@@ -16,7 +16,8 @@ function autoBootEnabled(api: SandkitApi): boolean {
 }
 
 function openDevTools(): void {
-  safe(() => window.electron?.openDevTools?.());
+  const bridge = (window as Window & { electron?: { openDevTools(): void } }).electron;
+  bridge?.openDevTools();
 }
 
 /** Open DevTools as soon as the mod loads (retries until the bridge is ready). */

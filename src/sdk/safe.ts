@@ -13,10 +13,10 @@ export function isEnabled(api: SandkitApi): boolean {
   return typeof value === "boolean" ? value : true;
 }
 
-/** Hide on menu scenes; show everywhere else (Workshop overlay pattern). */
+/** Hide on menu scenes; show everywhere else. */
 export function inGame(): boolean {
   const active = safe(() => sandkit.api.scene.getActive());
-  if (active === undefined || active === null) return true;
+  if (typeof active !== "number") return true;
 
   const Scene = safe(() => sandkit.enums.Scene as Record<string, number>) ?? {};
   const menuScenes = [Scene.MainMenu, Scene.Intro].filter(

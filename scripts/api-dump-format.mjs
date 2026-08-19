@@ -326,6 +326,109 @@ export function getDocEntry(docs, path) {
   return null;
 }
 
+/** @param {Record<string, unknown>} param */
+function inferParamType(param) {
+  if (typeof param.type === "string" && param.type.trim()) return param.type.trim();
+
+  const label = String(param.label || param.name || "");
+  const labelLower = label.toLowerCase();
+  const desc = String(param.description || "");
+  const text = `${label} ${desc}`.toLowerCase();
+
+  if (/unsubscribe/.test(desc)) return "() => void";
+
+  if (
+    /id$|kind$|key$|path$|type$|url$|hook$|event$|locale$|layer$|slot$|message$|title$|name$|scene$|mode$|binding$|sound$|sprite$|matter$|provider$/.test(
+      labelLower,
+    )
+  ) {
+    return "string";
+  }
+
+  if (labelLower === "component" || /callback|handler|\brender\b|listener|\bfn\b|\bfunction\b/.test(text)) {
+    return "(...args: unknown[]) => unknown";
+  }
+  if (
+    /coordinate|amount|damage|radius|power|duration|interval|index|level|hp|angle|distance|width|height|size|multiplier|cellx|celley|worldx|worldy|tick|time|min|max|fieldnumber|velocity|capacity|fluxite|energy|declared/.test(
+      text,
+    )
+  ) {
+    return "number";
+  }
+  if (/flag|whether|enabled|locked|active|collectable|blocked|ready|held|loaded|empty|terrain|focused|clear|falling|ground|colliding/.test(text)) {
+    return "boolean";
+  }
+  if (/string/.test(desc)) return "string";
+  if (/object|options|settings|definition|config|data|payload|recipe|profile|blueprint|pattern|metadata/.test(text)) {
+    return "Record<string, unknown>";
+  }
+  return "unknown";
+}
+
+/** @param {Record<string, unknown> | null | undefined} docEntry @param {string} methodKey */
+function inferReturnType(docEntry, methodKey) {
+  if (typeof docEntry?.returnType === "string" && docEntry.returnType.trim()) {
+    return docEntry.returnType.trim();
+  }
+
+  const desc = String(docEntry?.description || "");
+  const key = methodKey;
+
+  if (/return whether|return true if|return false if/i.test(desc)) return "boolean";
+  if (/return string/i.test(desc)) return "string";
+  if (/return number/i.test(desc)) return "number";
+  if (key === "on" || /unsubscribe function/i.test(desc)) return "() => void";
+  if (key === "inject") return "(() => void) | undefined";
+  if (key === "confirm" || /confirm dialog/i.test(desc)) return "Promise<boolean>";
+  if (key === "prompt" || /prompt dialog/i.test(desc)) return "Promise<string | null>";
+  if (key === "alert" || /alert dialog/i.test(desc)) return "Promise<void>";
+  if (/promise/i.test(desc)) return "Promise<unknown>";
+  if (/^get|^is|^has|^can|^find|^map|^createCircle|^key$|^t$|^translatable$/.test(key)) return "unknown";
+  return "void";
+}
+
+/** @param {string} name */
+function sanitizeParamName(name) {
+  const raw = String(name || "arg").trim() || "arg";
+  const safe = raw.replace(/[^a-zA-Z0-9_$]/g, "_");
+  if (/^[a-zA-Z_$]/.test(safe)) return safe;
+  return `_${safe}`;
+}
+
+/**
+ * Build a mod-facing function type for generated `.d.ts` stubs.
+ * @param {Record<string, unknown> | null | undefined} docEntry
+ * @param {import("./api-dump-format.mjs").TreeNode} dumpNode
+ * @param {string} methodKey
+ */
+export function formatFunctionSignature(docEntry, dumpNode, methodKey) {
+  const docParams = Array.isArray(docEntry?.params) ? docEntry.params : [];
+  const dumpParams = dumpNode.params ?? [];
+
+  /** @type {Array<Record<string, unknown>>} */
+  let params;
+  if (docParams.length > 0) {
+    params = docParams;
+  } else if (dumpParams.length > 0) {
+    params = dumpParams.map((name) => ({ name, label: name, description: "" }));
+  } else if (typeof dumpNode.arity === "number" && dumpNode.arity >= 0) {
+    params = Array.from({ length: dumpNode.arity }, (_, i) => ({
+      name: `arg${i}`,
+      label: `arg${i}`,
+      description: "",
+    }));
+  } else {
+    params = [];
+  }
+
+  const paramList = params
+    .map((p) => `${sanitizeParamName(/** @type {Record<string, string>} */ (p).label || /** @type {Record<string, string>} */ (p).name)}: ${inferParamType(p)}`)
+    .join(", ");
+
+  const ret = inferReturnType(docEntry, methodKey);
+  return `(${paramList}) => ${ret}`;
+}
+
 /** @param {Record<string, unknown> | null | undefined} entry */
 export function formatDocComment(entry) {
   if (!entry) return null;

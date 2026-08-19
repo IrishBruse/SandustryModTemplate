@@ -2,7 +2,7 @@
  * Paste this whole file into Sandustry DevTools (Console tab).
  *
  * Requires the example mod loaded so window.api exists.
- * Output: JSON for types/api/runtime-dump.json
+ * Output: JSON for sandkit-api/runtime-dump.json
  * Then run: npm run generate-types
  *
  * Tips:
@@ -209,7 +209,7 @@
     console.info(
       `[apiDump] ${payload.meta.entries} entries, ${payload.meta.functions} functions`,
     );
-    console.info("[apiDump] paste into types/api/runtime-dump.json, then: npm run generate-types");
+    console.info("[apiDump] paste into sandkit-api/runtime-dump.json, then: npm run generate-types");
 
     if (navigator.clipboard?.writeText) {
       navigator.clipboard

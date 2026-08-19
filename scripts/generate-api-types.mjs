@@ -1,9 +1,9 @@
 /**
- * Regenerate types/api/generated/ and types/api/api-docs.json from the runtime dump.
+ * Regenerate types/api/generated/ and sandkit-api/api-docs.json from the runtime dump.
  * Usage: npm run generate-types
  *
- * Paste target: types/api/runtime-dump.json (from scripts/dump-api-console.js)
- * Docs overlay: types/api/api-docs.json (merged on each run; edit descriptions by hand)
+ * Paste target: sandkit-api/runtime-dump.json (from scripts/dump-api-console.js)
+ * Docs overlay: sandkit-api/api-docs.json (merged on each run; edit descriptions by hand)
  */
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -11,6 +11,7 @@ import { fileURLToPath } from "node:url";
 import {
   dumpToJsonBlob,
   formatDocComment,
+  formatFunctionSignature,
   getDocEntry,
   mergeApiDocs,
   parseJsonDump,
@@ -18,9 +19,9 @@ import {
 } from "./api-dump-format.mjs";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
-const JSON_SOURCE = join(ROOT, "types/api/runtime-dump.json");
-const TXT_SOURCE = join(ROOT, "types/api/runtime-dump.txt");
-const DOCS_TARGET = join(ROOT, "types/api/api-docs.json");
+const JSON_SOURCE = join(ROOT, "sandkit-api/runtime-dump.json");
+const TXT_SOURCE = join(ROOT, "sandkit-api/runtime-dump.txt");
+const DOCS_TARGET = join(ROOT, "sandkit-api/api-docs.json");
 const OUT_DIR = join(ROOT, "types/api/generated");
 
 /** Default namespace descriptions seeded into api-docs.json on first run. */
@@ -81,9 +82,6 @@ const NAMESPACE_NOTES = {
   world: "Cell reads, excavation, idle mutation",
 };
 
-const COMMON_IMPORT =
-  'import type { ApiHandler, Method0, Method1, Method2, Method3, Method4, Method5, Method6 } from "../common";'; // types/api/common.d.ts
-
 function loadDump() {
   if (existsSync(JSON_SOURCE)) {
     return parseJsonDump(JSON.parse(readFileSync(JSON_SOURCE, "utf8")));
@@ -105,27 +103,20 @@ function ifaceName(pathParts) {
   return `Api${pathParts.map(pascal).join("")}`;
 }
 
-/** @param {number | null} arity */
-function methodType(arity) {
-  if (arity === 0) return "Method0";
-  if (arity === 1) return "Method1";
-  if (arity === 2) return "Method2";
-  if (arity === 3) return "Method3";
-  if (arity === 4) return "Method4";
-  if (arity === 5) return "Method5";
-  if (arity === 6) return "Method6";
-  return "ApiHandler";
-}
-
-/** @param {string} kind @param {number | null} arity */
-function fieldType(kind, arity) {
-  if (kind === "function") return methodType(arity);
+/** @param {string} kind */
+function scalarType(kind) {
   if (kind === "string") return "string";
   if (kind === "number") return "number";
   if (kind === "null") return "null";
   if (kind === "array") return "unknown[]";
   if (kind === "object") return "Record<string, unknown>";
   return "unknown";
+}
+
+/** @param {TreeNode} node @param {Record<string, unknown> | null | undefined} docEntry @param {string} methodKey */
+function memberType(node, docEntry, methodKey) {
+  if (node.kind === "function") return formatFunctionSignature(docEntry, node, methodKey);
+  return scalarType(node.kind);
 }
 
 /** @typedef {import("./api-dump-format.mjs").TreeNode} TreeNode */
@@ -147,7 +138,8 @@ function emitInterfaces(node, pathParts, out, docs) {
     if (value.members.size > 0) {
       out.push(`  ${key}: ${ifaceName([...pathParts, key])};`);
     } else {
-      out.push(`  ${key}: ${fieldType(value.kind, value.arity)};`);
+      const docEntry = getDocEntry(docs, [...pathParts, key]);
+      out.push(`  ${key}: ${memberType(value, docEntry, key)};`);
     }
   }
   out.push("}");
@@ -173,13 +165,11 @@ function writeNamespaceFile(rootKey, rootNode, docs) {
 
   const header = [
     "/**",
-    " * Auto-generated from types/api/runtime-dump.json",
+    " * Auto-generated from sandkit-api/runtime-dump.json",
     " * Run: npm run generate-types",
     nsDescription ? ` * ${nsDescription}` : "",
     " */",
     "/* eslint-disable @typescript-eslint/no-empty-object-type */",
-    "",
-    COMMON_IMPORT,
     "",
   ]
     .filter(Boolean)
@@ -230,21 +220,21 @@ for (const rootKey of rootKeys) {
         : `  ${rootKey}: ${ifaceName([rootKey])};`,
     );
   } else {
-    indexFields.push(`  ${rootKey}: ${fieldType(rootNode.kind, rootNode.arity)};`);
+    const docEntry = getDocEntry(docs, [rootKey]);
+    indexFields.push(`  ${rootKey}: ${memberType(rootNode, docEntry, rootKey)};`);
   }
 }
 
 const indexOutput = `/**
- * Auto-generated from types/api/runtime-dump.json
+ * Auto-generated from sandkit-api/runtime-dump.json
  * Run: npm run generate-types
  *
  * In-game runtime snapshot: ${dump.meta.entries} entries, ${dump.meta.functions} functions.
- * Signatures are mod-facing (ctx bound internally).
- * Docs overlay: types/api/api-docs.json
+ * Inline function signatures (ctx bound internally).
+ * Docs overlay: sandkit-api/api-docs.json
  */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 
-${COMMON_IMPORT}
 ${indexImports.join("\n")}
 
 /** Runtime API surface from the in-game dump. */
