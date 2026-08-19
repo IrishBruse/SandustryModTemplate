@@ -1,8 +1,8 @@
 import type { SandkitApi } from "types/api";
+import { MOD_ID } from "../debug/globals";
+import { safe } from "../sdk/safe";
 import { clickContinueButton, isContinueButtonReady } from "./menu";
 import { startSplashSkipPolling } from "./splash";
-import { safe } from "../sdk/safe";
-import { MOD_ID } from "./globals";
 
 const BOOT_INTERVAL_MS = 250;
 const FALLBACK_MS = 1000;

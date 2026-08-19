@@ -1,4 +1,4 @@
-import { registerDevToolsShortcut, scheduleMainMenuBoot } from "./debug/boot-menu";
+import { installDebug } from "./debug";
 import { installGlobals, MOD_ID } from "./debug/globals";
 import React, { createElement } from "./react";
 import { ExampleStatusPanel } from "./ui/ExampleStatusPanel";
@@ -22,8 +22,8 @@ function registerUi() {
   const dispose =
     safe(() => ui.inject?.(OVERLAY_ID, renderStatusPanel)) ??
     safe(() => {
-      ui.overlays.register(OVERLAY_LAYER, OVERLAY_ID, renderStatusPanel, sandkit.state);
-      return () => ui.overlays.unregister(OVERLAY_LAYER, OVERLAY_ID, sandkit.state);
+      ui.overlays.register(OVERLAY_LAYER, OVERLAY_ID, renderStatusPanel);
+      return () => ui.overlays.unregister(OVERLAY_LAYER, OVERLAY_ID);
     });
 
   if (!dispose) {
@@ -44,8 +44,7 @@ function registerUi() {
 
 if (isEnabled(api)) {
   safe(() => {
-    registerDevToolsShortcut();
-    scheduleMainMenuBoot(api);
+    installDebug(api);
     modGlobal.registerProbe();
     registerUi();
     api.ui.toast("Example Mod probe registered — select it on the Retro Console");
