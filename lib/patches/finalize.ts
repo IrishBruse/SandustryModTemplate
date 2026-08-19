@@ -1,4 +1,4 @@
-import type { Patch } from "./types";
+import type { Patch } from "types/lib/patch";
 
 /** Patch body without id — id comes from the filename at build time. */
 export type PatchBody = Omit<Patch, "id"> & { id?: string };

@@ -1,4 +1,4 @@
-import { replace } from "../../../patch-helpers/helpers.ts";
+import { replace } from "../../../lib/patches/helpers.ts";
 
 export default replace({
   file: "js/bundle.js",

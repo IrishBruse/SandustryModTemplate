@@ -1,6 +1,5 @@
 import type { SandkitApi } from "types/api";
-import { MOD_ID } from "../debug/globals";
-import { safe } from "../sdk/safe";
+import { debugEnabled, safe } from "../sdk/safe";
 import { clickContinueButton, isContinueButtonReady } from "./menu";
 import { startSplashSkipPolling } from "./splash";
 
@@ -9,11 +8,6 @@ const FALLBACK_MS = 1000;
 
 let booted = false;
 let pollTimer: ReturnType<typeof setInterval> | null = null;
-
-function debugEnabled(api: SandkitApi): boolean {
-  const value = safe(() => api.settings.get("debug"));
-  return typeof value === "boolean" ? value : true;
-}
 
 function openDevTools(): void {
   const bridge = (window as Window & { electron?: { openDevTools(): void } }).electron;
@@ -59,22 +53,22 @@ function tryBoot(api: SandkitApi): void {
   openDevTools();
 }
 
-function registerBootTrigger(api: SandkitApi): void {
+function registerBootTrigger(api: SandkitApi, modId: string): void {
   safe(() =>
-    api.triggers.register(`${MOD_ID}:main-menu-boot`, {
+    api.triggers.register(`${modId}:main-menu-boot`, {
       interval: BOOT_INTERVAL_MS,
       callback: () => tryBoot(api),
     }),
   );
 }
 
-function startBootPolling(api: SandkitApi): void {
+function startBootPolling(api: SandkitApi, modId: string): void {
   if (booted || !debugEnabled(api)) return;
 
   tryBoot(api);
   if (booted) return;
 
-  registerBootTrigger(api);
+  registerBootTrigger(api, modId);
 
   if (pollTimer !== null) return;
   pollTimer = setInterval(() => tryBoot(api), BOOT_INTERVAL_MS);
@@ -83,13 +77,13 @@ function startBootPolling(api: SandkitApi): void {
 /**
  * Open DevTools on load. When debug is on, poll until Continue is ready and click it.
  */
-export function scheduleMainMenuBoot(api: SandkitApi): void {
+export function scheduleMainMenuBoot(api: SandkitApi, modId: string): void {
   openDevToolsOnStartup();
   startSplashSkipPolling();
 
   if (!debugEnabled(api)) return;
 
-  safe(() => api.events.on("game:ready", () => startBootPolling(api)));
-  startBootPolling(api);
-  setTimeout(() => startBootPolling(api), FALLBACK_MS);
+  safe(() => api.events.on("game:ready", () => startBootPolling(api, modId)));
+  startBootPolling(api, modId);
+  setTimeout(() => startBootPolling(api, modId), FALLBACK_MS);
 }
