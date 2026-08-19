@@ -27,9 +27,10 @@
  *
  * ## API source of truth
  *
- * Method names come from the in-game runtime dump (`types/api/runtime-dump.txt`).
+ * Method names come from the in-game runtime dump (`types/api/runtime-dump.json`).
+ * Human-readable descriptions live in `api/api-docs.json` (merged on generate).
  * Regenerate stubs: `npm run generate-types`.
- * Hand-refined typings live in `api/refined.d.ts`.
+ * Hand-refined typings live in `api/refined/`.
  *
  * ## Workshop patterns (run `npm run references` to sync)
  *

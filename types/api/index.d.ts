@@ -1,27 +1,15 @@
 import type { GeneratedSandkitApi } from "./generated";
 import type { RefinedSandkitApi } from "./refined";
 
-/** Namespaces replaced by hand-refined typings in refined.d.ts */
+/** Namespaces replaced by hand-refined typings in refined/ */
 type RefinedKeys = keyof RefinedSandkitApi;
 
 /**
- * Full Sandkit API: runtime dump coverage (`generated.d.ts`) with refined
- * typings for mod-heavy namespaces (`refined.d.ts`).
+ * Full Sandkit API: runtime dump coverage (`generated/`) with refined
+ * typings for mod-heavy namespaces (`refined/`).
  *
- * ## Legacy name migration (Workshop → runtime)
- *
- * | Old / Workshop pattern | Runtime name |
- * |---|---|
- * | `canBuildAtCell(x, y)` | `canBuild(ctx, x, y)` |
- * | `getWorldPosition()` | `getPosition(ctx)` |
- * | `forEachCellInCircle(...)` | `iterateCircle(ctx, ...)` |
- * | `registerBinding(...)` | `registerKeyBinding(...)` |
- * | `createAtCellWhenIdle(...)` | `createAt(ctx, ...)` or idle helpers |
- * | `isCellEmptyAtCell(...)` | `isCellEmpty(ctx, ...)` |
- * | `loadFromMod(...)` | `sprites.load(ctx, ...)` |
- * | `api.gameConfig.get` | `api.config` |
- * | `api.ui.inject` | `api.ui.overlays.register` (inject may be absent) |
- * | `api.main.emitEvent` | `api.workers.emitToMain` |
+ * The runtime dump is mod-facing — ctx is bound internally. Method names match
+ * what you call in `main.js` / `worker.js` (e.g. `canBuildAtCell`, not `canBuild`).
  *
  * Regenerate dump stubs: `npm run generate-types`
  */

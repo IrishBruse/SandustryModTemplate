@@ -3,9 +3,12 @@
  *
  * ## Context
  *
- * Most main-thread methods take a game context as the first parameter (`ctx`).
+ * The public mod API (`api.*` in main.js) binds context internally — you do
+ * not pass `ctx` as the first argument. Generated stubs in `api/generated/`
+ * use mod-facing arity (`Method0`, `Method1`, …).
+ *
  * Mod settings from `configSchema` are read via `api.settings.get(...)`.
- * Legacy game config uses `api.config`.
+ * Read-only game config uses `api.gameConfig`.
  *
  * ## Timing and lifecycle
  *
