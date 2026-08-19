@@ -3,7 +3,7 @@
 import type { SandkitApi, SandkitGlobal } from "./index";
 
 declare global {
-  /** Set at build time — true when MOD_DEBUG=1 (dev/watch), false for release. */
+  /** Set at build time — true for dev/game builds, false for release. */
   const __MOD_DEBUG__: boolean;
 
   const sandkit: SandkitGlobal;

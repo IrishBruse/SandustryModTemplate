@@ -1,9 +1,9 @@
 /**
- * Auto-generated from sandkit-api/runtime-dump.json
+ * Auto-generated from types/api/source/runtime-dump.json
  * Run: npm run generate-types
  *
  * In-game runtime snapshot: 352 entries, 281 functions.
- * Docs overlay: sandkit-api/api-docs.json
+ * Docs overlay: types/api/source/api-docs.json
  */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 

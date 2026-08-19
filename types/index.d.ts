@@ -10,16 +10,15 @@
  *
  * ## API source of truth
  *
- * Method names come from the in-game runtime dump (`sandkit-api/runtime-dump.json`).
- * Descriptions live in `sandkit-api/api-docs.json` (merged on `npm run generate-types`).
+ * Method names come from the in-game runtime dump (`types/api/source/runtime-dump.json`).
+ * Descriptions live in `types/api/source/api-docs.json` (merged on `npm run generate-types`).
  */
 
 export type * from "./common";
 export type * from "./sandkit";
-export type * from "./mod/manifest";
-export type * from "../patch-helpers/types";
+export type * from "./lib";
 export type * from "./api";
 
 export type { SandkitApi } from "./api";
-export type { ModManifest, ConfigSchema } from "./mod/manifest";
-export type { Patch, PatchOperation } from "../patch-helpers/types";
+export type { ModManifest, ConfigSchema } from "./lib/manifest";
+export type { Patch, PatchOperation } from "./lib/patch";

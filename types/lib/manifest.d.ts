@@ -1,5 +1,6 @@
 /**
- * Mod manifest shapes — canonical example: `modinfo.json` at repo root.
+ * Mod manifest shapes — canonical example: `modinfo.ts` at repo root.
+ * Use `defineMod` from `lib/modinfo.ts` for type-safe manifest definitions.
  *
  * Read mod settings from `configSchema` via `api.settings.get(key)`.
  * Put feature switches in `configSchema` rather than hard-coded flags.
@@ -86,7 +87,7 @@ export interface MapConfig {
 }
 
 /**
- * Required mod manifest (`modinfo.json`).
+ * Required mod manifest (source: `modinfo.ts`, output: `modinfo.json`).
  *
  * - `entry` — main-thread script (default `main.js`)
  * - `workerEntry` — worker-thread script (default `worker.js`)

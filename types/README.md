@@ -2,7 +2,7 @@
 
 This folder holds TypeScript definitions for the Sandustry modding API (`sandkit.api`).
 
-Source data and docs live in [`../sandkit-api/`](../sandkit-api/). Generated `.d.ts` files live here.
+Source data and docs live in [`api/source/`](api/source/). Generated `.d.ts` files live in [`api/generated/`](api/generated/).
 
 ## Layout
 
@@ -10,25 +10,30 @@ Source data and docs live in [`../sandkit-api/`](../sandkit-api/). Generated `.d
 types/
   api/
     generated/     Auto-generated stubs (one file per namespace + index)
+    source/        Runtime dump and docs overlay JSON
     index.d.ts     SandkitApi export
+  lib/
+    manifest.d.ts  Mod manifest (modinfo.ts)
+    patch.d.ts     Bundle patch shapes
+    index.d.ts     Framework types entry
   common.d.ts      Shared primitives (CellPos, DataBag, …)
   sandkit.d.ts     sandkit global (api, react, state, enums, engine)
   global.d.ts      Declares sandkit and api in global scope
   index.d.ts       Package entry for IDE imports
 ```
 
-## Source files (outside `types/`)
+## Source files
 
 | File | Role |
 |---|---|
-| `sandkit-api/runtime-dump.json` | Paste from DevTools (`scripts/dump-api-console.js`). Lists API members from the game. |
-| `sandkit-api/api-docs.json` | Descriptions, param labels, `params[].type`, and `returnType`. Merged on each generate run. |
-| `scripts/api-type-curation.js` | Curated type overrides applied into `api-docs.json` on generate. |
+| `types/api/source/runtime-dump.json` | Paste from DevTools (`scripts/api/dump-api-console.js`). Lists API members from the game. |
+| `types/api/source/api-docs.json` | Descriptions, param labels, `params[].type`, and `returnType`. Merged on each generate run. |
+| `scripts/api/api-type-curation.js` | Curated type overrides applied into `api-docs.json` on generate. |
 
 ## Generate types and docs
 
-1. In Sandustry DevTools, run `scripts/dump-api-console.js`, then paste the JSON into `sandkit-api/runtime-dump.json`.
-2. Edit descriptions in `sandkit-api/api-docs.json` (optional). Add or change types in `scripts/api-type-curation.js` for bulk curation.
+1. In Sandustry DevTools, run `scripts/api/dump-api-console.js`, then paste the JSON into `types/api/source/runtime-dump.json`.
+2. Edit descriptions in `types/api/source/api-docs.json` (optional). Add or change types in `scripts/api/api-type-curation.js` for bulk curation.
 3. Run:
 
 ```bash
@@ -50,5 +55,5 @@ Globals `sandkit` and `api` are declared in `global.d.ts`.
 ## Rules
 
 - Do not edit `types/api/generated/` by hand.
-- Edit `sandkit-api/api-docs.json` for documentation text.
+- Edit `types/api/source/api-docs.json` for documentation text.
 - Paste a new runtime dump when the game API changes.

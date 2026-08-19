@@ -1,5 +1,5 @@
 /**
- * Auto-generated from sandkit-api/runtime-dump.json
+ * Auto-generated from types/api/source/runtime-dump.json
  * Run: npm run generate-types
  * Mod asset provider selection
  */
