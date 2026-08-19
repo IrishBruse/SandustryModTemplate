@@ -10,16 +10,11 @@ export interface ModGlobal {
 const MOD_ID = "author.example-mod";
 
 export function installGlobals(api: SandkitApi): ModGlobal {
-  const modGlobal: ModGlobal = {
+  return {
     modId: MOD_ID,
     api,
     sandkit,
   };
-
-  globalThis.api = api;
-  window.api = api;
-
-  return modGlobal;
 }
 
 export { MOD_ID };

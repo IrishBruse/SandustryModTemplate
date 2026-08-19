@@ -1,11 +1,12 @@
-import { installDebug } from "./debug";
+import { installDebug } from "../lib/debug";
+import { createElement } from "../lib/react";
+import { isEnabled, safe } from "../lib/sdk/safe";
 import { installGlobals, MOD_ID } from "./debug/globals";
-import { createElement } from "../react";
 import { ExampleStatusPanel } from "./ui/ExampleStatusPanel";
-import { isEnabled, safe } from "./sdk/safe";
 
 const api = sandkit.api;
 installGlobals(api);
+installDebug(api, MOD_ID);
 
 const OVERLAY_ID = "example-status-panel";
 
@@ -18,7 +19,6 @@ function registerUi() {
 
 if (isEnabled(api)) {
   safe(() => {
-    installDebug(api);
     registerUi();
     api.ui.toast("Example mod loaded", {});
   });
