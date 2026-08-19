@@ -1,9 +1,11 @@
 {
   "meta": {
-    "updatedAt": "2026-08-19T23:26:33.017Z",
+    "updatedAt": "2026-08-19T23:52:40.508Z",
     "sourceGeneratedAt": "2026-08-19",
     "entryCount": 352,
-    "functionCount": 281
+    "functionCount": 281,
+    "officialReferenceAppliedAt": "2026-08-19T23:52:40.512Z",
+    "officialReferenceMatches": 275
   },
   "namespaces": {
     "action": {
@@ -12,12 +14,12 @@
         "getActive": {
           "description": "Return active.",
           "params": [],
-          "returnType": "string"
+          "returnType": "Action"
         },
         "getSelected": {
           "description": "Return selected.",
           "params": [],
-          "returnType": "string"
+          "returnType": "Action"
         },
         "setCustomData": {
           "description": "Set custom data.",
@@ -26,7 +28,7 @@
               "name": "t",
               "label": "data",
               "description": "",
-              "type": "Record<string, unknown>"
+              "type": "unknown"
             }
           ],
           "returnType": "void"
@@ -46,7 +48,7 @@
               "type": "string"
             }
           ],
-          "returnType": "string | null"
+          "returnType": "AssetProviderV1 | null"
         },
         "getUrl": {
           "description": "Return url.",
@@ -73,10 +75,10 @@
               "name": "r",
               "label": "providerId",
               "description": "provider id.",
-              "type": "string"
+              "type": "string | null"
             }
           ],
-          "returnType": "void"
+          "returnType": "boolean"
         }
       }
     },
@@ -126,13 +128,14 @@
               "name": "t",
               "label": "player",
               "description": "",
-              "type": "string"
+              "type": "Player"
             },
             {
               "name": "r",
               "label": "isFlamethrower",
               "description": "is Flamethrower flag.",
-              "type": "boolean"
+              "type": "boolean",
+              "optional": true
             }
           ],
           "returnType": "boolean"
@@ -156,7 +159,8 @@
               "name": "o",
               "label": "isFlamethrower",
               "description": "is Flamethrower flag.",
-              "type": "boolean"
+              "type": "boolean",
+              "optional": true
             }
           ],
           "returnType": "boolean"
@@ -164,7 +168,7 @@
         "getPlayerZoneId": {
           "description": "Return player zone id.",
           "params": [],
-          "returnType": "string"
+          "returnType": "number"
         },
         "getZoneIdAtCell": {
           "description": "Return zone id at cell.",
@@ -182,7 +186,7 @@
               "type": "number"
             }
           ],
-          "returnType": "string"
+          "returnType": "number"
         }
       }
     },
@@ -210,7 +214,7 @@
               "type": "number"
             }
           ],
-          "returnType": "{ x: number; y: number }"
+          "returnType": "{ x: number; y: number; }"
         },
         "isBlockedAtCell": {
           "description": "Return whether blocked at cell.",
@@ -237,10 +241,10 @@
               "name": "t",
               "label": "structureTypeOrId",
               "description": "structure Type Or id.",
-              "type": "string"
+              "type": "string | StructureType"
             }
           ],
-          "returnType": "void"
+          "returnType": "string | StructureType | null"
         }
       }
     },
@@ -254,10 +258,11 @@
               "name": "t",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "{ durationMs?: number; }",
+              "optional": true
             }
           ],
-          "returnType": "void"
+          "returnType": "boolean"
         },
         "setFocusAtWorld": {
           "description": "Set focus at world.",
@@ -275,7 +280,7 @@
               "type": "number"
             }
           ],
-          "returnType": "void"
+          "returnType": "boolean"
         },
         "snapToPlayer": {
           "description": "snap To Player.",
@@ -294,7 +299,7 @@
               "name": "t",
               "label": "elementType",
               "description": "element Type.",
-              "type": "string"
+              "type": "number"
             }
           ],
           "returnType": "number"
@@ -306,7 +311,7 @@
               "name": "t",
               "label": "cellId",
               "description": "cell id.",
-              "type": "string"
+              "type": "number"
             }
           ],
           "returnType": "number"
@@ -318,7 +323,7 @@
               "name": "t",
               "label": "cellId",
               "description": "cell id.",
-              "type": "string"
+              "type": "number"
             }
           ],
           "returnType": "boolean"
@@ -330,7 +335,7 @@
               "name": "t",
               "label": "cellId",
               "description": "cell id.",
-              "type": "string"
+              "type": "number"
             }
           ],
           "returnType": "boolean"
@@ -385,15 +390,16 @@
           "params": [
             {
               "name": "t",
-              "label": "cooldownId",
+              "label": "cooldown",
               "description": "",
-              "type": "string"
+              "type": "Cooldown"
             },
             {
               "name": "r",
               "label": "overrideTime",
               "description": "override Time id.",
-              "type": "number"
+              "type": "number",
+              "optional": true
             }
           ],
           "returnType": "boolean"
@@ -403,15 +409,16 @@
           "params": [
             {
               "name": "t",
-              "label": "cooldownId",
+              "label": "cooldown",
               "description": "",
-              "type": "string"
+              "type": "Cooldown"
             },
             {
               "name": "r",
               "label": "overrideTime",
               "description": "override Time id.",
-              "type": "number"
+              "type": "number",
+              "optional": true
             }
           ],
           "returnType": "boolean"
@@ -428,7 +435,7 @@
               "name": "t",
               "label": "elementType",
               "description": "element Type.",
-              "type": "string"
+              "type": "number"
             }
           ],
           "returnType": "void"
@@ -440,7 +447,7 @@
               "name": "t",
               "label": "terrainType",
               "description": "terrain Type.",
-              "type": "string"
+              "type": "number"
             }
           ],
           "returnType": "void"
@@ -469,7 +476,8 @@
               "name": "o",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "{ style?: 'implode' | 'explode'; duration?: number; maxRadius?: number; intensity?: number; color?: [number, number, number, number]; }",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -499,7 +507,8 @@
               "name": "n",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "unknown",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -535,10 +544,11 @@
               "name": "l",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "{ width?: number; brightness?: number; color?: number; glow?: boolean; }",
+              "optional": true
             }
           ],
-          "returnType": "void"
+          "returnType": "unknown"
         },
         "createLightAtWorld": {
           "description": "Create light at world.",
@@ -559,10 +569,11 @@
               "name": "o",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "TemporaryLightOptions",
+              "optional": true
             }
           ],
-          "returnType": "void"
+          "returnType": "{ index: number | null; }"
         },
         "createParticlesAtWorld": {
           "description": "Create particles at world.",
@@ -583,7 +594,8 @@
               "name": "o",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "ParticleEffectOptions",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -595,7 +607,7 @@
               "name": "t",
               "label": "lightId",
               "description": "light id.",
-              "type": "string"
+              "type": "number"
             }
           ],
           "returnType": "void"
@@ -612,13 +624,13 @@
               "name": "t",
               "label": "elementTypeOrId",
               "description": "element Type Or id.",
-              "type": "string"
+              "type": "string | ElementType"
             },
             {
               "name": "r",
               "label": "interaction",
               "description": "",
-              "type": "Record<string, unknown>"
+              "type": "Interaction"
             }
           ],
           "returnType": "void"
@@ -642,13 +654,14 @@
               "name": "r",
               "label": "velocity",
               "description": "velocity.",
-              "type": "number"
+              "type": "{ x: number; y: number; }"
             },
             {
               "name": "o",
               "label": "maxSpeed",
               "description": "max Speed.",
-              "type": "number"
+              "type": "number",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -690,7 +703,7 @@
               "name": "r",
               "label": "velocity",
               "description": "velocity.",
-              "type": "number"
+              "type": "{ x: number; y: number; }"
             }
           ],
           "returnType": "void"
@@ -714,13 +727,14 @@
               "name": "o",
               "label": "elementType",
               "description": "",
-              "type": "string"
+              "type": "ElementType"
             },
             {
               "name": "n",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "ElementCreateOptions",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -747,7 +761,7 @@
               "type": "number"
             }
           ],
-          "returnType": "{ x: number; y: number } | null"
+          "returnType": "{ x: number; y: number; } | null"
         },
         "getDataFieldAtCell": {
           "description": "Return data field at cell.",
@@ -768,10 +782,10 @@
               "name": "o",
               "label": "fieldNumber",
               "description": "",
-              "type": "number"
+              "type": "1 | 2 | 3 | 4"
             }
           ],
-          "returnType": "number"
+          "returnType": "number | null"
         },
         "getDefinitionByType": {
           "description": "Return definition by type.",
@@ -780,10 +794,10 @@
               "name": "e",
               "label": "elementType",
               "description": "",
-              "type": "string"
+              "type": "ElementType"
             }
           ],
-          "returnType": "Record<string, unknown> | undefined"
+          "returnType": "ElementDefinition | undefined"
         },
         "getInfoAtCell": {
           "description": "Return info at cell.",
@@ -801,7 +815,7 @@
               "type": "number"
             }
           ],
-          "returnType": "Record<string, unknown> | undefined"
+          "returnType": "{ elementType: ElementType; isParticle: boolean; cellId: number; elementIndex: number; } | null"
         },
         "getMatterTypeAtCell": {
           "description": "Return matter type at cell.",
@@ -819,7 +833,7 @@
               "type": "number"
             }
           ],
-          "returnType": "string"
+          "returnType": "MatterType | null"
         },
         "getNameByType": {
           "description": "Return name by type.",
@@ -828,7 +842,7 @@
               "name": "t",
               "label": "elementType",
               "description": "element Type.",
-              "type": "string"
+              "type": "number"
             }
           ],
           "returnType": "string"
@@ -836,7 +850,7 @@
         "getRegisteredTypes": {
           "description": "Return registered types.",
           "params": [],
-          "returnType": "string[]"
+          "returnType": "ElementType[]"
         },
         "getResolvedTypeAtCell": {
           "description": "Return resolved type at cell.",
@@ -854,7 +868,7 @@
               "type": "number"
             }
           ],
-          "returnType": "string"
+          "returnType": "ElementType | null"
         },
         "getResolvedTypeFromCellId": {
           "description": "Return resolved type from cell id.",
@@ -863,10 +877,10 @@
               "name": "t",
               "label": "cellId",
               "description": "cell id.",
-              "type": "string"
+              "type": "number"
             }
           ],
-          "returnType": "string"
+          "returnType": "ElementType | null"
         },
         "getTypeAtCell": {
           "description": "Return type at cell.",
@@ -884,7 +898,7 @@
               "type": "number"
             }
           ],
-          "returnType": "string"
+          "returnType": "ElementType | null"
         },
         "getTypeFromId": {
           "description": "Return type from id.",
@@ -896,7 +910,7 @@
               "type": "string"
             }
           ],
-          "returnType": "string"
+          "returnType": "ElementType"
         },
         "getVelocityAtCell": {
           "description": "Return velocity at cell.",
@@ -914,7 +928,7 @@
               "type": "number"
             }
           ],
-          "returnType": "{ x: number; y: number }"
+          "returnType": "{ x: number; y: number; } | null"
         },
         "isFreeFallingAtCell": {
           "description": "Return whether free falling at cell.",
@@ -953,7 +967,7 @@
               "name": "o",
               "label": "elementType",
               "description": "",
-              "type": "string"
+              "type": "ElementType"
             }
           ],
           "returnType": "boolean"
@@ -983,10 +997,10 @@
               "name": "t",
               "label": "definition",
               "description": "Registration definition object.",
-              "type": "Record<string, unknown>"
+              "type": "ElementDefinition"
             }
           ],
-          "returnType": "void"
+          "returnType": "{ elementType: ElementType; }"
         },
         "removeAtCellWhenIdle": {
           "description": "Remove at cell when idle.",
@@ -1007,7 +1021,8 @@
               "name": "r",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "ElementRemovalOptions",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -1031,13 +1046,14 @@
               "name": "o",
               "label": "elementType",
               "description": "",
-              "type": "string"
+              "type": "ElementType"
             },
             {
               "name": "n",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "ElementCreateOptions",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -1061,7 +1077,7 @@
               "name": "r",
               "label": "fieldNumber",
               "description": "",
-              "type": "number"
+              "type": "1 | 2 | 3 | 4"
             },
             {
               "name": "o",
@@ -1097,7 +1113,8 @@
               "name": "o",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "{ updateMax?: boolean; }",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -1121,7 +1138,7 @@
               "name": "r",
               "label": "physicsState",
               "description": "physics State.",
-              "type": "Record<string, unknown>"
+              "type": "number"
             }
           ],
           "returnType": "void"
@@ -1145,7 +1162,7 @@
               "name": "r",
               "label": "velocity",
               "description": "velocity.",
-              "type": "number"
+              "type": "{ x: number; y: number; }"
             }
           ],
           "returnType": "void"
@@ -1187,13 +1204,13 @@
               "name": "t",
               "label": "elementTypeOrId",
               "description": "element Type Or id.",
-              "type": "string"
+              "type": "string | ElementType"
             },
             {
               "name": "r",
               "label": "partial",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "Partial<ElementDefinition>"
             }
           ],
           "returnType": "void"
@@ -1228,10 +1245,11 @@
               "name": "n",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "unknown",
+              "optional": true
             }
           ],
-          "returnType": "void"
+          "returnType": "number"
         },
         "consume": {
           "description": "Return number.",
@@ -1246,7 +1264,8 @@
               "name": "r",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "{ allOrNothing?: boolean; }",
+              "optional": true
             }
           ],
           "returnType": "number"
@@ -1291,7 +1310,7 @@
               "type": "number"
             }
           ],
-          "returnType": "Record<string, unknown> | undefined"
+          "returnType": "{ x: number; y: number; type: string; }[]"
         },
         "getNetworkFreeCapacityAtCell": {
           "description": "Return network free capacity at cell.",
@@ -1324,13 +1343,14 @@
               "name": "r",
               "label": "type",
               "description": "",
-              "type": "string"
+              "type": "'conductor' | 'storage'"
             },
             {
               "name": "o",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "unknown",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -1394,7 +1414,7 @@
               "name": "r",
               "label": "definition",
               "description": "Registration definition object.",
-              "type": "Record<string, unknown>"
+              "type": "ExcavationProfileDefinitionV1"
             }
           ],
           "returnType": "void"
@@ -1455,7 +1475,7 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "JsonValueV1 | undefined"
         },
         "getAll": {
           "description": "Return all.",
@@ -1492,7 +1512,7 @@
               "name": "n",
               "label": "callback",
               "description": "Callback function.",
-              "type": "(...args: unknown[]) => unknown"
+              "type": "(cellX: number, cellY: number) => void"
             }
           ],
           "returnType": "void"
@@ -1528,7 +1548,7 @@
               "name": "l",
               "label": "callback",
               "description": "Callback function.",
-              "type": "(...args: unknown[]) => unknown"
+              "type": "(cellX: number, cellY: number) => void"
             }
           ],
           "returnType": "void"
@@ -1628,7 +1648,8 @@
               "name": "t",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "I18nNumberFormatOptions",
+              "optional": true
             }
           ],
           "returnType": "string"
@@ -1645,7 +1666,8 @@
               "name": "e",
               "label": "definition",
               "description": "Registration definition object.",
-              "type": "Record<string, unknown>"
+              "type": "{ descriptionKey?: string; description?: string; }",
+              "optional": true
             }
           ],
           "returnType": "string"
@@ -1660,7 +1682,7 @@
               "type": "string"
             }
           ],
-          "returnType": "string"
+          "returnType": "string | undefined"
         },
         "getGlobals": {
           "description": "Return globals.",
@@ -1670,7 +1692,7 @@
         "getLanguages": {
           "description": "Return languages.",
           "params": [],
-          "returnType": "string[]"
+          "returnType": "{ code: string; nativeName: string; englishName: string; enabled: boolean; }[]"
         },
         "getLocale": {
           "description": "Return locale.",
@@ -1684,7 +1706,8 @@
               "name": "e",
               "label": "definition",
               "description": "Registration definition object.",
-              "type": "Record<string, unknown>"
+              "type": "{ nameKey?: string; name?: string; }",
+              "optional": true
             }
           ],
           "returnType": "string"
@@ -1702,7 +1725,8 @@
               "name": "t",
               "label": "locale",
               "description": "locale string.",
-              "type": "string"
+              "type": "string",
+              "optional": true
             }
           ],
           "returnType": "boolean"
@@ -1732,7 +1756,7 @@
               "name": "t",
               "label": "translations",
               "description": "translations string.",
-              "type": "string"
+              "type": "Record<string, string>"
             }
           ],
           "returnType": "void"
@@ -1750,15 +1774,22 @@
               "name": "t",
               "label": "value",
               "description": "value string.",
-              "type": "string"
+              "type": "string | (() => string)"
             }
           ],
           "returnType": "void"
         },
         "setLocale": {
           "description": "Set locale.",
-          "params": [],
-          "returnType": "void"
+          "params": [
+            {
+              "name": "locale",
+              "label": "locale",
+              "description": "",
+              "type": "string"
+            }
+          ],
+          "returnType": "Promise<void>"
         },
         "t": {
           "description": "Return string.",
@@ -1773,7 +1804,8 @@
               "name": "t",
               "label": "params",
               "description": "params.",
-              "type": "Record<string, unknown>"
+              "type": "Record<string, string | number>",
+              "optional": true
             }
           ],
           "returnType": "string"
@@ -1794,7 +1826,7 @@
               "type": "string"
             }
           ],
-          "returnType": "{ __translatable: true; key: string; fallback: string }"
+          "returnType": "{ __translatable: true; key: string; fallback: string; }"
         }
       }
     },
@@ -1826,7 +1858,8 @@
               "name": "r",
               "label": "defaultLabel",
               "description": "default Label string.",
-              "type": "string"
+              "type": "string",
+              "optional": true
             }
           ],
           "returnType": "string"
@@ -1834,7 +1867,7 @@
         "getMouseCellPosition": {
           "description": "Return mouse cell position.",
           "params": [],
-          "returnType": "{ x: number; y: number }"
+          "returnType": "{ x: number; y: number; }"
         },
         "isAltHeld": {
           "description": "Return whether alt held.",
@@ -1871,16 +1904,16 @@
               "name": "r",
               "label": "defaultKeys",
               "description": "default Keys string.",
-              "type": "string"
+              "type": "string[]"
             },
             {
               "name": "o",
               "label": "definition",
               "description": "Registration definition object.",
-              "type": "Record<string, unknown>"
+              "type": "InputBindingDefinition"
             }
           ],
-          "returnType": "void"
+          "returnType": "string"
         },
         "releaseBinding": {
           "description": "release Binding.",
@@ -1926,12 +1959,12 @@
               "type": "string"
             }
           ],
-          "returnType": "void"
+          "returnType": "ModItem"
         },
         "getActive": {
           "description": "Return active.",
           "params": [],
-          "returnType": "string | null"
+          "returnType": "unknown"
         },
         "getDefinitionById": {
           "description": "Return definition by id.",
@@ -1943,7 +1976,7 @@
               "type": "string"
             }
           ],
-          "returnType": "Record<string, unknown> | undefined"
+          "returnType": "unknown"
         },
         "isActiveById": {
           "description": "Return whether active by id.",
@@ -1952,13 +1985,14 @@
               "name": "t",
               "label": "itemId",
               "description": "item id.",
-              "type": "string"
+              "type": "string | number"
             },
             {
               "name": "r",
               "label": "itemType",
               "description": "",
-              "type": "string"
+              "type": "ItemType",
+              "optional": true
             }
           ],
           "returnType": "boolean"
@@ -1970,7 +2004,7 @@
               "name": "t",
               "label": "definition",
               "description": "Registration definition object.",
-              "type": "Record<string, unknown>"
+              "type": "unknown"
             }
           ],
           "returnType": "void"
@@ -2020,10 +2054,11 @@
                   "name": "o",
                   "label": "options",
                   "description": "Optional settings object.",
-                  "type": "Record<string, unknown>"
+                  "type": "PersistentLightOptions",
+                  "optional": true
                 }
               ],
-              "returnType": "void"
+              "returnType": "unknown"
             },
             "fadeAtWorld": {
               "description": "fade At World.",
@@ -2044,7 +2079,8 @@
                   "name": "o",
                   "label": "durationMs",
                   "description": "duration Ms.",
-                  "type": "number"
+                  "type": "number",
+                  "optional": true
                 }
               ],
               "returnType": "void"
@@ -2096,10 +2132,11 @@
                   "name": "o",
                   "label": "options",
                   "description": "Optional settings object.",
-                  "type": "Record<string, unknown>"
+                  "type": "TemporaryLightOptions",
+                  "optional": true
                 }
               ],
-              "returnType": "void"
+              "returnType": "{ index: number | null; }"
             },
             "removeById": {
               "description": "Remove by id.",
@@ -2108,7 +2145,7 @@
                   "name": "t",
                   "label": "lightId",
                   "description": "light id.",
-                  "type": "string"
+                  "type": "number"
                 }
               ],
               "returnType": "void"
@@ -2123,12 +2160,12 @@
         "getActive": {
           "description": "Return active.",
           "params": [],
-          "returnType": "string | null"
+          "returnType": "Readonly<ActiveMapV1> | null"
         },
         "getAvailable": {
           "description": "Return available.",
           "params": [],
-          "returnType": "string[]"
+          "returnType": "readonly Readonly<AvailableMapV1>[]"
         },
         "start": {
           "description": "Return boolean.",
@@ -2140,7 +2177,7 @@
               "type": "string"
             }
           ],
-          "returnType": "void"
+          "returnType": "boolean"
         }
       }
     },
@@ -2157,7 +2194,7 @@
               "type": "string"
             }
           ],
-          "returnType": "string[]"
+          "returnType": "readonly AssetProviderV1[]"
         }
       }
     },
@@ -2174,7 +2211,7 @@
               "type": "number"
             }
           ],
-          "returnType": "{ x: number; y: number }[]"
+          "returnType": "number[][]"
         },
         "excavateAtCell": {
           "description": "Excavate terrain at a cell.",
@@ -2195,13 +2232,13 @@
               "name": "o",
               "label": "pattern",
               "description": "pattern.",
-              "type": "Record<string, unknown>"
+              "type": "number[][]"
             },
             {
               "name": "n",
               "label": "outVelocity",
               "description": "out Velocity.",
-              "type": "number"
+              "type": "{ x: number; y: number; }"
             },
             {
               "name": "l",
@@ -2213,7 +2250,8 @@
               "name": "s",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "PatternExcavateOptions",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -2243,7 +2281,7 @@
         "getWorldPosition": {
           "description": "Return world position.",
           "params": [],
-          "returnType": "{ x: number; y: number }"
+          "returnType": "{ x: number; y: number; }"
         },
         "inventory": {
           "description": "",
@@ -2334,10 +2372,10 @@
               "name": "t",
               "label": "mode",
               "description": "",
-              "type": "string"
+              "type": "'normal' | 'hover'"
             }
           ],
-          "returnType": "void"
+          "returnType": "boolean"
         },
         "setMovementSpeedMultiplier": {
           "description": "Set movement speed multiplier.",
@@ -2404,7 +2442,7 @@
               "name": "e",
               "label": "definition",
               "description": "Registration definition object.",
-              "type": "Record<string, unknown>"
+              "type": "PlanterBoxRecipeDefinitionV1"
             }
           ],
           "returnType": "void"
@@ -2416,7 +2454,7 @@
               "name": "e",
               "label": "definition",
               "description": "Registration definition object.",
-              "type": "Record<string, unknown>"
+              "type": "KineticPressRecipeDefinitionV1"
             }
           ],
           "returnType": "void"
@@ -2428,7 +2466,7 @@
               "name": "e",
               "label": "definition",
               "description": "Registration definition object.",
-              "type": "Record<string, unknown>"
+              "type": "ShakerRecipeDefinitionV1"
             }
           ],
           "returnType": "void"
@@ -2445,10 +2483,10 @@
               "name": "t",
               "label": "request",
               "description": "",
-              "type": "Record<string, unknown>"
+              "type": "ProgressionCompletionRequestV1"
             }
           ],
-          "returnType": "void"
+          "returnType": "boolean"
         }
       }
     },
@@ -2465,12 +2503,12 @@
               "type": "string"
             }
           ],
-          "returnType": "void"
+          "returnType": "ProjectileBlueprint"
         },
         "getAll": {
           "description": "Return all.",
           "params": [],
-          "returnType": "Record<string, unknown>[]"
+          "returnType": "Projectile[]"
         },
         "getById": {
           "description": "Return by id.",
@@ -2479,10 +2517,10 @@
               "name": "t",
               "label": "projectileId",
               "description": "projectile id.",
-              "type": "string"
+              "type": "number"
             }
           ],
-          "returnType": "Record<string, unknown> | undefined"
+          "returnType": "Projectile | undefined"
         },
         "getDefinitionById": {
           "description": "Return definition by id.",
@@ -2494,7 +2532,7 @@
               "type": "string"
             }
           ],
-          "returnType": "Record<string, unknown> | undefined"
+          "returnType": "unknown"
         },
         "register": {
           "description": "Register a definition.",
@@ -2503,7 +2541,7 @@
               "name": "t",
               "label": "definition",
               "description": "Registration definition object.",
-              "type": "Record<string, unknown>"
+              "type": "unknown"
             }
           ],
           "returnType": "void"
@@ -2515,7 +2553,7 @@
               "name": "t",
               "label": "projectile",
               "description": "",
-              "type": "Record<string, unknown>"
+              "type": "Projectile"
             }
           ],
           "returnType": "void"
@@ -2545,10 +2583,10 @@
               "name": "n",
               "label": "blueprint",
               "description": "",
-              "type": "Record<string, unknown>"
+              "type": "ProjectileBlueprint"
             }
           ],
-          "returnType": "void"
+          "returnType": "Projectile"
         }
       }
     },
@@ -2624,7 +2662,7 @@
               "type": "number"
             }
           ],
-          "returnType": "void"
+          "returnType": "{ x: number; y: number; distance: number; } | null"
         }
       }
     },
@@ -2638,7 +2676,7 @@
               "name": "t",
               "label": "definition",
               "description": "Registration definition object.",
-              "type": "Record<string, unknown>"
+              "type": "ContactRecipeDefinitionV1"
             }
           ],
           "returnType": "void"
@@ -2664,17 +2702,17 @@
               "type": "number"
             }
           ],
-          "returnType": "{ x: number; y: number }"
+          "returnType": "{ x: number; y: number; }"
         },
         "getGridMetrics": {
           "description": "Return grid metrics.",
           "params": [],
-          "returnType": "Record<string, number>"
+          "returnType": "{ cellSize: number; snapGridCellSize: number; }"
         },
         "getOverlayViewportSize": {
           "description": "Return overlay viewport size.",
           "params": [],
-          "returnType": "{ width: number; height: number }"
+          "returnType": "{ width: number; height: number; }"
         },
         "withOverlayContext": {
           "description": "",
@@ -2724,7 +2762,8 @@
               "name": "r",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "{ deferUi?: boolean; }",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -2737,7 +2776,7 @@
         "getActive": {
           "description": "Return active.",
           "params": [],
-          "returnType": "string"
+          "returnType": "Scene"
         }
       }
     },
@@ -2751,7 +2790,7 @@
               "name": "t",
               "label": "callback",
               "description": "Callback function.",
-              "type": "(...args: unknown[]) => unknown"
+              "type": "() => void"
             }
           ],
           "returnType": "void"
@@ -2771,12 +2810,12 @@
               "type": "string"
             }
           ],
-          "returnType": "string | number | boolean | undefined"
+          "returnType": "ConfigValueV1 | undefined"
         },
         "getAll": {
           "description": "Return all.",
           "params": [],
-          "returnType": "Record<string, string | number | boolean>"
+          "returnType": "Readonly<Record<string, ConfigValueV1>>"
         },
         "onChange": {
           "description": "Return () => void.",
@@ -2785,10 +2824,10 @@
               "name": "t",
               "label": "callback",
               "description": "Callback function.",
-              "type": "(...args: unknown[]) => unknown"
+              "type": "(values: Readonly<Record<string, ConfigValueV1>>) => void"
             }
           ],
-          "returnType": "void"
+          "returnType": "() => void"
         }
       }
     },
@@ -2811,10 +2850,10 @@
                   "name": "o",
                   "label": "config",
                   "description": "config.",
-                  "type": "Record<string, unknown>"
+                  "type": "{ type: SharedArrayType; length: number; }"
                 }
               ],
-              "returnType": "void"
+              "returnType": "SharedArray"
             },
             "get": {
               "description": "Return SharedArray | undefined.",
@@ -2826,7 +2865,7 @@
                   "type": "string"
                 }
               ],
-              "returnType": "SharedArrayBuffer | undefined"
+              "returnType": "SharedArray | undefined"
             }
           }
         }
@@ -2845,13 +2884,13 @@
                   "name": "t",
                   "label": "structureTypeOrId",
                   "description": "structure Type Or id.",
-                  "type": "string"
+                  "type": "string | StructureType"
                 },
                 {
                   "name": "r",
                   "label": "apply",
                   "description": "",
-                  "type": "(...args: unknown[]) => unknown"
+                  "type": "(structure: Structure, payload: SignalTargetPayloadV1) => void"
                 }
               ],
               "returnType": "void"
@@ -2882,10 +2921,11 @@
               "name": "o",
               "label": "baseVolume",
               "description": "base Volume.",
-              "type": "number"
+              "type": "number",
+              "optional": true
             }
           ],
-          "returnType": "Record<string, unknown>"
+          "returnType": "SoundOptions"
         },
         "play": {
           "description": "Play .",
@@ -2900,10 +2940,11 @@
               "name": "r",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "unknown",
+              "optional": true
             }
           ],
-          "returnType": "void"
+          "returnType": "SoundHandle"
         },
         "playActive": {
           "description": "Play active.",
@@ -2918,10 +2959,11 @@
               "name": "r",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "unknown",
+              "optional": true
             }
           ],
-          "returnType": "void"
+          "returnType": "SoundHandle"
         },
         "playLayers": {
           "description": "Play layers.",
@@ -2930,16 +2972,17 @@
               "name": "t",
               "label": "layers",
               "description": "",
-              "type": "Record<string, unknown>[]"
+              "type": "SoundLayer[]"
             },
             {
               "name": "r",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "{ position?: { x: number; y: number; }; volume?: number; rateLimitKey?: string; rateLimitMs?: number; }",
+              "optional": true
             }
           ],
-          "returnType": "void"
+          "returnType": "SoundHandle[]"
         },
         "stopActive": {
           "description": "Stop active.",
@@ -2978,7 +3021,7 @@
               "type": "string"
             }
           ],
-          "returnType": "Record<string, unknown> | undefined"
+          "returnType": "unknown"
         },
         "hideAllPlayerModSprites": {
           "description": "hide All Player Mod Sprites.",
@@ -3004,10 +3047,11 @@
               "name": "o",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "{ tint?: number; }",
+              "optional": true
             }
           ],
-          "returnType": "void"
+          "returnType": "Promise<void>"
         },
         "loadFromMod": {
           "description": "Load from mod.",
@@ -3028,10 +3072,11 @@
               "name": "n",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "{ tint?: number; }",
+              "optional": true
             }
           ],
-          "returnType": "void"
+          "returnType": "Promise<void>"
         },
         "rotatePlayerModSprites": {
           "description": "rotate Player Mod Sprites.",
@@ -3060,7 +3105,7 @@
               "type": "string"
             }
           ],
-          "returnType": "void"
+          "returnType": "unknown"
         },
         "get": {
           "description": "Return any.",
@@ -3187,7 +3232,8 @@
               "name": "r",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "{ transportOffset?: { x: number; y: number; }; velocity?: { x: number; y: number; }; maxTransportDistance?: number; transportHeight?: number; runWith?: 'left' | 'right'; skipQueued?: boolean; }",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -3199,7 +3245,8 @@
               "name": "t",
               "label": "definition",
               "description": "Registration definition object.",
-              "type": "Record<string, unknown>"
+              "type": "{ upType: string; leftType: string; rightType: string; velocity: [number, number]; softDropVelocity: number; runTickSharedBufferKey?: string; }",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -3216,13 +3263,13 @@
               "name": "t",
               "label": "structureId",
               "description": "structure id.",
-              "type": "string"
+              "type": "string | StructureType"
             },
             {
               "name": "r",
               "label": "definition",
               "description": "Registration definition object.",
-              "type": "Record<string, unknown>"
+              "type": "StructureProcessorDefinitionV1"
             }
           ],
           "returnType": "void"
@@ -3234,19 +3281,20 @@
               "name": "t",
               "label": "baseStructureTypeOrId",
               "description": "base Structure Type Or id.",
-              "type": "string"
+              "type": "string | StructureType"
             },
             {
               "name": "r",
               "label": "variant",
               "description": "variant.",
-              "type": "Record<string, unknown>"
+              "type": "{ id: string | StructureType; angles: number[]; }"
             },
             {
               "name": "o",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "{ addBuildMode?: unknown; }",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -3276,7 +3324,8 @@
               "name": "n",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "unknown",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -3288,13 +3337,13 @@
               "name": "t",
               "label": "structureTypeOrId",
               "description": "structure Type Or id.",
-              "type": "string"
+              "type": "string | StructureType"
             },
             {
               "name": "r",
               "label": "callback",
               "description": "Callback function.",
-              "type": "(...args: unknown[]) => unknown"
+              "type": "(structure: Structure) => void"
             }
           ],
           "returnType": "void"
@@ -3315,7 +3364,7 @@
               "type": "number"
             }
           ],
-          "returnType": "Record<string, unknown> | undefined"
+          "returnType": "Structure | null"
         },
         "getDefinitionByType": {
           "description": "Return definition by type.",
@@ -3324,10 +3373,10 @@
               "name": "e",
               "label": "structureType",
               "description": "structure Type string.",
-              "type": "string"
+              "type": "string | StructureType"
             }
           ],
-          "returnType": "Record<string, unknown> | undefined"
+          "returnType": "unknown"
         },
         "getTypeFromId": {
           "description": "Return type from id.",
@@ -3339,12 +3388,12 @@
               "type": "string"
             }
           ],
-          "returnType": "string"
+          "returnType": "string | StructureType"
         },
         "getUnlockedTypes": {
           "description": "Return unlocked types.",
           "params": [],
-          "returnType": "string[]"
+          "returnType": "Set<string | StructureType>"
         },
         "hasBuiltAtCell": {
           "description": "Return whether built at cell exists.",
@@ -3407,7 +3456,7 @@
               "name": "e",
               "label": "structure",
               "description": "",
-              "type": "Record<string, unknown>"
+              "type": "Structure | null"
             },
             {
               "name": "t",
@@ -3449,7 +3498,7 @@
               "name": "t",
               "label": "structureType",
               "description": "structure Type string.",
-              "type": "string"
+              "type": "string | StructureType"
             }
           ],
           "returnType": "boolean"
@@ -3506,7 +3555,7 @@
                   "name": "r",
                   "label": "definition",
                   "description": "Registration definition object.",
-                  "type": "Record<string, unknown>"
+                  "type": "StructureProcessingDefinitionV1"
                 }
               ],
               "returnType": "void"
@@ -3533,7 +3582,7 @@
                   "type": "boolean"
                 }
               ],
-              "returnType": "void"
+              "returnType": "boolean"
             }
           }
         },
@@ -3547,13 +3596,13 @@
                   "name": "t",
                   "label": "id",
                   "description": "id id.",
-                  "type": "string"
+                  "type": "'planterBox'"
                 },
                 {
                   "name": "r",
                   "label": "definition",
                   "description": "Registration definition object.",
-                  "type": "Record<string, unknown>"
+                  "type": "PlanterBoxRecipeDefinitionV1"
                 }
               ],
               "returnType": "void"
@@ -3567,13 +3616,14 @@
               "name": "t",
               "label": "definition",
               "description": "Registration definition object.",
-              "type": "Record<string, unknown>"
+              "type": "SandkitStructureDefinition"
             },
             {
               "name": "o",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "{ useRawShape?: boolean; }",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -3585,7 +3635,7 @@
               "name": "t",
               "label": "definition",
               "description": "Registration definition object.",
-              "type": "Record<string, unknown>"
+              "type": "PlacementConfigDefinition"
             }
           ],
           "returnType": "void"
@@ -3597,13 +3647,14 @@
               "name": "t",
               "label": "positions",
               "description": "positions.",
-              "type": "{ x: number; y: number }[]"
+              "type": "{ x: number; y: number; }[]"
             },
             {
               "name": "r",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "{ removeCells?: boolean; skipVisuals?: boolean; }",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -3627,7 +3678,8 @@
               "name": "o",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "{ removeCells?: boolean; skipVisuals?: boolean; }",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -3663,7 +3715,8 @@
               "name": "l",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "{ removeCells?: boolean; preserveUnselectable?: boolean; onlyPositions?: { x: number; y: number; }[]; }",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -3675,19 +3728,20 @@
               "name": "t",
               "label": "structure",
               "description": "",
-              "type": "Record<string, unknown>"
+              "type": "Structure"
             },
             {
               "name": "r",
               "label": "partial",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "unknown"
             },
             {
               "name": "o",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "{ propagateToWorkers?: boolean; }",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -3699,7 +3753,7 @@
               "name": "t",
               "label": "structure",
               "description": "",
-              "type": "Record<string, unknown>"
+              "type": "Structure"
             },
             {
               "name": "r",
@@ -3741,7 +3795,7 @@
               "name": "t",
               "label": "structure",
               "description": "",
-              "type": "Record<string, unknown>"
+              "type": "Structure"
             },
             {
               "name": "r",
@@ -3795,13 +3849,14 @@
               "name": "t",
               "label": "structure",
               "description": "",
-              "type": "Record<string, unknown>"
+              "type": "Structure"
             },
             {
               "name": "r",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "{ propagateToWorkers?: boolean; }",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -3813,19 +3868,20 @@
               "name": "t",
               "label": "structureTypeOrId",
               "description": "structure Type Or id.",
-              "type": "string"
+              "type": "string | StructureType"
             },
             {
               "name": "o",
               "label": "partial",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "Partial<SandkitStructureDefinition>"
             },
             {
               "name": "n",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "{ useRawShape?: boolean; }",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -3848,7 +3904,7 @@
               "name": "t",
               "label": "definition",
               "description": "Registration definition object.",
-              "type": "Record<string, unknown>"
+              "type": "unknown"
             }
           ],
           "returnType": "void"
@@ -3863,7 +3919,7 @@
               "type": "string"
             }
           ],
-          "returnType": "Record<string, unknown> | undefined"
+          "returnType": "unknown"
         },
         "isLockedById": {
           "description": "Return whether locked by id.",
@@ -3872,7 +3928,7 @@
               "name": "t",
               "label": "techId",
               "description": "tech id.",
-              "type": "string"
+              "type": "string | number"
             }
           ],
           "returnType": "boolean"
@@ -3884,22 +3940,23 @@
               "name": "e",
               "label": "techId",
               "description": "tech id.",
-              "type": "string"
+              "type": "TechGridId"
             },
             {
               "name": "t",
               "label": "definition",
               "description": "Registration definition object.",
-              "type": "Record<string, unknown>"
+              "type": "TechDefinition"
             },
             {
               "name": "n",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "{ parentId: TechGridId; preferredPosition?: TechGridPosition; }",
+              "optional": true
             }
           ],
-          "returnType": "void"
+          "returnType": "TechGridPosition"
         },
         "setLockedById": {
           "description": "Set locked by id.",
@@ -3908,7 +3965,7 @@
               "name": "t",
               "label": "techId",
               "description": "tech id.",
-              "type": "string"
+              "type": "string | number"
             },
             {
               "name": "r",
@@ -3932,7 +3989,7 @@
               "name": "t",
               "label": "updates",
               "description": "",
-              "type": "Record<string, unknown>"
+              "type": "unknown"
             }
           ],
           "returnType": "void"
@@ -3961,13 +4018,14 @@
               "name": "o",
               "label": "terrainTypeOrId",
               "description": "terrain Type Or id.",
-              "type": "string"
+              "type": "string | number"
             },
             {
               "name": "n",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "TerrainMutationOptions",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -4012,7 +4070,7 @@
               "type": "number"
             }
           ],
-          "returnType": "Record<string, unknown>"
+          "returnType": "{ cellType: number; hp: number | null; } | null"
         },
         "getTypeAtCell": {
           "description": "Return type at cell.",
@@ -4030,7 +4088,7 @@
               "type": "number"
             }
           ],
-          "returnType": "string"
+          "returnType": "number | null"
         },
         "getTypeFromId": {
           "description": "Return type from id.",
@@ -4042,7 +4100,7 @@
               "type": "string"
             }
           ],
-          "returnType": "string"
+          "returnType": "number"
         },
         "isAtCell": {
           "description": "Return whether at cell.",
@@ -4069,7 +4127,7 @@
               "name": "e",
               "label": "cellId",
               "description": "cell id.",
-              "type": "string"
+              "type": "number"
             }
           ],
           "returnType": "boolean"
@@ -4105,10 +4163,10 @@
               "name": "t",
               "label": "definition",
               "description": "Registration definition object.",
-              "type": "Record<string, unknown>"
+              "type": "TerrainDefinition"
             }
           ],
-          "returnType": "void"
+          "returnType": "{ cellType: number; }"
         },
         "removeAtCellWhenIdle": {
           "description": "Remove at cell when idle.",
@@ -4129,7 +4187,8 @@
               "name": "r",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "TerrainMutationOptions",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -4153,13 +4212,14 @@
               "name": "o",
               "label": "terrainTypeOrId",
               "description": "terrain Type Or id.",
-              "type": "string"
+              "type": "string | number"
             },
             {
               "name": "n",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "TerrainMutationOptions",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -4195,13 +4255,13 @@
               "name": "t",
               "label": "cellTypeOrId",
               "description": "cell Type Or id.",
-              "type": "string"
+              "type": "string | number"
             },
             {
               "name": "r",
               "label": "partial",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "Partial<TerrainDefinition>"
             }
           ],
           "returnType": "void"
@@ -4276,7 +4336,7 @@
               "name": "r",
               "label": "definition",
               "description": "Registration definition object.",
-              "type": "Record<string, unknown>"
+              "type": "MainTriggerDefinition"
             }
           ],
           "returnType": "void"
@@ -4293,13 +4353,14 @@
               "name": "t",
               "label": "message",
               "description": "",
-              "type": "string"
+              "type": "LocalizedText"
             },
             {
               "name": "r",
               "label": "title",
               "description": "",
-              "type": "string"
+              "type": "LocalizedText",
+              "optional": true
             }
           ],
           "returnType": "Promise<void>"
@@ -4311,13 +4372,14 @@
               "name": "t",
               "label": "message",
               "description": "",
-              "type": "string"
+              "type": "LocalizedText"
             },
             {
               "name": "r",
               "label": "title",
               "description": "",
-              "type": "string"
+              "type": "LocalizedText",
+              "optional": true
             }
           ],
           "returnType": "Promise<boolean>"
@@ -4335,10 +4397,10 @@
               "name": "o",
               "label": "component",
               "description": "component string.",
-              "type": "(...args: unknown[]) => unknown"
+              "type": "ComponentType<Record<string, never>>"
             }
           ],
-          "returnType": "(() => void) | undefined"
+          "returnType": "() => void"
         },
         "navigation": {
           "description": "",
@@ -4374,7 +4436,8 @@
                   "name": "e",
                   "label": "options",
                   "description": "Optional settings object.",
-                  "type": "Record<string, unknown>"
+                  "type": "{ readonly id: string; readonly active: boolean; readonly priority?: number; readonly defaultId?: string; readonly onBack?: (() => boolean | void); }",
+                  "optional": true
                 }
               ],
               "returnType": "void"
@@ -4408,7 +4471,7 @@
                   "name": "o",
                   "label": "render",
                   "description": "",
-                  "type": "(...args: unknown[]) => unknown"
+                  "type": "() => unknown"
                 }
               ],
               "returnType": "void"
@@ -4452,31 +4515,35 @@
               "name": "t",
               "label": "message",
               "description": "",
-              "type": "string"
+              "type": "LocalizedText"
             },
             {
               "name": "r",
               "label": "defaultValue",
               "description": "default Value string.",
-              "type": "string"
+              "type": "string",
+              "optional": true
             },
             {
               "name": "o",
               "label": "placeholder",
               "description": "",
-              "type": "string"
+              "type": "LocalizedText",
+              "optional": true
             },
             {
               "name": "n",
               "label": "title",
               "description": "",
-              "type": "string"
+              "type": "LocalizedText",
+              "optional": true
             },
             {
               "name": "l",
               "label": "allowCopy",
               "description": "allow Copy flag.",
-              "type": "boolean"
+              "type": "boolean",
+              "optional": true
             }
           ],
           "returnType": "Promise<string | null>"
@@ -4488,7 +4555,7 @@
               "name": "t",
               "label": "data",
               "description": "",
-              "type": "Record<string, unknown>"
+              "type": "TooltipData"
             }
           ],
           "returnType": "void"
@@ -4500,13 +4567,14 @@
               "name": "t",
               "label": "message",
               "description": "",
-              "type": "string"
+              "type": "LocalizedText"
             },
             {
               "name": "r",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "ToastOptions",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -4518,13 +4586,14 @@
               "name": "t",
               "label": "componentId",
               "description": "component id.",
-              "type": "string"
+              "type": "ComponentId"
             },
             {
               "name": "r",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "unknown",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -4577,7 +4646,7 @@
               "name": "t",
               "label": "definition",
               "description": "Registration definition object.",
-              "type": "Record<string, unknown>"
+              "type": "UpgradeDefinition"
             }
           ],
           "returnType": "void"
@@ -4589,7 +4658,7 @@
               "name": "t",
               "label": "definition",
               "description": "Registration definition object.",
-              "type": "Record<string, unknown>"
+              "type": "UpgradeCategoryDefinition"
             }
           ],
           "returnType": "void"
@@ -4630,13 +4699,13 @@
               "name": "e",
               "label": "pointA",
               "description": "point A.",
-              "type": "{ x: number; y: number }"
+              "type": "{ x: number; y: number; }"
             },
             {
               "name": "t",
               "label": "pointB",
               "description": "point B.",
-              "type": "{ x: number; y: number }"
+              "type": "{ x: number; y: number; }"
             }
           ],
           "returnType": "number"
@@ -4648,16 +4717,16 @@
               "name": "e",
               "label": "pointA",
               "description": "point A.",
-              "type": "{ x: number; y: number }"
+              "type": "{ x: number; y: number; }"
             },
             {
               "name": "t",
               "label": "pointB",
               "description": "point B.",
-              "type": "{ x: number; y: number }"
+              "type": "{ x: number; y: number; }"
             }
           ],
-          "returnType": "{ x: number; y: number }[]"
+          "returnType": "{ x: number; y: number; }[]"
         },
         "getDirection": {
           "description": "Return direction.",
@@ -4666,20 +4735,33 @@
               "name": "e",
               "label": "pointA",
               "description": "point A.",
-              "type": "{ x: number; y: number }"
+              "type": "{ x: number; y: number; }"
             },
             {
               "name": "t",
               "label": "pointB",
               "description": "point B.",
-              "type": "{ x: number; y: number }"
+              "type": "{ x: number; y: number; }"
             }
           ],
-          "returnType": "{ x: number; y: number }"
+          "returnType": "{ x: number; y: number; }"
         },
         "getDistance": {
           "description": "Return distance.",
-          "params": [],
+          "params": [
+            {
+              "name": "pointA",
+              "label": "pointA",
+              "description": "",
+              "type": "{ x: number; y: number; }"
+            },
+            {
+              "name": "pointB",
+              "label": "pointB",
+              "description": "",
+              "type": "{ x: number; y: number; }"
+            }
+          ],
           "returnType": "number"
         }
       }
@@ -4723,7 +4805,7 @@
               "name": "o",
               "label": "outVelocity",
               "description": "out Velocity.",
-              "type": "number"
+              "type": "{ x: number; y: number; }"
             },
             {
               "name": "n",
@@ -4735,7 +4817,8 @@
               "name": "l",
               "label": "options",
               "description": "Optional settings object.",
-              "type": "Record<string, unknown>"
+              "type": "ExcavateOptions",
+              "optional": true
             }
           ],
           "returnType": "void"
@@ -4804,7 +4887,7 @@
                   "name": "t",
                   "label": "worldItem",
                   "description": "",
-                  "type": "Record<string, unknown>"
+                  "type": "unknown"
                 }
               ],
               "returnType": "void"
@@ -4812,7 +4895,7 @@
             "getAll": {
               "description": "Return all.",
               "params": [],
-              "returnType": "Record<string, unknown>[]"
+              "returnType": "unknown[]"
             },
             "getById": {
               "description": "Return by id.",
@@ -4821,10 +4904,10 @@
                   "name": "t",
                   "label": "worldItemId",
                   "description": "world Item id.",
-                  "type": "string"
+                  "type": "number"
                 }
               ],
-              "returnType": "Record<string, unknown> | undefined"
+              "returnType": "unknown"
             },
             "pickUp": {
               "description": "Return boolean.",
@@ -4833,10 +4916,10 @@
                   "name": "t",
                   "label": "worldItem",
                   "description": "",
-                  "type": "Record<string, unknown>"
+                  "type": "unknown"
                 }
               ],
-              "returnType": "void"
+              "returnType": "boolean"
             },
             "spawnAtWorld": {
               "description": "Spawn at world.",
@@ -4845,7 +4928,7 @@
                   "name": "t",
                   "label": "type",
                   "description": "",
-                  "type": "string"
+                  "type": "WorldItemType"
                 },
                 {
                   "name": "r",
@@ -4863,16 +4946,18 @@
                   "name": "n",
                   "label": "data",
                   "description": "",
-                  "type": "Record<string, unknown>"
+                  "type": "unknown",
+                  "optional": true
                 },
                 {
                   "name": "l",
                   "label": "light",
                   "description": "",
-                  "type": "Record<string, unknown> | undefined"
+                  "type": "WorldItemLight",
+                  "optional": true
                 }
               ],
-              "returnType": "void"
+              "returnType": "unknown"
             }
           }
         },
@@ -4943,7 +5028,7 @@
               "name": "t",
               "label": "callback",
               "description": "Callback function.",
-              "type": "(...args: unknown[]) => unknown"
+              "type": "() => void"
             }
           ],
           "returnType": "void"

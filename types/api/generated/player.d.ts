@@ -7,7 +7,7 @@
 export interface ApiPlayer {
   buildings: ApiPlayerBuildings;
   /** Return world position. */
-  getWorldPosition: () => { x: number; y: number };
+  getWorldPosition: () => { x: number; y: number; };
   inventory: ApiPlayerInventory;
   /**
    * Return whether colliding with cell.
@@ -31,7 +31,7 @@ export interface ApiPlayer {
    */
   isWorldPositionClear: (worldX: number, worldY: number) => boolean;
   /** Set movement mode. */
-  setMovementMode: (mode: string) => void;
+  setMovementMode: (mode: 'normal' | 'hover') => boolean;
   /**
    * Set movement speed multiplier.
    * @param multiplier multiplier.

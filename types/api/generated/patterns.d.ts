@@ -9,7 +9,7 @@ export interface ApiPatterns {
    * Create circle.
    * @param size size.
    */
-  createCircle: (size: number) => { x: number; y: number }[];
+  createCircle: (size: number) => number[][];
   /**
    * Excavate terrain at a cell.
    * @param cellX Cell X coordinate.
@@ -19,6 +19,6 @@ export interface ApiPatterns {
    * @param power power.
    * @param options Optional settings object.
    */
-  excavateAtCell: (cellX: number, cellY: number, pattern: Record<string, unknown>, outVelocity: number, power: number, options: Record<string, unknown>) => void;
+  excavateAtCell: (cellX: number, cellY: number, pattern: number[][], outVelocity: { x: number; y: number; }, power: number, options?: PatternExcavateOptions) => void;
 }
 export type ApiPatternsNamespace = ApiPatterns;

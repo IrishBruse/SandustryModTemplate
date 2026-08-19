@@ -9,6 +9,6 @@ export interface ApiSchedule {
    * Schedule work on the next main-thread tick.
    * @param callback Callback function.
    */
-  nextTick: (callback: (...args: unknown[]) => unknown) => void;
+  nextTick: (callback: () => void) => void;
 }
 export type ApiScheduleNamespace = ApiSchedule;

@@ -9,6 +9,6 @@ export interface ApiMods {
    * Return providers.
    * @param kind kind string.
    */
-  getProviders: (kind: string) => string[];
+  getProviders: (kind: string) => readonly AssetProviderV1[];
 }
 export type ApiModsNamespace = ApiMods;

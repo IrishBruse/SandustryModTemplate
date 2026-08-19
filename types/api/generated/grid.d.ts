@@ -12,7 +12,7 @@ export interface ApiGrid {
    * @param radius radius.
    * @param callback Callback function.
    */
-  forEachCellInCircle: (centerCellX: number, centerCellY: number, radius: number, callback: (...args: unknown[]) => unknown) => void;
+  forEachCellInCircle: (centerCellX: number, centerCellY: number, radius: number, callback: (cellX: number, cellY: number) => void) => void;
   /**
    * Iterate cell in rect.
    * @param cellX Cell X coordinate.
@@ -21,6 +21,6 @@ export interface ApiGrid {
    * @param height height.
    * @param callback Callback function.
    */
-  forEachCellInRect: (cellX: number, cellY: number, width: number, height: number, callback: (...args: unknown[]) => unknown) => void;
+  forEachCellInRect: (cellX: number, cellY: number, width: number, height: number, callback: (cellX: number, cellY: number) => void) => void;
 }
 export type ApiGridNamespace = ApiGrid;

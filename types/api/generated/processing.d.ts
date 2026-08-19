@@ -9,16 +9,16 @@ export interface ApiProcessing {
    * Register grower.
    * @param definition Registration definition object.
    */
-  registerGrower: (definition: Record<string, unknown>) => void;
+  registerGrower: (definition: PlanterBoxRecipeDefinitionV1) => void;
   /**
    * Register kinetic press.
    * @param definition Registration definition object.
    */
-  registerKineticPress: (definition: Record<string, unknown>) => void;
+  registerKineticPress: (definition: KineticPressRecipeDefinitionV1) => void;
   /**
    * Register shaker.
    * @param definition Registration definition object.
    */
-  registerShaker: (definition: Record<string, unknown>) => void;
+  registerShaker: (definition: ShakerRecipeDefinitionV1) => void;
 }
 export type ApiProcessingNamespace = ApiProcessing;

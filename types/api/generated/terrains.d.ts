@@ -12,7 +12,7 @@ export interface ApiTerrains {
    * @param terrainTypeOrId terrain Type Or id.
    * @param options Optional settings object.
    */
-  createAtCellWhenIdle: (cellX: number, cellY: number, terrainTypeOrId: string, options: Record<string, unknown>) => void;
+  createAtCellWhenIdle: (cellX: number, cellY: number, terrainTypeOrId: string | number, options?: TerrainMutationOptions) => void;
   /**
    * Apply damage at a cell.
    * @param cellX Cell X coordinate.
@@ -25,18 +25,18 @@ export interface ApiTerrains {
    * @param cellX Cell X coordinate.
    * @param cellY Cell Y coordinate.
    */
-  getDataAtCell: (cellX: number, cellY: number) => Record<string, unknown>;
+  getDataAtCell: (cellX: number, cellY: number) => { cellType: number; hp: number | null; } | null;
   /**
    * Return type at cell.
    * @param cellX Cell X coordinate.
    * @param cellY Cell Y coordinate.
    */
-  getTypeAtCell: (cellX: number, cellY: number) => string;
+  getTypeAtCell: (cellX: number, cellY: number) => number | null;
   /**
    * Return type from id.
    * @param terrainId terrain id.
    */
-  getTypeFromId: (terrainId: string) => string;
+  getTypeFromId: (terrainId: string) => number;
   /**
    * Return whether at cell.
    * @param cellX Cell X coordinate.
@@ -47,7 +47,7 @@ export interface ApiTerrains {
    * Return whether cell id terrain.
    * @param cellId cell id.
    */
-  isCellIdTerrain: (cellId: string) => boolean;
+  isCellIdTerrain: (cellId: number) => boolean;
   /**
    * Return whether type at cell.
    * @param cellX Cell X coordinate.
@@ -59,14 +59,14 @@ export interface ApiTerrains {
    * Register a definition.
    * @param definition Registration definition object.
    */
-  register: (definition: Record<string, unknown>) => void;
+  register: (definition: TerrainDefinition) => { cellType: number; };
   /**
    * Remove at cell when idle.
    * @param cellX Cell X coordinate.
    * @param cellY Cell Y coordinate.
    * @param options Optional settings object.
    */
-  removeAtCellWhenIdle: (cellX: number, cellY: number, options: Record<string, unknown>) => void;
+  removeAtCellWhenIdle: (cellX: number, cellY: number, options?: TerrainMutationOptions) => void;
   /**
    * Replace at cell when idle.
    * @param cellX Cell X coordinate.
@@ -74,7 +74,7 @@ export interface ApiTerrains {
    * @param terrainTypeOrId terrain Type Or id.
    * @param options Optional settings object.
    */
-  replaceAtCellWhenIdle: (cellX: number, cellY: number, terrainTypeOrId: string, options: Record<string, unknown>) => void;
+  replaceAtCellWhenIdle: (cellX: number, cellY: number, terrainTypeOrId: string | number, options?: TerrainMutationOptions) => void;
   /**
    * Set hp at cell when idle.
    * @param cellX Cell X coordinate.
@@ -87,6 +87,6 @@ export interface ApiTerrains {
    * @param cellTypeOrId cell Type Or id.
    * @param partial Optional settings object.
    */
-  updateDefinition: (cellTypeOrId: string, partial: Record<string, unknown>) => void;
+  updateDefinition: (cellTypeOrId: string | number, partial: Partial<TerrainDefinition>) => void;
 }
 export type ApiTerrainsNamespace = ApiTerrains;

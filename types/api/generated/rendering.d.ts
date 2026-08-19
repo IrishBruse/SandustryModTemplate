@@ -10,11 +10,11 @@ export interface ApiRendering {
    * @param cellX Cell X coordinate.
    * @param cellY Cell Y coordinate.
    */
-  getDrawPositionAtCell: (cellX: number, cellY: number) => { x: number; y: number };
+  getDrawPositionAtCell: (cellX: number, cellY: number) => { x: number; y: number; };
   /** Return grid metrics. */
-  getGridMetrics: () => Record<string, number>;
+  getGridMetrics: () => { cellSize: number; snapGridCellSize: number; };
   /** Return overlay viewport size. */
-  getOverlayViewportSize: () => { width: number; height: number };
+  getOverlayViewportSize: () => { width: number; height: number; };
   withOverlayContext: (draw: (ctx: CanvasRenderingContext2D) => void) => void;
 }
 export type ApiRenderingNamespace = ApiRendering;

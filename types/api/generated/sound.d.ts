@@ -11,24 +11,24 @@ export interface ApiSound {
    * @param worldY World Y coordinate.
    * @param baseVolume base Volume.
    */
-  calculateDistanceOptionsAtWorld: (worldX: number, worldY: number, baseVolume: number) => Record<string, unknown>;
+  calculateDistanceOptionsAtWorld: (worldX: number, worldY: number, baseVolume?: number) => SoundOptions;
   /**
    * Play .
    * @param soundId sound id.
    * @param options Optional settings object.
    */
-  play: (soundId: string, options: Record<string, unknown>) => void;
+  play: (soundId: string, options?: unknown) => SoundHandle;
   /**
    * Play active.
    * @param soundId sound id.
    * @param options Optional settings object.
    */
-  playActive: (soundId: string, options: Record<string, unknown>) => void;
+  playActive: (soundId: string, options?: unknown) => SoundHandle;
   /**
    * Play layers.
    * @param options Optional settings object.
    */
-  playLayers: (layers: Record<string, unknown>[], options: Record<string, unknown>) => void;
+  playLayers: (layers: SoundLayer[], options?: { position?: { x: number; y: number; }; volume?: number; rateLimitKey?: string; rateLimitMs?: number; }) => SoundHandle[];
   /** Stop active. */
   stopActive: () => void;
   /** Stop all. */

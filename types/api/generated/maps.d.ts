@@ -6,13 +6,13 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 export interface ApiMaps {
   /** Return active. */
-  getActive: () => string | null;
+  getActive: () => Readonly<ActiveMapV1> | null;
   /** Return available. */
-  getAvailable: () => string[];
+  getAvailable: () => readonly Readonly<AvailableMapV1>[];
   /**
    * Return boolean.
    * @param mapId map id.
    */
-  start: (mapId: string) => void;
+  start: (mapId: string) => boolean;
 }
 export type ApiMapsNamespace = ApiMaps;

@@ -13,11 +13,11 @@ export interface ApiSharedBuffers {
    * @param key key string.
    * @param config config.
    */
-  create: (key: string, config: Record<string, unknown>) => void;
+  create: (key: string, config: { type: SharedArrayType; length: number; }) => SharedArray;
   /**
    * Return SharedArray | undefined.
    * @param key key string.
    */
-  get: (key: string) => SharedArrayBuffer | undefined;
+  get: (key: string) => SharedArray | undefined;
 }
 export type ApiSharedNamespace = ApiShared;

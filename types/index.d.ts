@@ -11,6 +11,7 @@
  * ## API source of truth
  *
  * Method names come from the in-game runtime dump (`types/api/source/runtime-dump.json`).
+ * Param and return types come from `types/api/source/official-api-reference.txt` (merged on generate).
  * Descriptions live in `types/api/source/api-docs.json` (merged on `npm run generate-types`).
  */
 

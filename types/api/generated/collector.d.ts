@@ -9,22 +9,22 @@ export interface ApiCollector {
    * Return value by type.
    * @param elementType element Type.
    */
-  getValueByType: (elementType: string) => number;
+  getValueByType: (elementType: number) => number;
   /**
    * Return value from cell id.
    * @param cellId cell id.
    */
-  getValueFromCellId: (cellId: string) => number;
+  getValueFromCellId: (cellId: number) => number;
   /**
    * Return whether cell id collectable.
    * @param cellId cell id.
    */
-  isCellIdCollectable: (cellId: string) => boolean;
+  isCellIdCollectable: (cellId: number) => boolean;
   /**
    * Return whether cell id collectable for sprite.
    * @param cellId cell id.
    */
-  isCellIdCollectableForSprite: (cellId: string) => boolean;
+  isCellIdCollectableForSprite: (cellId: number) => boolean;
   /**
    * Notify pickup at cell.
    * @param cellX Cell X coordinate.

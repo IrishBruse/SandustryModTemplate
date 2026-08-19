@@ -6,15 +6,15 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 export interface ApiUi {
   /** Show an alert dialog. */
-  alert: (message: string, title: string) => Promise<void>;
+  alert: (message: LocalizedText, title?: LocalizedText) => Promise<void>;
   /** Show a confirm dialog. */
-  confirm: (message: string, title: string) => Promise<boolean>;
+  confirm: (message: LocalizedText, title?: LocalizedText) => Promise<boolean>;
   /**
    * Mount a React component into the game UI tree.
    * @param componentId component id.
    * @param component component string.
    */
-  inject: (componentId: string, component: (...args: unknown[]) => unknown) => (() => void) | undefined;
+  inject: (componentId: string, component: ComponentType<Record<string, never>>) => () => void;
   navigation: ApiUiNavigation;
   /** open Pause Menu. */
   openPauseMenu: () => void;
@@ -24,20 +24,20 @@ export interface ApiUi {
    * @param defaultValue default Value string.
    * @param allowCopy allow Copy flag.
    */
-  prompt: (message: string, defaultValue: string, placeholder: string, title: string, allowCopy: boolean) => Promise<string | null>;
+  prompt: (message: LocalizedText, defaultValue?: string, placeholder?: LocalizedText, title?: LocalizedText, allowCopy?: boolean) => Promise<string | null>;
   /** show Tooltip. */
-  showTooltip: (data: Record<string, unknown>) => void;
+  showTooltip: (data: TooltipData) => void;
   /**
    * Show a toast notification.
    * @param options Optional settings object.
    */
-  toast: (message: string, options: Record<string, unknown>) => void;
+  toast: (message: LocalizedText, options?: ToastOptions) => void;
   /**
    * Update a definition.
    * @param componentId component id.
    * @param options Optional settings object.
    */
-  update: (componentId: string, options: Record<string, unknown>) => void;
+  update: (componentId: ComponentId, options?: unknown) => void;
 }
 export interface ApiUiNavigation {
   /**
@@ -50,7 +50,7 @@ export interface ApiUiNavigation {
    * use Focus Scope.
    * @param options Optional settings object.
    */
-  useFocusScope: (options: Record<string, unknown>) => void;
+  useFocusScope: (options?: { readonly id: string; readonly active: boolean; readonly priority?: number; readonly defaultId?: string; readonly onBack?: (() => boolean | void); }) => void;
 }
 export interface ApiUiOverlays {
   /**
@@ -58,7 +58,7 @@ export interface ApiUiOverlays {
    * @param slot slot string.
    * @param overlayId overlay id.
    */
-  register: (slot: string, overlayId: string, render: (...args: unknown[]) => unknown) => void;
+  register: (slot: string, overlayId: string, render: () => unknown) => void;
   /**
    * unregister.
    * @param slot slot string.

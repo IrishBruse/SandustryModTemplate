@@ -15,14 +15,14 @@ export interface ApiLightsPersistent {
    * @param worldY World Y coordinate.
    * @param options Optional settings object.
    */
-  createAtWorld: (worldX: number, worldY: number, options: Record<string, unknown>) => void;
+  createAtWorld: (worldX: number, worldY: number, options?: PersistentLightOptions) => unknown;
   /**
    * fade At World.
    * @param worldX World X coordinate.
    * @param worldY World Y coordinate.
    * @param durationMs duration Ms.
    */
-  fadeAtWorld: (worldX: number, worldY: number, durationMs: number) => void;
+  fadeAtWorld: (worldX: number, worldY: number, durationMs?: number) => void;
   /** mark Dirty. */
   markDirty: () => void;
   /**
@@ -39,11 +39,11 @@ export interface ApiLightsVfx {
    * @param worldY World Y coordinate.
    * @param options Optional settings object.
    */
-  createAtWorld: (worldX: number, worldY: number, options: Record<string, unknown>) => void;
+  createAtWorld: (worldX: number, worldY: number, options?: TemporaryLightOptions) => { index: number | null; };
   /**
    * Remove by id.
    * @param lightId light id.
    */
-  removeById: (lightId: string) => void;
+  removeById: (lightId: number) => void;
 }
 export type ApiLightsNamespace = ApiLights;

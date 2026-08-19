@@ -310,10 +310,6 @@ function mergeDocMembers(out, prevMembers, dumpMembers) {
       params,
     };
 
-    if (typeof prevMember.signature === "string" && prevMember.signature) {
-      member.signature = prevMember.signature;
-    }
-
     if (node.kind === "function") {
       const prevReturn =
         typeof prevMember.returnType === "string" && prevMember.returnType.trim() ? prevMember.returnType.trim() : "";
@@ -347,7 +343,7 @@ export function getDocEntry(docs, path) {
  */
 export function inferParamType(param, methodKey, paramIndex) {
   const explicit = typeof param.type === "string" ? param.type.trim() : "";
-  if (explicit && explicit !== "unknown") return explicit;
+  if (explicit) return explicit;
 
   const label = String(param.label || param.name || "");
   const labelLower = label.toLowerCase();
@@ -451,9 +447,12 @@ export function formatFunctionSignature(docEntry, dumpNode, methodKey) {
   }
 
   const paramList = params
-    .map((p, i) =>
-      `${sanitizeParamName(/** @type {Record<string, string>} */ (p).label || /** @type {Record<string, string>} */ (p).name)}: ${inferParamType(p, methodKey, i)}`,
-    )
+    .map((p, i) => {
+      const param = /** @type {Record<string, unknown>} */ (p);
+      const name = sanitizeParamName(/** @type {Record<string, string>} */ (param.label || param.name));
+      const optional = param.optional === true ? "?" : "";
+      return `${name}${optional}: ${inferParamType(param, methodKey, i)}`;
+    })
     .join(", ");
 
   const ret = inferReturnType(docEntry, methodKey);

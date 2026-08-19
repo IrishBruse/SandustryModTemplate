@@ -9,11 +9,11 @@ export interface ApiDiscoveries {
    * Add element by type.
    * @param elementType element Type.
    */
-  addElementByType: (elementType: string) => void;
+  addElementByType: (elementType: number) => void;
   /**
    * Add terrain by type.
    * @param terrainType terrain Type.
    */
-  addTerrainByType: (terrainType: string) => void;
+  addTerrainByType: (terrainType: number) => void;
 }
 export type ApiDiscoveriesNamespace = ApiDiscoveries;

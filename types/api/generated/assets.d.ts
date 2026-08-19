@@ -9,7 +9,7 @@ export interface ApiAssets {
    * Return selected provider.
    * @param kind kind string.
    */
-  getSelectedProvider: (kind: string) => string | null;
+  getSelectedProvider: (kind: string) => AssetProviderV1 | null;
   /**
    * Return url.
    * @param relativePath relative Path string.
@@ -20,6 +20,6 @@ export interface ApiAssets {
    * @param kind kind string.
    * @param providerId provider id.
    */
-  selectProvider: (kind: string, providerId: string) => void;
+  selectProvider: (kind: string, providerId: string | null) => boolean;
 }
 export type ApiAssetsNamespace = ApiAssets;

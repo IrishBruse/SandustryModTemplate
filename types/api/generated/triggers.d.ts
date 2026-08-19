@@ -10,6 +10,6 @@ export interface ApiTriggers {
    * @param triggerId trigger id.
    * @param definition Registration definition object.
    */
-  register: (triggerId: string, definition: Record<string, unknown>) => void;
+  register: (triggerId: string, definition: MainTriggerDefinition) => void;
 }
 export type ApiTriggersNamespace = ApiTriggers;

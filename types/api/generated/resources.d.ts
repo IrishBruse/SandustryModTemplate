@@ -16,6 +16,6 @@ export interface ApiResources {
    * @param amount amount.
    * @param options Optional settings object.
    */
-  updateEnergy: (amount: number, options: Record<string, unknown>) => void;
+  updateEnergy: (amount: number, options?: { deferUi?: boolean; }) => void;
 }
 export type ApiResourcesNamespace = ApiResources;

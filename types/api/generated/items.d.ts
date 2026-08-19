@@ -9,24 +9,24 @@ export interface ApiItems {
    * Create from id.
    * @param itemId item id.
    */
-  createFromId: (itemId: string) => void;
+  createFromId: (itemId: string) => ModItem;
   /** Return active. */
-  getActive: () => string | null;
+  getActive: () => unknown;
   /**
    * Return definition by id.
    * @param itemId item id.
    */
-  getDefinitionById: (itemId: string) => Record<string, unknown> | undefined;
+  getDefinitionById: (itemId: string) => unknown;
   /**
    * Return whether active by id.
    * @param itemId item id.
    */
-  isActiveById: (itemId: string, itemType: string) => boolean;
+  isActiveById: (itemId: string | number, itemType?: ItemType) => boolean;
   /**
    * Register a definition.
    * @param definition Registration definition object.
    */
-  register: (definition: Record<string, unknown>) => void;
+  register: (definition: unknown) => void;
   /**
    * Update definition.
    * @param itemId item id.

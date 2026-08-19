@@ -11,7 +11,7 @@ export interface ApiEffects {
    * @param worldY World Y coordinate.
    * @param options Optional settings object.
    */
-  createDistortionWaveAtWorld: (worldX: number, worldY: number, options: Record<string, unknown>) => void;
+  createDistortionWaveAtWorld: (worldX: number, worldY: number, options?: { style?: 'implode' | 'explode'; duration?: number; maxRadius?: number; intensity?: number; color?: [number, number, number, number]; }) => void;
   /**
    * Create effect at world.
    * @param effectId effect id.
@@ -19,7 +19,7 @@ export interface ApiEffects {
    * @param worldY World Y coordinate.
    * @param options Optional settings object.
    */
-  createEffectAtWorld: (effectId: string, worldX: number, worldY: number, options: Record<string, unknown>) => void;
+  createEffectAtWorld: (effectId: string, worldX: number, worldY: number, options?: unknown) => void;
   /**
    * Create laser at world.
    * @param startWorldX World X coordinate.
@@ -28,25 +28,25 @@ export interface ApiEffects {
    * @param endWorldY World Y coordinate.
    * @param options Optional settings object.
    */
-  createLaserAtWorld: (startWorldX: number, startWorldY: number, endWorldX: number, endWorldY: number, options: Record<string, unknown>) => void;
+  createLaserAtWorld: (startWorldX: number, startWorldY: number, endWorldX: number, endWorldY: number, options?: { width?: number; brightness?: number; color?: number; glow?: boolean; }) => unknown;
   /**
    * Create light at world.
    * @param worldX World X coordinate.
    * @param worldY World Y coordinate.
    * @param options Optional settings object.
    */
-  createLightAtWorld: (worldX: number, worldY: number, options: Record<string, unknown>) => void;
+  createLightAtWorld: (worldX: number, worldY: number, options?: TemporaryLightOptions) => { index: number | null; };
   /**
    * Create particles at world.
    * @param worldX World X coordinate.
    * @param worldY World Y coordinate.
    * @param options Optional settings object.
    */
-  createParticlesAtWorld: (worldX: number, worldY: number, options: Record<string, unknown>) => void;
+  createParticlesAtWorld: (worldX: number, worldY: number, options?: ParticleEffectOptions) => void;
   /**
    * Remove light by id.
    * @param lightId light id.
    */
-  removeLightById: (lightId: string) => void;
+  removeLightById: (lightId: number) => void;
 }
 export type ApiEffectsNamespace = ApiEffects;

@@ -10,20 +10,20 @@ export interface ApiUtils {
    * @param pointA point A.
    * @param pointB point B.
    */
-  getAngle: (pointA: { x: number; y: number }, pointB: { x: number; y: number }) => number;
+  getAngle: (pointA: { x: number; y: number; }, pointB: { x: number; y: number; }) => number;
   /**
    * Return coordinates between points.
    * @param pointA point A.
    * @param pointB point B.
    */
-  getCoordinatesBetweenPoints: (pointA: { x: number; y: number }, pointB: { x: number; y: number }) => { x: number; y: number }[];
+  getCoordinatesBetweenPoints: (pointA: { x: number; y: number; }, pointB: { x: number; y: number; }) => { x: number; y: number; }[];
   /**
    * Return direction.
    * @param pointA point A.
    * @param pointB point B.
    */
-  getDirection: (pointA: { x: number; y: number }, pointB: { x: number; y: number }) => { x: number; y: number };
+  getDirection: (pointA: { x: number; y: number; }, pointB: { x: number; y: number; }) => { x: number; y: number; };
   /** Return distance. */
-  getDistance: (arg0: unknown, arg1: unknown) => number;
+  getDistance: (pointA: { x: number; y: number; }, pointB: { x: number; y: number; }) => number;
 }
 export type ApiUtilsNamespace = ApiUtils;

@@ -21,12 +21,12 @@ export interface ApiUpgrades {
    * Register a definition.
    * @param definition Registration definition object.
    */
-  register: (definition: Record<string, unknown>) => void;
+  register: (definition: UpgradeDefinition) => void;
   /**
    * Register category.
    * @param definition Registration definition object.
    */
-  registerCategory: (definition: Record<string, unknown>) => void;
+  registerCategory: (definition: UpgradeCategoryDefinition) => void;
   /**
    * Update definition.
    * @param itemId item id.

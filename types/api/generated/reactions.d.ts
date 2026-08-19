@@ -9,6 +9,6 @@ export interface ApiReactions {
    * Register contact.
    * @param definition Registration definition object.
    */
-  registerContact: (definition: Record<string, unknown>) => void;
+  registerContact: (definition: ContactRecipeDefinitionV1) => void;
 }
 export type ApiReactionsNamespace = ApiReactions;

@@ -10,11 +10,11 @@ export interface ApiStructureBehaviors {
    * @param structureId structure id.
    * @param options Optional settings object.
    */
-  registerConveyorType: (structureId: string, options: Record<string, unknown>) => void;
+  registerConveyorType: (structureId: string, options?: { transportOffset?: { x: number; y: number; }; velocity?: { x: number; y: number; }; maxTransportDistance?: number; transportHeight?: number; runWith?: 'left' | 'right'; skipQueued?: boolean; }) => void;
   /**
    * Register launcher type.
    * @param definition Registration definition object.
    */
-  registerLauncherType: (definition: Record<string, unknown>) => void;
+  registerLauncherType: (definition?: { upType: string; leftType: string; rightType: string; velocity: [number, number]; softDropVelocity: number; runTickSharedBufferKey?: string; }) => void;
 }
 export type ApiStructureBehaviorsNamespace = ApiStructureBehaviors;

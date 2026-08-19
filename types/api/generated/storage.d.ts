@@ -9,7 +9,7 @@ export interface ApiStorage {
    * Ensure  exists.
    * @param modId mod id.
    */
-  ensure: (modId: string) => void;
+  ensure: (modId: string) => unknown;
   /**
    * Return any.
    * @param modId mod id.

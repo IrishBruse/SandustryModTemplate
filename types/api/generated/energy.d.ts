@@ -12,13 +12,13 @@ export interface ApiEnergy {
    * @param amount amount.
    * @param options Optional settings object.
    */
-  addAtCell: (cellX: number, cellY: number, amount: number, options: Record<string, unknown>) => void;
+  addAtCell: (cellX: number, cellY: number, amount: number, options?: unknown) => number;
   /**
    * Return number.
    * @param amount amount.
    * @param options Optional settings object.
    */
-  consume: (amount: number, options: Record<string, unknown>) => number;
+  consume: (amount: number, options?: { allOrNothing?: boolean; }) => number;
   /**
    * Return number.
    * @param cellX Cell X coordinate.
@@ -31,7 +31,7 @@ export interface ApiEnergy {
    * @param cellX Cell X coordinate.
    * @param cellY Cell Y coordinate.
    */
-  getNetworkAtCell: (cellX: number, cellY: number) => Record<string, unknown> | undefined;
+  getNetworkAtCell: (cellX: number, cellY: number) => { x: number; y: number; type: string; }[];
   /**
    * Return network free capacity at cell.
    * @param cellX Cell X coordinate.
@@ -43,6 +43,6 @@ export interface ApiEnergy {
    * @param structureId structure id.
    * @param options Optional settings object.
    */
-  registerType: (structureId: string, type: string, options: Record<string, unknown>) => void;
+  registerType: (structureId: string, type: 'conductor' | 'storage', options?: unknown) => void;
 }
 export type ApiEnergyNamespace = ApiEnergy;

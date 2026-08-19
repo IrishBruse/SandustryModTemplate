@@ -6,6 +6,6 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 export interface ApiScene {
   /** Return active. */
-  getActive: () => string;
+  getActive: () => Scene;
 }
 export type ApiSceneNamespace = ApiScene;

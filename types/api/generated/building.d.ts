@@ -12,7 +12,7 @@ export interface ApiBuilding {
    * @param cellX Cell X coordinate.
    * @param cellY Cell Y coordinate.
    */
-  getSnappedPositionAtCell: (cellX: number, cellY: number) => { x: number; y: number };
+  getSnappedPositionAtCell: (cellX: number, cellY: number) => { x: number; y: number; };
   /**
    * Return whether blocked at cell.
    * @param cellX Cell X coordinate.
@@ -23,6 +23,6 @@ export interface ApiBuilding {
    * Select structure.
    * @param structureTypeOrId structure Type Or id.
    */
-  selectStructure: (structureTypeOrId: string) => void;
+  selectStructure: (structureTypeOrId: string | StructureType) => string | StructureType | null;
 }
 export type ApiBuildingNamespace = ApiBuilding;

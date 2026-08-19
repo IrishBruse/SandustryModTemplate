@@ -15,9 +15,9 @@ export interface ApiInput {
    * @param bindingId binding id.
    * @param defaultLabel default Label string.
    */
-  getDisplayKey: (bindingId: string, defaultLabel: string) => string;
+  getDisplayKey: (bindingId: string, defaultLabel?: string) => string;
   /** Return mouse cell position. */
-  getMouseCellPosition: () => { x: number; y: number };
+  getMouseCellPosition: () => { x: number; y: number; };
   /** Return whether alt held. */
   isAltHeld: () => boolean;
   /** Return whether ctrl held. */
@@ -33,7 +33,7 @@ export interface ApiInput {
    * @param defaultKeys default Keys string.
    * @param definition Registration definition object.
    */
-  registerBinding: (bindingId: string, defaultKeys: string, definition: Record<string, unknown>) => void;
+  registerBinding: (bindingId: string, defaultKeys: string[], definition: InputBindingDefinition) => string;
   /**
    * release Binding.
    * @param bindingId binding id.

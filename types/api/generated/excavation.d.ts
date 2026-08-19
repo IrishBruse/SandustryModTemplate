@@ -10,6 +10,6 @@ export interface ApiExcavation {
    * @param id id id.
    * @param definition Registration definition object.
    */
-  registerProfile: (id: string, definition: Record<string, unknown>) => void;
+  registerProfile: (id: string, definition: ExcavationProfileDefinitionV1) => void;
 }
 export type ApiExcavationNamespace = ApiExcavation;

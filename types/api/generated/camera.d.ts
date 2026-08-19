@@ -9,13 +9,13 @@ export interface ApiCamera {
    * Return boolean.
    * @param options Optional settings object.
    */
-  releaseFocus: (options: Record<string, unknown>) => void;
+  releaseFocus: (options?: { durationMs?: number; }) => boolean;
   /**
    * Set focus at world.
    * @param worldX World X coordinate.
    * @param worldY World Y coordinate.
    */
-  setFocusAtWorld: (worldX: number, worldY: number) => void;
+  setFocusAtWorld: (worldX: number, worldY: number) => boolean;
   /** snap To Player. */
   snapToPlayer: () => void;
 }

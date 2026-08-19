@@ -12,6 +12,6 @@ export interface ApiRaycast {
    * @param angle angle.
    * @param maxDistance max Distance.
    */
-  castFromWorld: (startWorldX: number, startWorldY: number, angle: number, maxDistance: number) => void;
+  castFromWorld: (startWorldX: number, startWorldY: number, angle: number, maxDistance: number) => { x: number; y: number; distance: number; } | null;
 }
 export type ApiRaycastNamespace = ApiRaycast;

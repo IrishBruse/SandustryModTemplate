@@ -21,21 +21,21 @@ export interface ApiAuthorization {
    * Return whether can use tool.
    * @param isFlamethrower is Flamethrower flag.
    */
-  canUseTool: (player: string, isFlamethrower: boolean) => boolean;
+  canUseTool: (player: Player, isFlamethrower?: boolean) => boolean;
   /**
    * Return whether can use tool at cell.
    * @param cellX Cell X coordinate.
    * @param cellY Cell Y coordinate.
    * @param isFlamethrower is Flamethrower flag.
    */
-  canUseToolAtCell: (cellX: number, cellY: number, isFlamethrower: boolean) => boolean;
+  canUseToolAtCell: (cellX: number, cellY: number, isFlamethrower?: boolean) => boolean;
   /** Return player zone id. */
-  getPlayerZoneId: () => string;
+  getPlayerZoneId: () => number;
   /**
    * Return zone id at cell.
    * @param cellX Cell X coordinate.
    * @param cellY Cell Y coordinate.
    */
-  getZoneIdAtCell: (cellX: number, cellY: number) => string;
+  getZoneIdAtCell: (cellX: number, cellY: number) => number;
 }
 export type ApiAuthorizationNamespace = ApiAuthorization;

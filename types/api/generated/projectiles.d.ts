@@ -9,32 +9,32 @@ export interface ApiProjectiles {
    * Create blueprint from id.
    * @param projectileId projectile id.
    */
-  createBlueprintFromId: (projectileId: string) => void;
+  createBlueprintFromId: (projectileId: string) => ProjectileBlueprint;
   /** Return all. */
-  getAll: () => Record<string, unknown>[];
+  getAll: () => Projectile[];
   /**
    * Return by id.
    * @param projectileId projectile id.
    */
-  getById: (projectileId: string) => Record<string, unknown> | undefined;
+  getById: (projectileId: number) => Projectile | undefined;
   /**
    * Return definition by id.
    * @param projectileId projectile id.
    */
-  getDefinitionById: (projectileId: string) => Record<string, unknown> | undefined;
+  getDefinitionById: (projectileId: string) => unknown;
   /**
    * Register a definition.
    * @param definition Registration definition object.
    */
-  register: (definition: Record<string, unknown>) => void;
+  register: (definition: unknown) => void;
   /** Remove . */
-  remove: (projectile: Record<string, unknown>) => void;
+  remove: (projectile: Projectile) => void;
   /**
    * Spawn at world.
    * @param worldX World X coordinate.
    * @param worldY World Y coordinate.
    * @param angle angle.
    */
-  spawnAtWorld: (worldX: number, worldY: number, angle: number, blueprint: Record<string, unknown>) => void;
+  spawnAtWorld: (worldX: number, worldY: number, angle: number, blueprint: ProjectileBlueprint) => Projectile;
 }
 export type ApiProjectilesNamespace = ApiProjectiles;

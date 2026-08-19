@@ -17,12 +17,15 @@ import {
   parseJsonDump,
   parseTextDump,
 } from "./api-dump-format.js";
+import { applyOfficialReference } from "./apply-official-reference.js";
 import { applyTypeCuration } from "./api-type-curation.js";
+import { loadOfficialReference } from "./parse-official-reference.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const JSON_SOURCE = join(ROOT, "types/api/source/runtime-dump.json");
 const TXT_SOURCE = join(ROOT, "types/api/source/runtime-dump.txt");
 const DOCS_TARGET = join(ROOT, "types/api/source/api-docs.json");
+const OFFICIAL_SOURCE = join(ROOT, "types/api/source/official-api-reference.txt");
 const OUT_DIR = join(ROOT, "types/api/generated");
 
 /** Default namespace descriptions seeded into api-docs.json on first run. */
@@ -196,6 +199,14 @@ if (existsSync(DOCS_TARGET)) {
 
 const docs = mergeApiDocs(existingDocs, dump, NAMESPACE_NOTES);
 applyTypeCuration(docs);
+
+if (existsSync(OFFICIAL_SOURCE)) {
+  const official = loadOfficialReference(readFileSync, OFFICIAL_SOURCE);
+  applyOfficialReference(docs, official);
+  console.log(`Applied ${docs.meta?.officialReferenceMatches ?? 0} official API signatures from ${OFFICIAL_SOURCE}`);
+} else {
+  console.warn(`Missing ${OFFICIAL_SOURCE} — skip official reference merge`);
+}
 
 writeFileSync(DOCS_TARGET, `${JSON.stringify(docs, null, 2)}\n`);
 

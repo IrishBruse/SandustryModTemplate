@@ -9,7 +9,7 @@ export interface ApiGameConfig {
    * Return JsonValueV1 | undefined.
    * @param key key string.
    */
-  get: (key: string) => unknown;
+  get: (key: string) => JsonValueV1 | undefined;
   /** Return all. */
   getAll: () => Record<string, unknown>;
 }

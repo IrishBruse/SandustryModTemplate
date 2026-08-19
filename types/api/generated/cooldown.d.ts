@@ -9,11 +9,11 @@ export interface ApiCooldown {
    * Return whether check.
    * @param overrideTime override Time id.
    */
-  check: (cooldownId: string, overrideTime: number) => boolean;
+  check: (cooldown: Cooldown, overrideTime?: number) => boolean;
   /**
    * Return whether ready.
    * @param overrideTime override Time id.
    */
-  isReady: (cooldownId: string, overrideTime: number) => boolean;
+  isReady: (cooldown: Cooldown, overrideTime?: number) => boolean;
 }
 export type ApiCooldownNamespace = ApiCooldown;

@@ -9,13 +9,13 @@ export interface ApiSettings {
    * Return ConfigValueV1 | undefined.
    * @param fieldId field id.
    */
-  get: (fieldId: string) => string | number | boolean | undefined;
+  get: (fieldId: string) => ConfigValueV1 | undefined;
   /** Return all. */
-  getAll: () => Record<string, string | number | boolean>;
+  getAll: () => Readonly<Record<string, ConfigValueV1>>;
   /**
    * Return () => void.
    * @param callback Callback function.
    */
-  onChange: (callback: (...args: unknown[]) => unknown) => void;
+  onChange: (callback: (values: Readonly<Record<string, ConfigValueV1>>) => void) => () => void;
 }
 export type ApiSettingsNamespace = ApiSettings;

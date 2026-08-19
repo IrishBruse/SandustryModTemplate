@@ -6,6 +6,6 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 export interface ApiProgression {
   /** Mark progression step complete. */
-  complete: (request: Record<string, unknown>) => void;
+  complete: (request: ProgressionCompletionRequestV1) => boolean;
 }
 export type ApiProgressionNamespace = ApiProgression;

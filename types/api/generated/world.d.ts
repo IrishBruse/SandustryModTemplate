@@ -13,7 +13,7 @@ export interface ApiWorld {
    * @param damage damage.
    * @param options Optional settings object.
    */
-  excavateAtCell: (cellX: number, cellY: number, outVelocity: number, damage: number, options: Record<string, unknown>) => void;
+  excavateAtCell: (cellX: number, cellY: number, outVelocity: { x: number; y: number; }, damage: number, options?: ExcavateOptions) => void;
   /**
    * Return cell id at cell.
    * @param cellX Cell X coordinate.
@@ -56,25 +56,25 @@ export interface ApiWorld {
    * Run a callback when the simulation is idle.
    * @param callback Callback function.
    */
-  runWhenSimulationIdle: (callback: (...args: unknown[]) => unknown) => void;
+  runWhenSimulationIdle: (callback: () => void) => void;
 }
 export interface ApiWorldPickups {
   /** destroy. */
-  destroy: (worldItem: Record<string, unknown>) => void;
+  destroy: (worldItem: unknown) => void;
   /** Return all. */
-  getAll: () => Record<string, unknown>[];
+  getAll: () => unknown[];
   /**
    * Return by id.
    * @param worldItemId world Item id.
    */
-  getById: (worldItemId: string) => Record<string, unknown> | undefined;
+  getById: (worldItemId: number) => unknown;
   /** Return boolean. */
-  pickUp: (worldItem: Record<string, unknown>) => void;
+  pickUp: (worldItem: unknown) => boolean;
   /**
    * Spawn at world.
    * @param worldX World X coordinate.
    * @param worldY World Y coordinate.
    */
-  spawnAtWorld: (type: string, worldX: number, worldY: number, data: Record<string, unknown>, light: Record<string, unknown> | undefined) => void;
+  spawnAtWorld: (type: WorldItemType, worldX: number, worldY: number, data?: unknown, light?: WorldItemLight) => unknown;
 }
 export type ApiWorldNamespace = ApiWorld;

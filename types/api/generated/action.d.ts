@@ -6,10 +6,10 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 export interface ApiAction {
   /** Return active. */
-  getActive: () => string;
+  getActive: () => Action;
   /** Return selected. */
-  getSelected: () => string;
+  getSelected: () => Action;
   /** Set custom data. */
-  setCustomData: (data: Record<string, unknown>) => void;
+  setCustomData: (data: unknown) => void;
 }
 export type ApiActionNamespace = ApiAction;

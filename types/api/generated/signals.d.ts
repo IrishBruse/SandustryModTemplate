@@ -12,6 +12,6 @@ export interface ApiSignalsTargets {
    * Register a definition.
    * @param structureTypeOrId structure Type Or id.
    */
-  register: (structureTypeOrId: string, apply: (...args: unknown[]) => unknown) => void;
+  register: (structureTypeOrId: string | StructureType, apply: (structure: Structure, payload: SignalTargetPayloadV1) => void) => void;
 }
 export type ApiSignalsNamespace = ApiSignals;

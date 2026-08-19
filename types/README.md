@@ -27,13 +27,15 @@ types/
 | File | Role |
 |---|---|
 | `types/api/source/runtime-dump.json` | Paste from DevTools (`scripts/api/dump-api-console.js`). Lists API members from the game. |
+| `types/api/source/official-api-reference.txt` | Vendored Sandkit API signatures (from [SandLoader](https://github.com/LopeKinz/SandLoader)). Merged on each generate run. |
 | `types/api/source/api-docs.json` | Descriptions, param labels, `params[].type`, and `returnType`. Merged on each generate run. |
+| `types/api/domain.d.ts` | Opaque domain type aliases used by generated signatures. |
 | `scripts/api/api-type-curation.js` | Curated type overrides applied into `api-docs.json` on generate. |
 
 ## Generate types and docs
 
 1. In Sandustry DevTools, run `scripts/api/dump-api-console.js`, then paste the JSON into `types/api/source/runtime-dump.json`.
-2. Edit descriptions in `types/api/source/api-docs.json` (optional). Add or change types in `scripts/api/api-type-curation.js` for bulk curation.
+2. Edit descriptions in `types/api/source/api-docs.json` (optional). Add or change types in `scripts/api/api-type-curation.js` for bulk curation. Update `types/api/source/official-api-reference.txt` when a new official reference is published.
 3. Run:
 
 ```bash
