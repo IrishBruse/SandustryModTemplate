@@ -1,0 +1,26 @@
+{
+  "manifestVersion": 1,
+  "id": "author.example-mod",
+  "name": "Example Mod",
+  "version": "0.0.1",
+  "apiVersion": 1,
+  "entry": "main.js",
+  "author": "IrishBruse",
+  "description": "Embeds Example Mod inside Sandustry.",
+  "dependencies": [],
+  "loadOrder": 0,
+  "configSchema": {
+    "enabled": {
+      "type": "boolean",
+      "default": true,
+      "labelKey": "Mod enabled",
+      "descriptionKey": "Turn the mod off without unsubscribing."
+    },
+    "autoBoot": {
+      "type": "boolean",
+      "default": true,
+      "labelKey": "Auto boot",
+      "descriptionKey": "On main menu load, open DevTools and click Continue."
+    }
+  }
+}
