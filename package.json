@@ -1,0 +1,20 @@
+{
+  "name": "sandustry-mod-template",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "dev": "bash scripts/dev.sh",
+    "watch": "bash scripts/dev.sh",
+    "typecheck": "tsc --noEmit",
+    "generate-types": "node scripts/generate-api-types.mjs",
+    "references": "node scripts/references.mjs",
+    "sandustry": "bash scripts/launch-sandustry.sh"
+  },
+  "devDependencies": {
+    "@electron/asar": "^4.0.0",
+    "@types/react": "^19.1.8",
+    "esbuild": "^0.25.9",
+    "typescript": "^5.9.2"
+  }
+}
