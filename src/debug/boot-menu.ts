@@ -1,22 +1,18 @@
 import type { SandkitApi } from "types/api";
 import { clickContinueButton, isContinueButtonReady } from "./menu";
+import { startSplashSkipPolling } from "./splash";
 import { safe } from "../sdk/safe";
 import { MOD_ID } from "./globals";
 
-const AUTO_BOOT_KEY = `${MOD_ID}:autoBoot`;
-const FALLBACK_MS = 4000;
+const BOOT_INTERVAL_MS = 250;
+const FALLBACK_MS = 1000;
 
 let booted = false;
+let pollTimer: ReturnType<typeof setInterval> | null = null;
 
 function autoBootEnabled(api: SandkitApi): boolean {
-  safe(() => {
-    const enabled = api.settings.get("autoBoot");
-    localStorage.setItem(
-      AUTO_BOOT_KEY,
-      enabled === false ? "false" : "true",
-    );
-  });
-  return localStorage.getItem(AUTO_BOOT_KEY) !== "false";
+  const value = safe(() => api.settings.get("autoBoot"));
+  return typeof value === "boolean" ? value : true;
 }
 
 function openDevTools(): void {
@@ -45,17 +41,30 @@ export function registerDevToolsShortcut(): void {
   );
 }
 
+function stopBootPolling(): void {
+  if (pollTimer !== null) {
+    clearInterval(pollTimer);
+    pollTimer = null;
+  }
+}
+
 function tryBoot(api: SandkitApi): void {
   if (booted || !autoBootEnabled(api)) return;
-
   if (!isContinueButtonReady()) return;
+  if (!clickContinueButton()) return;
 
   booted = true;
+  stopBootPolling();
   openDevTools();
+}
 
-  if (!clickContinueButton()) {
-    console.warn(`[${MOD_ID}] autoBoot: Continue button not ready`);
-  }
+function registerBootTrigger(api: SandkitApi): void {
+  safe(() =>
+    api.triggers.register(`${MOD_ID}:main-menu-boot`, {
+      interval: BOOT_INTERVAL_MS,
+      callback: () => tryBoot(api),
+    }),
+  );
 }
 
 function startBootPolling(api: SandkitApi): void {
@@ -64,19 +73,22 @@ function startBootPolling(api: SandkitApi): void {
   tryBoot(api);
   if (booted) return;
 
-  safe(() =>
-    api.triggers.register(
-      `${MOD_ID}:main-menu-boot`,
-      { intervalMs: 250, fn: () => tryBoot(api) },
-      sandkit.state,
-    ),
-  );
+  registerBootTrigger(api);
+
+  if (pollTimer !== null) return;
+  pollTimer = setInterval(() => tryBoot(api), BOOT_INTERVAL_MS);
 }
 
-/** Open DevTools and click Continue once the main menu button is on screen. */
+/**
+ * Open DevTools on load. When autoBoot is on, poll until Continue is ready and click it.
+ */
 export function scheduleMainMenuBoot(api: SandkitApi): void {
+  openDevToolsOnStartup();
+  startSplashSkipPolling();
+
   if (!autoBootEnabled(api)) return;
 
   safe(() => api.events.on("game:ready", () => startBootPolling(api)));
+  startBootPolling(api);
   setTimeout(() => startBootPolling(api), FALLBACK_MS);
 }
