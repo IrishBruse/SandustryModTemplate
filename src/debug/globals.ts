@@ -12,11 +12,11 @@ export function installGlobals(api: SandkitApi): ModGlobal {
     sandkit,
     status: { loaded: true, retroConsole: false, error: null },
     registerGame(definition) {
-      api.retroConsole.registerGame(definition);
+      api.retroConsole?.registerGame(definition);
     },
     registerProbe() {
-      api.retroConsole.registerGame(exampleProbe);
-      this.status.retroConsole = true;
+      api.retroConsole?.registerGame(exampleProbe);
+      this.status.retroConsole = Boolean(api.retroConsole);
       return exampleProbe.id;
     },
   };
