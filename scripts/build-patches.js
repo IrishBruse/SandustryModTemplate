@@ -15,6 +15,11 @@ export const PATCHES_CACHE = join(CACHE_DIR, "patches.js");
 export const PATCHES_WATCH_CACHE = join(CACHE_DIR, "patches-watch.js");
 const JS_PATCH_PATH = /^js\/[^/]+\.js$/;
 
+/** @param {boolean} modDebug */
+function patchDefine(modDebug) {
+  return { __MOD_DEBUG__: modDebug ? "true" : "false" };
+}
+
 /** @param {unknown[]} patches */
 function validatePatches(patches) {
   for (const patch of patches) {
@@ -36,8 +41,9 @@ function validatePatches(patches) {
 
 /**
  * @param {string} outDir
+ * @param {boolean} [modDebug=false]
  */
-export async function buildPatches(outDir) {
+export async function buildPatches(outDir, modDebug = false) {
   mkdirSync(dirname(PATCHES_CACHE), { recursive: true });
   mkdirSync(outDir, { recursive: true });
 
@@ -47,6 +53,7 @@ export async function buildPatches(outDir) {
     bundle: true,
     platform: "node",
     format: "esm",
+    define: patchDefine(modDebug),
     logLevel: "silent",
   });
 

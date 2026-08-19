@@ -13,6 +13,7 @@ const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 ensureModDir();
 linkRepoDistToModOutput(ROOT);
 process.env.MOD_OUT_DIR = MOD_DIR;
+process.env.MOD_DEBUG = "1";
 
 console.log(`Watching src/ -> ${MOD_DIR}/main.js`);
 

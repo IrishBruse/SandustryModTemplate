@@ -9,7 +9,7 @@
     {
       "label": "sandustry:build-mod-debug",
       "type": "shell",
-      "command": "MOD_SOURCEMAP=1 MOD_OUT_DIR=\"${env:HOME}/.config/sandustry/mods/Example Mod\" node esbuild.config.mjs",
+      "command": "MOD_DEBUG=1 MOD_SOURCEMAP=1 MOD_OUT_DIR=\"${env:HOME}/.config/sandustry/mods/Example Mod\" node esbuild.config.mjs",
       "options": {
         "cwd": "${workspaceFolder}"
       },

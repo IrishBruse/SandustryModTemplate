@@ -10,8 +10,8 @@ const FALLBACK_MS = 1000;
 let booted = false;
 let pollTimer: ReturnType<typeof setInterval> | null = null;
 
-function autoBootEnabled(api: SandkitApi): boolean {
-  const value = safe(() => api.settings.get("autoBoot"));
+function debugEnabled(api: SandkitApi): boolean {
+  const value = safe(() => api.settings.get("debug"));
   return typeof value === "boolean" ? value : true;
 }
 
@@ -50,7 +50,7 @@ function stopBootPolling(): void {
 }
 
 function tryBoot(api: SandkitApi): void {
-  if (booted || !autoBootEnabled(api)) return;
+  if (booted || !debugEnabled(api)) return;
   if (!isContinueButtonReady()) return;
   if (!clickContinueButton()) return;
 
@@ -69,7 +69,7 @@ function registerBootTrigger(api: SandkitApi): void {
 }
 
 function startBootPolling(api: SandkitApi): void {
-  if (booted || !autoBootEnabled(api)) return;
+  if (booted || !debugEnabled(api)) return;
 
   tryBoot(api);
   if (booted) return;
@@ -81,13 +81,13 @@ function startBootPolling(api: SandkitApi): void {
 }
 
 /**
- * Open DevTools on load. When autoBoot is on, poll until Continue is ready and click it.
+ * Open DevTools on load. When debug is on, poll until Continue is ready and click it.
  */
 export function scheduleMainMenuBoot(api: SandkitApi): void {
   openDevToolsOnStartup();
   startSplashSkipPolling();
 
-  if (!autoBootEnabled(api)) return;
+  if (!debugEnabled(api)) return;
 
   safe(() => api.events.on("game:ready", () => startBootPolling(api)));
   startBootPolling(api);

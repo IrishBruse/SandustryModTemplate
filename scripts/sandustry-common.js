@@ -21,12 +21,14 @@ export function sandustryRequireBinary() {
   }
 }
 
-/** @param {string} root @param {{ sourcemap?: boolean }} [options] */
-export function sandustryBuildMod(root, { sourcemap = false } = {}) {
+/** @param {string} root @param {{ sourcemap?: boolean; modDebug?: boolean }} [options] */
+export function sandustryBuildMod(root, { sourcemap = false, modDebug = true } = {}) {
   ensureModDir();
   /** @type {NodeJS.ProcessEnv} */
   const env = { ...process.env, MOD_OUT_DIR: MOD_DIR };
   if (sourcemap) env.MOD_SOURCEMAP = "1";
+  if (modDebug) env.MOD_DEBUG = "1";
+  else env.MOD_DEBUG = "0";
 
   const result = spawnSync("node", [join(root, "esbuild.config.mjs")], {
     stdio: "inherit",

@@ -16,11 +16,11 @@
       "labelKey": "Mod enabled",
       "descriptionKey": "Turn the mod off without unsubscribing."
     },
-    "autoBoot": {
+    "debug": {
       "type": "boolean",
       "default": true,
-      "labelKey": "Auto boot",
-      "descriptionKey": "On main menu load, open DevTools and click Continue."
+      "labelKey": "Debug",
+      "descriptionKey": "DevTools, splash skip, and main-menu auto-boot. Dev builds only."
     }
   }
 }

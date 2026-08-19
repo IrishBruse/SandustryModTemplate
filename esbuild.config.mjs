@@ -1,5 +1,5 @@
 import * as esbuild from "esbuild";
-import { cpSync, existsSync, mkdirSync, readdirSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -11,14 +11,17 @@ const ROOT = dirname(fileURLToPath(import.meta.url));
 const MOD_OUT_DIR = process.env.MOD_OUT_DIR ?? join(ROOT, "dist");
 const OUT_MAIN = join(MOD_OUT_DIR, "main.js");
 const watch = process.argv.includes("--watch");
+const modDebug =
+  process.env.MOD_DEBUG === "1" || (watch && process.env.MOD_DEBUG !== "0");
 
 console.log(`mod output: ${MOD_OUT_DIR}`);
 console.log(`main bundle: ${OUT_MAIN}`);
+console.log(`mod debug: ${modDebug ? "on" : "off"}`);
 
 /** Copy static mod files and generate patches.json into the output folder. */
 async function syncModFiles() {
   mkdirSync(MOD_OUT_DIR, { recursive: true });
-  cpSync(join(ROOT, "modinfo.json"), join(MOD_OUT_DIR, "modinfo.json"));
+  writeModinfo(MOD_OUT_DIR, modDebug);
   const modDir = join(ROOT, "mod");
   if (existsSync(modDir)) {
     for (const name of readdirSync(modDir)) {
@@ -29,7 +32,17 @@ async function syncModFiles() {
       });
     }
   }
-  await buildPatches(MOD_OUT_DIR);
+  await buildPatches(MOD_OUT_DIR, modDebug);
+}
+
+/** Write modinfo.json — debug setting is omitted from release builds. */
+function writeModinfo(outDir, includeDebugSetting) {
+  const manifest = JSON.parse(readFileSync(join(ROOT, "modinfo.json"), "utf8"));
+  if (!includeDebugSetting && manifest.configSchema?.debug) {
+    const { debug: _debug, ...rest } = manifest.configSchema;
+    manifest.configSchema = rest;
+  }
+  writeFileSync(join(outDir, "modinfo.json"), `${JSON.stringify(manifest, null, 2)}\n`);
 }
 
 function logBuildResult(result) {
@@ -40,6 +53,24 @@ function logBuildResult(result) {
 const sourcemap =
   process.env.MOD_SOURCEMAP === "1" ? "inline" : undefined;
 
+const define = {
+  __MOD_DEBUG__: modDebug ? "true" : "false",
+};
+
+/** @returns {import('esbuild').Plugin} */
+function releaseDebugStubPlugin() {
+  return {
+    name: "release-debug-stub",
+    setup(build) {
+      if (modDebug) return;
+      build.onResolve({ filter: /^\.[/\\]debug$/ }, (args) => {
+        if (!args.importer.endsWith(`${join("src", "main.tsx")}`)) return;
+        return { path: join(ROOT, "src/debug-empty.ts") };
+      });
+    },
+  };
+}
+
 /** @type {import('esbuild').BuildOptions} */
 const options = {
   entryPoints: [join(ROOT, "src/main.tsx")],
@@ -49,6 +80,8 @@ const options = {
   platform: "browser",
   target: "es2020",
   sourcemap,
+  define,
+  plugins: [releaseDebugStubPlugin()],
   jsx: "transform",
   jsxFactory: "React.createElement",
   jsxFragment: "React.Fragment",
@@ -68,6 +101,7 @@ if (watch) {
   const mainCtx = await esbuild.context({
     ...options,
     plugins: [
+      releaseDebugStubPlugin(),
       {
         name: "sync-mod",
         setup(build) {
@@ -86,6 +120,7 @@ if (watch) {
     bundle: true,
     platform: "node",
     format: "esm",
+    define,
     logLevel: "silent",
     plugins: [
       {
@@ -93,7 +128,7 @@ if (watch) {
         setup(build) {
           build.onEnd(async (result) => {
             if (result.errors.length > 0) return;
-            await buildPatches(MOD_OUT_DIR);
+            await buildPatches(MOD_OUT_DIR, modDebug);
           });
         },
       },
