@@ -37,6 +37,9 @@ function logBuildResult(result) {
   console.log(`built to ${MOD_OUT_DIR}`);
 }
 
+const sourcemap =
+  process.env.MOD_SOURCEMAP === "1" ? "inline" : undefined;
+
 /** @type {import('esbuild').BuildOptions} */
 const options = {
   entryPoints: [join(ROOT, "src/main.tsx")],
@@ -45,6 +48,7 @@ const options = {
   format: "iife",
   platform: "browser",
   target: "es2020",
+  sourcemap,
   jsx: "transform",
   jsxFactory: "React.createElement",
   jsxFragment: "React.Fragment",

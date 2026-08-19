@@ -10,9 +10,8 @@
     "isolatedModules": true,
     "lib": ["ES2020", "DOM"],
     "types": ["react"],
-    "baseUrl": ".",
     "paths": {
-      "types/*": ["types/*"]
+      "types/*": ["./types/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "types/**/*.d.ts"]

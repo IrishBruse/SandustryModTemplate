@@ -82,7 +82,7 @@ const NAMESPACE_NOTES = {
 };
 
 const COMMON_IMPORT =
-  'import type { ApiHandler, Method0, Method1, Method2, Method3, Method4, Method5, Method6 } from "../common";';
+  'import type { ApiHandler, Method0, Method1, Method2, Method3, Method4, Method5, Method6 } from "../common";'; // types/api/common.d.ts
 
 function loadDump() {
   if (existsSync(JSON_SOURCE)) {
@@ -204,6 +204,7 @@ if (existsSync(DOCS_TARGET)) {
 }
 
 const docs = mergeApiDocs(existingDocs, dump, NAMESPACE_NOTES);
+
 writeFileSync(DOCS_TARGET, `${JSON.stringify(docs, null, 2)}\n`);
 
 rmSync(OUT_DIR, { recursive: true, force: true });
@@ -240,7 +241,6 @@ const indexOutput = `/**
  * In-game runtime snapshot: ${dump.meta.entries} entries, ${dump.meta.functions} functions.
  * Signatures are mod-facing (ctx bound internally).
  * Docs overlay: types/api/api-docs.json
- * Prefer hand-crafted types in refined/ where available.
  */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 
