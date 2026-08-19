@@ -1,6 +1,6 @@
 import { installDebug } from "./debug";
 import { installGlobals, MOD_ID } from "./debug/globals";
-import React, { createElement } from "./react";
+import { createElement } from "../react";
 import { ExampleStatusPanel } from "./ui/ExampleStatusPanel";
 import { isEnabled, safe } from "./sdk/safe";
 
@@ -25,5 +25,3 @@ if (isEnabled(api)) {
 }
 
 console.log(`[${MOD_ID}] loaded — use window.api in DevTools`);
-
-void React;

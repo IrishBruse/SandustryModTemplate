@@ -17,9 +17,9 @@
 export type * from "./common";
 export type * from "./sandkit";
 export type * from "./mod/manifest";
-export type * from "./mod/patches";
+export type * from "../patch-helpers/types";
 export type * from "./api";
 
 export type { SandkitApi } from "./api";
 export type { ModManifest, ConfigSchema } from "./mod/manifest";
-export type { Patch, PatchOperation } from "./mod/patches";
+export type { Patch, PatchOperation } from "../patch-helpers/types";

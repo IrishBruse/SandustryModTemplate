@@ -1,6 +1,6 @@
 # Debug helpers
 
-This folder holds dev-only helpers: DevTools shortcuts, splash skip, main-menu auto-boot, and bundle patches under `patches.ts`.
+This folder holds dev-only runtime helpers: DevTools shortcuts, splash skip, and main-menu auto-boot. Dev-only bundle patches live in `patches/`.
 
 **Release builds do not compile this code.** `npm run build` sets `__MOD_DEBUG__` to false, so esbuild drops imports from `src/debug/` and omits debug patches from `patches.json`.
 

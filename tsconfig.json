@@ -14,5 +14,5 @@
       "types/*": ["./types/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "types/**/*.d.ts"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "patch-helpers/**/*.ts", "debug-empty.ts", "react.ts", "types/**/*.d.ts"]
 }

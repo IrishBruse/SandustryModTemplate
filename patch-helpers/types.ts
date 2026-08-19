@@ -51,22 +51,22 @@ export interface PatchRegexMatch extends PatchBase {
 export type PatchMatch = PatchFind | PatchRegexMatch;
 
 /** Insert `code` before each match. */
-export interface InsertBeforePatch extends PatchMatch {
+export type InsertBeforePatch = PatchMatch & {
   operation: "insertBefore";
   code: string;
-}
+};
 
 /** Replace each match with `code`. */
-export interface ReplacePatch extends PatchMatch {
+export type ReplacePatch = PatchMatch & {
   operation: "replace";
   code: string;
-}
+};
 
 /** Wrap each match with `before` + match + `after`. */
-export interface WrapPatch extends PatchMatch {
+export type WrapPatch = PatchMatch & {
   operation: "wrap";
   before: string;
   after: string;
-}
+};
 
 export type Patch = InsertBeforePatch | ReplacePatch | WrapPatch;

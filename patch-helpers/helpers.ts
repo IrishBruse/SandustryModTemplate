@@ -6,30 +6,32 @@ import type {
   WrapPatch,
 } from "./types";
 
-type FindPatchFields = Pick<PatchFind, "id" | "file" | "find" | "expectedMatches" | "atomicGroup">;
+type FindPatchFields = Pick<PatchFind, "file" | "find" | "expectedMatches" | "atomicGroup">;
 type RegexPatchFields = Pick<
   PatchRegexMatch,
-  "id" | "file" | "regex" | "expectedMatches" | "atomicGroup"
+  "file" | "regex" | "expectedMatches" | "atomicGroup"
 >;
 
 export function insertBefore(
   patch: FindPatchFields & { code: string },
-): InsertBeforePatch {
+): Omit<InsertBeforePatch, "id"> {
   return { ...patch, operation: "insertBefore" };
 }
 
-export function replace(patch: FindPatchFields & { code: string }): ReplacePatch {
+export function replace(
+  patch: FindPatchFields & { code: string },
+): Omit<ReplacePatch, "id"> {
   return { ...patch, operation: "replace" };
 }
 
 export function wrap(
   patch: FindPatchFields & { before: string; after: string },
-): WrapPatch {
+): Omit<WrapPatch, "id"> {
   return { ...patch, operation: "wrap" };
 }
 
 export function insertBeforeRegex(
   patch: RegexPatchFields & { code: string },
-): InsertBeforePatch {
+): Omit<InsertBeforePatch, "id"> {
   return { ...patch, operation: "insertBefore" };
 }

@@ -4,7 +4,9 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   buildPatches,
+  PATCHES_ENTRY,
   PATCHES_WATCH_CACHE,
+  patchSourcesPlugin,
 } from "./scripts/build-patches.js";
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
@@ -65,7 +67,7 @@ function releaseDebugStubPlugin() {
       if (modDebug) return;
       build.onResolve({ filter: /^\.[/\\]debug$/ }, (args) => {
         if (!args.importer.endsWith(`${join("src", "main.tsx")}`)) return;
-        return { path: join(ROOT, "src/debug-empty.ts") };
+        return { path: join(ROOT, "debug-empty.ts") };
       });
     },
   };
@@ -115,7 +117,7 @@ if (watch) {
   });
 
   const patchCtx = await esbuild.context({
-    entryPoints: [join(ROOT, "src/patches/index.ts")],
+    entryPoints: [PATCHES_ENTRY],
     outfile: PATCHES_WATCH_CACHE,
     bundle: true,
     platform: "node",
@@ -123,6 +125,7 @@ if (watch) {
     define,
     logLevel: "silent",
     plugins: [
+      patchSourcesPlugin(modDebug),
       {
         name: "emit-patches-json",
         setup(build) {
