@@ -1,0 +1,66 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Sandustry",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${env:HOME}/games/SteamLibrary/steamapps/common/Sandustry",
+      "runtimeExecutable": "${workspaceFolder}/scripts/sandustry-vscode-launch.sh",
+      "runtimeArgs": [],
+      "preLaunchTask": "sandustry:prepare-debug",
+      "outputCapture": "std",
+      "timeout": 120000,
+      "serverReadyAction": {
+        "pattern": "Debugger listening on ws://.*:9230",
+        "action": "startDebugging",
+        "name": "Sandustry Renderer"
+      }
+    },
+    {
+      "name": "Sandustry Renderer",
+      "type": "chrome",
+      "request": "attach",
+      "port": 9222,
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "/~/*": "${env:HOME}/*",
+        "webpack:///./*": "${workspaceFolder}/*"
+      },
+      "timeout": 120000
+    },
+    {
+      "name": "Sandustry: Attach (npm run sandustry:debug)",
+      "type": "node",
+      "request": "attach",
+      "port": 9230,
+      "restart": true,
+      "timeout": 120000
+    },
+    {
+      "name": "Sandustry Renderer: Attach (npm run sandustry:debug)",
+      "type": "chrome",
+      "request": "attach",
+      "port": 9222,
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "/~/*": "${env:HOME}/*",
+        "webpack:///./*": "${workspaceFolder}/*"
+      },
+      "timeout": 120000
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Sandustry: Attach Main + Renderer (npm run sandustry:debug)",
+      "configurations": [
+        "Sandustry: Attach (npm run sandustry:debug)",
+        "Sandustry Renderer: Attach (npm run sandustry:debug)"
+      ],
+      "preLaunchTask": "sandustry:debug-background",
+      "stopAll": true
+    }
+  ]
+}

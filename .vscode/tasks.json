@@ -1,0 +1,48 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "sandustry:prepare-debug",
+      "dependsOn": ["sandustry:build-mod-debug", "sandustry:stop"],
+      "problemMatcher": []
+    },
+    {
+      "label": "sandustry:build-mod-debug",
+      "type": "shell",
+      "command": "MOD_SOURCEMAP=1 MOD_OUT_DIR=\"${env:HOME}/.config/sandustry/mods/Example Mod\" node esbuild.config.mjs",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "sandustry:stop",
+      "type": "shell",
+      "command": "pkill -TERM -f '${env:HOME}/games/SteamLibrary/steamapps/common/Sandustry/sandustry' || true",
+      "problemMatcher": []
+    },
+    {
+      "label": "sandustry:debug-background",
+      "type": "shell",
+      "command": "bash scripts/launch-sandustry-debug.sh",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": ".",
+          "file": 1,
+          "location": 2,
+          "message": 3
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Sandustry debug",
+          "endsPattern": "Launched Sandustry with debug ports"
+        }
+      }
+    }
+  ]
+}
