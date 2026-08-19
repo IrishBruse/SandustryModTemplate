@@ -1,12 +1,19 @@
 /**
- * Auto-generated from types/api/runtime-dump.json
+ * Auto-generated from sandkit-api/runtime-dump.json
  * Run: npm run generate-types
  * Discovery journal
  */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import type { ApiHandler, Method0, Method1, Method2, Method3, Method4, Method5, Method6 } from "../common";
 export interface ApiDiscoveries {
-  addElementByType: Method1;
-  addTerrainByType: Method1;
+  /**
+   * Add element by type.
+   * @param elementType element Type.
+   */
+  addElementByType: (elementType: string) => void;
+  /**
+   * Add terrain by type.
+   * @param terrainType terrain Type.
+   */
+  addTerrainByType: (terrainType: string) => void;
 }
 export type ApiDiscoveriesNamespace = ApiDiscoveries;

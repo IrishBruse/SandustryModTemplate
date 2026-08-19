@@ -1,15 +1,23 @@
 /**
- * Auto-generated from types/api/runtime-dump.json
+ * Auto-generated from sandkit-api/runtime-dump.json
  * Run: npm run generate-types
  * Cross-thread shared buffers
  */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import type { ApiHandler, Method0, Method1, Method2, Method3, Method4, Method5, Method6 } from "../common";
 export interface ApiShared {
   buffers: ApiSharedBuffers;
 }
 export interface ApiSharedBuffers {
-  create: Method2;
-  get: Method1;
+  /**
+   * Create a resource.
+   * @param key key string.
+   * @param config config.
+   */
+  create: (key: string, config: Record<string, unknown>) => void;
+  /**
+   * Return SharedArray | undefined.
+   * @param key key string.
+   */
+  get: (key: string) => SharedArrayBuffer | undefined;
 }
 export type ApiSharedNamespace = ApiShared;

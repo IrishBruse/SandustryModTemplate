@@ -1,12 +1,21 @@
 /**
- * Auto-generated from types/api/runtime-dump.json
+ * Auto-generated from sandkit-api/runtime-dump.json
  * Run: npm run generate-types
  * Fluxite and energy UI
  */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import type { ApiHandler, Method0, Method1, Method2, Method3, Method4, Method5, Method6 } from "../common";
 export interface ApiResources {
-  collectFluxiteAtCell: Method2;
-  updateEnergy: Method2;
+  /**
+   * collect Fluxite At Cell.
+   * @param cellX Cell X coordinate.
+   * @param cellY Cell Y coordinate.
+   */
+  collectFluxiteAtCell: (cellX: number, cellY: number) => void;
+  /**
+   * Update energy.
+   * @param amount amount.
+   * @param options Optional settings object.
+   */
+  updateEnergy: (amount: number, options: Record<string, unknown>) => void;
 }
 export type ApiResourcesNamespace = ApiResources;

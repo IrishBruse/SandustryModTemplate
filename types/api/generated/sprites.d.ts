@@ -1,15 +1,35 @@
 /**
- * Auto-generated from types/api/runtime-dump.json
+ * Auto-generated from sandkit-api/runtime-dump.json
  * Run: npm run generate-types
  * Sprite loading
  */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import type { ApiHandler, Method0, Method1, Method2, Method3, Method4, Method5, Method6 } from "../common";
 export interface ApiSprites {
-  getById: Method1;
-  hideAllPlayerModSprites: Method0;
-  load: Method3;
-  loadFromMod: Method3;
-  rotatePlayerModSprites: Method1;
+  /**
+   * Return by id.
+   * @param spriteId sprite id.
+   */
+  getById: (spriteId: string) => Record<string, unknown> | undefined;
+  /** hide All Player Mod Sprites. */
+  hideAllPlayerModSprites: () => void;
+  /**
+   * Load .
+   * @param spriteId sprite id.
+   * @param path path string.
+   * @param options Optional settings object.
+   */
+  load: (spriteId: string, path: string, options: Record<string, unknown>) => void;
+  /**
+   * Load from mod.
+   * @param spriteId sprite id.
+   * @param relativePath relative Path string.
+   * @param options Optional settings object.
+   */
+  loadFromMod: (spriteId: string, relativePath: string, options: Record<string, unknown>) => void;
+  /**
+   * rotate Player Mod Sprites.
+   * @param angle angle.
+   */
+  rotatePlayerModSprites: (angle: number) => void;
 }
 export type ApiSpritesNamespace = ApiSprites;

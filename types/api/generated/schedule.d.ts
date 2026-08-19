@@ -1,11 +1,14 @@
 /**
- * Auto-generated from types/api/runtime-dump.json
+ * Auto-generated from sandkit-api/runtime-dump.json
  * Run: npm run generate-types
  * nextTick scheduling
  */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import type { ApiHandler, Method0, Method1, Method2, Method3, Method4, Method5, Method6 } from "../common";
 export interface ApiSchedule {
-  nextTick: Method1;
+  /**
+   * Schedule work on the next main-thread tick.
+   * @param callback Callback function.
+   */
+  nextTick: (callback: (...args: unknown[]) => unknown) => void;
 }
 export type ApiScheduleNamespace = ApiSchedule;

@@ -1,22 +1,49 @@
 /**
- * Auto-generated from types/api/runtime-dump.json
+ * Auto-generated from sandkit-api/runtime-dump.json
  * Run: npm run generate-types
  * Persistent and VFX lights
  */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import type { ApiHandler, Method0, Method1, Method2, Method3, Method4, Method5, Method6 } from "../common";
 export interface ApiLights {
   persistent: ApiLightsPersistent;
   vfx: ApiLightsVfx;
 }
 export interface ApiLightsPersistent {
-  createAtWorld: Method3;
-  fadeAtWorld: Method3;
-  markDirty: Method0;
-  removeAtWorld: Method2;
+  /**
+   * Create at world.
+   * @param worldX World X coordinate.
+   * @param worldY World Y coordinate.
+   * @param options Optional settings object.
+   */
+  createAtWorld: (worldX: number, worldY: number, options: Record<string, unknown>) => void;
+  /**
+   * fade At World.
+   * @param worldX World X coordinate.
+   * @param worldY World Y coordinate.
+   * @param durationMs duration Ms.
+   */
+  fadeAtWorld: (worldX: number, worldY: number, durationMs: number) => void;
+  /** mark Dirty. */
+  markDirty: () => void;
+  /**
+   * Remove at world.
+   * @param worldX World X coordinate.
+   * @param worldY World Y coordinate.
+   */
+  removeAtWorld: (worldX: number, worldY: number) => void;
 }
 export interface ApiLightsVfx {
-  createAtWorld: Method3;
-  removeById: Method1;
+  /**
+   * Create at world.
+   * @param worldX World X coordinate.
+   * @param worldY World Y coordinate.
+   * @param options Optional settings object.
+   */
+  createAtWorld: (worldX: number, worldY: number, options: Record<string, unknown>) => void;
+  /**
+   * Remove by id.
+   * @param lightId light id.
+   */
+  removeById: (lightId: string) => void;
 }
 export type ApiLightsNamespace = ApiLights;

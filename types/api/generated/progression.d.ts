@@ -1,11 +1,11 @@
 /**
- * Auto-generated from types/api/runtime-dump.json
+ * Auto-generated from sandkit-api/runtime-dump.json
  * Run: npm run generate-types
  * Story progression
  */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import type { ApiHandler, Method0, Method1, Method2, Method3, Method4, Method5, Method6 } from "../common";
 export interface ApiProgression {
-  complete: Method1;
+  /** Mark progression step complete. */
+  complete: (request: Record<string, unknown>) => void;
 }
 export type ApiProgressionNamespace = ApiProgression;

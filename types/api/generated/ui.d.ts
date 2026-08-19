@@ -1,30 +1,74 @@
 /**
- * Auto-generated from types/api/runtime-dump.json
+ * Auto-generated from sandkit-api/runtime-dump.json
  * Run: npm run generate-types
  * Toast, overlays, dialogs
  */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import type { ApiHandler, Method0, Method1, Method2, Method3, Method4, Method5, Method6 } from "../common";
 export interface ApiUi {
-  alert: Method2;
-  confirm: Method2;
-  inject: Method2;
+  /** Show an alert dialog. */
+  alert: (message: string, title: string) => Promise<void>;
+  /** Show a confirm dialog. */
+  confirm: (message: string, title: string) => Promise<boolean>;
+  /**
+   * Mount a React component into the game UI tree.
+   * @param componentId component id.
+   * @param component component string.
+   */
+  inject: (componentId: string, component: (...args: unknown[]) => unknown) => (() => void) | undefined;
   navigation: ApiUiNavigation;
-  openPauseMenu: Method0;
+  /** open Pause Menu. */
+  openPauseMenu: () => void;
   overlays: ApiUiOverlays;
-  prompt: Method5;
-  showTooltip: Method1;
-  toast: Method2;
-  update: Method2;
+  /**
+   * Show a prompt dialog.
+   * @param defaultValue default Value string.
+   * @param allowCopy allow Copy flag.
+   */
+  prompt: (message: string, defaultValue: string, placeholder: string, title: string, allowCopy: boolean) => Promise<string | null>;
+  /** show Tooltip. */
+  showTooltip: (data: Record<string, unknown>) => void;
+  /**
+   * Show a toast notification.
+   * @param options Optional settings object.
+   */
+  toast: (message: string, options: Record<string, unknown>) => void;
+  /**
+   * Update a definition.
+   * @param componentId component id.
+   * @param options Optional settings object.
+   */
+  update: (componentId: string, options: Record<string, unknown>) => void;
 }
 export interface ApiUiNavigation {
-  controllerFocusClass: Method1;
-  useFocusable: Method1;
-  useFocusScope: Method1;
+  /**
+   * Return string.
+   * @param focused focused flag.
+   */
+  controllerFocusClass: (focused: boolean) => string;
+  useFocusable: (options: Record<string, unknown>) => void;
+  /**
+   * use Focus Scope.
+   * @param options Optional settings object.
+   */
+  useFocusScope: (options: Record<string, unknown>) => void;
 }
 export interface ApiUiOverlays {
-  register: Method3;
-  unregister: Method2;
-  update: Method1;
+  /**
+   * Register a definition.
+   * @param slot slot string.
+   * @param overlayId overlay id.
+   */
+  register: (slot: string, overlayId: string, render: (...args: unknown[]) => unknown) => void;
+  /**
+   * unregister.
+   * @param slot slot string.
+   * @param overlayId overlay id.
+   */
+  unregister: (slot: string, overlayId: string) => void;
+  /**
+   * Update a definition.
+   * @param slot slot string.
+   */
+  update: (slot: string) => void;
 }
 export type ApiUiNamespace = ApiUi;

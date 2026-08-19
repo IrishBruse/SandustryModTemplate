@@ -17,6 +17,7 @@ import {
   parseJsonDump,
   parseTextDump,
 } from "./api-dump-format.mjs";
+import { applyTypeCuration } from "./api-type-curation.mjs";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const JSON_SOURCE = join(ROOT, "sandkit-api/runtime-dump.json");
@@ -194,6 +195,7 @@ if (existsSync(DOCS_TARGET)) {
 }
 
 const docs = mergeApiDocs(existingDocs, dump, NAMESPACE_NOTES);
+applyTypeCuration(docs);
 
 writeFileSync(DOCS_TARGET, `${JSON.stringify(docs, null, 2)}\n`);
 

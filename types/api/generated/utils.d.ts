@@ -1,14 +1,29 @@
 /**
- * Auto-generated from types/api/runtime-dump.json
+ * Auto-generated from sandkit-api/runtime-dump.json
  * Run: npm run generate-types
  * Math helpers
  */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import type { ApiHandler, Method0, Method1, Method2, Method3, Method4, Method5, Method6 } from "../common";
 export interface ApiUtils {
-  getAngle: Method2;
-  getCoordinatesBetweenPoints: Method2;
-  getDirection: Method2;
-  getDistance: Method2;
+  /**
+   * Return angle.
+   * @param pointA point A.
+   * @param pointB point B.
+   */
+  getAngle: (pointA: { x: number; y: number }, pointB: { x: number; y: number }) => number;
+  /**
+   * Return coordinates between points.
+   * @param pointA point A.
+   * @param pointB point B.
+   */
+  getCoordinatesBetweenPoints: (pointA: { x: number; y: number }, pointB: { x: number; y: number }) => { x: number; y: number }[];
+  /**
+   * Return direction.
+   * @param pointA point A.
+   * @param pointB point B.
+   */
+  getDirection: (pointA: { x: number; y: number }, pointB: { x: number; y: number }) => { x: number; y: number };
+  /** Return distance. */
+  getDistance: (arg0: unknown, arg1: unknown) => number;
 }
 export type ApiUtilsNamespace = ApiUtils;

@@ -1,15 +1,38 @@
 /**
- * Auto-generated from types/api/runtime-dump.json
+ * Auto-generated from sandkit-api/runtime-dump.json
  * Run: npm run generate-types
  * Upgrade trees
  */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import type { ApiHandler, Method0, Method1, Method2, Method3, Method4, Method5, Method6 } from "../common";
 export interface ApiUpgrades {
-  getAvailableLevelById: Method2;
-  getLevelById: Method2;
-  register: Method1;
-  registerCategory: Method1;
-  updateDefinition: Method3;
+  /**
+   * Return available level by id.
+   * @param itemId item id.
+   * @param upgradeId upgrade id.
+   */
+  getAvailableLevelById: (itemId: string, upgradeId: string) => number;
+  /**
+   * Return level by id.
+   * @param itemId item id.
+   * @param upgradeId upgrade id.
+   */
+  getLevelById: (itemId: string, upgradeId: string) => number;
+  /**
+   * Register a definition.
+   * @param definition Registration definition object.
+   */
+  register: (definition: Record<string, unknown>) => void;
+  /**
+   * Register category.
+   * @param definition Registration definition object.
+   */
+  registerCategory: (definition: Record<string, unknown>) => void;
+  /**
+   * Update definition.
+   * @param itemId item id.
+   * @param upgradeId upgrade id.
+   * @param partial Optional settings object.
+   */
+  updateDefinition: (itemId: string, upgradeId: string, partial: Record<string, unknown>) => void;
 }
 export type ApiUpgradesNamespace = ApiUpgrades;

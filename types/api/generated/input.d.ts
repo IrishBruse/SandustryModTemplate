@@ -1,20 +1,50 @@
 /**
- * Auto-generated from types/api/runtime-dump.json
+ * Auto-generated from sandkit-api/runtime-dump.json
  * Run: npm run generate-types
  * Key bindings and mouse
  */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import type { ApiHandler, Method0, Method1, Method2, Method3, Method4, Method5, Method6 } from "../common";
 export interface ApiInput {
-  getBoundKeys: Method1;
-  getDisplayKey: Method2;
-  getMouseCellPosition: Method0;
-  isAltHeld: Method0;
-  isCtrlHeld: Method0;
-  pressBinding: Method1;
-  registerBinding: Method3;
-  releaseBinding: Method1;
-  resetMouseState: Method0;
-  triggerBinding: Method1;
+  /**
+   * Return bound keys.
+   * @param bindingId binding id.
+   */
+  getBoundKeys: (bindingId: string) => string[];
+  /**
+   * Return display key.
+   * @param bindingId binding id.
+   * @param defaultLabel default Label string.
+   */
+  getDisplayKey: (bindingId: string, defaultLabel: string) => string;
+  /** Return mouse cell position. */
+  getMouseCellPosition: () => { x: number; y: number };
+  /** Return whether alt held. */
+  isAltHeld: () => boolean;
+  /** Return whether ctrl held. */
+  isCtrlHeld: () => boolean;
+  /**
+   * press Binding.
+   * @param bindingId binding id.
+   */
+  pressBinding: (bindingId: string) => void;
+  /**
+   * Register binding.
+   * @param bindingId binding id.
+   * @param defaultKeys default Keys string.
+   * @param definition Registration definition object.
+   */
+  registerBinding: (bindingId: string, defaultKeys: string, definition: Record<string, unknown>) => void;
+  /**
+   * release Binding.
+   * @param bindingId binding id.
+   */
+  releaseBinding: (bindingId: string) => void;
+  /** reset Mouse State. */
+  resetMouseState: () => void;
+  /**
+   * trigger Binding.
+   * @param bindingId binding id.
+   */
+  triggerBinding: (bindingId: string) => void;
 }
 export type ApiInputNamespace = ApiInput;

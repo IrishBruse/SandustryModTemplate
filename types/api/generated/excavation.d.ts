@@ -1,11 +1,15 @@
 /**
- * Auto-generated from types/api/runtime-dump.json
+ * Auto-generated from sandkit-api/runtime-dump.json
  * Run: npm run generate-types
  * Excavation profiles
  */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import type { ApiHandler, Method0, Method1, Method2, Method3, Method4, Method5, Method6 } from "../common";
 export interface ApiExcavation {
-  registerProfile: Method2;
+  /**
+   * Register profile.
+   * @param id id id.
+   * @param definition Registration definition object.
+   */
+  registerProfile: (id: string, definition: Record<string, unknown>) => void;
 }
 export type ApiExcavationNamespace = ApiExcavation;

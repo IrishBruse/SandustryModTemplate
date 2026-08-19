@@ -1,13 +1,18 @@
 /**
- * Auto-generated from types/api/runtime-dump.json
+ * Auto-generated from sandkit-api/runtime-dump.json
  * Run: npm run generate-types
  * Custom maps
  */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import type { ApiHandler, Method0, Method1, Method2, Method3, Method4, Method5, Method6 } from "../common";
 export interface ApiMaps {
-  getActive: Method0;
-  getAvailable: Method0;
-  start: Method1;
+  /** Return active. */
+  getActive: () => string | null;
+  /** Return available. */
+  getAvailable: () => string[];
+  /**
+   * Return boolean.
+   * @param mapId map id.
+   */
+  start: (mapId: string) => void;
 }
 export type ApiMapsNamespace = ApiMaps;

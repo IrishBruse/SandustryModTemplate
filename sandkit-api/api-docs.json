@@ -1,6 +1,6 @@
 {
   "meta": {
-    "updatedAt": "2026-08-19T22:40:03.816Z",
+    "updatedAt": "2026-08-19T22:41:53.287Z",
     "sourceGeneratedAt": "2026-08-19",
     "entryCount": 352,
     "functionCount": 281
@@ -12,12 +12,12 @@
         "getActive": {
           "description": "Return active.",
           "params": [],
-          "returnType": "unknown"
+          "returnType": "string"
         },
         "getSelected": {
           "description": "Return selected.",
           "params": [],
-          "returnType": "unknown"
+          "returnType": "string"
         },
         "setCustomData": {
           "description": "Set custom data.",
@@ -46,7 +46,7 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "string | null"
         },
         "getUrl": {
           "description": "Return url.",
@@ -58,7 +58,7 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "string"
         },
         "selectProvider": {
           "description": "Select provider.",
@@ -164,7 +164,7 @@
         "getPlayerZoneId": {
           "description": "Return player zone id.",
           "params": [],
-          "returnType": "unknown"
+          "returnType": "string"
         },
         "getZoneIdAtCell": {
           "description": "Return zone id at cell.",
@@ -182,7 +182,7 @@
               "type": "number"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "string"
         }
       }
     },
@@ -192,7 +192,7 @@
         "cancelPlacement": {
           "description": "Cancel placement.",
           "params": [],
-          "returnType": "unknown"
+          "returnType": "void"
         },
         "getSnappedPositionAtCell": {
           "description": "Return snapped position at cell.",
@@ -210,7 +210,7 @@
               "type": "number"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "{ x: number; y: number }"
         },
         "isBlockedAtCell": {
           "description": "Return whether blocked at cell.",
@@ -297,7 +297,7 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "number"
         },
         "getValueFromCellId": {
           "description": "Return value from cell id.",
@@ -309,7 +309,7 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "number"
         },
         "isCellIdCollectable": {
           "description": "Return whether cell id collectable.",
@@ -385,9 +385,9 @@
           "params": [
             {
               "name": "t",
-              "label": "cooldown",
+              "label": "cooldownId",
               "description": "",
-              "type": "unknown"
+              "type": "string"
             },
             {
               "name": "r",
@@ -403,9 +403,9 @@
           "params": [
             {
               "name": "t",
-              "label": "cooldown",
+              "label": "cooldownId",
               "description": "",
-              "type": "unknown"
+              "type": "string"
             },
             {
               "name": "r",
@@ -618,7 +618,7 @@
               "name": "r",
               "label": "interaction",
               "description": "",
-              "type": "unknown"
+              "type": "Record<string, unknown>"
             }
           ],
           "returnType": "void"
@@ -747,7 +747,7 @@
               "type": "number"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "{ x: number; y: number } | null"
         },
         "getDataFieldAtCell": {
           "description": "Return data field at cell.",
@@ -771,7 +771,7 @@
               "type": "number"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "number"
         },
         "getDefinitionByType": {
           "description": "Return definition by type.",
@@ -783,7 +783,7 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "Record<string, unknown> | undefined"
         },
         "getInfoAtCell": {
           "description": "Return info at cell.",
@@ -801,7 +801,7 @@
               "type": "number"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "Record<string, unknown> | undefined"
         },
         "getMatterTypeAtCell": {
           "description": "Return matter type at cell.",
@@ -819,7 +819,7 @@
               "type": "number"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "string"
         },
         "getNameByType": {
           "description": "Return name by type.",
@@ -831,12 +831,12 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "string"
         },
         "getRegisteredTypes": {
           "description": "Return registered types.",
           "params": [],
-          "returnType": "unknown"
+          "returnType": "string[]"
         },
         "getResolvedTypeAtCell": {
           "description": "Return resolved type at cell.",
@@ -854,7 +854,7 @@
               "type": "number"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "string"
         },
         "getResolvedTypeFromCellId": {
           "description": "Return resolved type from cell id.",
@@ -866,7 +866,7 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "string"
         },
         "getTypeAtCell": {
           "description": "Return type at cell.",
@@ -884,7 +884,7 @@
               "type": "number"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "string"
         },
         "getTypeFromId": {
           "description": "Return type from id.",
@@ -896,7 +896,7 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "string"
         },
         "getVelocityAtCell": {
           "description": "Return velocity at cell.",
@@ -914,7 +914,7 @@
               "type": "number"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "{ x: number; y: number }"
         },
         "isFreeFallingAtCell": {
           "description": "Return whether free falling at cell.",
@@ -1067,7 +1067,7 @@
               "name": "o",
               "label": "value",
               "description": "value.",
-              "type": "unknown"
+              "type": "number"
             }
           ],
           "returnType": "void"
@@ -1121,7 +1121,7 @@
               "name": "r",
               "label": "physicsState",
               "description": "physics State.",
-              "type": "unknown"
+              "type": "Record<string, unknown>"
             }
           ],
           "returnType": "void"
@@ -1291,7 +1291,7 @@
               "type": "number"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "Record<string, unknown> | undefined"
         },
         "getNetworkFreeCapacityAtCell": {
           "description": "Return network free capacity at cell.",
@@ -1309,7 +1309,7 @@
               "type": "number"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "number"
         },
         "registerType": {
           "description": "Register type.",
@@ -1345,13 +1345,13 @@
           "params": [
             {
               "name": "t",
-              "label": "t",
+              "label": "eventName",
               "description": "",
               "type": "string"
             },
             {
               "name": "r",
-              "label": "r",
+              "label": "payload",
               "description": "",
               "type": "unknown"
             }
@@ -1363,13 +1363,13 @@
           "params": [
             {
               "name": "t",
-              "label": "t",
+              "label": "eventName",
               "description": "",
               "type": "string"
             },
             {
               "name": "r",
-              "label": "r",
+              "label": "handler",
               "description": "",
               "type": "(...args: unknown[]) => unknown"
             }
@@ -1460,7 +1460,7 @@
         "getAll": {
           "description": "Return all.",
           "params": [],
-          "returnType": "unknown"
+          "returnType": "Record<string, unknown>"
         }
       }
     },
@@ -1543,21 +1543,21 @@
           "params": [
             {
               "name": "t",
-              "label": "t",
+              "label": "hookId",
               "description": "",
-              "type": "unknown"
+              "type": "string"
             },
             {
               "name": "o",
-              "label": "o",
+              "label": "handler",
               "description": "",
-              "type": "unknown"
+              "type": "(...args: unknown[]) => unknown"
             },
             {
               "name": "n",
-              "label": "n",
+              "label": "priority",
               "description": "",
-              "type": "unknown"
+              "type": "number"
             }
           ],
           "returnType": "void"
@@ -1567,21 +1567,21 @@
           "params": [
             {
               "name": "t",
-              "label": "t",
+              "label": "hookId",
               "description": "",
-              "type": "unknown"
+              "type": "string"
             },
             {
               "name": "o",
-              "label": "o",
+              "label": "handler",
               "description": "",
-              "type": "unknown"
+              "type": "(...args: unknown[]) => unknown"
             },
             {
               "name": "n",
-              "label": "n",
+              "label": "priority",
               "description": "",
-              "type": "unknown"
+              "type": "number"
             }
           ],
           "returnType": "void"
@@ -1622,7 +1622,7 @@
               "name": "e",
               "label": "value",
               "description": "value.",
-              "type": "unknown"
+              "type": "number"
             },
             {
               "name": "t",
@@ -1636,7 +1636,7 @@
         "getAvailableLocales": {
           "description": "Return available locales.",
           "params": [],
-          "returnType": "unknown"
+          "returnType": "string[]"
         },
         "getDescription": {
           "description": "Return description.",
@@ -1648,7 +1648,7 @@
               "type": "Record<string, unknown>"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "string"
         },
         "getGlobal": {
           "description": "Return global.",
@@ -1660,22 +1660,22 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "string"
         },
         "getGlobals": {
           "description": "Return globals.",
           "params": [],
-          "returnType": "unknown"
+          "returnType": "Record<string, string>"
         },
         "getLanguages": {
           "description": "Return languages.",
           "params": [],
-          "returnType": "unknown"
+          "returnType": "string[]"
         },
         "getLocale": {
           "description": "Return locale.",
           "params": [],
-          "returnType": "unknown"
+          "returnType": "string"
         },
         "getName": {
           "description": "Return name.",
@@ -1687,7 +1687,7 @@
               "type": "Record<string, unknown>"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "string"
         },
         "hasTranslation": {
           "description": "Return whether translation exists.",
@@ -1773,7 +1773,7 @@
               "name": "t",
               "label": "params",
               "description": "params.",
-              "type": "unknown"
+              "type": "Record<string, unknown>"
             }
           ],
           "returnType": "string"
@@ -1794,7 +1794,7 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "{ __translatable: true; key: string; fallback: string }"
         }
       }
     },
@@ -1811,7 +1811,7 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "string[]"
         },
         "getDisplayKey": {
           "description": "Return display key.",
@@ -1829,12 +1829,12 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "string"
         },
         "getMouseCellPosition": {
           "description": "Return mouse cell position.",
           "params": [],
-          "returnType": "unknown"
+          "returnType": "{ x: number; y: number }"
         },
         "isAltHeld": {
           "description": "Return whether alt held.",
@@ -1931,7 +1931,7 @@
         "getActive": {
           "description": "Return active.",
           "params": [],
-          "returnType": "unknown"
+          "returnType": "string | null"
         },
         "getDefinitionById": {
           "description": "Return definition by id.",
@@ -1943,7 +1943,7 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "Record<string, unknown> | undefined"
         },
         "isActiveById": {
           "description": "Return whether active by id.",
@@ -2123,12 +2123,12 @@
         "getActive": {
           "description": "Return active.",
           "params": [],
-          "returnType": "unknown"
+          "returnType": "string | null"
         },
         "getAvailable": {
           "description": "Return available.",
           "params": [],
-          "returnType": "unknown"
+          "returnType": "string[]"
         },
         "start": {
           "description": "Return boolean.",
@@ -2157,7 +2157,7 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "string[]"
         }
       }
     },
@@ -2174,7 +2174,7 @@
               "type": "number"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "{ x: number; y: number }[]"
         },
         "excavateAtCell": {
           "description": "Excavate terrain at a cell.",
@@ -2243,7 +2243,7 @@
         "getWorldPosition": {
           "description": "Return world position.",
           "params": [],
-          "returnType": "unknown"
+          "returnType": "{ x: number; y: number }"
         },
         "inventory": {
           "description": "",
@@ -2445,7 +2445,7 @@
               "name": "t",
               "label": "request",
               "description": "",
-              "type": "unknown"
+              "type": "Record<string, unknown>"
             }
           ],
           "returnType": "void"
@@ -2470,7 +2470,7 @@
         "getAll": {
           "description": "Return all.",
           "params": [],
-          "returnType": "unknown"
+          "returnType": "Record<string, unknown>[]"
         },
         "getById": {
           "description": "Return by id.",
@@ -2482,7 +2482,7 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "Record<string, unknown> | undefined"
         },
         "getDefinitionById": {
           "description": "Return definition by id.",
@@ -2494,7 +2494,7 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "Record<string, unknown> | undefined"
         },
         "register": {
           "description": "Register a definition.",
@@ -2515,7 +2515,7 @@
               "name": "t",
               "label": "projectile",
               "description": "",
-              "type": "unknown"
+              "type": "Record<string, unknown>"
             }
           ],
           "returnType": "void"
@@ -2664,26 +2664,26 @@
               "type": "number"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "{ x: number; y: number }"
         },
         "getGridMetrics": {
           "description": "Return grid metrics.",
           "params": [],
-          "returnType": "unknown"
+          "returnType": "Record<string, number>"
         },
         "getOverlayViewportSize": {
           "description": "Return overlay viewport size.",
           "params": [],
-          "returnType": "unknown"
+          "returnType": "{ width: number; height: number }"
         },
         "withOverlayContext": {
           "description": "",
           "params": [
             {
               "name": "t",
-              "label": "t",
+              "label": "draw",
               "description": "",
-              "type": "unknown"
+              "type": "(ctx: CanvasRenderingContext2D) => void"
             }
           ],
           "returnType": "void"
@@ -2737,7 +2737,7 @@
         "getActive": {
           "description": "Return active.",
           "params": [],
-          "returnType": "unknown"
+          "returnType": "string"
         }
       }
     },
@@ -2771,12 +2771,12 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "string | number | boolean | undefined"
         },
         "getAll": {
           "description": "Return all.",
           "params": [],
-          "returnType": "unknown"
+          "returnType": "Record<string, string | number | boolean>"
         },
         "onChange": {
           "description": "Return () => void.",
@@ -2826,7 +2826,7 @@
                   "type": "string"
                 }
               ],
-              "returnType": "unknown"
+              "returnType": "SharedArrayBuffer | undefined"
             }
           }
         }
@@ -2851,7 +2851,7 @@
                   "name": "r",
                   "label": "apply",
                   "description": "",
-                  "type": "unknown"
+                  "type": "(...args: unknown[]) => unknown"
                 }
               ],
               "returnType": "void"
@@ -2882,7 +2882,7 @@
               "name": "o",
               "label": "baseVolume",
               "description": "base Volume.",
-              "type": "unknown"
+              "type": "number"
             }
           ],
           "returnType": "void"
@@ -2930,7 +2930,7 @@
               "name": "t",
               "label": "layers",
               "description": "",
-              "type": "unknown"
+              "type": "Record<string, unknown>[]"
             },
             {
               "name": "r",
@@ -2978,7 +2978,7 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "Record<string, unknown> | undefined"
         },
         "hideAllPlayerModSprites": {
           "description": "hide All Player Mod Sprites.",
@@ -3240,7 +3240,7 @@
               "name": "r",
               "label": "variant",
               "description": "variant.",
-              "type": "unknown"
+              "type": "Record<string, unknown>"
             },
             {
               "name": "o",
@@ -3315,7 +3315,7 @@
               "type": "number"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "Record<string, unknown> | undefined"
         },
         "getDefinitionByType": {
           "description": "Return definition by type.",
@@ -3327,7 +3327,7 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "Record<string, unknown> | undefined"
         },
         "getTypeFromId": {
           "description": "Return type from id.",
@@ -3339,12 +3339,12 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "string"
         },
         "getUnlockedTypes": {
           "description": "Return unlocked types.",
           "params": [],
-          "returnType": "unknown"
+          "returnType": "string[]"
         },
         "hasBuiltAtCell": {
           "description": "Return whether built at cell exists.",
@@ -3407,7 +3407,7 @@
               "name": "e",
               "label": "structure",
               "description": "",
-              "type": "unknown"
+              "type": "Record<string, unknown>"
             },
             {
               "name": "t",
@@ -3461,13 +3461,13 @@
               "name": "e",
               "label": "value",
               "description": "value.",
-              "type": "unknown"
+              "type": "number"
             },
             {
               "name": "t",
               "label": "thresholds",
               "description": "thresholds.",
-              "type": "unknown"
+              "type": "number[]"
             }
           ],
           "returnType": "number"
@@ -3597,7 +3597,7 @@
               "name": "t",
               "label": "positions",
               "description": "positions.",
-              "type": "unknown"
+              "type": "{ x: number; y: number }[]"
             },
             {
               "name": "r",
@@ -3675,7 +3675,7 @@
               "name": "t",
               "label": "structure",
               "description": "",
-              "type": "unknown"
+              "type": "Record<string, unknown>"
             },
             {
               "name": "r",
@@ -3699,7 +3699,7 @@
               "name": "t",
               "label": "structure",
               "description": "",
-              "type": "unknown"
+              "type": "Record<string, unknown>"
             },
             {
               "name": "r",
@@ -3741,19 +3741,19 @@
               "name": "t",
               "label": "structure",
               "description": "",
-              "type": "unknown"
+              "type": "Record<string, unknown>"
             },
             {
               "name": "r",
               "label": "value",
               "description": "value.",
-              "type": "unknown"
+              "type": "number"
             },
             {
               "name": "o",
               "label": "thresholds",
               "description": "thresholds.",
-              "type": "unknown"
+              "type": "number[]"
             }
           ],
           "returnType": "void"
@@ -3777,13 +3777,13 @@
               "name": "o",
               "label": "value",
               "description": "value.",
-              "type": "unknown"
+              "type": "number"
             },
             {
               "name": "n",
               "label": "thresholds",
               "description": "thresholds.",
-              "type": "unknown"
+              "type": "number[]"
             }
           ],
           "returnType": "void"
@@ -3795,7 +3795,7 @@
               "name": "t",
               "label": "structure",
               "description": "",
-              "type": "unknown"
+              "type": "Record<string, unknown>"
             },
             {
               "name": "r",
@@ -3863,7 +3863,7 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "Record<string, unknown> | undefined"
         },
         "isLockedById": {
           "description": "Return whether locked by id.",
@@ -3932,7 +3932,7 @@
               "name": "t",
               "label": "updates",
               "description": "",
-              "type": "unknown"
+              "type": "Record<string, unknown>"
             }
           ],
           "returnType": "void"
@@ -4012,7 +4012,7 @@
               "type": "number"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "Record<string, unknown>"
         },
         "getTypeAtCell": {
           "description": "Return type at cell.",
@@ -4030,7 +4030,7 @@
               "type": "number"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "string"
         },
         "getTypeFromId": {
           "description": "Return type from id.",
@@ -4042,7 +4042,7 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "string"
         },
         "isAtCell": {
           "description": "Return whether at cell.",
@@ -4214,12 +4214,12 @@
         "getTick": {
           "description": "Return tick.",
           "params": [],
-          "returnType": "unknown"
+          "returnType": "number"
         },
         "getTimeMs": {
           "description": "Return time ms.",
           "params": [],
-          "returnType": "unknown"
+          "returnType": "number"
         }
       }
     },
@@ -4232,7 +4232,7 @@
             "getSize": {
               "description": "Return size.",
               "params": [],
-              "returnType": "unknown"
+              "returnType": "number"
             },
             "isActive": {
               "description": "Return whether active.",
@@ -4360,9 +4360,9 @@
               "params": [
                 {
                   "name": "e",
-                  "label": "e",
+                  "label": "options",
                   "description": "",
-                  "type": "unknown"
+                  "type": "Record<string, unknown>"
                 }
               ],
               "returnType": "void"
@@ -4464,7 +4464,7 @@
               "name": "o",
               "label": "placeholder",
               "description": "",
-              "type": "unknown"
+              "type": "string"
             },
             {
               "name": "n",
@@ -4550,7 +4550,7 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "number"
         },
         "getLevelById": {
           "description": "Return level by id.",
@@ -4568,7 +4568,7 @@
               "type": "string"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "number"
         },
         "register": {
           "description": "Register a definition.",
@@ -4630,16 +4630,16 @@
               "name": "e",
               "label": "pointA",
               "description": "point A.",
-              "type": "unknown"
+              "type": "{ x: number; y: number }"
             },
             {
               "name": "t",
               "label": "pointB",
               "description": "point B.",
-              "type": "unknown"
+              "type": "{ x: number; y: number }"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "number"
         },
         "getCoordinatesBetweenPoints": {
           "description": "Return coordinates between points.",
@@ -4648,16 +4648,16 @@
               "name": "e",
               "label": "pointA",
               "description": "point A.",
-              "type": "unknown"
+              "type": "{ x: number; y: number }"
             },
             {
               "name": "t",
               "label": "pointB",
               "description": "point B.",
-              "type": "unknown"
+              "type": "{ x: number; y: number }"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "{ x: number; y: number }[]"
         },
         "getDirection": {
           "description": "Return direction.",
@@ -4666,21 +4666,21 @@
               "name": "e",
               "label": "pointA",
               "description": "point A.",
-              "type": "unknown"
+              "type": "{ x: number; y: number }"
             },
             {
               "name": "t",
               "label": "pointB",
               "description": "point B.",
-              "type": "unknown"
+              "type": "{ x: number; y: number }"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "{ x: number; y: number }"
         },
         "getDistance": {
           "description": "Return distance.",
           "params": [],
-          "returnType": "unknown"
+          "returnType": "number"
         }
       }
     },
@@ -4756,7 +4756,7 @@
               "type": "number"
             }
           ],
-          "returnType": "unknown"
+          "returnType": "number"
         },
         "isCellEmptyAtCell": {
           "description": "Return whether cell empty at cell.",
@@ -4804,7 +4804,7 @@
                   "name": "t",
                   "label": "worldItem",
                   "description": "",
-                  "type": "unknown"
+                  "type": "Record<string, unknown>"
                 }
               ],
               "returnType": "void"
@@ -4812,7 +4812,7 @@
             "getAll": {
               "description": "Return all.",
               "params": [],
-              "returnType": "unknown"
+              "returnType": "Record<string, unknown>[]"
             },
             "getById": {
               "description": "Return by id.",
@@ -4824,7 +4824,7 @@
                   "type": "string"
                 }
               ],
-              "returnType": "unknown"
+              "returnType": "Record<string, unknown> | undefined"
             },
             "pickUp": {
               "description": "Return boolean.",
@@ -4833,7 +4833,7 @@
                   "name": "t",
                   "label": "worldItem",
                   "description": "",
-                  "type": "unknown"
+                  "type": "Record<string, unknown>"
                 }
               ],
               "returnType": "void"
@@ -4869,7 +4869,7 @@
                   "name": "l",
                   "label": "light",
                   "description": "",
-                  "type": "unknown"
+                  "type": "Record<string, unknown> | undefined"
                 }
               ],
               "returnType": "void"
@@ -4895,7 +4895,7 @@
               "name": "o",
               "label": "range",
               "description": "range.",
-              "type": "unknown"
+              "type": "number"
             }
           ],
           "returnType": "void"

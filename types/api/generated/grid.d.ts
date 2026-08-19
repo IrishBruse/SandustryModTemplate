@@ -1,12 +1,26 @@
 /**
- * Auto-generated from types/api/runtime-dump.json
+ * Auto-generated from sandkit-api/runtime-dump.json
  * Run: npm run generate-types
  * Rect/circle iteration
  */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import type { ApiHandler, Method0, Method1, Method2, Method3, Method4, Method5, Method6 } from "../common";
 export interface ApiGrid {
-  forEachCellInCircle: Method4;
-  forEachCellInRect: Method5;
+  /**
+   * Iterate cell in circle.
+   * @param centerCellX Cell X coordinate.
+   * @param centerCellY Cell Y coordinate.
+   * @param radius radius.
+   * @param callback Callback function.
+   */
+  forEachCellInCircle: (centerCellX: number, centerCellY: number, radius: number, callback: (...args: unknown[]) => unknown) => void;
+  /**
+   * Iterate cell in rect.
+   * @param cellX Cell X coordinate.
+   * @param cellY Cell Y coordinate.
+   * @param width width id.
+   * @param height height.
+   * @param callback Callback function.
+   */
+  forEachCellInRect: (cellX: number, cellY: number, width: number, height: number, callback: (...args: unknown[]) => unknown) => void;
 }
 export type ApiGridNamespace = ApiGrid;

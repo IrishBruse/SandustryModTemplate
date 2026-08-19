@@ -1,13 +1,25 @@
 /**
- * Auto-generated from types/api/runtime-dump.json
+ * Auto-generated from sandkit-api/runtime-dump.json
  * Run: npm run generate-types
  * Mod asset provider selection
  */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import type { ApiHandler, Method0, Method1, Method2, Method3, Method4, Method5, Method6 } from "../common";
 export interface ApiAssets {
-  getSelectedProvider: Method1;
-  getUrl: Method1;
-  selectProvider: Method2;
+  /**
+   * Return selected provider.
+   * @param kind kind string.
+   */
+  getSelectedProvider: (kind: string) => string | null;
+  /**
+   * Return url.
+   * @param relativePath relative Path string.
+   */
+  getUrl: (relativePath: string) => string;
+  /**
+   * Select provider.
+   * @param kind kind string.
+   * @param providerId provider id.
+   */
+  selectProvider: (kind: string, providerId: string) => void;
 }
 export type ApiAssetsNamespace = ApiAssets;

@@ -1,14 +1,28 @@
 /**
- * Auto-generated from types/api/runtime-dump.json
+ * Auto-generated from sandkit-api/runtime-dump.json
  * Run: npm run generate-types
  * Placement helpers
  */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import type { ApiHandler, Method0, Method1, Method2, Method3, Method4, Method5, Method6 } from "../common";
 export interface ApiBuilding {
-  cancelPlacement: Method0;
-  getSnappedPositionAtCell: Method2;
-  isBlockedAtCell: Method2;
-  selectStructure: Method1;
+  /** Cancel placement. */
+  cancelPlacement: () => void;
+  /**
+   * Return snapped position at cell.
+   * @param cellX Cell X coordinate.
+   * @param cellY Cell Y coordinate.
+   */
+  getSnappedPositionAtCell: (cellX: number, cellY: number) => { x: number; y: number };
+  /**
+   * Return whether blocked at cell.
+   * @param cellX Cell X coordinate.
+   * @param cellY Cell Y coordinate.
+   */
+  isBlockedAtCell: (cellX: number, cellY: number) => boolean;
+  /**
+   * Select structure.
+   * @param structureTypeOrId structure Type Or id.
+   */
+  selectStructure: (structureTypeOrId: string) => void;
 }
 export type ApiBuildingNamespace = ApiBuilding;

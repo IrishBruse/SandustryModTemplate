@@ -1,15 +1,12 @@
 /**
- * Auto-generated from types/api/runtime-dump.json
+ * Auto-generated from sandkit-api/runtime-dump.json
  * Run: npm run generate-types
  *
  * In-game runtime snapshot: 352 entries, 281 functions.
- * Signatures are mod-facing (ctx bound internally).
- * Docs overlay: types/api/api-docs.json
- * Prefer hand-crafted types in refined/ where available.
+ * Docs overlay: sandkit-api/api-docs.json
  */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 
-import type { ApiHandler, Method0, Method1, Method2, Method3, Method4, Method5, Method6 } from "../common";
 import type { ApiAction } from "./action";
 import type { ApiAssets } from "./assets";
 import type { ApiAuthorization } from "./authorization";

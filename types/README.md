@@ -22,12 +22,13 @@ types/
 | File | Role |
 |---|---|
 | `sandkit-api/runtime-dump.json` | Paste from DevTools (`scripts/dump-api-console.js`). Lists API members from the game. |
-| `sandkit-api/api-docs.json` | Descriptions and param labels. Merged on each generate run. |
+| `sandkit-api/api-docs.json` | Descriptions, param labels, `params[].type`, and `returnType`. Merged on each generate run. |
+| `scripts/api-type-curation.mjs` | Curated type overrides applied into `api-docs.json` on generate. |
 
 ## Generate types and docs
 
 1. In Sandustry DevTools, run `scripts/dump-api-console.js`, then paste the JSON into `sandkit-api/runtime-dump.json`.
-2. Edit descriptions in `sandkit-api/api-docs.json` (optional).
+2. Edit descriptions in `sandkit-api/api-docs.json` (optional). Add or change types in `scripts/api-type-curation.mjs` for bulk curation.
 3. Run:
 
 ```bash

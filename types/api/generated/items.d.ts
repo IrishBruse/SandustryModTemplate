@@ -1,16 +1,37 @@
 /**
- * Auto-generated from types/api/runtime-dump.json
+ * Auto-generated from sandkit-api/runtime-dump.json
  * Run: npm run generate-types
  * Item registration
  */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import type { ApiHandler, Method0, Method1, Method2, Method3, Method4, Method5, Method6 } from "../common";
 export interface ApiItems {
-  createFromId: Method1;
-  getActive: Method0;
-  getDefinitionById: Method1;
-  isActiveById: Method2;
-  register: Method1;
-  updateDefinition: Method2;
+  /**
+   * Create from id.
+   * @param itemId item id.
+   */
+  createFromId: (itemId: string) => void;
+  /** Return active. */
+  getActive: () => string | null;
+  /**
+   * Return definition by id.
+   * @param itemId item id.
+   */
+  getDefinitionById: (itemId: string) => Record<string, unknown> | undefined;
+  /**
+   * Return whether active by id.
+   * @param itemId item id.
+   */
+  isActiveById: (itemId: string, itemType: string) => boolean;
+  /**
+   * Register a definition.
+   * @param definition Registration definition object.
+   */
+  register: (definition: Record<string, unknown>) => void;
+  /**
+   * Update definition.
+   * @param itemId item id.
+   * @param partial Optional settings object.
+   */
+  updateDefinition: (itemId: string, partial: Record<string, unknown>) => void;
 }
 export type ApiItemsNamespace = ApiItems;
