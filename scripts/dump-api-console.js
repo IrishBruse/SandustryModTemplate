@@ -2,12 +2,12 @@
  * Paste this whole file into Sandustry DevTools (Console tab).
  *
  * Requires the example mod loaded so window.api exists.
- * Output matches types/api/runtime-dump.txt
- * Paste into that file, then run: npm run generate-types
+ * Output: JSON for types/api/runtime-dump.json
+ * Then run: npm run generate-types
  *
  * Tips:
- * - Right-click the logged string → "Copy string contents"
- * - Or use copy(apiDump()) if the clipboard API is allowed
+ * - apiDump() logs JSON and copies to clipboard when allowed
+ * - apiDumpObject() returns the parsed object
  */
 (function () {
   function resolveApi() {
@@ -23,83 +23,193 @@
     return t;
   }
 
-  function walk(path, value, depth, seen, lines) {
+  function getFunctionSource(fn) {
+    try {
+      const src = Function.prototype.toString.call(fn);
+      if (src.includes("[native code]")) return "[native code]";
+      return src;
+    } catch {
+      return "[source unavailable]";
+    }
+  }
+
+  function findTopLevelEq(param) {
+    let depth = 0;
+    for (let i = 0; i < param.length; i++) {
+      const ch = param[i];
+      if (ch === "(" || ch === "[" || ch === "{") depth++;
+      else if (ch === ")" || ch === "]" || ch === "}") depth--;
+      else if (ch === "=" && depth === 0) return i;
+    }
+    return -1;
+  }
+
+  function simplifyParam(param) {
+    param = param.replace(/\/\*[\s\S]*?\*\//g, "").trim();
+    if (!param) return null;
+    if (param.startsWith("...")) return param.replace(/\s*=.*$/, "").trim();
+
+    const eqIdx = findTopLevelEq(param);
+    if (eqIdx >= 0) param = param.slice(0, eqIdx).trim();
+
+    if (param.startsWith("{") || param.startsWith("[")) {
+      return param.replace(/\s+/g, " ");
+    }
+
+    const id = param.match(/^([\w$]+)/);
+    return id ? id[1] : param;
+  }
+
+  function parseParamList(paramsStr) {
+    if (!paramsStr.trim()) return [];
+
+    const names = [];
+    let depth = 0;
+    let current = "";
+
+    for (let i = 0; i < paramsStr.length; i++) {
+      const ch = paramsStr[i];
+      if (ch === "(" || ch === "[" || ch === "{") depth++;
+      else if (ch === ")" || ch === "]" || ch === "}") depth--;
+      else if (ch === "," && depth === 0) {
+        const name = simplifyParam(current.trim());
+        if (name) names.push(name);
+        current = "";
+        continue;
+      }
+      current += ch;
+    }
+
+    const last = simplifyParam(current.trim());
+    if (last) names.push(last);
+    return names;
+  }
+
+  function extractParamNames(fn) {
+    const src = getFunctionSource(fn);
+    if (src === "[native code]" || src === "[source unavailable]") return null;
+
+    let paramsStr = null;
+    let match = src.match(/^(?:async\s+)?function\*?\s*[\w$]*\s*\(([^)]*)\)/);
+    if (match) paramsStr = match[1];
+    if (!paramsStr) {
+      match = src.match(/^\(([^)]*)\)\s*=>/);
+      if (match) paramsStr = match[1];
+    }
+    if (!paramsStr) {
+      match = src.match(/^([\w$]+)\s*=>/);
+      if (match) paramsStr = match[1];
+    }
+    if (paramsStr === null) return null;
+    return parseParamList(paramsStr);
+  }
+
+  function formatFunctionDetail(name, fn) {
+    const params = extractParamNames(fn);
+    if (params) {
+      return params.length === 0 ? `${name} ()` : `${name} (${params.join(", ")})`;
+    }
+
+    const arity = fn.length;
+    const plural = arity === 1 ? "parameter" : "parameters";
+    return `${name} (${arity} declared ${plural})`;
+  }
+
+  function walkObject(value, seen) {
     const kind = kindOf(value);
-    const indent = "  ".repeat(depth);
 
     if (kind === "function") {
-      const name = value.name || path.split(".").pop();
-      const arity = value.length;
-      const plural = arity === 1 ? "parameter" : "parameters";
-      lines.push(
-        `${indent}- \`${path}\` — \`function\` — \`${name} (${arity} declared ${plural})\``,
-      );
-      return;
+      const params = extractParamNames(value);
+      const name = value.name || "anonymous";
+      return {
+        kind: "function",
+        name,
+        params: params ?? [],
+        declaredArity: params ? params.length : value.length,
+        signature: formatFunctionDetail(name, value),
+      };
     }
 
     if (kind === "object") {
       if (seen.has(value)) {
-        lines.push(`${indent}- \`${path}\` — \`object\` — \`[circular]\``);
-        return;
+        return { kind: "object", circular: true, members: {} };
       }
       seen.add(value);
 
-      const keys = Object.keys(value).sort();
-      const label = keys.length === 1 ? "property" : "properties";
-      lines.push(
-        `${indent}- \`${path}\` — \`object\` — \`${keys.length} ${label}\``,
-      );
-      for (const key of keys) {
-        walk(`${path}.${key}`, value[key], depth + 1, seen, lines);
+      /** @type {Record<string, unknown>} */
+      const members = {};
+      for (const key of Object.keys(value).sort()) {
+        members[key] = walkObject(value[key], seen);
       }
-      return;
+      return {
+        kind: "object",
+        memberCount: Object.keys(members).length,
+        members,
+      };
     }
 
     if (kind === "array") {
-      lines.push(`${indent}- \`${path}\` — \`array\` — \`${value.length} items\``);
-      return;
+      return { kind: "array", length: value.length };
     }
 
-    lines.push(`${indent}- \`${path}\` — \`${kind}\``);
+    if (kind === "number" || kind === "string" || kind === "boolean" || kind === "null") {
+      return { kind, value };
+    }
+
+    return { kind };
   }
 
-  function dump(api) {
+  function buildDump(api) {
+    /** @type {Record<string, unknown>} */
+    const namespaces = {};
     const seen = new WeakSet();
-    const body = [];
-    const namespaces = Object.keys(api).sort();
+    let functions = 0;
+    let entries = 0;
 
-    for (const key of namespaces) {
-      walk(`api.${key}`, api[key], 0, seen, body);
+    function count(node) {
+      entries++;
+      if (node && typeof node === "object" && node.kind === "function") functions++;
+      if (node && typeof node === "object" && node.members && typeof node.members === "object") {
+        for (const child of Object.values(node.members)) count(child);
+      }
     }
 
-    const functions = body.filter((line) => line.includes("— `function`")).length;
-    const entries = body.length;
-    const stamp = new Date().toISOString().slice(0, 10);
+    for (const key of Object.keys(api).sort()) {
+      namespaces[key] = walkObject(api[key], seen);
+      count(namespaces[key]);
+    }
 
-    return [
-      `# Sandkit API runtime dump (${stamp})`,
-      `# Entries: ${entries}, Functions: ${functions}`,
-      `# Paste below into types/api/runtime-dump.txt, then: npm run generate-types`,
-      "",
-      ...body,
-      "",
-    ].join("\n");
+    return {
+      meta: {
+        generatedAt: new Date().toISOString().slice(0, 10),
+        entries,
+        functions,
+      },
+      namespaces,
+    };
   }
 
-  globalThis.apiDump = function apiDump() {
+  globalThis.apiDumpObject = function apiDumpObject() {
     const api = resolveApi();
     if (!api) {
       console.error(
         "api not found. Load Sandustry with the example mod, then run apiDump() again.",
       );
-      return "";
+      return null;
     }
+    return buildDump(api);
+  };
 
-    const text = dump(api);
+  globalThis.apiDump = function apiDump() {
+    const payload = globalThis.apiDumpObject();
+    if (!payload) return "";
+
+    const text = JSON.stringify(payload, null, 2);
     console.log(text);
     console.info(
-      `[apiDump] ${text.split("\n").length} lines, ${(text.match(/— `function`/g) ?? []).length} functions`,
+      `[apiDump] ${payload.meta.entries} entries, ${payload.meta.functions} functions`,
     );
+    console.info("[apiDump] paste into types/api/runtime-dump.json, then: npm run generate-types");
 
     if (navigator.clipboard?.writeText) {
       navigator.clipboard
@@ -116,9 +226,11 @@
   };
 
   const api = resolveApi();
-  if (api) {
-    console.info("[apiDump] ready — run apiDump()");
-  } else {
+  if (!api) {
     console.warn("[apiDump] api not found yet — run apiDump() after the mod loads");
+    return "";
   }
+
+  console.info("[apiDump] running dump…");
+  return globalThis.apiDump();
 })();
