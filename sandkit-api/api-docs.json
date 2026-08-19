@@ -1,0 +1,4954 @@
+{
+  "meta": {
+    "updatedAt": "2026-08-19T22:40:03.816Z",
+    "sourceGeneratedAt": "2026-08-19",
+    "entryCount": 352,
+    "functionCount": 281
+  },
+  "namespaces": {
+    "action": {
+      "description": "Active/selected tool actions",
+      "members": {
+        "getActive": {
+          "description": "Return active.",
+          "params": [],
+          "returnType": "unknown"
+        },
+        "getSelected": {
+          "description": "Return selected.",
+          "params": [],
+          "returnType": "unknown"
+        },
+        "setCustomData": {
+          "description": "Set custom data.",
+          "params": [
+            {
+              "name": "t",
+              "label": "data",
+              "description": "",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "assets": {
+      "description": "Mod asset provider selection",
+      "members": {
+        "getSelectedProvider": {
+          "description": "Return selected provider.",
+          "params": [
+            {
+              "name": "t",
+              "label": "kind",
+              "description": "kind string.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getUrl": {
+          "description": "Return url.",
+          "params": [
+            {
+              "name": "e",
+              "label": "relativePath",
+              "description": "relative Path string.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "selectProvider": {
+          "description": "Select provider.",
+          "params": [
+            {
+              "name": "t",
+              "label": "kind",
+              "description": "kind string.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "providerId",
+              "description": "provider id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "authorization": {
+      "description": "Build/grab/tool permissions",
+      "members": {
+        "canBuildAtCell": {
+          "description": "Return whether the player can build at a cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "canGrabAtCell": {
+          "description": "Return whether can grab at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "canUseTool": {
+          "description": "Return whether can use tool.",
+          "params": [
+            {
+              "name": "t",
+              "label": "player",
+              "description": "",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "isFlamethrower",
+              "description": "is Flamethrower flag.",
+              "type": "boolean"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "canUseToolAtCell": {
+          "description": "Return whether can use tool at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "isFlamethrower",
+              "description": "is Flamethrower flag.",
+              "type": "boolean"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "getPlayerZoneId": {
+          "description": "Return player zone id.",
+          "params": [],
+          "returnType": "unknown"
+        },
+        "getZoneIdAtCell": {
+          "description": "Return zone id at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "unknown"
+        }
+      }
+    },
+    "building": {
+      "description": "Placement helpers",
+      "members": {
+        "cancelPlacement": {
+          "description": "Cancel placement.",
+          "params": [],
+          "returnType": "unknown"
+        },
+        "getSnappedPositionAtCell": {
+          "description": "Return snapped position at cell.",
+          "params": [
+            {
+              "name": "e",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "t",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "isBlockedAtCell": {
+          "description": "Return whether blocked at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "selectStructure": {
+          "description": "Select structure.",
+          "params": [
+            {
+              "name": "t",
+              "label": "structureTypeOrId",
+              "description": "structure Type Or id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "camera": {
+      "description": "Focus and snap",
+      "members": {
+        "releaseFocus": {
+          "description": "Return boolean.",
+          "params": [
+            {
+              "name": "t",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "setFocusAtWorld": {
+          "description": "Set focus at world.",
+          "params": [
+            {
+              "name": "t",
+              "label": "worldX",
+              "description": "World X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "worldY",
+              "description": "World Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "void"
+        },
+        "snapToPlayer": {
+          "description": "snap To Player.",
+          "params": [],
+          "returnType": "void"
+        }
+      }
+    },
+    "collector": {
+      "description": "Collector value queries",
+      "members": {
+        "getValueByType": {
+          "description": "Return value by type.",
+          "params": [
+            {
+              "name": "t",
+              "label": "elementType",
+              "description": "element Type.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getValueFromCellId": {
+          "description": "Return value from cell id.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellId",
+              "description": "cell id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "isCellIdCollectable": {
+          "description": "Return whether cell id collectable.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellId",
+              "description": "cell id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "isCellIdCollectableForSprite": {
+          "description": "Return whether cell id collectable for sprite.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellId",
+              "description": "cell id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "notifyPickupAtCell": {
+          "description": "Notify pickup at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "constants": {
+      "description": "Physics constants",
+      "members": {
+        "physics": {
+          "description": "",
+          "members": {
+            "aggressiveSkip": {
+              "description": "",
+              "params": []
+            },
+            "normal": {
+              "description": "",
+              "params": []
+            },
+            "skip": {
+              "description": "",
+              "params": []
+            }
+          }
+        }
+      }
+    },
+    "cooldown": {
+      "description": "Cooldown checks",
+      "members": {
+        "check": {
+          "description": "Return whether check.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cooldown",
+              "description": "",
+              "type": "unknown"
+            },
+            {
+              "name": "r",
+              "label": "overrideTime",
+              "description": "override Time id.",
+              "type": "number"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "isReady": {
+          "description": "Return whether ready.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cooldown",
+              "description": "",
+              "type": "unknown"
+            },
+            {
+              "name": "r",
+              "label": "overrideTime",
+              "description": "override Time id.",
+              "type": "number"
+            }
+          ],
+          "returnType": "boolean"
+        }
+      }
+    },
+    "discoveries": {
+      "description": "Discovery journal",
+      "members": {
+        "addElementByType": {
+          "description": "Add element by type.",
+          "params": [
+            {
+              "name": "t",
+              "label": "elementType",
+              "description": "element Type.",
+              "type": "string"
+            }
+          ],
+          "returnType": "void"
+        },
+        "addTerrainByType": {
+          "description": "Add terrain by type.",
+          "params": [
+            {
+              "name": "t",
+              "label": "terrainType",
+              "description": "terrain Type.",
+              "type": "string"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "effects": {
+      "description": "Particles, lights, lasers",
+      "members": {
+        "createDistortionWaveAtWorld": {
+          "description": "Create distortion wave at world.",
+          "params": [
+            {
+              "name": "t",
+              "label": "worldX",
+              "description": "World X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "worldY",
+              "description": "World Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "createEffectAtWorld": {
+          "description": "Create effect at world.",
+          "params": [
+            {
+              "name": "t",
+              "label": "effectId",
+              "description": "effect id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "worldX",
+              "description": "World X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "worldY",
+              "description": "World Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "n",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "createLaserAtWorld": {
+          "description": "Create laser at world.",
+          "params": [
+            {
+              "name": "t",
+              "label": "startWorldX",
+              "description": "World X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "startWorldY",
+              "description": "World Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "endWorldX",
+              "description": "World X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "n",
+              "label": "endWorldY",
+              "description": "World Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "l",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "createLightAtWorld": {
+          "description": "Create light at world.",
+          "params": [
+            {
+              "name": "t",
+              "label": "worldX",
+              "description": "World X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "worldY",
+              "description": "World Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "createParticlesAtWorld": {
+          "description": "Create particles at world.",
+          "params": [
+            {
+              "name": "t",
+              "label": "worldX",
+              "description": "World X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "worldY",
+              "description": "World Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "removeLightById": {
+          "description": "Remove light by id.",
+          "params": [
+            {
+              "name": "t",
+              "label": "lightId",
+              "description": "light id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "elements": {
+      "description": "Element defs and cell mutation",
+      "members": {
+        "addInteractionInfo": {
+          "description": "Add interaction info.",
+          "params": [
+            {
+              "name": "t",
+              "label": "elementTypeOrId",
+              "description": "element Type Or id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "interaction",
+              "description": "",
+              "type": "unknown"
+            }
+          ],
+          "returnType": "void"
+        },
+        "addParticleVelocityAtCellWhenIdle": {
+          "description": "Add particle velocity at cell when idle.",
+          "params": [
+            {
+              "name": "e",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "t",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "velocity",
+              "description": "velocity.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "maxSpeed",
+              "description": "max Speed.",
+              "type": "number"
+            }
+          ],
+          "returnType": "void"
+        },
+        "convertFromParticleAtCellWhenIdle": {
+          "description": "Convert from particle at cell when idle.",
+          "params": [
+            {
+              "name": "e",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "t",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "void"
+        },
+        "convertToParticleAtCellWhenIdle": {
+          "description": "Convert to particle at cell when idle.",
+          "params": [
+            {
+              "name": "e",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "t",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "velocity",
+              "description": "velocity.",
+              "type": "number"
+            }
+          ],
+          "returnType": "void"
+        },
+        "createAtCellWhenIdle": {
+          "description": "Create at cell when idle.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "elementType",
+              "description": "",
+              "type": "string"
+            },
+            {
+              "name": "n",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "findFreeCellInStructure": {
+          "description": "Return { x: number; y: number; } | null.",
+          "params": [
+            {
+              "name": "t",
+              "label": "structureCellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "structureCellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "structureSize",
+              "description": "structure Size.",
+              "type": "number"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getDataFieldAtCell": {
+          "description": "Return data field at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "fieldNumber",
+              "description": "",
+              "type": "number"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getDefinitionByType": {
+          "description": "Return definition by type.",
+          "params": [
+            {
+              "name": "e",
+              "label": "elementType",
+              "description": "",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getInfoAtCell": {
+          "description": "Return info at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getMatterTypeAtCell": {
+          "description": "Return matter type at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getNameByType": {
+          "description": "Return name by type.",
+          "params": [
+            {
+              "name": "t",
+              "label": "elementType",
+              "description": "element Type.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getRegisteredTypes": {
+          "description": "Return registered types.",
+          "params": [],
+          "returnType": "unknown"
+        },
+        "getResolvedTypeAtCell": {
+          "description": "Return resolved type at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getResolvedTypeFromCellId": {
+          "description": "Return resolved type from cell id.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellId",
+              "description": "cell id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getTypeAtCell": {
+          "description": "Return type at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getTypeFromId": {
+          "description": "Return type from id.",
+          "params": [
+            {
+              "name": "t",
+              "label": "elementId",
+              "description": "element id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getVelocityAtCell": {
+          "description": "Return velocity at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "isFreeFallingAtCell": {
+          "description": "Return whether free falling at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "isTypeAtCell": {
+          "description": "Return whether type at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "elementType",
+              "description": "",
+              "type": "string"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "refreshColorAtCellWhenIdle": {
+          "description": "Refresh color at cell when idle.",
+          "params": [
+            {
+              "name": "e",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "t",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "void"
+        },
+        "register": {
+          "description": "Register a definition.",
+          "params": [
+            {
+              "name": "t",
+              "label": "definition",
+              "description": "Registration definition object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "removeAtCellWhenIdle": {
+          "description": "Remove at cell when idle.",
+          "params": [
+            {
+              "name": "e",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "t",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "replaceAtCellWhenIdle": {
+          "description": "Replace at cell when idle.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "elementType",
+              "description": "",
+              "type": "string"
+            },
+            {
+              "name": "n",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "setDataFieldAtCellWhenIdle": {
+          "description": "Set data field at cell when idle.",
+          "params": [
+            {
+              "name": "e",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "t",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "fieldNumber",
+              "description": "",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "value",
+              "description": "value.",
+              "type": "unknown"
+            }
+          ],
+          "returnType": "void"
+        },
+        "setDurationAtCellWhenIdle": {
+          "description": "Set duration at cell when idle.",
+          "params": [
+            {
+              "name": "e",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "t",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "duration",
+              "description": "duration.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "setPhysicsAtCellWhenIdle": {
+          "description": "Set physics at cell when idle.",
+          "params": [
+            {
+              "name": "e",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "t",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "physicsState",
+              "description": "physics State.",
+              "type": "unknown"
+            }
+          ],
+          "returnType": "void"
+        },
+        "setVelocityAtCellWhenIdle": {
+          "description": "Set velocity at cell when idle.",
+          "params": [
+            {
+              "name": "e",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "t",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "velocity",
+              "description": "velocity.",
+              "type": "number"
+            }
+          ],
+          "returnType": "void"
+        },
+        "teleportBetweenCellsWhenIdle": {
+          "description": "Teleport the player or an element.",
+          "params": [
+            {
+              "name": "t",
+              "label": "fromCellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "fromCellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "toCellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "n",
+              "label": "toCellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "void"
+        },
+        "updateDefinition": {
+          "description": "Update definition.",
+          "params": [
+            {
+              "name": "t",
+              "label": "elementTypeOrId",
+              "description": "element Type Or id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "partial",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "energy": {
+      "description": "Energy network",
+      "members": {
+        "addAtCell": {
+          "description": "Add at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "amount",
+              "description": "amount.",
+              "type": "number"
+            },
+            {
+              "name": "n",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "consume": {
+          "description": "Return number.",
+          "params": [
+            {
+              "name": "t",
+              "label": "amount",
+              "description": "amount.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "number"
+        },
+        "consumeExcludingNetworkAtCell": {
+          "description": "Return number.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "amount",
+              "description": "amount.",
+              "type": "number"
+            }
+          ],
+          "returnType": "number"
+        },
+        "getNetworkAtCell": {
+          "description": "Return network at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getNetworkFreeCapacityAtCell": {
+          "description": "Return network free capacity at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "registerType": {
+          "description": "Register type.",
+          "params": [
+            {
+              "name": "t",
+              "label": "structureId",
+              "description": "structure id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "type",
+              "description": "",
+              "type": "string"
+            },
+            {
+              "name": "o",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "events": {
+      "description": "Event bus",
+      "members": {
+        "emit": {
+          "description": "",
+          "params": [
+            {
+              "name": "t",
+              "label": "t",
+              "description": "",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "r",
+              "description": "",
+              "type": "unknown"
+            }
+          ],
+          "returnType": "void"
+        },
+        "on": {
+          "description": "",
+          "params": [
+            {
+              "name": "t",
+              "label": "t",
+              "description": "",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "r",
+              "description": "",
+              "type": "(...args: unknown[]) => unknown"
+            }
+          ],
+          "returnType": "() => void"
+        }
+      }
+    },
+    "excavation": {
+      "description": "Excavation profiles",
+      "members": {
+        "registerProfile": {
+          "description": "Register profile.",
+          "params": [
+            {
+              "name": "t",
+              "label": "id",
+              "description": "id id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "definition",
+              "description": "Registration definition object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "fire": {
+      "description": "Burning elements",
+      "members": {
+        "burnElementAtCellWhenIdle": {
+          "description": "burn Element At Cell When Idle.",
+          "params": [
+            {
+              "name": "e",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "t",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "void"
+        },
+        "canBurnElementAtCell": {
+          "description": "Return whether can burn element at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "boolean"
+        }
+      }
+    },
+    "gameConfig": {
+      "description": "Read-only game config",
+      "members": {
+        "get": {
+          "description": "Return JsonValueV1 | undefined.",
+          "params": [
+            {
+              "name": "e",
+              "label": "key",
+              "description": "key string.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getAll": {
+          "description": "Return all.",
+          "params": [],
+          "returnType": "unknown"
+        }
+      }
+    },
+    "grid": {
+      "description": "Rect/circle iteration",
+      "members": {
+        "forEachCellInCircle": {
+          "description": "Iterate cell in circle.",
+          "params": [
+            {
+              "name": "t",
+              "label": "centerCellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "centerCellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "radius",
+              "description": "radius.",
+              "type": "number"
+            },
+            {
+              "name": "n",
+              "label": "callback",
+              "description": "Callback function.",
+              "type": "(...args: unknown[]) => unknown"
+            }
+          ],
+          "returnType": "void"
+        },
+        "forEachCellInRect": {
+          "description": "Iterate cell in rect.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "width",
+              "description": "width id.",
+              "type": "number"
+            },
+            {
+              "name": "n",
+              "label": "height",
+              "description": "height.",
+              "type": "number"
+            },
+            {
+              "name": "l",
+              "label": "callback",
+              "description": "Callback function.",
+              "type": "(...args: unknown[]) => unknown"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "hooks": {
+      "description": "Intercept and modify hooks",
+      "members": {
+        "intercept": {
+          "description": "",
+          "params": [
+            {
+              "name": "t",
+              "label": "t",
+              "description": "",
+              "type": "unknown"
+            },
+            {
+              "name": "o",
+              "label": "o",
+              "description": "",
+              "type": "unknown"
+            },
+            {
+              "name": "n",
+              "label": "n",
+              "description": "",
+              "type": "unknown"
+            }
+          ],
+          "returnType": "void"
+        },
+        "modify": {
+          "description": "",
+          "params": [
+            {
+              "name": "t",
+              "label": "t",
+              "description": "",
+              "type": "unknown"
+            },
+            {
+              "name": "o",
+              "label": "o",
+              "description": "",
+              "type": "unknown"
+            },
+            {
+              "name": "n",
+              "label": "n",
+              "description": "",
+              "type": "unknown"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "i18n": {
+      "description": "Translations",
+      "members": {
+        "clearGlobal": {
+          "description": "clear Global.",
+          "params": [
+            {
+              "name": "e",
+              "label": "key",
+              "description": "key string.",
+              "type": "string"
+            }
+          ],
+          "returnType": "void"
+        },
+        "formatKeyForDisplay": {
+          "description": "Return string.",
+          "params": [
+            {
+              "name": "e",
+              "label": "keyCode",
+              "description": "key Code string.",
+              "type": "string"
+            }
+          ],
+          "returnType": "string"
+        },
+        "formatNumber": {
+          "description": "Return string.",
+          "params": [
+            {
+              "name": "e",
+              "label": "value",
+              "description": "value.",
+              "type": "unknown"
+            },
+            {
+              "name": "t",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "string"
+        },
+        "getAvailableLocales": {
+          "description": "Return available locales.",
+          "params": [],
+          "returnType": "unknown"
+        },
+        "getDescription": {
+          "description": "Return description.",
+          "params": [
+            {
+              "name": "e",
+              "label": "definition",
+              "description": "Registration definition object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getGlobal": {
+          "description": "Return global.",
+          "params": [
+            {
+              "name": "e",
+              "label": "key",
+              "description": "key string.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getGlobals": {
+          "description": "Return globals.",
+          "params": [],
+          "returnType": "unknown"
+        },
+        "getLanguages": {
+          "description": "Return languages.",
+          "params": [],
+          "returnType": "unknown"
+        },
+        "getLocale": {
+          "description": "Return locale.",
+          "params": [],
+          "returnType": "unknown"
+        },
+        "getName": {
+          "description": "Return name.",
+          "params": [
+            {
+              "name": "e",
+              "label": "definition",
+              "description": "Registration definition object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "hasTranslation": {
+          "description": "Return whether translation exists.",
+          "params": [
+            {
+              "name": "e",
+              "label": "key",
+              "description": "key string.",
+              "type": "string"
+            },
+            {
+              "name": "t",
+              "label": "locale",
+              "description": "locale string.",
+              "type": "string"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "key": {
+          "description": "Return string.",
+          "params": [
+            {
+              "name": "...e",
+              "label": "parts",
+              "description": "parts string.",
+              "type": "string"
+            }
+          ],
+          "returnType": "string"
+        },
+        "register": {
+          "description": "Register a definition.",
+          "params": [
+            {
+              "name": "e",
+              "label": "locale",
+              "description": "locale string.",
+              "type": "string"
+            },
+            {
+              "name": "t",
+              "label": "translations",
+              "description": "translations string.",
+              "type": "string"
+            }
+          ],
+          "returnType": "void"
+        },
+        "setGlobal": {
+          "description": "Set global.",
+          "params": [
+            {
+              "name": "e",
+              "label": "key",
+              "description": "key string.",
+              "type": "string"
+            },
+            {
+              "name": "t",
+              "label": "value",
+              "description": "value string.",
+              "type": "string"
+            }
+          ],
+          "returnType": "void"
+        },
+        "setLocale": {
+          "description": "Set locale.",
+          "params": [],
+          "returnType": "void"
+        },
+        "t": {
+          "description": "Return string.",
+          "params": [
+            {
+              "name": "e",
+              "label": "key",
+              "description": "key string.",
+              "type": "string"
+            },
+            {
+              "name": "t",
+              "label": "params",
+              "description": "params.",
+              "type": "unknown"
+            }
+          ],
+          "returnType": "string"
+        },
+        "translatable": {
+          "description": "Return { __translatable: true; key: string; fallback: string; }.",
+          "params": [
+            {
+              "name": "e",
+              "label": "key",
+              "description": "key string.",
+              "type": "string"
+            },
+            {
+              "name": "t",
+              "label": "fallback",
+              "description": "fallback string.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        }
+      }
+    },
+    "input": {
+      "description": "Key bindings and mouse",
+      "members": {
+        "getBoundKeys": {
+          "description": "Return bound keys.",
+          "params": [
+            {
+              "name": "t",
+              "label": "bindingId",
+              "description": "binding id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getDisplayKey": {
+          "description": "Return display key.",
+          "params": [
+            {
+              "name": "t",
+              "label": "bindingId",
+              "description": "binding id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "defaultLabel",
+              "description": "default Label string.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getMouseCellPosition": {
+          "description": "Return mouse cell position.",
+          "params": [],
+          "returnType": "unknown"
+        },
+        "isAltHeld": {
+          "description": "Return whether alt held.",
+          "params": [],
+          "returnType": "boolean"
+        },
+        "isCtrlHeld": {
+          "description": "Return whether ctrl held.",
+          "params": [],
+          "returnType": "boolean"
+        },
+        "pressBinding": {
+          "description": "press Binding.",
+          "params": [
+            {
+              "name": "t",
+              "label": "bindingId",
+              "description": "binding id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "void"
+        },
+        "registerBinding": {
+          "description": "Register binding.",
+          "params": [
+            {
+              "name": "t",
+              "label": "bindingId",
+              "description": "binding id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "defaultKeys",
+              "description": "default Keys string.",
+              "type": "string"
+            },
+            {
+              "name": "o",
+              "label": "definition",
+              "description": "Registration definition object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "releaseBinding": {
+          "description": "release Binding.",
+          "params": [
+            {
+              "name": "t",
+              "label": "bindingId",
+              "description": "binding id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "void"
+        },
+        "resetMouseState": {
+          "description": "reset Mouse State.",
+          "params": [],
+          "returnType": "void"
+        },
+        "triggerBinding": {
+          "description": "trigger Binding.",
+          "params": [
+            {
+              "name": "t",
+              "label": "bindingId",
+              "description": "binding id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "items": {
+      "description": "Item registration",
+      "members": {
+        "createFromId": {
+          "description": "Create from id.",
+          "params": [
+            {
+              "name": "t",
+              "label": "itemId",
+              "description": "item id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "void"
+        },
+        "getActive": {
+          "description": "Return active.",
+          "params": [],
+          "returnType": "unknown"
+        },
+        "getDefinitionById": {
+          "description": "Return definition by id.",
+          "params": [
+            {
+              "name": "t",
+              "label": "itemId",
+              "description": "item id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "isActiveById": {
+          "description": "Return whether active by id.",
+          "params": [
+            {
+              "name": "t",
+              "label": "itemId",
+              "description": "item id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "itemType",
+              "description": "",
+              "type": "string"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "register": {
+          "description": "Register a definition.",
+          "params": [
+            {
+              "name": "t",
+              "label": "definition",
+              "description": "Registration definition object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "updateDefinition": {
+          "description": "Update definition.",
+          "params": [
+            {
+              "name": "t",
+              "label": "itemId",
+              "description": "item id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "partial",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "lights": {
+      "description": "Persistent and VFX lights",
+      "members": {
+        "persistent": {
+          "description": "",
+          "members": {
+            "createAtWorld": {
+              "description": "Create at world.",
+              "params": [
+                {
+                  "name": "t",
+                  "label": "worldX",
+                  "description": "World X coordinate.",
+                  "type": "number"
+                },
+                {
+                  "name": "r",
+                  "label": "worldY",
+                  "description": "World Y coordinate.",
+                  "type": "number"
+                },
+                {
+                  "name": "o",
+                  "label": "options",
+                  "description": "Optional settings object.",
+                  "type": "Record<string, unknown>"
+                }
+              ],
+              "returnType": "void"
+            },
+            "fadeAtWorld": {
+              "description": "fade At World.",
+              "params": [
+                {
+                  "name": "t",
+                  "label": "worldX",
+                  "description": "World X coordinate.",
+                  "type": "number"
+                },
+                {
+                  "name": "r",
+                  "label": "worldY",
+                  "description": "World Y coordinate.",
+                  "type": "number"
+                },
+                {
+                  "name": "o",
+                  "label": "durationMs",
+                  "description": "duration Ms.",
+                  "type": "number"
+                }
+              ],
+              "returnType": "void"
+            },
+            "markDirty": {
+              "description": "mark Dirty.",
+              "params": [],
+              "returnType": "void"
+            },
+            "removeAtWorld": {
+              "description": "Remove at world.",
+              "params": [
+                {
+                  "name": "t",
+                  "label": "worldX",
+                  "description": "World X coordinate.",
+                  "type": "number"
+                },
+                {
+                  "name": "r",
+                  "label": "worldY",
+                  "description": "World Y coordinate.",
+                  "type": "number"
+                }
+              ],
+              "returnType": "void"
+            }
+          }
+        },
+        "vfx": {
+          "description": "",
+          "members": {
+            "createAtWorld": {
+              "description": "Create at world.",
+              "params": [
+                {
+                  "name": "t",
+                  "label": "worldX",
+                  "description": "World X coordinate.",
+                  "type": "number"
+                },
+                {
+                  "name": "r",
+                  "label": "worldY",
+                  "description": "World Y coordinate.",
+                  "type": "number"
+                },
+                {
+                  "name": "o",
+                  "label": "options",
+                  "description": "Optional settings object.",
+                  "type": "Record<string, unknown>"
+                }
+              ],
+              "returnType": "void"
+            },
+            "removeById": {
+              "description": "Remove by id.",
+              "params": [
+                {
+                  "name": "t",
+                  "label": "lightId",
+                  "description": "light id.",
+                  "type": "string"
+                }
+              ],
+              "returnType": "void"
+            }
+          }
+        }
+      }
+    },
+    "maps": {
+      "description": "Custom maps",
+      "members": {
+        "getActive": {
+          "description": "Return active.",
+          "params": [],
+          "returnType": "unknown"
+        },
+        "getAvailable": {
+          "description": "Return available.",
+          "params": [],
+          "returnType": "unknown"
+        },
+        "start": {
+          "description": "Return boolean.",
+          "params": [
+            {
+              "name": "t",
+              "label": "mapId",
+              "description": "map id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "mods": {
+      "description": "Mod provider listing",
+      "members": {
+        "getProviders": {
+          "description": "Return providers.",
+          "params": [
+            {
+              "name": "t",
+              "label": "kind",
+              "description": "kind string.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        }
+      }
+    },
+    "patterns": {
+      "description": "Excavation patterns",
+      "members": {
+        "createCircle": {
+          "description": "Create circle.",
+          "params": [
+            {
+              "name": "e",
+              "label": "size",
+              "description": "size.",
+              "type": "number"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "excavateAtCell": {
+          "description": "Excavate terrain at a cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "pattern",
+              "description": "pattern.",
+              "type": "Record<string, unknown>"
+            },
+            {
+              "name": "n",
+              "label": "outVelocity",
+              "description": "out Velocity.",
+              "type": "number"
+            },
+            {
+              "name": "l",
+              "label": "power",
+              "description": "power.",
+              "type": "number"
+            },
+            {
+              "name": "s",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "player": {
+      "description": "Player state",
+      "members": {
+        "buildings": {
+          "description": "",
+          "members": {
+            "unlockByType": {
+              "description": "Unlock by type.",
+              "params": [
+                {
+                  "name": "t",
+                  "label": "structureId",
+                  "description": "structure id.",
+                  "type": "string"
+                }
+              ],
+              "returnType": "void"
+            }
+          }
+        },
+        "getWorldPosition": {
+          "description": "Return world position.",
+          "params": [],
+          "returnType": "unknown"
+        },
+        "inventory": {
+          "description": "",
+          "members": {
+            "addFromId": {
+              "description": "Add from id.",
+              "params": [
+                {
+                  "name": "t",
+                  "label": "itemId",
+                  "description": "item id.",
+                  "type": "string"
+                }
+              ],
+              "returnType": "void"
+            }
+          }
+        },
+        "isCollidingWithCell": {
+          "description": "Return whether colliding with cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "isOnGround": {
+          "description": "Return whether on ground.",
+          "params": [],
+          "returnType": "boolean"
+        },
+        "isWithinRadiusOfCell": {
+          "description": "Return whether within radius of cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "radius",
+              "description": "radius.",
+              "type": "number"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "isWorldPositionClear": {
+          "description": "Return whether world position clear.",
+          "params": [
+            {
+              "name": "t",
+              "label": "worldX",
+              "description": "World X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "worldY",
+              "description": "World Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "setMovementMode": {
+          "description": "Set movement mode.",
+          "params": [
+            {
+              "name": "t",
+              "label": "mode",
+              "description": "",
+              "type": "string"
+            }
+          ],
+          "returnType": "void"
+        },
+        "setMovementSpeedMultiplier": {
+          "description": "Set movement speed multiplier.",
+          "params": [
+            {
+              "name": "t",
+              "label": "multiplier",
+              "description": "multiplier.",
+              "type": "number"
+            }
+          ],
+          "returnType": "void"
+        },
+        "setVelocity": {
+          "description": "Set velocity.",
+          "params": [
+            {
+              "name": "t",
+              "label": "velocityX",
+              "description": "velocity X.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "velocityY",
+              "description": "velocity Y.",
+              "type": "number"
+            }
+          ],
+          "returnType": "void"
+        },
+        "setWorldPosition": {
+          "description": "Set world position.",
+          "params": [
+            {
+              "name": "t",
+              "label": "worldX",
+              "description": "World X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "worldY",
+              "description": "World Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "void"
+        },
+        "teleportToGround": {
+          "description": "Teleport the player or an element.",
+          "params": [],
+          "returnType": "void"
+        }
+      }
+    },
+    "processing": {
+      "description": "Grower/shaker/press recipes",
+      "members": {
+        "registerGrower": {
+          "description": "Register grower.",
+          "params": [
+            {
+              "name": "e",
+              "label": "definition",
+              "description": "Registration definition object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "registerKineticPress": {
+          "description": "Register kinetic press.",
+          "params": [
+            {
+              "name": "e",
+              "label": "definition",
+              "description": "Registration definition object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "registerShaker": {
+          "description": "Register shaker.",
+          "params": [
+            {
+              "name": "e",
+              "label": "definition",
+              "description": "Registration definition object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "progression": {
+      "description": "Story progression",
+      "members": {
+        "complete": {
+          "description": "Mark progression step complete.",
+          "params": [
+            {
+              "name": "t",
+              "label": "request",
+              "description": "",
+              "type": "unknown"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "projectiles": {
+      "description": "Projectile spawn",
+      "members": {
+        "createBlueprintFromId": {
+          "description": "Create blueprint from id.",
+          "params": [
+            {
+              "name": "t",
+              "label": "projectileId",
+              "description": "projectile id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "void"
+        },
+        "getAll": {
+          "description": "Return all.",
+          "params": [],
+          "returnType": "unknown"
+        },
+        "getById": {
+          "description": "Return by id.",
+          "params": [
+            {
+              "name": "t",
+              "label": "projectileId",
+              "description": "projectile id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getDefinitionById": {
+          "description": "Return definition by id.",
+          "params": [
+            {
+              "name": "t",
+              "label": "projectileId",
+              "description": "projectile id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "register": {
+          "description": "Register a definition.",
+          "params": [
+            {
+              "name": "t",
+              "label": "definition",
+              "description": "Registration definition object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "remove": {
+          "description": "Remove .",
+          "params": [
+            {
+              "name": "t",
+              "label": "projectile",
+              "description": "",
+              "type": "unknown"
+            }
+          ],
+          "returnType": "void"
+        },
+        "spawnAtWorld": {
+          "description": "Spawn at world.",
+          "params": [
+            {
+              "name": "t",
+              "label": "worldX",
+              "description": "World X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "worldY",
+              "description": "World Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "angle",
+              "description": "angle.",
+              "type": "number"
+            },
+            {
+              "name": "n",
+              "label": "blueprint",
+              "description": "",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "random": {
+      "description": "RNG",
+      "members": {
+        "float": {
+          "description": "Return number.",
+          "params": [
+            {
+              "name": "e",
+              "label": "min",
+              "description": "min.",
+              "type": "number"
+            },
+            {
+              "name": "t",
+              "label": "max",
+              "description": "max.",
+              "type": "number"
+            }
+          ],
+          "returnType": "number"
+        },
+        "int": {
+          "description": "Return number.",
+          "params": [
+            {
+              "name": "e",
+              "label": "min",
+              "description": "min.",
+              "type": "number"
+            },
+            {
+              "name": "t",
+              "label": "max",
+              "description": "max.",
+              "type": "number"
+            }
+          ],
+          "returnType": "number"
+        }
+      }
+    },
+    "raycast": {
+      "description": "Ray casting",
+      "members": {
+        "castFromWorld": {
+          "description": "Return { x: number; y: number; distance: number; } | null.",
+          "params": [
+            {
+              "name": "t",
+              "label": "startWorldX",
+              "description": "World X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "startWorldY",
+              "description": "World Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "angle",
+              "description": "angle.",
+              "type": "number"
+            },
+            {
+              "name": "n",
+              "label": "maxDistance",
+              "description": "max Distance.",
+              "type": "number"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "reactions": {
+      "description": "Contact reactions",
+      "members": {
+        "registerContact": {
+          "description": "Register contact.",
+          "params": [
+            {
+              "name": "t",
+              "label": "definition",
+              "description": "Registration definition object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "rendering": {
+      "description": "Draw positions, overlay canvas",
+      "members": {
+        "getDrawPositionAtCell": {
+          "description": "Return draw position at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getGridMetrics": {
+          "description": "Return grid metrics.",
+          "params": [],
+          "returnType": "unknown"
+        },
+        "getOverlayViewportSize": {
+          "description": "Return overlay viewport size.",
+          "params": [],
+          "returnType": "unknown"
+        },
+        "withOverlayContext": {
+          "description": "",
+          "params": [
+            {
+              "name": "t",
+              "label": "t",
+              "description": "",
+              "type": "unknown"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "resources": {
+      "description": "Fluxite and energy UI",
+      "members": {
+        "collectFluxiteAtCell": {
+          "description": "collect Fluxite At Cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "void"
+        },
+        "updateEnergy": {
+          "description": "Update energy.",
+          "params": [
+            {
+              "name": "t",
+              "label": "amount",
+              "description": "amount.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "scene": {
+      "description": "Active scene",
+      "members": {
+        "getActive": {
+          "description": "Return active.",
+          "params": [],
+          "returnType": "unknown"
+        }
+      }
+    },
+    "schedule": {
+      "description": "nextTick scheduling",
+      "members": {
+        "nextTick": {
+          "description": "Schedule work on the next main-thread tick.",
+          "params": [
+            {
+              "name": "t",
+              "label": "callback",
+              "description": "Callback function.",
+              "type": "(...args: unknown[]) => unknown"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "settings": {
+      "description": "Mod configSchema settings",
+      "members": {
+        "get": {
+          "description": "Return ConfigValueV1 | undefined.",
+          "params": [
+            {
+              "name": "t",
+              "label": "fieldId",
+              "description": "field id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getAll": {
+          "description": "Return all.",
+          "params": [],
+          "returnType": "unknown"
+        },
+        "onChange": {
+          "description": "Return () => void.",
+          "params": [
+            {
+              "name": "t",
+              "label": "callback",
+              "description": "Callback function.",
+              "type": "(...args: unknown[]) => unknown"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "shared": {
+      "description": "Cross-thread shared buffers",
+      "members": {
+        "buffers": {
+          "description": "",
+          "members": {
+            "create": {
+              "description": "Create a resource.",
+              "params": [
+                {
+                  "name": "t",
+                  "label": "key",
+                  "description": "key string.",
+                  "type": "string"
+                },
+                {
+                  "name": "o",
+                  "label": "config",
+                  "description": "config.",
+                  "type": "Record<string, unknown>"
+                }
+              ],
+              "returnType": "void"
+            },
+            "get": {
+              "description": "Return SharedArray | undefined.",
+              "params": [
+                {
+                  "name": "t",
+                  "label": "key",
+                  "description": "key string.",
+                  "type": "string"
+                }
+              ],
+              "returnType": "unknown"
+            }
+          }
+        }
+      }
+    },
+    "signals": {
+      "description": "Signal target registration",
+      "members": {
+        "targets": {
+          "description": "",
+          "members": {
+            "register": {
+              "description": "Register a definition.",
+              "params": [
+                {
+                  "name": "t",
+                  "label": "structureTypeOrId",
+                  "description": "structure Type Or id.",
+                  "type": "string"
+                },
+                {
+                  "name": "r",
+                  "label": "apply",
+                  "description": "",
+                  "type": "unknown"
+                }
+              ],
+              "returnType": "void"
+            }
+          }
+        }
+      }
+    },
+    "sound": {
+      "description": "Sound playback",
+      "members": {
+        "calculateDistanceOptionsAtWorld": {
+          "description": "Return SoundOptions.",
+          "params": [
+            {
+              "name": "t",
+              "label": "worldX",
+              "description": "World X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "worldY",
+              "description": "World Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "baseVolume",
+              "description": "base Volume.",
+              "type": "unknown"
+            }
+          ],
+          "returnType": "void"
+        },
+        "play": {
+          "description": "Play .",
+          "params": [
+            {
+              "name": "t",
+              "label": "soundId",
+              "description": "sound id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "playActive": {
+          "description": "Play active.",
+          "params": [
+            {
+              "name": "t",
+              "label": "soundId",
+              "description": "sound id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "playLayers": {
+          "description": "Play layers.",
+          "params": [
+            {
+              "name": "t",
+              "label": "layers",
+              "description": "",
+              "type": "unknown"
+            },
+            {
+              "name": "r",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "stopActive": {
+          "description": "Stop active.",
+          "params": [],
+          "returnType": "void"
+        },
+        "stopAll": {
+          "description": "Stop all.",
+          "params": [],
+          "returnType": "void"
+        },
+        "stopById": {
+          "description": "Stop by id.",
+          "params": [
+            {
+              "name": "t",
+              "label": "soundId",
+              "description": "sound id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "sprites": {
+      "description": "Sprite loading",
+      "members": {
+        "getById": {
+          "description": "Return by id.",
+          "params": [
+            {
+              "name": "t",
+              "label": "spriteId",
+              "description": "sprite id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "hideAllPlayerModSprites": {
+          "description": "hide All Player Mod Sprites.",
+          "params": [],
+          "returnType": "void"
+        },
+        "load": {
+          "description": "Load .",
+          "params": [
+            {
+              "name": "t",
+              "label": "spriteId",
+              "description": "sprite id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "path",
+              "description": "path string.",
+              "type": "string"
+            },
+            {
+              "name": "o",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "loadFromMod": {
+          "description": "Load from mod.",
+          "params": [
+            {
+              "name": "r",
+              "label": "spriteId",
+              "description": "sprite id.",
+              "type": "string"
+            },
+            {
+              "name": "o",
+              "label": "relativePath",
+              "description": "relative Path string.",
+              "type": "string"
+            },
+            {
+              "name": "n",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "rotatePlayerModSprites": {
+          "description": "rotate Player Mod Sprites.",
+          "params": [
+            {
+              "name": "t",
+              "label": "angle",
+              "description": "angle.",
+              "type": "number"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "storage": {
+      "description": "Mod and local storage",
+      "members": {
+        "ensure": {
+          "description": "Ensure  exists.",
+          "params": [
+            {
+              "name": "t",
+              "label": "modId",
+              "description": "mod id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "void"
+        },
+        "get": {
+          "description": "Return any.",
+          "params": [
+            {
+              "name": "t",
+              "label": "modId",
+              "description": "mod id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "key",
+              "description": "key string.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "local": {
+          "description": "",
+          "members": {
+            "get": {
+              "description": "Return any.",
+              "params": [
+                {
+                  "name": "e",
+                  "label": "key",
+                  "description": "key string.",
+                  "type": "string"
+                }
+              ],
+              "returnType": "unknown"
+            },
+            "remove": {
+              "description": "Remove .",
+              "params": [
+                {
+                  "name": "e",
+                  "label": "key",
+                  "description": "key string.",
+                  "type": "string"
+                }
+              ],
+              "returnType": "void"
+            },
+            "set": {
+              "description": "set.",
+              "params": [
+                {
+                  "name": "e",
+                  "label": "key",
+                  "description": "key string.",
+                  "type": "string"
+                },
+                {
+                  "name": "t",
+                  "label": "value",
+                  "description": "",
+                  "type": "unknown"
+                }
+              ],
+              "returnType": "void"
+            }
+          }
+        },
+        "remove": {
+          "description": "Remove .",
+          "params": [
+            {
+              "name": "t",
+              "label": "modId",
+              "description": "mod id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "key",
+              "description": "key string.",
+              "type": "string"
+            }
+          ],
+          "returnType": "void"
+        },
+        "set": {
+          "description": "set.",
+          "params": [
+            {
+              "name": "t",
+              "label": "modId",
+              "description": "mod id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "key",
+              "description": "key string.",
+              "type": "string"
+            },
+            {
+              "name": "o",
+              "label": "value",
+              "description": "",
+              "type": "unknown"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "structureBehaviors": {
+      "description": "Conveyor and launcher types",
+      "members": {
+        "registerConveyorType": {
+          "description": "Register conveyor type.",
+          "params": [
+            {
+              "name": "t",
+              "label": "structureId",
+              "description": "structure id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "registerLauncherType": {
+          "description": "Register launcher type.",
+          "params": [
+            {
+              "name": "t",
+              "label": "definition",
+              "description": "Registration definition object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "structures": {
+      "description": "Structure registration and mutation",
+      "members": {
+        "addProcessor": {
+          "description": "Add processor.",
+          "params": [
+            {
+              "name": "t",
+              "label": "structureId",
+              "description": "structure id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "definition",
+              "description": "Registration definition object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "addVariant": {
+          "description": "Add variant.",
+          "params": [
+            {
+              "name": "t",
+              "label": "baseStructureTypeOrId",
+              "description": "base Structure Type Or id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "variant",
+              "description": "variant.",
+              "type": "unknown"
+            },
+            {
+              "name": "o",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "buildAtCellWhenIdle": {
+          "description": "Build at cell when idle.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "structureTypeOrId",
+              "description": "structure Type Or id.",
+              "type": "string"
+            },
+            {
+              "name": "n",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "forEachOfType": {
+          "description": "Iterate of type.",
+          "params": [
+            {
+              "name": "t",
+              "label": "structureTypeOrId",
+              "description": "structure Type Or id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "callback",
+              "description": "Callback function.",
+              "type": "(...args: unknown[]) => unknown"
+            }
+          ],
+          "returnType": "void"
+        },
+        "getAtCell": {
+          "description": "Return at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getDefinitionByType": {
+          "description": "Return definition by type.",
+          "params": [
+            {
+              "name": "e",
+              "label": "structureType",
+              "description": "structure Type string.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getTypeFromId": {
+          "description": "Return type from id.",
+          "params": [
+            {
+              "name": "e",
+              "label": "structureId",
+              "description": "structure id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getUnlockedTypes": {
+          "description": "Return unlocked types.",
+          "params": [],
+          "returnType": "unknown"
+        },
+        "hasBuiltAtCell": {
+          "description": "Return whether built at cell exists.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "isBlockedByPlayerAtCell": {
+          "description": "Return whether blocked by player at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "isLauncherAtCell": {
+          "description": "Return whether launcher at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "isType": {
+          "description": "Return whether type.",
+          "params": [
+            {
+              "name": "e",
+              "label": "structure",
+              "description": "",
+              "type": "unknown"
+            },
+            {
+              "name": "t",
+              "label": "structureId",
+              "description": "structure id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "isTypeAtCell": {
+          "description": "Return whether type at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "structureId",
+              "description": "structure id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "isUnlockedByType": {
+          "description": "Return whether unlocked by type.",
+          "params": [
+            {
+              "name": "t",
+              "label": "structureType",
+              "description": "structure Type string.",
+              "type": "string"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "mapValueToSpritesheetIndex": {
+          "description": "Return number.",
+          "params": [
+            {
+              "name": "e",
+              "label": "value",
+              "description": "value.",
+              "type": "unknown"
+            },
+            {
+              "name": "t",
+              "label": "thresholds",
+              "description": "thresholds.",
+              "type": "unknown"
+            }
+          ],
+          "returnType": "number"
+        },
+        "processing": {
+          "description": "",
+          "members": {
+            "isEnabledAt": {
+              "description": "Return whether enabled at.",
+              "params": [
+                {
+                  "name": "t",
+                  "label": "cellX",
+                  "description": "Cell X coordinate.",
+                  "type": "number"
+                },
+                {
+                  "name": "r",
+                  "label": "cellY",
+                  "description": "Cell Y coordinate.",
+                  "type": "number"
+                }
+              ],
+              "returnType": "boolean"
+            },
+            "register": {
+              "description": "Register a definition.",
+              "params": [
+                {
+                  "name": "t",
+                  "label": "id",
+                  "description": "id id.",
+                  "type": "string"
+                },
+                {
+                  "name": "r",
+                  "label": "definition",
+                  "description": "Registration definition object.",
+                  "type": "Record<string, unknown>"
+                }
+              ],
+              "returnType": "void"
+            },
+            "setEnabledAt": {
+              "description": "Set enabled at.",
+              "params": [
+                {
+                  "name": "t",
+                  "label": "cellX",
+                  "description": "Cell X coordinate.",
+                  "type": "number"
+                },
+                {
+                  "name": "r",
+                  "label": "cellY",
+                  "description": "Cell Y coordinate.",
+                  "type": "number"
+                },
+                {
+                  "name": "o",
+                  "label": "enabled",
+                  "description": "enabled flag.",
+                  "type": "boolean"
+                }
+              ],
+              "returnType": "void"
+            }
+          }
+        },
+        "recipes": {
+          "description": "",
+          "members": {
+            "register": {
+              "description": "Register a definition.",
+              "params": [
+                {
+                  "name": "t",
+                  "label": "id",
+                  "description": "id id.",
+                  "type": "string"
+                },
+                {
+                  "name": "r",
+                  "label": "definition",
+                  "description": "Registration definition object.",
+                  "type": "Record<string, unknown>"
+                }
+              ],
+              "returnType": "void"
+            }
+          }
+        },
+        "register": {
+          "description": "Register a definition.",
+          "params": [
+            {
+              "name": "t",
+              "label": "definition",
+              "description": "Registration definition object.",
+              "type": "Record<string, unknown>"
+            },
+            {
+              "name": "o",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "registerPlacementConfig": {
+          "description": "Register placement config.",
+          "params": [
+            {
+              "name": "t",
+              "label": "definition",
+              "description": "Registration definition object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "removeAtCellsWhenIdle": {
+          "description": "Remove at cells when idle.",
+          "params": [
+            {
+              "name": "t",
+              "label": "positions",
+              "description": "positions.",
+              "type": "unknown"
+            },
+            {
+              "name": "r",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "removeAtCellWhenIdle": {
+          "description": "Remove at cell when idle.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "removeBetweenCellsWhenIdle": {
+          "description": "Remove between cells when idle.",
+          "params": [
+            {
+              "name": "t",
+              "label": "startCellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "startCellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "endCellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "n",
+              "label": "endCellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "l",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "setData": {
+          "description": "Set data.",
+          "params": [
+            {
+              "name": "t",
+              "label": "structure",
+              "description": "",
+              "type": "unknown"
+            },
+            {
+              "name": "r",
+              "label": "partial",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            },
+            {
+              "name": "o",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "setSpritesheetIndex": {
+          "description": "Set spritesheet index.",
+          "params": [
+            {
+              "name": "t",
+              "label": "structure",
+              "description": "",
+              "type": "unknown"
+            },
+            {
+              "name": "r",
+              "label": "index",
+              "description": "index.",
+              "type": "number"
+            }
+          ],
+          "returnType": "void"
+        },
+        "setSpritesheetIndexAtCell": {
+          "description": "Set spritesheet index at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "index",
+              "description": "index.",
+              "type": "number"
+            }
+          ],
+          "returnType": "void"
+        },
+        "setSpritesheetIndexByValue": {
+          "description": "Set spritesheet index by value.",
+          "params": [
+            {
+              "name": "t",
+              "label": "structure",
+              "description": "",
+              "type": "unknown"
+            },
+            {
+              "name": "r",
+              "label": "value",
+              "description": "value.",
+              "type": "unknown"
+            },
+            {
+              "name": "o",
+              "label": "thresholds",
+              "description": "thresholds.",
+              "type": "unknown"
+            }
+          ],
+          "returnType": "void"
+        },
+        "setSpritesheetIndexByValueAtCell": {
+          "description": "Set spritesheet index by value at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "value",
+              "description": "value.",
+              "type": "unknown"
+            },
+            {
+              "name": "n",
+              "label": "thresholds",
+              "description": "thresholds.",
+              "type": "unknown"
+            }
+          ],
+          "returnType": "void"
+        },
+        "update": {
+          "description": "Update a definition.",
+          "params": [
+            {
+              "name": "t",
+              "label": "structure",
+              "description": "",
+              "type": "unknown"
+            },
+            {
+              "name": "r",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "updateDefinition": {
+          "description": "Update definition.",
+          "params": [
+            {
+              "name": "t",
+              "label": "structureTypeOrId",
+              "description": "structure Type Or id.",
+              "type": "string"
+            },
+            {
+              "name": "o",
+              "label": "partial",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            },
+            {
+              "name": "n",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "tech": {
+      "description": "Tech tree",
+      "members": {
+        "addDefinition": {
+          "description": "Add definition.",
+          "params": [
+            {
+              "name": "e",
+              "label": "techId",
+              "description": "tech id.",
+              "type": "string"
+            },
+            {
+              "name": "t",
+              "label": "definition",
+              "description": "Registration definition object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "getDefinitionById": {
+          "description": "Return definition by id.",
+          "params": [
+            {
+              "name": "e",
+              "label": "techId",
+              "description": "tech id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "isLockedById": {
+          "description": "Return whether locked by id.",
+          "params": [
+            {
+              "name": "t",
+              "label": "techId",
+              "description": "tech id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "registerNode": {
+          "description": "Register node.",
+          "params": [
+            {
+              "name": "e",
+              "label": "techId",
+              "description": "tech id.",
+              "type": "string"
+            },
+            {
+              "name": "t",
+              "label": "definition",
+              "description": "Registration definition object.",
+              "type": "Record<string, unknown>"
+            },
+            {
+              "name": "n",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "setLockedById": {
+          "description": "Set locked by id.",
+          "params": [
+            {
+              "name": "t",
+              "label": "techId",
+              "description": "tech id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "locked",
+              "description": "locked flag.",
+              "type": "boolean"
+            }
+          ],
+          "returnType": "void"
+        },
+        "updateDefinition": {
+          "description": "Update definition.",
+          "params": [
+            {
+              "name": "e",
+              "label": "techId",
+              "description": "tech id.",
+              "type": "string"
+            },
+            {
+              "name": "t",
+              "label": "updates",
+              "description": "",
+              "type": "unknown"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "terrains": {
+      "description": "Terrain registration and mutation",
+      "members": {
+        "createAtCellWhenIdle": {
+          "description": "Create at cell when idle.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "terrainTypeOrId",
+              "description": "terrain Type Or id.",
+              "type": "string"
+            },
+            {
+              "name": "n",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "damageAtCell": {
+          "description": "Apply damage at a cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "damage",
+              "description": "damage.",
+              "type": "number"
+            }
+          ],
+          "returnType": "void"
+        },
+        "getDataAtCell": {
+          "description": "Return data at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getTypeAtCell": {
+          "description": "Return type at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getTypeFromId": {
+          "description": "Return type from id.",
+          "params": [
+            {
+              "name": "t",
+              "label": "terrainId",
+              "description": "terrain id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "isAtCell": {
+          "description": "Return whether at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "isCellIdTerrain": {
+          "description": "Return whether cell id terrain.",
+          "params": [
+            {
+              "name": "e",
+              "label": "cellId",
+              "description": "cell id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "isTypeAtCell": {
+          "description": "Return whether type at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "terrainId",
+              "description": "terrain id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "register": {
+          "description": "Register a definition.",
+          "params": [
+            {
+              "name": "t",
+              "label": "definition",
+              "description": "Registration definition object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "removeAtCellWhenIdle": {
+          "description": "Remove at cell when idle.",
+          "params": [
+            {
+              "name": "e",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "t",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "replaceAtCellWhenIdle": {
+          "description": "Replace at cell when idle.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "terrainTypeOrId",
+              "description": "terrain Type Or id.",
+              "type": "string"
+            },
+            {
+              "name": "n",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "setHpAtCellWhenIdle": {
+          "description": "Set hp at cell when idle.",
+          "params": [
+            {
+              "name": "e",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "t",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "hp",
+              "description": "hp.",
+              "type": "number"
+            }
+          ],
+          "returnType": "void"
+        },
+        "updateDefinition": {
+          "description": "Update definition.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellTypeOrId",
+              "description": "cell Type Or id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "partial",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "time": {
+      "description": "Simulation tick and time",
+      "members": {
+        "getTick": {
+          "description": "Return tick.",
+          "params": [],
+          "returnType": "unknown"
+        },
+        "getTimeMs": {
+          "description": "Return time ms.",
+          "params": [],
+          "returnType": "unknown"
+        }
+      }
+    },
+    "tools": {
+      "description": "Grabber helpers",
+      "members": {
+        "grabber": {
+          "description": "",
+          "members": {
+            "getSize": {
+              "description": "Return size.",
+              "params": [],
+              "returnType": "unknown"
+            },
+            "isActive": {
+              "description": "Return whether active.",
+              "params": [],
+              "returnType": "boolean"
+            },
+            "isLoaded": {
+              "description": "Return whether loaded.",
+              "params": [],
+              "returnType": "boolean"
+            },
+            "setSize": {
+              "description": "Set size.",
+              "params": [
+                {
+                  "name": "t",
+                  "label": "size",
+                  "description": "size.",
+                  "type": "number"
+                }
+              ],
+              "returnType": "void"
+            }
+          }
+        }
+      }
+    },
+    "triggers": {
+      "description": "Interval triggers (main)",
+      "members": {
+        "register": {
+          "description": "Register a definition.",
+          "params": [
+            {
+              "name": "t",
+              "label": "triggerId",
+              "description": "trigger id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "definition",
+              "description": "Registration definition object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "ui": {
+      "description": "Toast, overlays, dialogs",
+      "members": {
+        "alert": {
+          "description": "Show an alert dialog.",
+          "params": [
+            {
+              "name": "t",
+              "label": "message",
+              "description": "",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "title",
+              "description": "",
+              "type": "string"
+            }
+          ],
+          "returnType": "Promise<void>"
+        },
+        "confirm": {
+          "description": "Show a confirm dialog.",
+          "params": [
+            {
+              "name": "t",
+              "label": "message",
+              "description": "",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "title",
+              "description": "",
+              "type": "string"
+            }
+          ],
+          "returnType": "Promise<boolean>"
+        },
+        "inject": {
+          "description": "Mount a React component into the game UI tree.",
+          "params": [
+            {
+              "name": "t",
+              "label": "componentId",
+              "description": "component id.",
+              "type": "string"
+            },
+            {
+              "name": "o",
+              "label": "component",
+              "description": "component string.",
+              "type": "(...args: unknown[]) => unknown"
+            }
+          ],
+          "returnType": "(() => void) | undefined"
+        },
+        "navigation": {
+          "description": "",
+          "members": {
+            "controllerFocusClass": {
+              "description": "Return string.",
+              "params": [
+                {
+                  "name": "e",
+                  "label": "focused",
+                  "description": "focused flag.",
+                  "type": "boolean"
+                }
+              ],
+              "returnType": "string"
+            },
+            "useFocusable": {
+              "description": "",
+              "params": [
+                {
+                  "name": "e",
+                  "label": "e",
+                  "description": "",
+                  "type": "unknown"
+                }
+              ],
+              "returnType": "void"
+            },
+            "useFocusScope": {
+              "description": "use Focus Scope.",
+              "params": [
+                {
+                  "name": "e",
+                  "label": "options",
+                  "description": "Optional settings object.",
+                  "type": "Record<string, unknown>"
+                }
+              ],
+              "returnType": "void"
+            }
+          }
+        },
+        "openPauseMenu": {
+          "description": "open Pause Menu.",
+          "params": [],
+          "returnType": "void"
+        },
+        "overlays": {
+          "description": "",
+          "members": {
+            "register": {
+              "description": "Register a definition.",
+              "params": [
+                {
+                  "name": "t",
+                  "label": "slot",
+                  "description": "slot string.",
+                  "type": "string"
+                },
+                {
+                  "name": "r",
+                  "label": "overlayId",
+                  "description": "overlay id.",
+                  "type": "string"
+                },
+                {
+                  "name": "o",
+                  "label": "render",
+                  "description": "",
+                  "type": "(...args: unknown[]) => unknown"
+                }
+              ],
+              "returnType": "void"
+            },
+            "unregister": {
+              "description": "unregister.",
+              "params": [
+                {
+                  "name": "t",
+                  "label": "slot",
+                  "description": "slot string.",
+                  "type": "string"
+                },
+                {
+                  "name": "r",
+                  "label": "overlayId",
+                  "description": "overlay id.",
+                  "type": "string"
+                }
+              ],
+              "returnType": "void"
+            },
+            "update": {
+              "description": "Update a definition.",
+              "params": [
+                {
+                  "name": "t",
+                  "label": "slot",
+                  "description": "slot string.",
+                  "type": "string"
+                }
+              ],
+              "returnType": "void"
+            }
+          }
+        },
+        "prompt": {
+          "description": "Show a prompt dialog.",
+          "params": [
+            {
+              "name": "t",
+              "label": "message",
+              "description": "",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "defaultValue",
+              "description": "default Value string.",
+              "type": "string"
+            },
+            {
+              "name": "o",
+              "label": "placeholder",
+              "description": "",
+              "type": "unknown"
+            },
+            {
+              "name": "n",
+              "label": "title",
+              "description": "",
+              "type": "string"
+            },
+            {
+              "name": "l",
+              "label": "allowCopy",
+              "description": "allow Copy flag.",
+              "type": "boolean"
+            }
+          ],
+          "returnType": "Promise<string | null>"
+        },
+        "showTooltip": {
+          "description": "show Tooltip.",
+          "params": [
+            {
+              "name": "t",
+              "label": "data",
+              "description": "",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "toast": {
+          "description": "Show a toast notification.",
+          "params": [
+            {
+              "name": "t",
+              "label": "message",
+              "description": "",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "update": {
+          "description": "Update a definition.",
+          "params": [
+            {
+              "name": "t",
+              "label": "componentId",
+              "description": "component id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "upgrades": {
+      "description": "Upgrade trees",
+      "members": {
+        "getAvailableLevelById": {
+          "description": "Return available level by id.",
+          "params": [
+            {
+              "name": "t",
+              "label": "itemId",
+              "description": "item id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "upgradeId",
+              "description": "upgrade id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getLevelById": {
+          "description": "Return level by id.",
+          "params": [
+            {
+              "name": "t",
+              "label": "itemId",
+              "description": "item id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "upgradeId",
+              "description": "upgrade id.",
+              "type": "string"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "register": {
+          "description": "Register a definition.",
+          "params": [
+            {
+              "name": "t",
+              "label": "definition",
+              "description": "Registration definition object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "registerCategory": {
+          "description": "Register category.",
+          "params": [
+            {
+              "name": "t",
+              "label": "definition",
+              "description": "Registration definition object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "updateDefinition": {
+          "description": "Update definition.",
+          "params": [
+            {
+              "name": "t",
+              "label": "itemId",
+              "description": "item id.",
+              "type": "string"
+            },
+            {
+              "name": "r",
+              "label": "upgradeId",
+              "description": "upgrade id.",
+              "type": "string"
+            },
+            {
+              "name": "o",
+              "label": "partial",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "utils": {
+      "description": "Math helpers",
+      "members": {
+        "getAngle": {
+          "description": "Return angle.",
+          "params": [
+            {
+              "name": "e",
+              "label": "pointA",
+              "description": "point A.",
+              "type": "unknown"
+            },
+            {
+              "name": "t",
+              "label": "pointB",
+              "description": "point B.",
+              "type": "unknown"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getCoordinatesBetweenPoints": {
+          "description": "Return coordinates between points.",
+          "params": [
+            {
+              "name": "e",
+              "label": "pointA",
+              "description": "point A.",
+              "type": "unknown"
+            },
+            {
+              "name": "t",
+              "label": "pointB",
+              "description": "point B.",
+              "type": "unknown"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getDirection": {
+          "description": "Return direction.",
+          "params": [
+            {
+              "name": "e",
+              "label": "pointA",
+              "description": "point A.",
+              "type": "unknown"
+            },
+            {
+              "name": "t",
+              "label": "pointB",
+              "description": "point B.",
+              "type": "unknown"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "getDistance": {
+          "description": "Return distance.",
+          "params": [],
+          "returnType": "unknown"
+        }
+      }
+    },
+    "workers": {
+      "description": "Worker post-update flag",
+      "members": {
+        "setPostUpdateEnabled": {
+          "description": "Set post update enabled.",
+          "params": [
+            {
+              "name": "t",
+              "label": "enabled",
+              "description": "enabled flag.",
+              "type": "boolean"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    },
+    "world": {
+      "description": "Cell reads, excavation, idle mutation",
+      "members": {
+        "excavateAtCell": {
+          "description": "Excavate terrain at a cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "outVelocity",
+              "description": "out Velocity.",
+              "type": "number"
+            },
+            {
+              "name": "n",
+              "label": "damage",
+              "description": "damage.",
+              "type": "number"
+            },
+            {
+              "name": "l",
+              "label": "options",
+              "description": "Optional settings object.",
+              "type": "Record<string, unknown>"
+            }
+          ],
+          "returnType": "void"
+        },
+        "getCellIdAtCell": {
+          "description": "Return cell id at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "unknown"
+        },
+        "isCellEmptyAtCell": {
+          "description": "Return whether cell empty at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "isTerrainAtCell": {
+          "description": "Return whether terrain at cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        "pickups": {
+          "description": "",
+          "members": {
+            "destroy": {
+              "description": "destroy.",
+              "params": [
+                {
+                  "name": "t",
+                  "label": "worldItem",
+                  "description": "",
+                  "type": "unknown"
+                }
+              ],
+              "returnType": "void"
+            },
+            "getAll": {
+              "description": "Return all.",
+              "params": [],
+              "returnType": "unknown"
+            },
+            "getById": {
+              "description": "Return by id.",
+              "params": [
+                {
+                  "name": "t",
+                  "label": "worldItemId",
+                  "description": "world Item id.",
+                  "type": "string"
+                }
+              ],
+              "returnType": "unknown"
+            },
+            "pickUp": {
+              "description": "Return boolean.",
+              "params": [
+                {
+                  "name": "t",
+                  "label": "worldItem",
+                  "description": "",
+                  "type": "unknown"
+                }
+              ],
+              "returnType": "void"
+            },
+            "spawnAtWorld": {
+              "description": "Spawn at world.",
+              "params": [
+                {
+                  "name": "t",
+                  "label": "type",
+                  "description": "",
+                  "type": "string"
+                },
+                {
+                  "name": "r",
+                  "label": "worldX",
+                  "description": "World X coordinate.",
+                  "type": "number"
+                },
+                {
+                  "name": "o",
+                  "label": "worldY",
+                  "description": "World Y coordinate.",
+                  "type": "number"
+                },
+                {
+                  "name": "n",
+                  "label": "data",
+                  "description": "",
+                  "type": "Record<string, unknown>"
+                },
+                {
+                  "name": "l",
+                  "label": "light",
+                  "description": "",
+                  "type": "unknown"
+                }
+              ],
+              "returnType": "void"
+            }
+          }
+        },
+        "redrawAroundCellWhenIdle": {
+          "description": "Redraw cells around a position when idle.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "o",
+              "label": "range",
+              "description": "range.",
+              "type": "unknown"
+            }
+          ],
+          "returnType": "void"
+        },
+        "reportActivityAtCell": {
+          "description": "Report simulation activity at a cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "void"
+        },
+        "revealFogAtCell": {
+          "description": "Reveal fog at a cell.",
+          "params": [
+            {
+              "name": "t",
+              "label": "cellX",
+              "description": "Cell X coordinate.",
+              "type": "number"
+            },
+            {
+              "name": "r",
+              "label": "cellY",
+              "description": "Cell Y coordinate.",
+              "type": "number"
+            }
+          ],
+          "returnType": "void"
+        },
+        "runWhenSimulationIdle": {
+          "description": "Run a callback when the simulation is idle.",
+          "params": [
+            {
+              "name": "t",
+              "label": "callback",
+              "description": "Callback function.",
+              "type": "(...args: unknown[]) => unknown"
+            }
+          ],
+          "returnType": "void"
+        }
+      }
+    }
+  }
+}

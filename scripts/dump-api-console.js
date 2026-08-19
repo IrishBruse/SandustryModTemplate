@@ -104,17 +104,6 @@
     return parseParamList(paramsStr);
   }
 
-  function formatFunctionDetail(name, fn) {
-    const params = extractParamNames(fn);
-    if (params) {
-      return params.length === 0 ? `${name} ()` : `${name} (${params.join(", ")})`;
-    }
-
-    const arity = fn.length;
-    const plural = arity === 1 ? "parameter" : "parameters";
-    return `${name} (${arity} declared ${plural})`;
-  }
-
   function walkObject(value, seen) {
     const kind = kindOf(value);
 
@@ -126,7 +115,6 @@
         name,
         params: params ?? [],
         declaredArity: params ? params.length : value.length,
-        signature: formatFunctionDetail(name, value),
       };
     }
 

@@ -3,7 +3,7 @@
  * Used by scripts/generate-api-types.mjs
  */
 
-/** @typedef {{ kind: string; arity: number | null; params: string[] | null; signature?: string; value?: unknown; members: Map<string, TreeNode> }} TreeNode */
+/** @typedef {{ kind: string; arity: number | null; params: string[] | null; value?: unknown; members: Map<string, TreeNode> }} TreeNode */
 
 /** @param {string | undefined} detail */
 export function parseFunctionDetail(detail) {
@@ -86,7 +86,6 @@ export function parseTextDump(md) {
       kind,
       arity,
       params,
-      signature: kind === "function" ? detail ?? undefined : undefined,
     });
   }
 
@@ -121,7 +120,6 @@ function jsonMemberToNode(jsonMember) {
           ? jsonMember.params.length
           : null,
     params: Array.isArray(jsonMember.params) ? jsonMember.params : null,
-    signature: typeof jsonMember.signature === "string" ? jsonMember.signature : undefined,
     value: "value" in jsonMember ? jsonMember.value : undefined,
   });
 
@@ -192,10 +190,8 @@ function treeNodeToJson(node) {
   /** @type {Record<string, unknown>} */
   const out = { kind: node.kind };
   if (node.kind === "function") {
-    out.name = node.signature?.match(/^([^(]+)/)?.[1]?.trim() ?? "";
     out.params = node.params ?? [];
     out.declaredArity = node.arity ?? out.params.length;
-    if (node.signature) out.signature = node.signature;
   } else if (node.kind === "object") {
     /** @type {Record<string, unknown>} */
     const members = {};
@@ -283,13 +279,14 @@ function mergeDocMembers(out, prevMembers, dumpMembers) {
       continue;
     }
 
-    /** @type {Array<Record<string, string>>} */
+    /** @type {Array<Record<string, unknown>>} */
     const params = [];
     const prevParams = Array.isArray(prevMember.params) ? prevMember.params : [];
     const dumpParams = node.params ?? [];
     for (let i = 0; i < dumpParams.length; i++) {
       const prevParam = prevParams[i];
-      params.push({
+      /** @type {Record<string, unknown>} */
+      const param = {
         name: dumpParams[i],
         label:
           prevParam && typeof prevParam === "object" && typeof prevParam.label === "string"
@@ -299,14 +296,31 @@ function mergeDocMembers(out, prevMembers, dumpMembers) {
           prevParam && typeof prevParam === "object" && typeof prevParam.description === "string"
             ? prevParam.description
             : "",
-      });
+      };
+      const prevType =
+        prevParam && typeof prevParam === "object" && typeof prevParam.type === "string" ? prevParam.type.trim() : "";
+      const inferredType = inferParamType(param, key, i);
+      param.type = prevType && prevType !== "unknown" ? prevType : inferredType;
+      params.push(param);
     }
 
-    out[key] = {
+    /** @type {Record<string, unknown>} */
+    const member = {
       description: typeof prevMember.description === "string" ? prevMember.description : "",
-      signature: node.signature ?? "",
       params,
     };
+
+    if (typeof prevMember.signature === "string" && prevMember.signature) {
+      member.signature = prevMember.signature;
+    }
+
+    if (node.kind === "function") {
+      const prevReturn =
+        typeof prevMember.returnType === "string" && prevMember.returnType.trim() ? prevMember.returnType.trim() : "";
+      member.returnType = prevReturn || inferReturnType(member, key);
+    }
+
+    out[key] = member;
   }
 }
 
@@ -326,14 +340,29 @@ export function getDocEntry(docs, path) {
   return null;
 }
 
-/** @param {Record<string, unknown>} param */
-function inferParamType(param) {
-  if (typeof param.type === "string" && param.type.trim()) return param.type.trim();
+/**
+ * @param {Record<string, unknown>} param
+ * @param {string} [methodKey]
+ * @param {number} [paramIndex]
+ */
+export function inferParamType(param, methodKey, paramIndex) {
+  const explicit = typeof param.type === "string" ? param.type.trim() : "";
+  if (explicit && explicit !== "unknown") return explicit;
 
   const label = String(param.label || param.name || "");
   const labelLower = label.toLowerCase();
   const desc = String(param.description || "");
   const text = `${label} ${desc}`.toLowerCase();
+
+  if (methodKey === "on" && paramIndex === 0) return "string";
+  if (methodKey === "on" && paramIndex === 1) return "(...args: unknown[]) => unknown";
+  if (methodKey === "emit" && paramIndex === 0) return "string";
+  if (methodKey === "emit" && paramIndex === 1) return "unknown";
+  if (methodKey === "nextTick" && paramIndex === 0) return "(...args: unknown[]) => unknown";
+  if (methodKey === "onChange" && paramIndex === 0) return "(...args: unknown[]) => unknown";
+  if (/^register/.test(methodKey ?? "") && paramIndex === 0) return "string";
+  if (methodKey === "get" && paramIndex === 0) return "string";
+  if (methodKey === "set" && paramIndex === 0) return "string";
 
   if (/unsubscribe/.test(desc)) return "() => void";
 
@@ -366,7 +395,7 @@ function inferParamType(param) {
 }
 
 /** @param {Record<string, unknown> | null | undefined} docEntry @param {string} methodKey */
-function inferReturnType(docEntry, methodKey) {
+export function inferReturnType(docEntry, methodKey) {
   if (typeof docEntry?.returnType === "string" && docEntry.returnType.trim()) {
     return docEntry.returnType.trim();
   }
@@ -422,7 +451,9 @@ export function formatFunctionSignature(docEntry, dumpNode, methodKey) {
   }
 
   const paramList = params
-    .map((p) => `${sanitizeParamName(/** @type {Record<string, string>} */ (p).label || /** @type {Record<string, string>} */ (p).name)}: ${inferParamType(p)}`)
+    .map((p, i) =>
+      `${sanitizeParamName(/** @type {Record<string, string>} */ (p).label || /** @type {Record<string, string>} */ (p).name)}: ${inferParamType(p, methodKey, i)}`,
+    )
     .join(", ");
 
   const ret = inferReturnType(docEntry, methodKey);

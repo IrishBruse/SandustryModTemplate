@@ -1,0 +1,2566 @@
+{
+  "meta": {
+    "generatedAt": "2026-08-19",
+    "entries": 352,
+    "functions": 281
+  },
+  "namespaces": {
+    "action": {
+      "kind": "object",
+      "members": {
+        "getActive": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "getSelected": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "setCustomData": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        }
+      },
+      "memberCount": 3
+    },
+    "assets": {
+      "kind": "object",
+      "members": {
+        "getSelectedProvider": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "getUrl": {
+          "kind": "function",
+          "params": [
+            "e"
+          ],
+          "declaredArity": 1
+        },
+        "selectProvider": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        }
+      },
+      "memberCount": 3
+    },
+    "authorization": {
+      "kind": "object",
+      "members": {
+        "canBuildAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "canGrabAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "canUseTool": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "canUseToolAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 3
+        },
+        "getPlayerZoneId": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "getZoneIdAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        }
+      },
+      "memberCount": 6
+    },
+    "building": {
+      "kind": "object",
+      "members": {
+        "cancelPlacement": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "getSnappedPositionAtCell": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t"
+          ],
+          "declaredArity": 2
+        },
+        "isBlockedAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "selectStructure": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        }
+      },
+      "memberCount": 4
+    },
+    "camera": {
+      "kind": "object",
+      "members": {
+        "releaseFocus": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "setFocusAtWorld": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "snapToPlayer": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        }
+      },
+      "memberCount": 3
+    },
+    "collector": {
+      "kind": "object",
+      "members": {
+        "getValueByType": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "getValueFromCellId": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "isCellIdCollectable": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "isCellIdCollectableForSprite": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "notifyPickupAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        }
+      },
+      "memberCount": 5
+    },
+    "constants": {
+      "kind": "object",
+      "members": {
+        "physics": {
+          "kind": "object",
+          "members": {
+            "aggressiveSkip": {
+              "kind": "number",
+              "value": 2
+            },
+            "normal": {
+              "kind": "number",
+              "value": 0
+            },
+            "skip": {
+              "kind": "number",
+              "value": 1
+            }
+          },
+          "memberCount": 3
+        }
+      },
+      "memberCount": 1
+    },
+    "cooldown": {
+      "kind": "object",
+      "members": {
+        "check": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "isReady": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        }
+      },
+      "memberCount": 2
+    },
+    "discoveries": {
+      "kind": "object",
+      "members": {
+        "addElementByType": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "addTerrainByType": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        }
+      },
+      "memberCount": 2
+    },
+    "effects": {
+      "kind": "object",
+      "members": {
+        "createDistortionWaveAtWorld": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 3
+        },
+        "createEffectAtWorld": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o",
+            "n"
+          ],
+          "declaredArity": 4
+        },
+        "createLaserAtWorld": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o",
+            "n",
+            "l"
+          ],
+          "declaredArity": 5
+        },
+        "createLightAtWorld": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 3
+        },
+        "createParticlesAtWorld": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 3
+        },
+        "removeLightById": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        }
+      },
+      "memberCount": 6
+    },
+    "elements": {
+      "kind": "object",
+      "members": {
+        "addInteractionInfo": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "addParticleVelocityAtCellWhenIdle": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 4
+        },
+        "convertFromParticleAtCellWhenIdle": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t"
+          ],
+          "declaredArity": 2
+        },
+        "convertToParticleAtCellWhenIdle": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t",
+            "r"
+          ],
+          "declaredArity": 3
+        },
+        "createAtCellWhenIdle": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o",
+            "n"
+          ],
+          "declaredArity": 4
+        },
+        "findFreeCellInStructure": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 3
+        },
+        "getDataFieldAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 3
+        },
+        "getDefinitionByType": {
+          "kind": "function",
+          "params": [
+            "e"
+          ],
+          "declaredArity": 1
+        },
+        "getInfoAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "getMatterTypeAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "getNameByType": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "getRegisteredTypes": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "getResolvedTypeAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "getResolvedTypeFromCellId": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "getTypeAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "getTypeFromId": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "getVelocityAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "isFreeFallingAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "isTypeAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 3
+        },
+        "refreshColorAtCellWhenIdle": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t"
+          ],
+          "declaredArity": 2
+        },
+        "register": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "removeAtCellWhenIdle": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t",
+            "r"
+          ],
+          "declaredArity": 3
+        },
+        "replaceAtCellWhenIdle": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o",
+            "n"
+          ],
+          "declaredArity": 4
+        },
+        "setDataFieldAtCellWhenIdle": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 4
+        },
+        "setDurationAtCellWhenIdle": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 4
+        },
+        "setPhysicsAtCellWhenIdle": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t",
+            "r"
+          ],
+          "declaredArity": 3
+        },
+        "setVelocityAtCellWhenIdle": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t",
+            "r"
+          ],
+          "declaredArity": 3
+        },
+        "teleportBetweenCellsWhenIdle": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o",
+            "n"
+          ],
+          "declaredArity": 4
+        },
+        "updateDefinition": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        }
+      },
+      "memberCount": 29
+    },
+    "energy": {
+      "kind": "object",
+      "members": {
+        "addAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o",
+            "n"
+          ],
+          "declaredArity": 4
+        },
+        "consume": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "consumeExcludingNetworkAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 3
+        },
+        "getNetworkAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "getNetworkFreeCapacityAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "registerType": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 3
+        }
+      },
+      "memberCount": 6
+    },
+    "events": {
+      "kind": "object",
+      "members": {
+        "emit": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "on": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        }
+      },
+      "memberCount": 2
+    },
+    "excavation": {
+      "kind": "object",
+      "members": {
+        "registerProfile": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        }
+      },
+      "memberCount": 1
+    },
+    "fire": {
+      "kind": "object",
+      "members": {
+        "burnElementAtCellWhenIdle": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t"
+          ],
+          "declaredArity": 2
+        },
+        "canBurnElementAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        }
+      },
+      "memberCount": 2
+    },
+    "gameConfig": {
+      "kind": "object",
+      "members": {
+        "get": {
+          "kind": "function",
+          "params": [
+            "e"
+          ],
+          "declaredArity": 1
+        },
+        "getAll": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        }
+      },
+      "memberCount": 2
+    },
+    "grid": {
+      "kind": "object",
+      "members": {
+        "forEachCellInCircle": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o",
+            "n"
+          ],
+          "declaredArity": 4
+        },
+        "forEachCellInRect": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o",
+            "n",
+            "l"
+          ],
+          "declaredArity": 5
+        }
+      },
+      "memberCount": 2
+    },
+    "hooks": {
+      "kind": "object",
+      "members": {
+        "intercept": {
+          "kind": "function",
+          "params": [
+            "t",
+            "o",
+            "n"
+          ],
+          "declaredArity": 3
+        },
+        "modify": {
+          "kind": "function",
+          "params": [
+            "t",
+            "o",
+            "n"
+          ],
+          "declaredArity": 3
+        }
+      },
+      "memberCount": 2
+    },
+    "i18n": {
+      "kind": "object",
+      "members": {
+        "clearGlobal": {
+          "kind": "function",
+          "params": [
+            "e"
+          ],
+          "declaredArity": 1
+        },
+        "formatKeyForDisplay": {
+          "kind": "function",
+          "params": [
+            "e"
+          ],
+          "declaredArity": 1
+        },
+        "formatNumber": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t"
+          ],
+          "declaredArity": 2
+        },
+        "getAvailableLocales": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "getDescription": {
+          "kind": "function",
+          "params": [
+            "e"
+          ],
+          "declaredArity": 1
+        },
+        "getGlobal": {
+          "kind": "function",
+          "params": [
+            "e"
+          ],
+          "declaredArity": 1
+        },
+        "getGlobals": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "getLanguages": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "getLocale": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "getName": {
+          "kind": "function",
+          "params": [
+            "e"
+          ],
+          "declaredArity": 1
+        },
+        "hasTranslation": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t"
+          ],
+          "declaredArity": 2
+        },
+        "key": {
+          "kind": "function",
+          "params": [
+            "...e"
+          ],
+          "declaredArity": 1
+        },
+        "register": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t"
+          ],
+          "declaredArity": 2
+        },
+        "setGlobal": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t"
+          ],
+          "declaredArity": 2
+        },
+        "setLocale": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 1
+        },
+        "t": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t"
+          ],
+          "declaredArity": 2
+        },
+        "translatable": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t"
+          ],
+          "declaredArity": 2
+        }
+      },
+      "memberCount": 17
+    },
+    "input": {
+      "kind": "object",
+      "members": {
+        "getBoundKeys": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "getDisplayKey": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "getMouseCellPosition": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "isAltHeld": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "isCtrlHeld": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "pressBinding": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "registerBinding": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 3
+        },
+        "releaseBinding": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "resetMouseState": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "triggerBinding": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        }
+      },
+      "memberCount": 10
+    },
+    "items": {
+      "kind": "object",
+      "members": {
+        "createFromId": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "getActive": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "getDefinitionById": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "isActiveById": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "register": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "updateDefinition": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        }
+      },
+      "memberCount": 6
+    },
+    "lights": {
+      "kind": "object",
+      "members": {
+        "persistent": {
+          "kind": "object",
+          "members": {
+            "createAtWorld": {
+              "kind": "function",
+              "params": [
+                "t",
+                "r",
+                "o"
+              ],
+              "declaredArity": 3
+            },
+            "fadeAtWorld": {
+              "kind": "function",
+              "params": [
+                "t",
+                "r",
+                "o"
+              ],
+              "declaredArity": 3
+            },
+            "markDirty": {
+              "kind": "function",
+              "params": [],
+              "declaredArity": 0
+            },
+            "removeAtWorld": {
+              "kind": "function",
+              "params": [
+                "t",
+                "r"
+              ],
+              "declaredArity": 2
+            }
+          },
+          "memberCount": 4
+        },
+        "vfx": {
+          "kind": "object",
+          "members": {
+            "createAtWorld": {
+              "kind": "function",
+              "params": [
+                "t",
+                "r",
+                "o"
+              ],
+              "declaredArity": 3
+            },
+            "removeById": {
+              "kind": "function",
+              "params": [
+                "t"
+              ],
+              "declaredArity": 1
+            }
+          },
+          "memberCount": 2
+        }
+      },
+      "memberCount": 2
+    },
+    "maps": {
+      "kind": "object",
+      "members": {
+        "getActive": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "getAvailable": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "start": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        }
+      },
+      "memberCount": 3
+    },
+    "mods": {
+      "kind": "object",
+      "members": {
+        "getProviders": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        }
+      },
+      "memberCount": 1
+    },
+    "patterns": {
+      "kind": "object",
+      "members": {
+        "createCircle": {
+          "kind": "function",
+          "params": [
+            "e"
+          ],
+          "declaredArity": 1
+        },
+        "excavateAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o",
+            "n",
+            "l",
+            "s"
+          ],
+          "declaredArity": 6
+        }
+      },
+      "memberCount": 2
+    },
+    "player": {
+      "kind": "object",
+      "members": {
+        "buildings": {
+          "kind": "object",
+          "members": {
+            "unlockByType": {
+              "kind": "function",
+              "params": [
+                "t"
+              ],
+              "declaredArity": 1
+            }
+          },
+          "memberCount": 1
+        },
+        "getWorldPosition": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "inventory": {
+          "kind": "object",
+          "members": {
+            "addFromId": {
+              "kind": "function",
+              "params": [
+                "t"
+              ],
+              "declaredArity": 1
+            }
+          },
+          "memberCount": 1
+        },
+        "isCollidingWithCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "isOnGround": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "isWithinRadiusOfCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 3
+        },
+        "isWorldPositionClear": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "setMovementMode": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "setMovementSpeedMultiplier": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "setVelocity": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "setWorldPosition": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "teleportToGround": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        }
+      },
+      "memberCount": 12
+    },
+    "processing": {
+      "kind": "object",
+      "members": {
+        "registerGrower": {
+          "kind": "function",
+          "params": [
+            "e"
+          ],
+          "declaredArity": 1
+        },
+        "registerKineticPress": {
+          "kind": "function",
+          "params": [
+            "e"
+          ],
+          "declaredArity": 1
+        },
+        "registerShaker": {
+          "kind": "function",
+          "params": [
+            "e"
+          ],
+          "declaredArity": 1
+        }
+      },
+      "memberCount": 3
+    },
+    "progression": {
+      "kind": "object",
+      "members": {
+        "complete": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        }
+      },
+      "memberCount": 1
+    },
+    "projectiles": {
+      "kind": "object",
+      "members": {
+        "createBlueprintFromId": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "getAll": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "getById": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "getDefinitionById": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "register": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "remove": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "spawnAtWorld": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o",
+            "n"
+          ],
+          "declaredArity": 4
+        }
+      },
+      "memberCount": 7
+    },
+    "random": {
+      "kind": "object",
+      "members": {
+        "float": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t"
+          ],
+          "declaredArity": 2
+        },
+        "int": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t"
+          ],
+          "declaredArity": 2
+        }
+      },
+      "memberCount": 2
+    },
+    "raycast": {
+      "kind": "object",
+      "members": {
+        "castFromWorld": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o",
+            "n"
+          ],
+          "declaredArity": 4
+        }
+      },
+      "memberCount": 1
+    },
+    "reactions": {
+      "kind": "object",
+      "members": {
+        "registerContact": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        }
+      },
+      "memberCount": 1
+    },
+    "rendering": {
+      "kind": "object",
+      "members": {
+        "getDrawPositionAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "getGridMetrics": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "getOverlayViewportSize": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "withOverlayContext": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        }
+      },
+      "memberCount": 4
+    },
+    "resources": {
+      "kind": "object",
+      "members": {
+        "collectFluxiteAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "updateEnergy": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        }
+      },
+      "memberCount": 2
+    },
+    "scene": {
+      "kind": "object",
+      "members": {
+        "getActive": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        }
+      },
+      "memberCount": 1
+    },
+    "schedule": {
+      "kind": "object",
+      "members": {
+        "nextTick": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        }
+      },
+      "memberCount": 1
+    },
+    "settings": {
+      "kind": "object",
+      "members": {
+        "get": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "getAll": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "onChange": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        }
+      },
+      "memberCount": 3
+    },
+    "shared": {
+      "kind": "object",
+      "members": {
+        "buffers": {
+          "kind": "object",
+          "members": {
+            "create": {
+              "kind": "function",
+              "params": [
+                "t",
+                "o"
+              ],
+              "declaredArity": 2
+            },
+            "get": {
+              "kind": "function",
+              "params": [
+                "t"
+              ],
+              "declaredArity": 1
+            }
+          },
+          "memberCount": 2
+        }
+      },
+      "memberCount": 1
+    },
+    "signals": {
+      "kind": "object",
+      "members": {
+        "targets": {
+          "kind": "object",
+          "members": {
+            "register": {
+              "kind": "function",
+              "params": [
+                "t",
+                "r"
+              ],
+              "declaredArity": 2
+            }
+          },
+          "memberCount": 1
+        }
+      },
+      "memberCount": 1
+    },
+    "sound": {
+      "kind": "object",
+      "members": {
+        "calculateDistanceOptionsAtWorld": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 3
+        },
+        "play": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "playActive": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "playLayers": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "stopActive": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "stopAll": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "stopById": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        }
+      },
+      "memberCount": 7
+    },
+    "sprites": {
+      "kind": "object",
+      "members": {
+        "getById": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "hideAllPlayerModSprites": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "load": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 3
+        },
+        "loadFromMod": {
+          "kind": "function",
+          "params": [
+            "r",
+            "o",
+            "n"
+          ],
+          "declaredArity": 3
+        },
+        "rotatePlayerModSprites": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        }
+      },
+      "memberCount": 5
+    },
+    "storage": {
+      "kind": "object",
+      "members": {
+        "ensure": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "get": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "local": {
+          "kind": "object",
+          "members": {
+            "get": {
+              "kind": "function",
+              "params": [
+                "e"
+              ],
+              "declaredArity": 1
+            },
+            "remove": {
+              "kind": "function",
+              "params": [
+                "e"
+              ],
+              "declaredArity": 1
+            },
+            "set": {
+              "kind": "function",
+              "params": [
+                "e",
+                "t"
+              ],
+              "declaredArity": 2
+            }
+          },
+          "memberCount": 3
+        },
+        "remove": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "set": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 3
+        }
+      },
+      "memberCount": 5
+    },
+    "structureBehaviors": {
+      "kind": "object",
+      "members": {
+        "registerConveyorType": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "registerLauncherType": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        }
+      },
+      "memberCount": 2
+    },
+    "structures": {
+      "kind": "object",
+      "members": {
+        "addProcessor": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "addVariant": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 3
+        },
+        "buildAtCellWhenIdle": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o",
+            "n"
+          ],
+          "declaredArity": 4
+        },
+        "forEachOfType": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "getAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "getDefinitionByType": {
+          "kind": "function",
+          "params": [
+            "e"
+          ],
+          "declaredArity": 1
+        },
+        "getTypeFromId": {
+          "kind": "function",
+          "params": [
+            "e"
+          ],
+          "declaredArity": 1
+        },
+        "getUnlockedTypes": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "hasBuiltAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "isBlockedByPlayerAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "isLauncherAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "isType": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t"
+          ],
+          "declaredArity": 2
+        },
+        "isTypeAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 3
+        },
+        "isUnlockedByType": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "mapValueToSpritesheetIndex": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t"
+          ],
+          "declaredArity": 2
+        },
+        "processing": {
+          "kind": "object",
+          "members": {
+            "isEnabledAt": {
+              "kind": "function",
+              "params": [
+                "t",
+                "r"
+              ],
+              "declaredArity": 2
+            },
+            "register": {
+              "kind": "function",
+              "params": [
+                "t",
+                "r"
+              ],
+              "declaredArity": 2
+            },
+            "setEnabledAt": {
+              "kind": "function",
+              "params": [
+                "t",
+                "r",
+                "o"
+              ],
+              "declaredArity": 3
+            }
+          },
+          "memberCount": 3
+        },
+        "recipes": {
+          "kind": "object",
+          "members": {
+            "register": {
+              "kind": "function",
+              "params": [
+                "t",
+                "r"
+              ],
+              "declaredArity": 2
+            }
+          },
+          "memberCount": 1
+        },
+        "register": {
+          "kind": "function",
+          "params": [
+            "t",
+            "o"
+          ],
+          "declaredArity": 2
+        },
+        "registerPlacementConfig": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "removeAtCellsWhenIdle": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "removeAtCellWhenIdle": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 3
+        },
+        "removeBetweenCellsWhenIdle": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o",
+            "n",
+            "l"
+          ],
+          "declaredArity": 5
+        },
+        "setData": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 3
+        },
+        "setSpritesheetIndex": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "setSpritesheetIndexAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 3
+        },
+        "setSpritesheetIndexByValue": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 3
+        },
+        "setSpritesheetIndexByValueAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o",
+            "n"
+          ],
+          "declaredArity": 4
+        },
+        "update": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "updateDefinition": {
+          "kind": "function",
+          "params": [
+            "t",
+            "o",
+            "n"
+          ],
+          "declaredArity": 3
+        }
+      },
+      "memberCount": 29
+    },
+    "tech": {
+      "kind": "object",
+      "members": {
+        "addDefinition": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t"
+          ],
+          "declaredArity": 2
+        },
+        "getDefinitionById": {
+          "kind": "function",
+          "params": [
+            "e"
+          ],
+          "declaredArity": 1
+        },
+        "isLockedById": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "registerNode": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t",
+            "n"
+          ],
+          "declaredArity": 3
+        },
+        "setLockedById": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "updateDefinition": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t"
+          ],
+          "declaredArity": 2
+        }
+      },
+      "memberCount": 6
+    },
+    "terrains": {
+      "kind": "object",
+      "members": {
+        "createAtCellWhenIdle": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o",
+            "n"
+          ],
+          "declaredArity": 4
+        },
+        "damageAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 3
+        },
+        "getDataAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "getTypeAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "getTypeFromId": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "isAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "isCellIdTerrain": {
+          "kind": "function",
+          "params": [
+            "e"
+          ],
+          "declaredArity": 1
+        },
+        "isTypeAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 3
+        },
+        "register": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "removeAtCellWhenIdle": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t",
+            "r"
+          ],
+          "declaredArity": 3
+        },
+        "replaceAtCellWhenIdle": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o",
+            "n"
+          ],
+          "declaredArity": 4
+        },
+        "setHpAtCellWhenIdle": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t",
+            "r"
+          ],
+          "declaredArity": 3
+        },
+        "updateDefinition": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        }
+      },
+      "memberCount": 13
+    },
+    "time": {
+      "kind": "object",
+      "members": {
+        "getTick": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "getTimeMs": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        }
+      },
+      "memberCount": 2
+    },
+    "tools": {
+      "kind": "object",
+      "members": {
+        "grabber": {
+          "kind": "object",
+          "members": {
+            "getSize": {
+              "kind": "function",
+              "params": [],
+              "declaredArity": 0
+            },
+            "isActive": {
+              "kind": "function",
+              "params": [],
+              "declaredArity": 0
+            },
+            "isLoaded": {
+              "kind": "function",
+              "params": [],
+              "declaredArity": 0
+            },
+            "setSize": {
+              "kind": "function",
+              "params": [
+                "t"
+              ],
+              "declaredArity": 1
+            }
+          },
+          "memberCount": 4
+        }
+      },
+      "memberCount": 1
+    },
+    "triggers": {
+      "kind": "object",
+      "members": {
+        "register": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        }
+      },
+      "memberCount": 1
+    },
+    "ui": {
+      "kind": "object",
+      "members": {
+        "alert": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "confirm": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "inject": {
+          "kind": "function",
+          "params": [
+            "t",
+            "o"
+          ],
+          "declaredArity": 2
+        },
+        "navigation": {
+          "kind": "object",
+          "members": {
+            "controllerFocusClass": {
+              "kind": "function",
+              "params": [
+                "e"
+              ],
+              "declaredArity": 1
+            },
+            "useFocusable": {
+              "kind": "function",
+              "params": [
+                "e"
+              ],
+              "declaredArity": 1
+            },
+            "useFocusScope": {
+              "kind": "function",
+              "params": [
+                "e"
+              ],
+              "declaredArity": 1
+            }
+          },
+          "memberCount": 3
+        },
+        "openPauseMenu": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 0
+        },
+        "overlays": {
+          "kind": "object",
+          "members": {
+            "register": {
+              "kind": "function",
+              "params": [
+                "t",
+                "r",
+                "o"
+              ],
+              "declaredArity": 3
+            },
+            "unregister": {
+              "kind": "function",
+              "params": [
+                "t",
+                "r"
+              ],
+              "declaredArity": 2
+            },
+            "update": {
+              "kind": "function",
+              "params": [
+                "t"
+              ],
+              "declaredArity": 1
+            }
+          },
+          "memberCount": 3
+        },
+        "prompt": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o",
+            "n",
+            "l"
+          ],
+          "declaredArity": 5
+        },
+        "showTooltip": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "toast": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "update": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        }
+      },
+      "memberCount": 10
+    },
+    "upgrades": {
+      "kind": "object",
+      "members": {
+        "getAvailableLevelById": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "getLevelById": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "register": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "registerCategory": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        },
+        "updateDefinition": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 3
+        }
+      },
+      "memberCount": 5
+    },
+    "utils": {
+      "kind": "object",
+      "members": {
+        "getAngle": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t"
+          ],
+          "declaredArity": 2
+        },
+        "getCoordinatesBetweenPoints": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t"
+          ],
+          "declaredArity": 2
+        },
+        "getDirection": {
+          "kind": "function",
+          "params": [
+            "e",
+            "t"
+          ],
+          "declaredArity": 2
+        },
+        "getDistance": {
+          "kind": "function",
+          "params": [],
+          "declaredArity": 2
+        }
+      },
+      "memberCount": 4
+    },
+    "workers": {
+      "kind": "object",
+      "members": {
+        "setPostUpdateEnabled": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        }
+      },
+      "memberCount": 1
+    },
+    "world": {
+      "kind": "object",
+      "members": {
+        "excavateAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o",
+            "n",
+            "l"
+          ],
+          "declaredArity": 5
+        },
+        "getCellIdAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "isCellEmptyAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "isTerrainAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "pickups": {
+          "kind": "object",
+          "members": {
+            "destroy": {
+              "kind": "function",
+              "params": [
+                "t"
+              ],
+              "declaredArity": 1
+            },
+            "getAll": {
+              "kind": "function",
+              "params": [],
+              "declaredArity": 0
+            },
+            "getById": {
+              "kind": "function",
+              "params": [
+                "t"
+              ],
+              "declaredArity": 1
+            },
+            "pickUp": {
+              "kind": "function",
+              "params": [
+                "t"
+              ],
+              "declaredArity": 1
+            },
+            "spawnAtWorld": {
+              "kind": "function",
+              "params": [
+                "t",
+                "r",
+                "o",
+                "n",
+                "l"
+              ],
+              "declaredArity": 5
+            }
+          },
+          "memberCount": 5
+        },
+        "redrawAroundCellWhenIdle": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r",
+            "o"
+          ],
+          "declaredArity": 3
+        },
+        "reportActivityAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "revealFogAtCell": {
+          "kind": "function",
+          "params": [
+            "t",
+            "r"
+          ],
+          "declaredArity": 2
+        },
+        "runWhenSimulationIdle": {
+          "kind": "function",
+          "params": [
+            "t"
+          ],
+          "declaredArity": 1
+        }
+      },
+      "memberCount": 9
+    }
+  }
+}

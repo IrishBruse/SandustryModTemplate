@@ -230,7 +230,6 @@ const indexOutput = `/**
  * Run: npm run generate-types
  *
  * In-game runtime snapshot: ${dump.meta.entries} entries, ${dump.meta.functions} functions.
- * Inline function signatures (ctx bound internally).
  * Docs overlay: sandkit-api/api-docs.json
  */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
