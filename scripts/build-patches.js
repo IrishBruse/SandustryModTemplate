@@ -11,8 +11,8 @@ const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PATCHES_ENTRY = join(ROOT, "src/patches/index.ts");
 /** Ephemeral esbuild output — lives under the system temp dir, not the repo. */
 export const CACHE_DIR = join(tmpdir(), "sandustry-mod-template");
-export const PATCHES_CACHE = join(CACHE_DIR, "patches.mjs");
-export const PATCHES_WATCH_CACHE = join(CACHE_DIR, "patches-watch.mjs");
+export const PATCHES_CACHE = join(CACHE_DIR, "patches.js");
+export const PATCHES_WATCH_CACHE = join(CACHE_DIR, "patches-watch.js");
 const JS_PATCH_PATH = /^js\/[^/]+\.js$/;
 
 /** @param {unknown[]} patches */

@@ -4,13 +4,13 @@
   "type": "module",
   "scripts": {
     "build": "node esbuild.config.mjs",
-    "dev": "bash scripts/dev.sh",
-    "watch": "bash scripts/dev.sh",
+    "dev": "node scripts/dev.js",
+    "watch": "node scripts/dev.js",
     "typecheck": "tsc --noEmit",
-    "generate-types": "node scripts/generate-api-types.mjs",
-    "references": "node scripts/references.mjs",
-    "sandustry": "bash scripts/launch-sandustry.sh",
-    "sandustry:debug": "bash scripts/launch-sandustry-debug.sh"
+    "generate-types": "node scripts/generate-api-types.js",
+    "references": "node scripts/references.js",
+    "sandustry": "node scripts/launch-sandustry.js",
+    "sandustry:debug": "node scripts/launch-sandustry-debug.js"
   },
   "devDependencies": {
     "@electron/asar": "^4.3.0",

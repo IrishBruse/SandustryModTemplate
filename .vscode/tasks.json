@@ -19,13 +19,13 @@
     {
       "label": "sandustry:stop",
       "type": "shell",
-      "command": "pkill -TERM -f '${env:HOME}/games/SteamLibrary/steamapps/common/Sandustry/sandustry' || true",
+      "command": "node scripts/sandustry-stop.js",
       "problemMatcher": []
     },
     {
       "label": "sandustry:debug-background",
       "type": "shell",
-      "command": "bash scripts/launch-sandustry-debug.sh",
+      "command": "node scripts/launch-sandustry-debug.js",
       "options": {
         "cwd": "${workspaceFolder}"
       },

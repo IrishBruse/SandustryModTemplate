@@ -1,6 +1,6 @@
 /**
  * Shared runtime dump parsing and api-docs merge helpers.
- * Used by scripts/generate-api-types.mjs
+ * Used by scripts/generate-api-types.js
  */
 
 /** @typedef {{ kind: string; arity: number | null; params: string[] | null; value?: unknown; members: Map<string, TreeNode> }} TreeNode */
@@ -427,7 +427,7 @@ function sanitizeParamName(name) {
 /**
  * Build a mod-facing function type for generated `.d.ts` stubs.
  * @param {Record<string, unknown> | null | undefined} docEntry
- * @param {import("./api-dump-format.mjs").TreeNode} dumpNode
+ * @param {import("./api-dump-format.js").TreeNode} dumpNode
  * @param {string} methodKey
  */
 export function formatFunctionSignature(docEntry, dumpNode, methodKey) {

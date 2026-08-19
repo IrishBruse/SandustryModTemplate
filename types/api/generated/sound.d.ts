@@ -11,7 +11,7 @@ export interface ApiSound {
    * @param worldY World Y coordinate.
    * @param baseVolume base Volume.
    */
-  calculateDistanceOptionsAtWorld: (worldX: number, worldY: number, baseVolume: number) => void;
+  calculateDistanceOptionsAtWorld: (worldX: number, worldY: number, baseVolume: number) => Record<string, unknown>;
   /**
    * Play .
    * @param soundId sound id.

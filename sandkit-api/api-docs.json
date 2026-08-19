@@ -1,6 +1,6 @@
 {
   "meta": {
-    "updatedAt": "2026-08-19T22:41:53.287Z",
+    "updatedAt": "2026-08-19T22:50:51.047Z",
     "sourceGeneratedAt": "2026-08-19",
     "entryCount": 352,
     "functionCount": 281
@@ -2885,7 +2885,7 @@
               "type": "number"
             }
           ],
-          "returnType": "void"
+          "returnType": "Record<string, unknown>"
         },
         "play": {
           "description": "Play .",

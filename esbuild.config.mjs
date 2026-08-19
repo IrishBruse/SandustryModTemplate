@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import {
   buildPatches,
   PATCHES_WATCH_CACHE,
-} from "./scripts/build-patches.mjs";
+} from "./scripts/build-patches.js";
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const MOD_OUT_DIR = process.env.MOD_OUT_DIR ?? join(ROOT, "dist");

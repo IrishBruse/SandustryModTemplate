@@ -16,8 +16,8 @@ import {
   mergeApiDocs,
   parseJsonDump,
   parseTextDump,
-} from "./api-dump-format.mjs";
-import { applyTypeCuration } from "./api-type-curation.mjs";
+} from "./api-dump-format.js";
+import { applyTypeCuration } from "./api-type-curation.js";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const JSON_SOURCE = join(ROOT, "sandkit-api/runtime-dump.json");
@@ -120,7 +120,7 @@ function memberType(node, docEntry, methodKey) {
   return scalarType(node.kind);
 }
 
-/** @typedef {import("./api-dump-format.mjs").TreeNode} TreeNode */
+/** @typedef {import("./api-dump-format.js").TreeNode} TreeNode */
 
 /** @param {Map<string, TreeNode>} node @param {string[]} pathParts @param {string[]} out @param {Record<string, unknown>} docs */
 function emitInterfaces(node, pathParts, out, docs) {
