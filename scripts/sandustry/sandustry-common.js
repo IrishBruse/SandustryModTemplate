@@ -5,7 +5,7 @@ import { execSync, spawn, spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
-import { ensureModDir, MOD_DIR } from "./mod-path.js";
+import { ensureModDir } from "./mod-path.js";
 
 export const SANDUSTRY =
   process.env.SANDUSTRY ?? "/home/econn/games/SteamLibrary/steamapps/common/Sandustry/sandustry";
@@ -24,15 +24,12 @@ export function sandustryRequireBinary() {
 /** @param {string} root @param {{ sourcemap?: boolean; modDebug?: boolean }} [options] */
 export function sandustryBuildMod(root, { sourcemap = false, modDebug = true } = {}) {
   ensureModDir();
-  /** @type {NodeJS.ProcessEnv} */
-  const env = { ...process.env, MOD_OUT_DIR: MOD_DIR };
-  if (sourcemap) env.MOD_SOURCEMAP = "1";
-  if (modDebug) env.MOD_DEBUG = "1";
-  else env.MOD_DEBUG = "0";
+  const args = [join(root, "scripts/build/esbuild.config.mjs"), "--game"];
+  if (sourcemap) args.push("--sourcemap");
+  if (!modDebug) args.push("--no-debug");
 
-  const result = spawnSync("node", [join(root, "esbuild.config.mjs")], {
+  const result = spawnSync("node", args, {
     stdio: "inherit",
-    env,
     cwd: root,
   });
   if (result.status !== 0) process.exit(result.status ?? 1);

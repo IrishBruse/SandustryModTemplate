@@ -21,7 +21,7 @@ import { homedir } from "node:os";
 import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
+const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const SANDUSTRY_DIR = "/home/econn/games/SteamLibrary/steamapps/common/Sandustry";
 const STEAM_APPS = join(SANDUSTRY_DIR, "../..");
 const SANDUSTRY_APP_ID = "2764460";

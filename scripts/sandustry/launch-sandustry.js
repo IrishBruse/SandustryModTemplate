@@ -15,7 +15,7 @@ import {
   spawnSandustry,
 } from "./sandustry-common.js";
 
-const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
+const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 
 sandustryRequireBinary();
 sandustryBuildMod(ROOT);

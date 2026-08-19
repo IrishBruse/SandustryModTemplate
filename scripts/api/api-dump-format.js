@@ -1,6 +1,6 @@
 /**
  * Shared runtime dump parsing and api-docs merge helpers.
- * Used by scripts/generate-api-types.js
+ * Used by scripts/api/generate-api-types.js
  */
 
 /** @typedef {{ kind: string; arity: number | null; params: string[] | null; value?: unknown; members: Map<string, TreeNode> }} TreeNode */

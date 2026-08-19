@@ -7,7 +7,7 @@
       "request": "launch",
       "cwd": "${env:HOME}/games/SteamLibrary/steamapps/common/Sandustry",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["${workspaceFolder}/scripts/sandustry-vscode-launch.js"],
+      "runtimeArgs": ["${workspaceFolder}/scripts/sandustry/sandustry-vscode-launch.js"],
       "preLaunchTask": "sandustry:prepare-debug",
       "outputCapture": "std",
       "timeout": 120000,

@@ -1,5 +1,5 @@
 /**
- * Curated Sandkit API types written into sandkit-api/api-docs.json.
+ * Curated Sandkit API types written into types/api/source/api-docs.json.
  * Applied after merge on each generate-types run.
  */
 

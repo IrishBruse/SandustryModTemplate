@@ -1,9 +1,9 @@
 /**
- * Regenerate types/api/generated/ and sandkit-api/api-docs.json from the runtime dump.
+ * Regenerate types/api/generated/ and types/api/source/api-docs.json from the runtime dump.
  * Usage: npm run generate-types
  *
- * Paste target: sandkit-api/runtime-dump.json (from scripts/dump-api-console.js)
- * Docs overlay: sandkit-api/api-docs.json (merged on each run; edit descriptions by hand)
+ * Paste target: types/api/source/runtime-dump.json (from scripts/api/dump-api-console.js)
+ * Docs overlay: types/api/source/api-docs.json (merged on each run; edit descriptions by hand)
  */
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -19,10 +19,10 @@ import {
 } from "./api-dump-format.js";
 import { applyTypeCuration } from "./api-type-curation.js";
 
-const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
-const JSON_SOURCE = join(ROOT, "sandkit-api/runtime-dump.json");
-const TXT_SOURCE = join(ROOT, "sandkit-api/runtime-dump.txt");
-const DOCS_TARGET = join(ROOT, "sandkit-api/api-docs.json");
+const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
+const JSON_SOURCE = join(ROOT, "types/api/source/runtime-dump.json");
+const TXT_SOURCE = join(ROOT, "types/api/source/runtime-dump.txt");
+const DOCS_TARGET = join(ROOT, "types/api/source/api-docs.json");
 const OUT_DIR = join(ROOT, "types/api/generated");
 
 /** Default namespace descriptions seeded into api-docs.json on first run. */
@@ -93,7 +93,7 @@ function loadDump() {
     console.log(`Migrated ${TXT_SOURCE} -> ${JSON_SOURCE}`);
     return dump;
   }
-  throw new Error(`Missing runtime dump. Paste into ${JSON_SOURCE} (see scripts/dump-api-console.js).`);
+  throw new Error(`Missing runtime dump. Paste into ${JSON_SOURCE} (see scripts/api/dump-api-console.js).`);
 }
 
 function pascal(segment) {
@@ -166,7 +166,7 @@ function writeNamespaceFile(rootKey, rootNode, docs) {
 
   const header = [
     "/**",
-    " * Auto-generated from sandkit-api/runtime-dump.json",
+    " * Auto-generated from types/api/source/runtime-dump.json",
     " * Run: npm run generate-types",
     nsDescription ? ` * ${nsDescription}` : "",
     " */",
@@ -228,11 +228,11 @@ for (const rootKey of rootKeys) {
 }
 
 const indexOutput = `/**
- * Auto-generated from sandkit-api/runtime-dump.json
+ * Auto-generated from types/api/source/runtime-dump.json
  * Run: npm run generate-types
  *
  * In-game runtime snapshot: ${dump.meta.entries} entries, ${dump.meta.functions} functions.
- * Docs overlay: sandkit-api/api-docs.json
+ * Docs overlay: types/api/source/api-docs.json
  */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 

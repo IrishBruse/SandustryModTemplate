@@ -1,20 +1,35 @@
 import * as esbuild from "esbuild";
-import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import {
   buildPatches,
   PATCHES_ENTRY,
   PATCHES_WATCH_CACHE,
   patchSourcesPlugin,
-} from "./scripts/build-patches.js";
+} from "./build-patches.js";
+import { MOD_DIR } from "../sandustry/mod-path.js";
 
-const ROOT = dirname(fileURLToPath(import.meta.url));
-const MOD_OUT_DIR = process.env.MOD_OUT_DIR ?? join(ROOT, "dist");
+const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
+const args = process.argv.slice(2);
+const watch = args.includes("--watch");
+const game = args.includes("--game");
+const debugFlag = args.includes("--debug");
+const noDebugFlag = args.includes("--no-debug");
+const sourcemapFlag = args.includes("--sourcemap");
+
+const MOD_OUT_DIR = game || watch ? MOD_DIR : join(ROOT, "dist");
 const OUT_MAIN = join(MOD_OUT_DIR, "main.js");
-const watch = process.argv.includes("--watch");
-const modDebug =
-  process.env.MOD_DEBUG === "1" || (watch && process.env.MOD_DEBUG !== "0");
+
+/** @returns {boolean} */
+function resolveModDebug() {
+  if (noDebugFlag) return false;
+  if (debugFlag) return true;
+  return watch || game;
+}
+
+const modDebug = resolveModDebug();
 
 console.log(`mod output: ${MOD_OUT_DIR}`);
 console.log(`main bundle: ${OUT_MAIN}`);
@@ -23,7 +38,7 @@ console.log(`mod debug: ${modDebug ? "on" : "off"}`);
 /** Copy static mod files and generate patches.json into the output folder. */
 async function syncModFiles() {
   mkdirSync(MOD_OUT_DIR, { recursive: true });
-  writeModinfo(MOD_OUT_DIR, modDebug);
+  await writeModinfo(MOD_OUT_DIR, modDebug);
   const modDir = join(ROOT, "mod");
   if (existsSync(modDir)) {
     for (const name of readdirSync(modDir)) {
@@ -37,9 +52,25 @@ async function syncModFiles() {
   await buildPatches(MOD_OUT_DIR, modDebug);
 }
 
+const MODINFO_CACHE = join(tmpdir(), "sandustry-mod-template-modinfo.mjs");
+
+/** Load modinfo.ts via esbuild so the build script can stay plain Node ESM. */
+async function loadModManifest() {
+  await esbuild.build({
+    entryPoints: [join(ROOT, "modinfo.ts")],
+    outfile: MODINFO_CACHE,
+    bundle: true,
+    platform: "node",
+    format: "esm",
+    logLevel: "silent",
+  });
+  const mod = await import(pathToFileURL(MODINFO_CACHE).href);
+  return structuredClone(mod.modManifest);
+}
+
 /** Write modinfo.json — debug setting is omitted from release builds. */
-function writeModinfo(outDir, includeDebugSetting) {
-  const manifest = JSON.parse(readFileSync(join(ROOT, "modinfo.json"), "utf8"));
+async function writeModinfo(outDir, includeDebugSetting) {
+  const manifest = await loadModManifest();
   if (!includeDebugSetting && manifest.configSchema?.debug) {
     const { debug: _debug, ...rest } = manifest.configSchema;
     manifest.configSchema = rest;
@@ -52,8 +83,7 @@ function logBuildResult(result) {
   console.log(`built to ${MOD_OUT_DIR}`);
 }
 
-const sourcemap =
-  process.env.MOD_SOURCEMAP === "1" ? "inline" : undefined;
+const sourcemap = sourcemapFlag ? "inline" : undefined;
 
 const define = {
   __MOD_DEBUG__: modDebug ? "true" : "false",
@@ -65,9 +95,9 @@ function releaseDebugStubPlugin() {
     name: "release-debug-stub",
     setup(build) {
       if (modDebug) return;
-      build.onResolve({ filter: /^\.[/\\]debug$/ }, (args) => {
+      build.onResolve({ filter: /^\.\.[/\\]lib[/\\]debug$/ }, (args) => {
         if (!args.importer.endsWith(`${join("src", "main.tsx")}`)) return;
-        return { path: join(ROOT, "debug-empty.ts") };
+        return { path: join(ROOT, "lib/debug/empty.ts") };
       });
     },
   };
