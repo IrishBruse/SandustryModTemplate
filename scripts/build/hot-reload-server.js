@@ -3,6 +3,7 @@
  * Game clients subscribe with EventSource; rebuilds push a small JSON event.
  */
 import http from "node:http";
+import net from "node:net";
 
 export const HOT_RELOAD_PORT = 19147;
 export const HOT_RELOAD_PATH = "/hot-reload";
@@ -10,6 +11,27 @@ export const HOT_RELOAD_PATH = "/hot-reload";
 /** @returns {string} */
 export function hotReloadUrl() {
   return `http://127.0.0.1:${HOT_RELOAD_PORT}${HOT_RELOAD_PATH}`;
+}
+
+/**
+ * True when the watch SSE server is accepting connections.
+ * Used so one-shot `--game` / F5 builds keep the notify URL while `npm run dev` runs.
+ * @param {number} [timeoutMs]
+ * @returns {Promise<boolean>}
+ */
+export function isHotReloadServerUp(timeoutMs = 200) {
+  return new Promise((resolve) => {
+    const socket = net.connect({ host: "127.0.0.1", port: HOT_RELOAD_PORT }, () => {
+      socket.destroy();
+      resolve(true);
+    });
+    const fail = () => {
+      socket.destroy();
+      resolve(false);
+    };
+    socket.on("error", fail);
+    socket.setTimeout(timeoutMs, fail);
+  });
 }
 
 /** @type {Set<import('node:http').ServerResponse>} */

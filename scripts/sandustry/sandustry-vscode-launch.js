@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * VS Code F5 launcher — same window placement as launch-sandustry.js,
- * with Node/Chrome debug ports for Sandustry + Sandustry Renderer configs.
+ * with Node/Chrome debug ports for the Sandustry compound (Main + Renderer).
  */
 import {
   DEFAULT_MAIN_DEBUG_PORT,

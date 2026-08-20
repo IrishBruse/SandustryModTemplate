@@ -2,21 +2,15 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Sandustry",
+      "name": "Sandustry Main",
       "type": "node",
       "request": "launch",
       "cwd": "${env:HOME}/games/SteamLibrary/steamapps/common/Sandustry",
       "runtimeExecutable": "node",
       "runtimeArgs": ["${workspaceFolder}/scripts/sandustry/sandustry-vscode-launch.js"],
-      "preLaunchTask": "sandustry:prepare-debug",
       "outputCapture": "std",
       "timeout": 120000,
-      "autoAttachChildProcesses": true,
-      "serverReadyAction": {
-        "pattern": "Debugger listening on ws://.*:9230",
-        "action": "startDebugging",
-        "name": "Sandustry Renderer"
-      }
+      "autoAttachChildProcesses": true
     },
     {
       "name": "Sandustry Renderer",
@@ -29,8 +23,7 @@
         "/~/*": "${env:HOME}/*",
         "webpack:///./*": "${workspaceFolder}/*"
       },
-      "timeout": 120000,
-      "restart": true
+      "timeout": 120000
     },
     {
       "name": "Sandustry: Attach (npm run sandustry:vscode)",
@@ -51,11 +44,20 @@
         "/~/*": "${env:HOME}/*",
         "webpack:///./*": "${workspaceFolder}/*"
       },
-      "timeout": 120000,
-      "restart": true
+      "timeout": 120000
     }
   ],
   "compounds": [
+    {
+      "name": "Sandustry",
+      "configurations": ["Sandustry Main", "Sandustry Renderer"],
+      "preLaunchTask": "sandustry:prepare-debug",
+      "stopAll": true,
+      "presentation": {
+        "order": 1,
+        "group": "sandustry"
+      }
+    },
     {
       "name": "Sandustry: Attach Main + Renderer (npm run sandustry:vscode)",
       "configurations": [
@@ -63,7 +65,11 @@
         "Sandustry Renderer: Attach (npm run sandustry:vscode)"
       ],
       "preLaunchTask": "sandustry:vscode-background",
-      "stopAll": true
+      "stopAll": true,
+      "presentation": {
+        "order": 2,
+        "group": "sandustry"
+      }
     }
   ]
 }

@@ -76,7 +76,7 @@ When the Debug setting is on, the helper waits until a **Continue** control is v
 
 Hot reload runs only with **`npm run dev`**. That watch build starts an SSE server on `http://127.0.0.1:19147/hot-reload` and embeds the URL in the debug bundle. With the Debug setting on, the mod opens `EventSource` to that URL. Each successful rebuild pushes a notify event; the client then re-reads `main.js`, runs `onDispose` callbacks, and evaluates the new source with `new Function("sandkit", source)`.
 
-One-shot builds (`npm run build`, `sandustry`, `sandustry:vscode`) leave the URL empty — no subscribe and no file polling.
+One-shot builds leave the URL empty **unless** the watch SSE server is already up (so F5 / `npm run sandustry` do not wipe hot reload after `npm run dev`).
 
 JavaScript cannot be unloaded. The loader only reclaims what you register:
 

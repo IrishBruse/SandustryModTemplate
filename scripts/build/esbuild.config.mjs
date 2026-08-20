@@ -9,7 +9,12 @@ import {
   TAILWIND_CSS_FILTER,
 } from "./compile-tailwind.js";
 import { MOD_DIR } from "../sandustry/mod-path.js";
-import { hotReloadUrl, notifyHotReload, startHotReloadServer } from "./hot-reload-server.js";
+import {
+  hotReloadUrl,
+  isHotReloadServerUp,
+  notifyHotReload,
+  startHotReloadServer,
+} from "./hot-reload-server.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const MODKIT_DIR = join(ROOT, "modkit");
@@ -46,10 +51,15 @@ function resolveSourcemap() {
 
 const sourcemap = resolveSourcemap();
 
+// Watch always embeds the URL. One-shot debug (F5 / --game) embeds it when
+// `npm run dev` is already serving notify, so prepare-debug does not wipe it.
+const embedHotReloadUrl = watch || (modDebug && (await isHotReloadServerUp()));
+
 console.log(`mod output: ${MOD_OUT_DIR}`);
 console.log(`main bundle: ${OUT_MAIN}`);
 console.log(`mod debug: ${modDebug ? "on" : "off"}`);
 console.log(`sourcemap: ${sourcemap ?? "off"}`);
+console.log(`hot reload URL: ${embedHotReloadUrl ? hotReloadUrl() : "(none)"}`);
 
 /** Copy static mod files and generate patches.json into the output folder. */
 async function syncModFiles() {
@@ -99,8 +109,9 @@ function logBuildResult(result) {
 
 const define = {
   __MOD_DEBUG__: modDebug ? "true" : "false",
-  // Only `npm run dev` (--watch) starts the SSE server and embeds its URL.
-  __HOT_RELOAD_URL__: watch ? JSON.stringify(hotReloadUrl()) : '""',
+  // SSE server starts only with `--watch`. Embed the URL for watch builds and
+  // for one-shot debug builds while that server is already up (F5 / --game).
+  __HOT_RELOAD_URL__: embedHotReloadUrl ? JSON.stringify(hotReloadUrl()) : '""',
 };
 
 /** Resolve `@modkit/...` to `modkit/...`. */
