@@ -13,6 +13,7 @@ import {
 import { MOD_DIR } from "../sandustry/mod-path.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
+const FRAMEWORK_DIR = join(ROOT, "framework");
 const args = process.argv.slice(2);
 const watch = args.includes("--watch");
 const game = args.includes("--game");
@@ -63,6 +64,7 @@ async function loadModManifest() {
     bundle: true,
     platform: "node",
     format: "esm",
+    plugins: [frameworkAliasPlugin()],
     logLevel: "silent",
   });
   const mod = await import(pathToFileURL(MODINFO_CACHE).href);
@@ -90,6 +92,23 @@ const define = {
   __MOD_DEBUG__: modDebug ? "true" : "false",
 };
 
+/** Resolve `@framework/...` to `framework/...`. */
+function frameworkAliasPlugin() {
+  return {
+    name: "framework-alias",
+    setup(build) {
+      build.onResolve({ filter: /^@framework(?:\/|$)/ }, (args) => {
+        const rest = args.path === "@framework" ? "" : args.path.slice("@framework/".length);
+        return build.resolve(rest === "" ? "." : `./${rest}`, {
+          kind: args.kind,
+          importer: args.importer,
+          resolveDir: FRAMEWORK_DIR,
+        });
+      });
+    },
+  };
+}
+
 /** @returns {import('esbuild').Plugin} */
 function releaseDebugStubPlugin() {
   return {
@@ -98,7 +117,7 @@ function releaseDebugStubPlugin() {
       if (modDebug) return;
       build.onResolve({ filter: /^\.\/debug$/ }, (args) => {
         if (!args.importer.endsWith(`${join("src", "main.ts")}`)) return;
-        return { path: join(ROOT, "src/debug/empty.ts") };
+        return { path: join(ROOT, "framework/debug/empty.ts") };
       });
     },
   };
@@ -119,7 +138,7 @@ const options = {
     "react/jsx-runtime": join(ROOT, "framework/jsx-runtime.ts"),
     "react/jsx-dev-runtime": join(ROOT, "framework/jsx-dev-runtime.ts"),
   },
-  plugins: [releaseDebugStubPlugin()],
+  plugins: [frameworkAliasPlugin(), releaseDebugStubPlugin()],
   jsx: "automatic",
   jsxImportSource: "react",
   banner: {
@@ -138,6 +157,7 @@ if (watch) {
   const mainCtx = await esbuild.context({
     ...options,
     plugins: [
+      frameworkAliasPlugin(),
       releaseDebugStubPlugin(),
       {
         name: "sync-mod",

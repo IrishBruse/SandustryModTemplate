@@ -1,6 +1,6 @@
 import { installDebug, isHotReloadEval, onDispose } from "./debug";
 import { createElement } from "react";
-import { isEnabled, safe } from "../framework/sdk";
+import { isEnabled, safe } from "@framework/sdk";
 import { installGlobals, MOD_ID } from "./globals";
 import { ExampleStatusPanel } from "./ui/ExampleStatusPanel";
 

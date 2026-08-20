@@ -5,7 +5,7 @@ const COLORS = {
   border: "#444",
   text: "#e0e0e0",
   dim: "#888",
-  ok: "#7cfc00",
+  ok: "#7cfc00"
 };
 
 const panelStyle: CSSProperties = {
@@ -20,12 +20,30 @@ const panelStyle: CSSProperties = {
   fontFamily: "monospace",
   fontSize: 12,
   zIndex: 9999,
-  pointerEvents: "none",
+  pointerEvents: "none"
 };
 
 export function ExampleStatusPanel() {
   return (
     <div style={panelStyle}>
+      <li>test</li>
+      <table>
+        <tr>
+          <th>Test</th>
+          <th>Contact</th>
+          <th>Country</th>
+        </tr>
+        <tr>
+          <td>Alfreds Futterkiste</td>
+          <td>Maria Anders</td>
+          <td>Germany</td>
+        </tr>
+        <tr>
+          <td>Centro comercial Moctezuma</td>
+          <td>Francisco Chang</td>
+          <td>Mexico</td>
+        </tr>
+      </table>
       <div>author.example-mod</div>
       <div style={{ color: COLORS.ok }}>loaded</div>
     </div>
