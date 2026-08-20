@@ -11,10 +11,8 @@
     "ui:previews": "node scripts/ui/generate-previews.mjs",
     "sandustry": "node scripts/sandustry/launch-sandustry.js",
     "sandustry:debug": "node scripts/sandustry/launch-sandustry-debug.js",
-    "lint": "oxlint",
-    "lint:fix": "oxlint --fix",
-    "fmt": "oxfmt",
-    "fmt:check": "oxfmt --check",
+    "lint": "oxlint && oxfmt --check",
+    "lint:fix": "oxlint --fix && oxfmt",
     "prepare": "node scripts/git/install-hooks.js"
   },
   "devDependencies": {
