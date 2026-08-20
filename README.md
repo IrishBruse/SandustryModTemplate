@@ -29,6 +29,10 @@ TypeScript, React, and Tailwind template for [Sandustry](https://store.steampowe
 
 6. Run `npm run dev`, then launch the game (`npm run sandustry`).
 
+`npm install` also installs a `commit-msg` hook in `.git/hooks`. A commit fails when the subject does not start with a conventional type (`feat:`, `fix:`, `docs:`, `chore:`, `refactor:`, …).
+
+If Git uses a global `core.hooksPath`, copy [`scripts/git/hooks-path-commit-msg.sh`](scripts/git/hooks-path-commit-msg.sh) to that hooks directory as `commit-msg` so this check still runs.
+
 In game, **Alt+E** opens the example overlay. The Retro Console also gets a **Noise Test** sample.
 
 ## Commands

@@ -72,6 +72,9 @@ Path aliases: `@framework/*` → `./framework/*`; `types/api` / `types/sandkit` 
 | `scripts/sandustry/mod-path.js` | `MOD_DIR` = `~/.config/sandustry/mods/Example Mod` |
 | `scripts/sandustry/launch-sandustry.js` | Build (debug) and launch the game |
 | `scripts/api/generate-api-types.js` | `npm run generate-types` |
+| `scripts/git/commit-msg.js` | Fail commits whose subject lacks `feat:` / `fix:` / `docs:` / `chore:` / … |
+| `scripts/git/install-hooks.js` | `npm prepare` links `commit-msg` into this repo's `.git/hooks` |
+| `scripts/git/hooks-path-commit-msg.sh` | Copy to a global `core.hooksPath` as `commit-msg` if local hooks do not run |
 
 ## Builds
 

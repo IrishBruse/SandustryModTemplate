@@ -14,7 +14,8 @@
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "fmt": "oxfmt",
-    "fmt:check": "oxfmt --check"
+    "fmt:check": "oxfmt --check",
+    "prepare": "node scripts/git/install-hooks.js"
   },
   "devDependencies": {
     "@electron/asar": "^4.3.0",
