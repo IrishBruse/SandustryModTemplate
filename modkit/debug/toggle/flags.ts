@@ -1,5 +1,5 @@
 import type { SandkitApi } from "types/api";
-import { safe } from "../../sdk/safe";
+import { safe } from "../../utils/safe";
 
 /** Flags the game reads from localStorage while it boots. */
 export const BOOT_FLAGS = ["active", "drawChunks"] as const;

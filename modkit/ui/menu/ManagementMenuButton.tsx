@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { sandkit } from "../../sandkit";
-import { safe } from "../../sdk/safe";
+import { safe } from "../../utils/safe";
 import { Interactive } from "../layout/OverlayPanel";
 import { MenuButton } from "./MenuButton";
 

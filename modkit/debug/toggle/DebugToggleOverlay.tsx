@@ -9,8 +9,8 @@ import {
   UiBox,
 } from "../../ui";
 import { sandkit } from "../../sandkit";
-import { inGame } from "../../sdk/scene";
-import { safe } from "../../sdk/safe";
+import { inGame } from "../../utils/scene";
+import { safe } from "../../utils/safe";
 import {
   BOOT_FLAGS,
   DEBUG_FLAGS,

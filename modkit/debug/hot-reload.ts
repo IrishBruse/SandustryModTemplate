@@ -1,6 +1,6 @@
 import type { SandkitApi } from "types/api";
 import { sandkit } from "../sandkit";
-import { debugEnabled, safe } from "../sdk";
+import { debugEnabled, safe } from "../utils";
 
 /**
  * Renderer hot reload for official Sandkit mods.

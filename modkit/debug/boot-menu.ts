@@ -1,5 +1,5 @@
 import type { SandkitApi } from "types/api";
-import { debugEnabled, inGame, safe } from "../sdk";
+import { debugEnabled, inGame, safe } from "../utils";
 import { clickContinueButton, isContinueButtonReady } from "./menu";
 import { startSplashSkipPolling } from "./splash";
 
