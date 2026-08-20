@@ -4,9 +4,12 @@ TypeScript template for [Sandustry](https://store.steampowered.com/app/2764460/S
 
 ## Features
 
-- TypeScript + React HUD UI (`sandkit.react`)
-- Hot reload, debug helpers (F12, splash skip, console globals)
-- Typed `mod.ts` / patches and Sandkit API types
+- **TypeScript** — Sandkit API types from [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types)
+- **React HUD** — JSX via `sandkit.react` (no extra React package). [React](docs/modkit/react.md) · [UI kit](docs/ui/README.md) · [gallery](docs/ui/gallery.md)
+- **SDK** — `safe`, settings, scene checks, retro console. [SDK](docs/modkit/sdk.md)
+- **Hot reload** — `npm run dev` reloads the mod without a game restart. [Builds](docs/builds.md) · [debug](docs/modkit/debug.md)
+- **Debug helpers** — F12 DevTools, splash skip, main-menu boot, F3 engine flags, console globals. [Debug](docs/modkit/debug.md)
+- **Typed `mod.ts`** — one file for the manifest and [patches](docs/patches.md). [Folder layout](docs/layout.md)
 
 ## Quick start
 
@@ -18,10 +21,10 @@ TypeScript template for [Sandustry](https://store.steampowered.com/app/2764460/S
    npm install
    ```
 
-3. Set `id`, `name`, `author`, and `description` in `mod.ts`. Set the same folder name in `scripts/sandustry/mod-path.js` (`MOD_FOLDER_NAME`).
-4. Run `npm run dev`, then `npm run sandustry` (or **F5** in VS Code).
+3. Set `id`, `name`, `author`, and `description` in [`mod.ts`](mod.ts). Match the folder name in [`scripts/sandustry/mod-path.js`](scripts/sandustry/mod-path.js) (`MOD_FOLDER_NAME`).
+4. Run `npm run dev`, then `npm run sandustry` (or **F5** in VS Code). See [builds](docs/builds.md).
 
-In game, **Alt+E** opens the example overlay.
+In game, **Alt+E** opens the example overlay. More: [docs site](https://ethanconneely.com/SandustryModTemplate/) · [modkit](docs/modkit/README.md) · [`AGENTS.md`](AGENTS.md)
 
 ## Commands
 
@@ -48,5 +51,3 @@ export SANDUSTRY=/path/to/sandustry
 Default path: `~/games/SteamLibrary/steamapps/common/Sandustry/sandustry`.
 
 **Types missing** — Run `git submodule update --init --recursive`. Types live in `types/` ([sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types)).
-
-Agent notes: [`AGENTS.md`](AGENTS.md).
