@@ -17,7 +17,7 @@ dist/                   Symlink to ~/.config/sandustry/mods/Example Mod (dev out
 | ----------------------- | -------------------------------------------------------------------------------------- |
 | `src/main.ts`           | Mod entry. Import debug from `./debug` (not `framework/debug`) so release can stub it. |
 | `src/globals.ts`        | `MOD_ID` (from `mod.ts`) and `installGlobals`                                          |
-| `src/ui/`               | React overlays (import `react`, resolved to `framework/react.ts`)                      |
+| `src/ui/`               | React overlays and `tailwind.css` (`@tailwind utilities`)                              |
 | `src/debug/`            | Mod debug entry: calls `framework/debug`, re-exports `onDispose` / `isHotReloadEval`   |
 | `src/patches/README.md` | Points at [patches.md](patches.md)                                                     |
 
@@ -57,8 +57,9 @@ Path aliases: `@framework/*` → `./framework/*`; `types/*` → `./types/*`.
 
 | Path                                    | Role                                                                    |
 | --------------------------------------- | ----------------------------------------------------------------------- |
-| `scripts/build/esbuild.config.mjs`      | Bundle `src/main.ts` → `main.js`, write `modinfo.json` + `patches.json` |
-| `scripts/build/build-patches.js`        | Load `mod.ts` patch exports and write `patches.json`                    |
+| `scripts/build/esbuild.config.mjs`      | Bundle `src/main.ts` → `main.js`, compile used Tailwind utilities |
+| `scripts/build/compile-tailwind.js`     | Shared Tailwind compile (mod bundle + UI previews)                |
+| `scripts/build/build-patches.js`        | Load `mod.ts` patch exports and write `patches.json`              |
 | `scripts/build/dev.js`                  | Watch + write to the game mods folder                                   |
 | `scripts/sandustry/mod-path.js`         | `MOD_DIR` = `~/.config/sandustry/mods/Example Mod`                      |
 | `scripts/sandustry/launch-sandustry.js` | Build (debug) and launch the game                                       |

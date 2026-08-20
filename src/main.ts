@@ -3,6 +3,7 @@ import { sandkit } from "@framework/sandkit";
 import { isEnabled, registerRetroGame, safe } from "@framework/sdk";
 import { installGlobals, MOD_ID } from "./globals";
 import { ExampleOverlay } from "./ui/ExampleOverlay";
+import tailwindCss from "./ui/tailwind.css";
 
 const api = sandkit.api;
 const reloaded = isHotReloadEval(MOD_ID);
@@ -13,6 +14,17 @@ const OVERLAY_ID = "example-overlay";
 
 const WIDTH = 160;
 const HEIGHT = 100;
+
+/** Sandkit loads `main.js` only. Insert the compiled utilities into the document. */
+function installTailwind() {
+  const id = `${MOD_ID}-tailwind`;
+  document.getElementById(id)?.remove();
+  const style = document.createElement("style");
+  style.id = id;
+  style.textContent = tailwindCss;
+  document.head.appendChild(style);
+  onDispose(() => style.remove());
+}
 
 /** Stable hash noise in 0..1. No Math.random flicker. */
 function noise(x: number, y: number, seed: number): number {
@@ -73,6 +85,7 @@ function registerNoiseTest() {
 
 if (isEnabled(api)) {
   safe(() => {
+    installTailwind();
     registerUi();
     registerNoiseTest();
     if (!reloaded) api.ui.toast("Example mod loaded", {});

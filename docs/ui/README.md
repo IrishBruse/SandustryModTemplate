@@ -50,3 +50,9 @@ Each page lists props, a usage snippet, and a link to the matching `preview.html
 ```ts
 import { ACCENT, hotkeyBadgeStyle } from "@framework/ui";
 ```
+
+## Tailwind in overlays
+
+The game Tailwind stylesheet is purged. Classes the HUD does not use (for example `w-[28rem]`, `underline`) do nothing until this mod inserts utilities.
+
+The build compiles only class names from files esbuild packed into `main.js`. Sandkit does not load a CSS file, so [src/main.ts](../src/main.ts) still inserts that compiled sheet.

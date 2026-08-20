@@ -32,7 +32,7 @@ export function ExampleOverlay() {
         <Interactive>
           <UiBox className="bg-black bg-opacity-85 p-4 shadow-lg card-2 w-[28rem] text-white">
             <SectionHeading size="md">Example Mod</SectionHeading>
-            <p className="text-sm opacity-80 mb-3">
+            <p className="text-sm opacity-80 mb-3 underline">
               Replace this overlay with your UI. Tailwind classes and the framework kit both work
               here.
             </p>

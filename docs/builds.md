@@ -18,6 +18,34 @@ In-game **Debug** (`api.settings.get("debug")`) is omitted from release `modinfo
 
 See [framework/debug.md](framework/debug.md) for what debug helpers do at runtime.
 
+## Tailwind CSS
+
+The game ships Tailwind **v3.4.19** inside `bundle.js`. That stylesheet is purged: only classes the HUD uses are present. A class such as `w-[28rem]` has no rule until the mod adds it.
+
+Sandkit loads `main.js` only. There is no CSS file in the mod manifest. The build still has to insert a `<style>` tag. The compiled sheet is **only the utilities this bundle uses**: esbuild lists the source files it packed, then Tailwind scans those files. Unused `framework/ui` components do not add CSS.
+
+The insert lives in [src/main.ts](../src/main.ts) (`style#<mod-id>-tailwind`). Hot reload removes that tag before it inserts a new one.
+
+Do not enable Tailwind preflight. The game already resets `*, ::before, ::after`. A second preflight can change the HUD.
+
+### Verify
+
+Static check against an extracted `references/source/dist/js/bundle.js`:
+
+| Selector           | In the game CSS |
+| ------------------ | --------------- |
+| `.flex {`          | Yes             |
+| `.bg-black {`      | Yes             |
+| `.bg-opacity-85 {` | Yes             |
+| `.w-\[28rem\] {`   | No              |
+| `.underline {`     | No              |
+
+In game:
+
+1. Run `npm run sandustry`.
+2. Press **Alt+E**. The example panel must be 28rem (448px) wide. The help sentence must be underlined.
+3. In DevTools, `document.getElementById("<mod-id>-tailwind")` must exist.
+
 ## Commands
 
 ```bash

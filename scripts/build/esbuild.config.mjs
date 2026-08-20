@@ -4,6 +4,11 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { buildPatches } from "./build-patches.js";
+import {
+  bundledContentFiles,
+  compileTailwindUtilities,
+  TAILWIND_CSS_FILTER,
+} from "./compile-tailwind.js";
 import { MOD_DIR } from "../sandustry/mod-path.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
@@ -132,6 +137,43 @@ function releaseDebugStubPlugin() {
   };
 }
 
+const basePlugins = [browserPatchesStubPlugin(), frameworkAliasPlugin(), releaseDebugStubPlugin()];
+
+/** Empty CSS so the first graph pass can list bundled sources without a CSS cycle. */
+function stubCssPlugin() {
+  return {
+    name: "tailwind-stub",
+    setup(build) {
+      build.onLoad({ filter: TAILWIND_CSS_FILTER }, () => ({ contents: "", loader: "text" }));
+    },
+  };
+}
+
+/** @param {() => string} getCss */
+function cssTextPlugin(getCss) {
+  return {
+    name: "tailwind-utilities",
+    setup(build) {
+      build.onLoad({ filter: TAILWIND_CSS_FILTER }, () => ({
+        contents: getCss(),
+        loader: "text",
+      }));
+    },
+  };
+}
+
+/** Scan only files this bundle includes, then compile `@tailwind utilities`. */
+async function compileFromBundleGraph() {
+  const result = await esbuild.build({
+    ...options,
+    write: false,
+    logLevel: "silent",
+    metafile: true,
+    plugins: [...basePlugins, stubCssPlugin()],
+  });
+  return compileTailwindUtilities(bundledContentFiles(result.metafile, ROOT));
+}
+
 /** @type {import('esbuild').BuildOptions} */
 const options = {
   entryPoints: [join(ROOT, "src/main.ts")],
@@ -147,7 +189,7 @@ const options = {
     "react/jsx-runtime": join(ROOT, "framework/jsx-runtime.ts"),
     "react/jsx-dev-runtime": join(ROOT, "framework/jsx-dev-runtime.ts"),
   },
-  plugins: [browserPatchesStubPlugin(), frameworkAliasPlugin(), releaseDebugStubPlugin()],
+  plugins: basePlugins,
   jsx: "automatic",
   jsxImportSource: "react",
   banner: {
@@ -162,17 +204,26 @@ const options = {
 
 await syncModFiles();
 
+let tailwindCss = await compileFromBundleGraph();
+
 if (watch) {
   const mainCtx = await esbuild.context({
     ...options,
+    metafile: true,
     plugins: [
-      browserPatchesStubPlugin(),
-      frameworkAliasPlugin(),
-      releaseDebugStubPlugin(),
+      ...basePlugins,
+      cssTextPlugin(() => tailwindCss),
       {
         name: "sync-mod",
         setup(build) {
           build.onEnd(async (result) => {
+            if (result.errors.length > 0) return;
+            const next = await compileTailwindUtilities(bundledContentFiles(result.metafile, ROOT));
+            if (next !== tailwindCss) {
+              tailwindCss = next;
+              await mainCtx.rebuild();
+              return;
+            }
             await syncModFiles();
             logBuildResult(result);
           });
@@ -184,6 +235,9 @@ if (watch) {
   await mainCtx.watch();
   console.log(`watching ${join(ROOT, "src")} -> ${OUT_MAIN}`);
 } else {
-  const result = await esbuild.build(options);
+  const result = await esbuild.build({
+    ...options,
+    plugins: [...basePlugins, cssTextPlugin(() => tailwindCss)],
+  });
   logBuildResult(result);
 }
