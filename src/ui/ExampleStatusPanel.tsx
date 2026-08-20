@@ -1,4 +1,4 @@
-import React from "../../lib/react";
+import type { CSSProperties } from "react";
 
 const COLORS = {
   bg: "rgba(0, 0, 0, 0.72)",
@@ -8,7 +8,7 @@ const COLORS = {
   ok: "#7cfc00",
 };
 
-const panelStyle: React.CSSProperties = {
+const panelStyle: CSSProperties = {
   position: "fixed",
   bottom: "25%",
   right: 12,

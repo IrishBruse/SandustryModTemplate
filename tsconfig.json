@@ -3,7 +3,8 @@
     "target": "ES2020",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "jsx": "react",
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
     "strict": true,
     "noEmit": true,
     "skipLibCheck": true,
@@ -14,5 +15,5 @@
       "types/*": ["./types/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "lib/**/*.ts", "modinfo.ts", "types/**/*.d.ts"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "framework/**/*.ts", "modinfo.ts", "types/**/*.d.ts"]
 }

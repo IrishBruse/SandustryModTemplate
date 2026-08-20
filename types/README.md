@@ -12,7 +12,7 @@ types/
     generated/     Auto-generated stubs (one file per namespace + index)
     source/        Runtime dump and docs overlay JSON
     index.d.ts     SandkitApi export
-  lib/
+  framework/
     manifest.d.ts  Mod manifest (modinfo.ts)
     patch.d.ts     Bundle patch shapes
     index.d.ts     Framework types entry

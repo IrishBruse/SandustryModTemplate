@@ -4,7 +4,7 @@ import type {
   PatchRegexMatch,
   ReplacePatch,
   WrapPatch,
-} from "types/lib/patch";
+} from "types/framework/patch";
 
 type FindPatchFields = Pick<PatchFind, "file" | "find" | "expectedMatches" | "atomicGroup">;
 type RegexPatchFields = Pick<

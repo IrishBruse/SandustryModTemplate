@@ -1,6 +1,6 @@
-import { installDebug } from "../lib/debug";
-import { createElement } from "../lib/react";
-import { isEnabled, safe } from "../lib/sdk/safe";
+import { installDebug } from "./debug";
+import { createElement } from "react";
+import { isEnabled, safe } from "../framework/sdk/safe";
 import { installGlobals, MOD_ID } from "./debug/globals";
 import { ExampleStatusPanel } from "./ui/ExampleStatusPanel";
 

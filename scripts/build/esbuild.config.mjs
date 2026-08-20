@@ -95,9 +95,9 @@ function releaseDebugStubPlugin() {
     name: "release-debug-stub",
     setup(build) {
       if (modDebug) return;
-      build.onResolve({ filter: /^\.\.[/\\]lib[/\\]debug$/ }, (args) => {
-        if (!args.importer.endsWith(`${join("src", "main.tsx")}`)) return;
-        return { path: join(ROOT, "lib/debug/empty.ts") };
+      build.onResolve({ filter: /^\.\/debug$/ }, (args) => {
+        if (!args.importer.endsWith(`${join("src", "main.ts")}`)) return;
+        return { path: join(ROOT, "src/debug/empty.ts") };
       });
     },
   };
@@ -105,7 +105,7 @@ function releaseDebugStubPlugin() {
 
 /** @type {import('esbuild').BuildOptions} */
 const options = {
-  entryPoints: [join(ROOT, "src/main.tsx")],
+  entryPoints: [join(ROOT, "src/main.ts")],
   outfile: OUT_MAIN,
   bundle: true,
   format: "iife",
@@ -113,10 +113,14 @@ const options = {
   target: "es2020",
   sourcemap,
   define,
+  alias: {
+    react: join(ROOT, "framework/react.ts"),
+    "react/jsx-runtime": join(ROOT, "framework/jsx-runtime.ts"),
+    "react/jsx-dev-runtime": join(ROOT, "framework/jsx-dev-runtime.ts"),
+  },
   plugins: [releaseDebugStubPlugin()],
-  jsx: "transform",
-  jsxFactory: "React.createElement",
-  jsxFragment: "React.Fragment",
+  jsx: "automatic",
+  jsxImportSource: "react",
   banner: {
     js: [
       "// Generated — edit src/ and run npm run dev.",

@@ -1,4 +1,4 @@
-import { defineMod } from "./lib/modinfo";
+import { defineMod } from "./framework/modinfo";
 
 export const modManifest = defineMod({
   manifestVersion: 1,

@@ -17,9 +17,9 @@
 
 export type * from "./common";
 export type * from "./sandkit";
-export type * from "./lib";
+export type * from "./framework";
 export type * from "./api";
 
 export type { SandkitApi } from "./api";
-export type { ModManifest, ConfigSchema } from "./lib/manifest";
-export type { Patch, PatchOperation } from "./lib/patch";
+export type { ModManifest, ConfigSchema } from "./framework/manifest";
+export type { Patch, PatchOperation } from "./framework/patch";

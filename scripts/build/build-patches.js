@@ -1,5 +1,5 @@
 /**
- * Compile patch files under src/patches/ and src/patches/debug/ to patches.json.
+ * Compile patch files under src/patches/ and src/debug/patches/ to patches.json.
  */
 import * as esbuild from "esbuild";
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
@@ -9,7 +9,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const PATCHES_PROD_DIR = join(ROOT, "src/patches");
-const PATCHES_DEBUG_DIR = join(ROOT, "src/patches/debug");
+const PATCHES_DEBUG_DIR = join(ROOT, "src/debug/patches");
 /** Ephemeral esbuild output — lives under the system temp dir, not the repo. */
 export const CACHE_DIR = join(tmpdir(), "sandustry-mod-template");
 export const PATCHES_CACHE = join(CACHE_DIR, "patches.js");
@@ -43,7 +43,7 @@ export function generatePatchesEntry(modDebug) {
   const prodFiles = listPatchFiles(PATCHES_PROD_DIR);
   const debugFiles = modDebug ? listPatchFiles(PATCHES_DEBUG_DIR) : [];
   const allFiles = [...prodFiles, ...debugFiles];
-  const finalizePath = join(ROOT, "lib/patches/finalize.ts");
+  const finalizePath = join(ROOT, "framework/patches/finalize.ts");
 
   const imports = allFiles.map(
     (file, index) => `import patch_${index} from ${JSON.stringify(file)};`,
