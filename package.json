@@ -5,16 +5,15 @@
   "scripts": {
     "build": "node scripts/build/esbuild.config.mjs",
     "dev": "node scripts/build/dev.js",
-    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit && oxlint && oxfmt --check",
+    "lint:fix": "oxlint --fix && oxfmt",
+    "docs": "docsify serve docs",
     "generate-types": "node scripts/api/generate-api-types.js",
     "references": "node scripts/sandustry/references.js",
     "ui:css": "node scripts/ui/compile-preview-css.mjs",
     "ui:previews": "node scripts/ui/generate-previews.mjs",
     "sandustry": "node scripts/sandustry/launch-sandustry.js",
-    "sandustry:debug": "node scripts/sandustry/launch-sandustry-debug.js",
-    "lint": "oxlint && oxfmt --check",
-    "lint:fix": "oxlint --fix && oxfmt",
-    "docs": "docsify serve docs"
+    "sandustry:vscode": "node scripts/sandustry/launch-sandustry-vscode.js"
   },
   "devDependencies": {
     "@electron/asar": "^4.3.0",

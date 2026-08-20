@@ -1,12 +1,56 @@
 /**
  * Sandustry mod output path and repo dist symlink.
+ * Folder name comes from `modinfo.name` in root `mod.ts`.
  * The game resolves symlinks with realpath and rejects mod folders outside the mods root.
  */
 import { existsSync, lstatSync, mkdirSync, readlinkSync, rmSync, symlinkSync } from "node:fs";
-import { homedir } from "node:os";
+import { homedir, tmpdir } from "node:os";
 import { dirname, join } from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import * as esbuild from "esbuild";
 
-export const MOD_FOLDER_NAME = "Example Mod";
+const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
+const MODKIT_DIR = join(ROOT, "modkit");
+const MODINFO_CACHE = join(tmpdir(), "sandustry-mod-template-mod-path.mjs");
+
+/** Resolve `@modkit/...` to `modkit/...`. */
+function modkitAliasPlugin() {
+  return {
+    name: "modkit-alias",
+    setup(build) {
+      build.onResolve({ filter: /^@modkit(?:\/|$)/ }, (args) => {
+        const rest = args.path === "@modkit" ? "" : args.path.slice("@modkit/".length);
+        return build.resolve(rest === "" ? "." : `./${rest}`, {
+          kind: args.kind,
+          importer: args.importer,
+          resolveDir: MODKIT_DIR,
+        });
+      });
+    },
+  };
+}
+
+/** @returns {Promise<string>} */
+async function loadModFolderName() {
+  await esbuild.build({
+    entryPoints: [join(ROOT, "mod.ts")],
+    outfile: MODINFO_CACHE,
+    bundle: true,
+    platform: "node",
+    format: "esm",
+    plugins: [modkitAliasPlugin()],
+    logLevel: "silent",
+  });
+
+  const mod = await import(`${pathToFileURL(MODINFO_CACHE).href}?t=${Date.now()}`);
+  const name = mod.modinfo?.name;
+  if (typeof name !== "string" || !name.trim()) {
+    throw new Error("mod.ts modinfo.name must be a non-empty string (mods folder name)");
+  }
+  return name.trim();
+}
+
+export const MOD_FOLDER_NAME = await loadModFolderName();
 export const MOD_DIR = join(homedir(), ".config/sandustry/mods", MOD_FOLDER_NAME);
 export const REPO_DIST_LINK = "dist";
 

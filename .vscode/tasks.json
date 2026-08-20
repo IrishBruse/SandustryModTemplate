@@ -23,9 +23,9 @@
       "problemMatcher": []
     },
     {
-      "label": "sandustry:debug-background",
+      "label": "sandustry:vscode-background",
       "type": "shell",
-      "command": "node scripts/sandustry/launch-sandustry-debug.js",
+      "command": "node scripts/sandustry/launch-sandustry-vscode.js",
       "options": {
         "cwd": "${workspaceFolder}"
       },
