@@ -2,26 +2,19 @@
 
 The game runs `main.js` as a script body (`new Function`). `sandkit` is already in scope. The bundle must not emit `import` / `export` (esbuild IIFE).
 
-The build writes two IIFE files:
-
-| Output            | Role                                                                |
-| ----------------- | ------------------------------------------------------------------- |
-| `main.js`         | Mod entry. Banner sync-loads `modkit/index.js`, then runs mod code. |
-| `modkit/index.js` | Shared kit on `globalThis.__modkit` (sdk, react, ui, debug).        |
-
 ## Debug vs release
 
-| Command                                    | Debug helpers                  | `debugPatches` | Output                                 |
-| ------------------------------------------ | ------------------------------ | -------------- | -------------------------------------- |
-| `npm run build`                            | Stub (`modkit/debug/empty.ts`) | Omitted        | `dist/` (symlink)                      |
-| `npm run dev`                              | Included                       | Included       | `~/.config/sandustry/mods/Example Mod` |
-| `npm run sandustry` / `--game` / `--debug` | Included                       | Included       | Game mods folder                       |
+| Command                                    | Debug helpers                  | `debugPatches` | Output                                    |
+| ------------------------------------------ | ------------------------------ | -------------- | ----------------------------------------- |
+| `npm run build`                            | Stub (`modkit/debug/empty.ts`) | Omitted        | `dist/` (symlink)                         |
+| `npm run dev`                              | Included                       | Included       | `~/.config/sandustry/mods/<modinfo.name>` |
+| `npm run sandustry` / `--game` / `--debug` | Included                       | Included       | Game mods folder                          |
 
 `--no-debug` forces a release-style bundle even when watch or game flags are set.
 
-Debug builds emit **inline** source maps on `main.js` and `modkit/index.js` (needed for `new Function` eval). Use `--sourcemap` to force maps on a release build, or `--no-sourcemap` to omit them from a debug build.
+Debug builds emit **inline** source maps on `main.js` (needed for `new Function` eval). Use `--sourcemap` to force maps on a release build, or `--no-sourcemap` to omit them from a debug build.
 
-In-game **Debug** (`api.settings.get("debug")`) and the other `modkitDebugConfigSchema` keys are omitted from release `modinfo.json`. When the Debug setting is missing, it defaults to on.
+In-game **Debug** (`api.settings.get("debug")`) is merged into debug `modinfo.json` by the build and omitted from release. When the setting is missing, it defaults to on.
 
 `__MOD_DEBUG__` is `true` in dev builds and `false` in release.
 
@@ -31,7 +24,7 @@ See [modkit/debug.md](modkit/debug.md) for what debug helpers do at runtime.
 
 The game ships Tailwind **v3.4.19** inside `bundle.js`. That stylesheet is purged: only classes the HUD uses are present. A class such as `w-[28rem]` has no rule until the mod adds it.
 
-Sandkit loads `main.js` only. There is no CSS file in the mod manifest. The build still has to insert a `<style>` tag. The compiled sheet is **only the utilities this mod uses**: a full-graph scan (mod + reachable modkit) lists source files, then Tailwind scans those files.
+Sandkit loads `main.js` only. There is no CSS file in the mod manifest. The build still has to insert a `<style>` tag. The compiled sheet is **only the utilities this bundle uses**: esbuild lists the source files it packed, then Tailwind scans those files. Unused `modkit/ui` components do not add CSS.
 
 The insert lives in [src/main.ts](../src/main.ts) (`style#<mod-id>-tailwind`). Hot reload removes that tag before it inserts a new one.
 
@@ -65,7 +58,6 @@ npm run build            # release
 npm run typecheck
 npm run generate-types   # after a new runtime dump
 npm run sandustry        # build debug + launch
-npm run sandustry:debug  # same, with inspector ports
 npm run ui:css           # compile docs/ui/canvas preview Tailwind
 npm run ui:previews      # compile preview CSS, then screenshot preview.html
 ```

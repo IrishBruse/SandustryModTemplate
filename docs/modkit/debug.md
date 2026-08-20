@@ -17,27 +17,24 @@ Mod-only extra debug code lives in [`src/debug/`](../../src/debug/). That folder
 
 ## Features
 
-| Feature               | File                                                                         | Debug setting              | Notes                                                 |
-| --------------------- | ---------------------------------------------------------------------------- | -------------------------- | ----------------------------------------------------- |
-| DevTools globals      | `index.ts`                                                                   | Always in a debug build    | `sandkit`, `api`, `enums`, `react` on `globalThis`    |
-| Open DevTools on load | `boot-menu.ts`                                                               | Always in a debug build    | Retries until the Electron bridge is ready            |
-| F12 opens DevTools    | `boot-menu.ts`                                                               | Always in a debug build    | Capture-phase keydown; skipped on hot-reload eval     |
-| Splash skip (runtime) | `splash.ts`                                                                  | Always in a debug build    | Clicks the splash while logos are visible             |
-| Splash skip (bundle)  | [`../../modkit/patches.ts`](../../modkit/patches.ts) (`skip-startup-splash`) | Debug **build**            | Rewrites `js/bundle.js`; not toggled at runtime       |
-| Main-menu auto-boot   | `boot-menu.ts` + `menu.ts`                                                   | Must be on                 | Clicks **Continue** after it has been visible         |
-| Renderer hot reload   | `hot-reload.ts`                                                              | Must be on + `npm run dev` | SSE notify from watch build; dispose + eval `main.js` |
-| F3 debug toggle       | `toggle/`                                                                    | Always in a debug build    | Management row + panel for engine debug flags         |
+| Feature               | File                                                                         | Debug setting              | Notes                                                                                    |
+| --------------------- | ---------------------------------------------------------------------------- | -------------------------- | ---------------------------------------------------------------------------------------- |
+| DevTools globals      | `index.ts`                                                                   | Always in a debug build    | `sandkit`, `api`, `enums`, `react` on `globalThis`                                       |
+| Open DevTools on load | `boot-menu.ts`                                                               | Always in a debug build    | Retries until the Electron bridge is ready; skipped when CDP `:9222` is up (F5)          |
+| F12 opens DevTools    | `boot-menu.ts`                                                               | Always in a debug build    | Capture-phase keydown; skipped on hot-reload eval                                        |
+| Splash skip (runtime) | `splash.ts`                                                                  | Always in a debug build    | Clicks the splash while logos are visible                                                |
+| Splash skip (bundle)  | [`../../modkit/patches.ts`](../../modkit/patches.ts) (`skip-startup-splash`) | Debug **build**            | Rewrites `js/bundle.js`; not toggled at runtime                                          |
+| Main-menu auto-boot   | `boot-menu.ts` + `menu.ts`                                                   | Must be on                 | Clicks **Continue** after it has been visible                                            |
+| Renderer hot reload   | `hot-reload.ts`                                                              | Must be on + `npm run dev` | SSE notify from watch build; dispose + eval `main.js`                                    |
+| F3 debug toggle       | `toggle/`                                                                    | Must be on                 | Management row + F3 opens the engine Debug window; engine Debug/Stats buttons are hidden |
 
 ### F3 debug toggle
 
-Dev builds inject a **Debug** management row under Upgrades and bind **F3** to the same panel. The panel toggles the engine flags from `references/uolkx-debug-toggle` (`active`, `drawChunks`, cell inspector, lights, and so on).
+When the **Debug** setting is on, the mod injects a **Debug** management row under Upgrades and binds **F3**. Both open the engine Debug window (Spawn / Overlays / Lighting / Game / Audio / Stats).
 
-| Control            | Setting           | Notes                                                                                             |
-| ------------------ | ----------------- | ------------------------------------------------------------------------------------------------- |
-| Sidebar Debug row  | `debugMenuButton` | Default on. Turn off to hide the row; **F3 still works** and cannot be disabled in a debug build. |
-| Engine flag fields | `debugActive`, …  | Same schema as the reference mod; omitted from release `modinfo.json`.                            |
+The same **Debug** setting turns engine `debug.active` on or off (live config + boot localStorage). The engine's plain Debug / Stats buttons under the management column are hidden while Debug is on.
 
-Schema helpers: `modkitDebugConfigSchema` / `debugOnlyConfigKeys` from `@modkit/debug/config-schema` (spread into `mod.ts`).
+Schema: `modkitDebugConfigSchema` / `debugOnlyConfigKeys` in `@modkit/debug/config-schema`. The build merges that schema into debug `modinfo.json` (not into root `mod.ts`). The only schema key is **Debug**.
 
 Hot-reload eval skips DevTools shortcut, splash polling, and auto-boot so those do not stack on every save.
 
@@ -56,8 +53,9 @@ After the mod has loaded, you can paste a runtime API dump script into DevTools.
 
 ## DevTools
 
-- On first load, `openDevToolsOnStartup` calls `window.electron.openDevTools()` immediately and again at 250 ms, 750 ms, 1500 ms, and 3000 ms.
-- **F12** opens DevTools. The listener uses capture phase so the game does not swallow the key. Preload patches cannot target `preload.js`, so this runs in the renderer.
+- On first load, `openDevToolsOnStartup` calls `window.electron.openDevTools()` immediately and again at 250 ms, 750 ms, 1500 ms, and 3000 ms — **unless** CDP remote debugging is already listening on `127.0.0.1:9222` (F5 / `sandustry:vscode`). Opening Electron DevTools on top of that attach drops the IDE debugger.
+- **F12** still opens Electron DevTools (force). That can disconnect an IDE CDP session; prefer the IDE debugger panel when you launched with F5.
+- The listener uses capture phase so the game does not swallow the key. Preload patches cannot target `preload.js`, so this runs in the renderer.
 
 ## Splash skip
 
@@ -76,9 +74,9 @@ When the Debug setting is on, the helper waits until a **Continue** control is v
 
 ## Hot reload
 
-Hot reload runs only with **`npm run dev`**. That watch build starts an SSE server on `http://127.0.0.1:19147/hot-reload` and embeds the URL in the debug bundle. With the Debug setting on, the mod opens `EventSource` to that URL. Each successful rebuild pushes a notify event; the client then re-reads `main.js` / `modkit/index.js`, runs `onDispose` callbacks, clears `globalThis.__modkit` when the kit changed, and evaluates the new `main.js` with `new Function("sandkit", source)`.
+Hot reload runs only with **`npm run dev`**. That watch build starts an SSE server on `http://127.0.0.1:19147/hot-reload` and embeds the URL in the debug bundle. With the Debug setting on, the mod opens `EventSource` to that URL. Each successful rebuild pushes a notify event; the client then re-reads `main.js`, runs `onDispose` callbacks, and evaluates the new source with `new Function("sandkit", source)`.
 
-One-shot builds (`npm run build`, `sandustry`, `sandustry:debug`) leave the URL empty — no subscribe and no file polling.
+One-shot builds (`npm run build`, `sandustry`, `sandustry:vscode`) leave the URL empty — no subscribe and no file polling.
 
 JavaScript cannot be unloaded. The loader only reclaims what you register:
 
@@ -90,11 +88,10 @@ onDispose(stop);
 onDispose(() => clearInterval(timer));
 ```
 
-| Change                                                 | Result                                                           |
-| ------------------------------------------------------ | ---------------------------------------------------------------- |
-| `main.js` (dev rebuild notify)                         | Dispose, then evaluate the new source                            |
-| `modkit/index.js` (dev rebuild notify)                 | Dispose, clear `__modkit`, then evaluate `main.js` (reloads kit) |
-| `patches.json`, `modinfo.json`, declared `workerEntry` | Toast: restart the game                                          |
+| Change                                                 | Result                                |
+| ------------------------------------------------------ | ------------------------------------- |
+| `main.js` (dev rebuild notify)                         | Dispose, then evaluate the new source |
+| `patches.json`, `modinfo.json`, declared `workerEntry` | Toast: restart the game               |
 
 A monkey-patch or a trigger with no unregister path stays until the game restarts.
 
@@ -104,20 +101,20 @@ Turning Debug off closes the EventSource. Turning it on connects again when the 
 
 ## Debug patches
 
-Define debug-only patches in root `mod.ts` as `debugPatches`. Shared splash skip lives in [`modkit/patches.ts`](../../modkit/patches.ts) (`modkitDebugPatches`). See [patches.md](../patches.md).
+The build merges [`modkitDebugPatches`](../../modkit/patches.ts) into debug `patches.json`. Optional extra debug-only patches can still be exported from root `mod.ts` as `debugPatches`. See [patches.md](../patches.md).
 
 ## Files
 
-| Path               | Role                                                               |
-| ------------------ | ------------------------------------------------------------------ |
-| `index.ts`         | `installDebug`, globals, re-exports                                |
-| `empty.ts`         | Release stub: no-op `installDebug`, `onDispose`, `isHotReloadEval` |
-| `config-schema.ts` | Dev-only settings schema + keys omitted from release               |
-| `boot-menu.ts`     | DevTools on load, F12, auto-boot schedule                          |
-| `menu.ts`          | Find and click the main-menu Continue row                          |
-| `splash.ts`        | Runtime splash click poll                                          |
-| `hot-reload.ts`    | SSE subscribe (`npm run dev`), `onDispose`, `isHotReloadEval`      |
-| `toggle/`          | F3 / management Debug panel for engine flags                       |
+| Path               | Role                                                                             |
+| ------------------ | -------------------------------------------------------------------------------- |
+| `index.ts`         | `installDebug`, globals, re-exports                                              |
+| `empty.ts`         | Release stub: no-op `installDebug`, `onDispose`, `isHotReloadEval`               |
+| `config-schema.ts` | Dev-only settings schema; merged into debug `modinfo.json`                       |
+| `boot-menu.ts`     | DevTools on load, F12, auto-boot schedule                                        |
+| `menu.ts`          | Find and click the main-menu Continue row                                        |
+| `splash.ts`        | Runtime splash click poll                                                        |
+| `hot-reload.ts`    | SSE subscribe (`npm run dev`), `onDispose`, `isHotReloadEval`                    |
+| `toggle/`          | F3 / management Debug row; force `debug.active`; hide engine Debug/Stats buttons |
 
 ## Wiring
 

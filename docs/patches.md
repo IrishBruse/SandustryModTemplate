@@ -14,13 +14,13 @@ Patch `code` runs outside the game bundle IIFE. Put shared runtime helpers on `g
 
 ## Layout
 
-| Export                                      | Role                                                           |
-| ------------------------------------------- | -------------------------------------------------------------- |
-| `patches` in `mod.ts`                       | Production patches (always written)                            |
-| `debugPatches` in `mod.ts`                  | Debug-only patches (dev / `--debug` builds)                    |
-| `modkitDebugPatches` in `modkit/patches.ts` | Shared debug patches (splash skip); spread into `debugPatches` |
+| Export / source                             | Role                                                       |
+| ------------------------------------------- | ---------------------------------------------------------- |
+| `patches` in `mod.ts`                       | Production patches (always written)                        |
+| `debugPatches` in `mod.ts` (optional)       | Extra debug-only patches (dev / `--debug` builds)          |
+| `modkitDebugPatches` in `modkit/patches.ts` | Framework debug patches (splash skip); merged by the build |
 
-Release builds (`npm run build`) omit `debugPatches`. Dev builds (`npm run dev`, VS Code debug tasks, `npm run sandustry`) include them.
+Release builds (`npm run build`) omit framework and mod debug patches. Dev builds (`npm run dev`, VS Code debug tasks, `npm run sandustry`) include them.
 
 ## Fields
 
@@ -53,7 +53,6 @@ Always set `expectedMatches`. The mod loader fails if the match count differs â€
 ```ts
 // mod.ts
 import { definePatches } from "@modkit/modinfo";
-import { modkitDebugPatches } from "@modkit/patches";
 
 export const patches = definePatches([
   {
@@ -66,10 +65,13 @@ export const patches = definePatches([
   },
 ]);
 
-export const debugPatches = definePatches([...modkitDebugPatches]);
+/** Optional â€” extra debug-only patches for this mod. */
+export const debugPatches = definePatches([
+  // ...
+]);
 ```
 
-Shared debug example: [`modkit/patches.ts`](../modkit/patches.ts) (`skip-startup-splash`). The browser bundle stubs that module so patch payloads stay out of `main.js`.
+Framework debug patches (for example `skip-startup-splash`) live in [`modkit/patches.ts`](../modkit/patches.ts). The build merges them; do not re-export them from `mod.ts`. The browser bundle stubs `@modkit/patches` so patch payloads stay out of `main.js`.
 
 ## Build output
 

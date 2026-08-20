@@ -1,11 +1,12 @@
 - [Home](/)
 - [Folder layout](layout.md)
 - [Builds](builds.md)
+- [Troubleshooting](troubleshooting.md)
 
 - Modkit
   - [Overview](modkit/README.md)
   - [React](modkit/react.md)
-  - [SDK](modkit/sdk.md)
+  - [Utils](modkit/utils.md)
   - [Debug](modkit/debug.md)
 
 - UI kit

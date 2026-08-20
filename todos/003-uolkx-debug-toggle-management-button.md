@@ -6,7 +6,7 @@ Make the Debug control from `uolkx-debug-toggle` match the vanilla left manageme
 
 ## Why
 
-The current Debug control is a plain black box under Upgrades. It does not match the management list look, so it reads as an out-of-place mod HUD instead of a normal menu row.
+The engine Debug control is a plain black box under Upgrades. It does not match the management list look, so it reads as an out-of-place mod HUD instead of a normal menu row.
 
 ## Acceptance
 
@@ -15,12 +15,13 @@ The current Debug control is a plain black box under Upgrades. It does not match
 - [x] Hover / click use the same sound cues as vanilla rows (`blip` / `click`) when that path is available
 - [x] Row stays aligned under Upgrades when the management column collapses or the UI scales
 - [x] Prefer the shared modkit management-row API from [001-management-menu-button-api.md](001-management-menu-button-api.md) once it exists; avoid a one-off DOM spacer if the API can do the job
+- [x] Engine debug mode follows the single **Debug** setting (no per-flag settings UI)
+- [x] Engine plain Debug / Stats buttons are hidden while Debug is on
 
 ## Notes
 
 - Lives in `modkit/debug/toggle/` (dev builds only via `installDebug`).
-- Setting `debugMenuButton` (default on) can hide the sidebar row; **F3 cannot be turned off** in a debug build.
-- Flag apply logic follows `references/uolkx-debug-toggle/main.js`.
+- No `debugActive` / `drawChunks` / … settings — `debug.active` tracks the **Debug** setting.
 
 ## Origin
 

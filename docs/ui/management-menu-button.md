@@ -1,6 +1,6 @@
 # ManagementMenuButton
 
-A vanilla-style management column row under Upgrades (same look as Toolbox / Building / Research / Upgrades). Stacks additional mod rows without overlap.
+A vanilla-style management column row under Upgrades (same look as Toolbox / Building / Research / Upgrades). Stacks additional mod rows without overlap. The row mounts in the management column (same stacking as vanilla rows) and follows expand / collapse.
 
 ## Props
 

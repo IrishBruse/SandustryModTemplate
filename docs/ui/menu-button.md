@@ -15,6 +15,7 @@ A menu row with icon, label, highlighted first letter, and hotkey badge.
 | `hotkey`          | `string`           | —                     | Hotkey label inside `HotkeyBadge` (required). |
 | `highlightLetter` | `string`           | first char of `label` | Letter highlighted on hover.                  |
 | `width`           | `number \| string` | `208`                 | Row width.                                    |
+| `collapsed`       | `boolean`          | `false`               | Hide label + hotkey (management column fold). |
 | `className`       | `string`           | `""`                  | Extra CSS classes.                            |
 | `style`           | `CSSProperties`    | —                     | Inline styles merged with width.              |
 | `onClick`         | `() => void`       | —                     | When set, row acts as a button.               |

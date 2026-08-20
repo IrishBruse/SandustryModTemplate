@@ -3,7 +3,7 @@
 ```
 mod.ts                  Typed manifest + patches → modinfo.json / patches.json at build
 src/                    This mod (entry, UI, mod debug)
-modkit/              Shared kit (sdk, react, debug, patches, modinfo)
+modkit/              Shared kit (utils, react, debug, patches, modinfo)
 docs/                   Docsify site; UI canvases under docs/ui/canvas/
 assets/                 Symlink to docs/assets (so README image paths work on GitHub and Docsify)
 types/                  Sandkit API types (submodule: sandustry-modding-types)
@@ -11,7 +11,7 @@ scripts/build/          esbuild, patches.json
 scripts/ui/             Preview CSS + screenshot tools for docs/ui/canvas
 scripts/sandustry/      Launch / stop the game, mod output path
 scripts/api/            Generate types from runtime dump + official reference
-dist/                   Symlink to ~/.config/sandustry/mods/Example Mod (dev output)
+dist/                   Symlink to ~/.config/sandustry/mods/<modinfo.name> (dev output)
 ```
 
 ## `src/`
@@ -28,12 +28,12 @@ dist/                   Symlink to ~/.config/sandustry/mods/Example Mod (dev out
 
 | Path                    | Role                                                                                 |
 | ----------------------- | ------------------------------------------------------------------------------------ |
-| `modkit/browser.ts`     | Browser entry: installs `globalThis.__modkit` for the split `main.js` bundle         |
+| `modkit/modinfo.ts`     | `defineModInfo` / `definePatches` plus manifest and patch types                      |
 | `modkit/sandkit.ts`     | Host-injected `sandkit` export (not DevTools globals)                                |
 | `modkit/patches.ts`     | Shared debug patches (`modkitDebugPatches`)                                          |
 | `modkit/react.ts`       | Runtime React from `sandkit.react` (`jsxImportSource`)                               |
 | `modkit/jsx-runtime.ts` | JSX automatic runtime                                                                |
-| `modkit/sdk/`           | `safe`, `isEnabled`, `debugEnabled`, `inGame`, `registerRetroGame`                   |
+| `modkit/utils/`         | `safe`, `isEnabled`, `debugEnabled`, `inGame`, `registerRetroGame`                   |
 | `modkit/debug/`         | DevTools globals, F12, splash skip, main-menu boot, hot reload                       |
 | `modkit/debug/empty.ts` | Release stub for `./debug` (`installDebug` / `onDispose` / `isHotReloadEval` no-ops) |
 | `modkit/ui/`            | Shared React UI components only (no preview HTML / PNGs)                             |
@@ -44,38 +44,32 @@ Do not import `onDispose` or `isHotReloadEval` from `modkit/debug` in `src/main.
 
 Git submodule: [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types). Definitions live under `types/src/` (`main`, `shared`, `worker`, `common-types`).
 
-| Path                      | Role                              |
-| ------------------------- | --------------------------------- |
-| `types/src/main/`         | Main-thread Sandkit API           |
-| `types/src/shared/`       | Shared main/worker API            |
-| `types/src/worker/`       | Worker-thread API                 |
-| `types/src/common-types/` | Shared domain shapes              |
-| `types/api.d.ts`          | Composed main-thread `SandkitApi` |
-| `types/sandkit.d.ts`      | `sandkit` global shape            |
-| `types/engine.d.ts`       | Retro Console engine shapes       |
+| Path                        | Role                                            |
+| --------------------------- | ----------------------------------------------- |
+| `types/src/main/`           | Main-thread Sandkit API                         |
+| `types/src/shared/`         | Shared main/worker API                          |
+| `types/src/worker/`         | Worker-thread API                               |
+| `types/src/common-types/`   | Shared domain shapes                            |
+| `modkit/types/api.d.ts`     | Composed main-thread `SandkitApi` (`types/api`) |
+| `modkit/types/sandkit.d.ts` | `sandkit` global shape (`types/sandkit`)        |
+| `modkit/types/engine.d.ts`  | Retro Console engine shapes (`types/engine`)    |
 
-Path aliases: `@modkit/*` → `./modkit/*`; `types/*` → `./types/*`.
+Path aliases: `@modkit/*` → `./modkit/*`; `types/api` / `types/sandkit` / `types/engine` → `./modkit/types/…`; `types/*` → `./types/*`.
 
 ## Build scripts
 
-| Path                                    | Role                                                                                                          |
-| --------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `scripts/build/esbuild.config.mjs`      | Bundle `src/main.ts` → `main.js` and `modkit/browser.ts` → `modkit/index.js`; compile used Tailwind utilities |
-| `scripts/build/compile-tailwind.js`     | Shared Tailwind compile (mod bundle + UI previews)                                                            |
-| `scripts/ui/compile-preview-css.mjs`    | `npm run ui:css` — Tailwind for `docs/ui/canvas`                                                              |
-| `scripts/ui/generate-previews.mjs`      | `npm run ui:previews` — screenshot canvases into PNGs                                                         |
-| `scripts/build/build-patches.js`        | Load `mod.ts` patch exports and write `patches.json`                                                          |
-| `scripts/build/dev.js`                  | Watch + write to the game mods folder                                                                         |
-| `scripts/sandustry/mod-path.js`         | `MOD_DIR` = `~/.config/sandustry/mods/Example Mod`                                                            |
-| `scripts/sandustry/launch-sandustry.js` | Build (debug) and launch the game                                                                             |
-| `scripts/api/generate-api-types.js`     | `npm run generate-types`                                                                                      |
+| Path                                    | Role                                                              |
+| --------------------------------------- | ----------------------------------------------------------------- |
+| `scripts/build/esbuild.config.mjs`      | Bundle `src/main.ts` → `main.js`, compile used Tailwind utilities |
+| `scripts/build/compile-tailwind.js`     | Shared Tailwind compile (mod bundle + UI previews)                |
+| `scripts/ui/compile-preview-css.mjs`    | `npm run ui:css` — Tailwind for `docs/ui/canvas`                  |
+| `scripts/ui/generate-previews.mjs`      | `npm run ui:previews` — screenshot canvases into PNGs             |
+| `scripts/build/build-patches.js`        | Load `mod.ts` patch exports and write `patches.json`              |
+| `scripts/build/dev.js`                  | Watch + write to the game mods folder                             |
+| `scripts/sandustry/mod-path.js`         | `MOD_DIR` = `~/.config/sandustry/mods/<modinfo.name>`             |
+| `scripts/sandustry/launch-sandustry.js` | Build (debug) and launch the game                                 |
+| `scripts/api/generate-api-types.js`     | `npm run generate-types`                                          |
 
 ## Output
 
 `dist/` is a symlink to the game mods folder during development. Release builds write the same files there.
-
-| Path                            | Role                                                         |
-| ------------------------------- | ------------------------------------------------------------ |
-| `main.js`                       | Mod entry (IIFE). Loads `modkit/index.js`, then runs `src/`. |
-| `modkit/index.js`               | Shared kit IIFE on `globalThis.__modkit`.                    |
-| `modinfo.json` / `patches.json` | Manifest and patches from `mod.ts`.                          |

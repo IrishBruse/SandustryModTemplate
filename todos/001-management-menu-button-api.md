@@ -10,7 +10,7 @@ Expose a standard modkit helper so mods can add a row to the left management lis
 
 ## Acceptance
 
-- [x] Modkit API (for example `@modkit/ui` or `@modkit/sdk`) can register a management-row button: label, icon, hotkey badge, `onClick`
+- [x] Modkit API (for example `@modkit/ui` or `@modkit/utils`) can register a management-row button: label, icon, hotkey badge, `onClick`
 - [x] Hover and click use the same sound cues as the vanilla rows (`blip` / `click`)
 - [x] The row stays aligned when the management column collapses or the UI scales
 - [x] Debug (and any rows below) stay below the inserted button without overlap
