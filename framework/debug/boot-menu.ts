@@ -1,5 +1,5 @@
 import type { SandkitApi } from "types/api";
-import { debugEnabled, safe } from "../sdk/safe";
+import { debugEnabled, safe } from "../sdk";
 import { clickContinueButton, isContinueButtonReady } from "./menu";
 import { startSplashSkipPolling } from "./splash";
 
@@ -10,7 +10,8 @@ let booted = false;
 let pollTimer: ReturnType<typeof setInterval> | null = null;
 
 function openDevTools(): void {
-  const bridge = (window as Window & { electron?: { openDevTools(): void } }).electron;
+  const bridge = (window as Window & { electron?: { openDevTools(): void } })
+    .electron;
   bridge?.openDevTools();
 }
 
@@ -22,7 +23,7 @@ export function openDevToolsOnStartup(): void {
   }
 }
 
-/** F12 opens DevTools (preload patches cannot target preload.js). */
+/** F12 opens DevTools */
 export function registerDevToolsShortcut(): void {
   window.addEventListener(
     "keydown",
@@ -32,7 +33,7 @@ export function registerDevToolsShortcut(): void {
       event.stopPropagation();
       openDevTools();
     },
-    true,
+    true
   );
 }
 
@@ -57,8 +58,8 @@ function registerBootTrigger(api: SandkitApi, modId: string): void {
   safe(() =>
     api.triggers.register(`${modId}:main-menu-boot`, {
       interval: BOOT_INTERVAL_MS,
-      callback: () => tryBoot(api),
-    }),
+      callback: () => tryBoot(api)
+    })
   );
 }
 

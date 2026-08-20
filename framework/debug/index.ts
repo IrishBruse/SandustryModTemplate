@@ -1,5 +1,8 @@
 import type { SandkitApi } from "types/api";
 import { registerDevToolsShortcut, scheduleMainMenuBoot } from "./boot-menu";
+import { installHotReload, isHotReloadEval } from "./hot-reload";
+
+export { isHotReloadEval, onDispose } from "./hot-reload";
 
 /** Expose sandkit.api on window for DevTools and dump scripts. */
 function registerGlobalApi(api: SandkitApi): void {
@@ -7,9 +10,12 @@ function registerGlobalApi(api: SandkitApi): void {
   window.api = api;
 }
 
-/** DevTools, splash skip, and main-menu auto-boot (controlled by mod debug setting). */
+/** DevTools, splash skip, main-menu auto-boot, and hot reload (debug setting). */
 export function installDebug(api: SandkitApi, modId: string): void {
   registerGlobalApi(api);
-  registerDevToolsShortcut();
-  scheduleMainMenuBoot(api, modId);
+  if (!isHotReloadEval(modId)) {
+    registerDevToolsShortcut();
+    scheduleMainMenuBoot(api, modId);
+  }
+  installHotReload(api, modId);
 }

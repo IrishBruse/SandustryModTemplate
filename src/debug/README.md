@@ -6,10 +6,10 @@ Optional dev-only hooks for this mod. Release builds stub this folder to `empty.
 
 | Path | Role |
 |---|---|
-| `index.ts` | Mod debug entry — calls [`framework/debug`](../../framework/debug/) and adds mod-specific setup |
+| `index.ts` | Mod debug entry — calls [`framework/debug`](../../framework/debug/) and re-exports `onDispose` |
 | `patches/*.js` | Dev-only bundle patches (included in dev builds only) |
 
-Framework helpers (DevTools, splash skip, main-menu boot) live in [`framework/debug/`](../../framework/debug/). Edit `index.ts` when this mod needs extra dev behaviour on top of that.
+Framework helpers (DevTools, splash skip, main-menu boot, hot reload) live in [`framework/debug/`](../../framework/debug/). Edit `index.ts` when this mod needs extra dev behaviour on top of that.
 
 ## Build behaviour
 
