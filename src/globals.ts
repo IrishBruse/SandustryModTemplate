@@ -1,6 +1,6 @@
 import type { SandkitApi } from "types/api";
 import type { SandkitGlobal } from "types/sandkit";
-import { modManifest } from "../modinfo";
+import { modinfo } from "../mod";
 
 export interface ModGlobal {
   modId: string;
@@ -8,7 +8,7 @@ export interface ModGlobal {
   sandkit: SandkitGlobal;
 }
 
-export const MOD_ID = modManifest.id;
+export const MOD_ID = modinfo.id;
 
 export function installGlobals(api: SandkitApi): ModGlobal {
   return {

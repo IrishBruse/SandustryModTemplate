@@ -13,7 +13,7 @@ Detail docs:
 ## Layout
 
 ```
-modinfo.ts              Typed manifest → modinfo.json at build
+mod.ts                  Typed manifest (`modinfo`) → modinfo.json at build
 src/                    This mod (entry, UI, mod debug, mod patches)
 framework/              Shared kit (sdk, react, debug, patches, types)
 types/                  Sandkit API types (submodule: sandustry-modding-types)
@@ -28,7 +28,7 @@ dist/                   Symlink to ~/.config/sandustry/mods/Example Mod (dev out
 | Path | Role |
 |---|---|
 | `src/main.ts` | Mod entry. Import debug from `./debug` (not `framework/debug`) so release can stub it. |
-| `src/globals.ts` | `MOD_ID` (from `modinfo.ts`) and `installGlobals` |
+| `src/globals.ts` | `MOD_ID` (from `mod.ts`) and `installGlobals` |
 | `src/ui/` | React overlays (import `react`, resolved to `framework/react.ts`) |
 | `src/debug/` | Mod debug entry: calls `framework/debug`, re-exports `onDispose` / `isHotReloadEval` |
 | `src/patches/*.js` | Production bundle patches for this mod |
@@ -38,7 +38,7 @@ dist/                   Symlink to ~/.config/sandustry/mods/Example Mod (dev out
 
 | Path | Role |
 |---|---|
-| `framework/modinfo.ts` | `defineMod` for `modinfo.ts` |
+| `framework/modinfo.ts` | `defineMod` for `mod.ts` |
 | `framework/react.ts` | Runtime React from `sandkit.react` (`jsxImportSource`) |
 | `framework/jsx-runtime.ts` | JSX automatic runtime |
 | `framework/sdk/` | `safe`, `isEnabled`, `debugEnabled`, `inGame`, `registerRetroGame` |

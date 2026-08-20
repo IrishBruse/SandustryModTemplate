@@ -56,10 +56,10 @@ async function syncModFiles() {
 
 const MODINFO_CACHE = join(tmpdir(), "sandustry-mod-template-modinfo.mjs");
 
-/** Load modinfo.ts via esbuild so the build script can stay plain Node ESM. */
+/** Load mod.ts via esbuild so the build script can stay plain Node ESM. */
 async function loadModManifest() {
   await esbuild.build({
-    entryPoints: [join(ROOT, "modinfo.ts")],
+    entryPoints: [join(ROOT, "mod.ts")],
     outfile: MODINFO_CACHE,
     bundle: true,
     platform: "node",
@@ -68,7 +68,7 @@ async function loadModManifest() {
     logLevel: "silent",
   });
   const mod = await import(pathToFileURL(MODINFO_CACHE).href);
-  return structuredClone(mod.modManifest);
+  return structuredClone(mod.modinfo);
 }
 
 /** Write modinfo.json — debug setting is omitted from release builds. */

@@ -16,10 +16,10 @@ TypeScript, React, and Tailwind template for [Sandustry](https://store.steampowe
 
    | File | What to change |
    |---|---|
-   | `modinfo.ts` | `id`, `name`, `author`, `description` |
+   | `mod.ts` | `id`, `name`, `author`, `description` |
    | `scripts/sandustry/mod-path.js` | `MOD_FOLDER_NAME` (game mods folder) |
 
-   `src/globals.ts` reads `id` from `modinfo.ts`. Do not hard-code a second copy.
+   `src/globals.ts` reads `id` from `mod.ts`. Do not hard-code a second copy.
 
 5. Point the launcher at your Sandustry binary if it is not at `~/games/SteamLibrary/steamapps/common/Sandustry/sandustry`:
 

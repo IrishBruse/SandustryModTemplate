@@ -1,6 +1,6 @@
 import { defineMod } from "@framework/modinfo";
 
-export const modManifest = defineMod({
+export const modinfo = defineMod({
   manifestVersion: 1,
   id: "author.example-mod",
   name: "Example Mod",
