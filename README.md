@@ -2,7 +2,9 @@
 
 Start a Sandustry mod on the Steam **[mods] branch** — the beta that loads local mods and Workshop content. Get the game on [Steam](https://store.steampowered.com/app/2764460/Sandustry/) and browse mods on the [Workshop](https://steamcommunity.com/app/2764460/workshop/).
 
-**Opt in:** Steam Library → Sandustry → Properties → Betas → select `mods`.
+## Docs
+
+Full layout, framework, debug, patches, and UI kit: [Docs](docs/) and [https://ethanconneely.com/SandustryModTemplate/](https://ethanconneely.com/SandustryModTemplate/).
 
 ## Features
 
@@ -15,11 +17,11 @@ Start a Sandustry mod on the Steam **[mods] branch** — the beta that loads loc
 - Typed `mod.ts` / patches
 - Sandkit API types from [flamableassassin/sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types)
 
-## Docs
-
-Full layout, framework, debug, patches, and UI kit: [Docs](docs/) and [https://ethanconneely.com/SandustryModTemplate/](https://ethanconneely.com/SandustryModTemplate/).
-
 ## Start a mod
+
+**Opt in:** Steam Library → Sandustry → Properties → Betas → select `mods`.
+
+![Steam Properties Betas tab with the mods branch selected](assets/images/mods-branch.png)
 
 1. Use this repository as a GitHub template, or clone it.
 2. Install Node 24 (`fnm` / `.nvmrc`) and run `npm install`.
@@ -46,7 +48,7 @@ Full layout, framework, debug, patches, and UI kit: [Docs](docs/) and [https://e
    export SANDUSTRY=/path/to/sandustry
    ```
 
-6. Run `npm run dev`, then launch the game (`npm run sandustry`).
+6. Run `npm run dev`, then launch the game (`npm run sandustry`). In VS Code, **F5** also launches the game.
 
 In game, **Alt+E** opens the example overlay. The Retro Console also gets a **Noise Test** sample.
 

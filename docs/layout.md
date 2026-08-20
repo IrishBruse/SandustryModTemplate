@@ -5,6 +5,7 @@ mod.ts                  Typed manifest + patches → modinfo.json / patches.json
 src/                    This mod (entry, UI, mod debug)
 framework/              Shared kit (sdk, react, debug, patches, modinfo)
 docs/                   Docsify site; UI canvases under docs/ui/canvas/
+assets/                 Symlink to docs/assets (so README image paths work on GitHub and Docsify)
 types/                  Sandkit API types (submodule: sandustry-modding-types)
 scripts/build/          esbuild, patches.json
 scripts/ui/             Preview CSS + screenshot tools for docs/ui/canvas

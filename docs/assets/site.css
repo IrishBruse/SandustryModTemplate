@@ -523,3 +523,13 @@ iframe.ui-canvas {
   margin: 0;
   min-height: 9rem;
 }
+
+/* Doc screenshots and figures */
+.markdown-section img {
+  display: block;
+  max-width: min(100%, 42rem);
+  height: auto;
+  margin-block: 1rem;
+  border: 1px solid var(--border-color, rgba(0, 0, 0, 0.18));
+  border-radius: 6px;
+}
