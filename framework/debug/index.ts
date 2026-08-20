@@ -4,15 +4,18 @@ import { installHotReload, isHotReloadEval } from "./hot-reload";
 
 export { isHotReloadEval, onDispose } from "./hot-reload";
 
-/** Expose sandkit.api on window for DevTools and dump scripts. */
-function registerGlobalApi(api: SandkitApi): void {
+/** Expose sandkit on globalThis for DevTools and dump scripts. */
+function registerSandkitGlobals(api: SandkitApi): void {
+  const { enums, react } = sandkit;
+  globalThis.sandkit = sandkit;
   globalThis.api = api;
-  window.api = api;
+  globalThis.enums = enums;
+  globalThis.react = react;
 }
 
 /** DevTools, splash skip, main-menu auto-boot, and hot reload (debug setting). */
 export function installDebug(api: SandkitApi, modId: string): void {
-  registerGlobalApi(api);
+  registerSandkitGlobals(api);
   if (!isHotReloadEval(modId)) {
     registerDevToolsShortcut();
     scheduleMainMenuBoot(api, modId);

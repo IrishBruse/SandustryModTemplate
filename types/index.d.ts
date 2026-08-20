@@ -8,6 +8,13 @@
  * - `sandkit` and `api` are already in global scope.
  * - `main.js` runs on the main thread; `worker.js` runs on worker threads.
  *
+ * ## Patches
+ *
+ * Patch source files are raw JavaScript. Leading `// @file`, `// @find`, and
+ * `// @expectedMatches` comments set the other fields; the filename is the id.
+ * See `src/patches/README.md`. `Patch` in `types/framework/patch.d.ts` is the
+ * compiled `patches.json` object, not the source file.
+ *
  * ## API source of truth
  *
  * Method names come from the in-game runtime dump (`types/api/source/runtime-dump.json`).

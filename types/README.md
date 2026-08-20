@@ -14,7 +14,7 @@ types/
     index.d.ts     SandkitApi export
   framework/
     manifest.d.ts  Mod manifest (modinfo.ts)
-    patch.d.ts     Bundle patch shapes
+    patch.d.ts     Output shapes for patches.json (sources: see src/patches/README.md)
     index.d.ts     Framework types entry
   common.d.ts      Shared primitives (CellPos, DataBag, …)
   sandkit.d.ts     sandkit global (api, react, state, enums, engine)
@@ -53,6 +53,12 @@ import type { SandkitApi } from "types/api";
 ```
 
 Globals `sandkit` and `api` are declared in `global.d.ts`.
+
+## Patches
+
+Patch **source** files are raw JavaScript. Leading `// @file`, `// @find`, and `// @expectedMatches` comments set the other fields; the filename is the id. The build writes `patches.json`.
+
+Authoring guide: [`src/patches/README.md`](../src/patches/README.md). Output types: [`framework/patch.d.ts`](framework/patch.d.ts).
 
 ## Rules
 

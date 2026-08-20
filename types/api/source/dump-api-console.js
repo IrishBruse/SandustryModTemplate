@@ -1,7 +1,7 @@
 /**
  * Paste this whole file into Sandustry DevTools (Console tab).
  *
- * Requires the example mod loaded so window.api exists.
+ * Requires the example mod loaded so globalThis.api exists.
  * Output: JSON for sandkit-api/runtime-dump.json
  * Then run: npm run generate-types
  *

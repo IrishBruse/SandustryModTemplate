@@ -8,6 +8,7 @@ import {
   PATCHES_ENTRY,
   PATCHES_WATCH_CACHE,
   patchSourcesPlugin,
+  writePatchWatchStub,
 } from "./build-patches.js";
 import { MOD_DIR } from "../sandustry/mod-path.js";
 
@@ -150,6 +151,7 @@ if (watch) {
     ],
   });
 
+  writePatchWatchStub();
   const patchCtx = await esbuild.context({
     entryPoints: [PATCHES_ENTRY],
     outfile: PATCHES_WATCH_CACHE,

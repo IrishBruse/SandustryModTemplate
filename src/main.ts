@@ -1,7 +1,7 @@
 import { installDebug, isHotReloadEval, onDispose } from "./debug";
 import { createElement } from "react";
 import { isEnabled, safe } from "../framework/sdk";
-import { installGlobals, MOD_ID } from "./debug/globals";
+import { installGlobals, MOD_ID } from "./globals";
 import { ExampleStatusPanel } from "./ui/ExampleStatusPanel";
 
 const api = sandkit.api;
@@ -27,4 +27,4 @@ if (isEnabled(api)) {
   });
 }
 
-console.log(`[${MOD_ID}] ${reloaded ? "reloaded" : "loaded"} — use window.api in DevTools`);
+console.log(`[${MOD_ID}] ${reloaded ? "reloaded" : "loaded"} — use api in DevTools`);

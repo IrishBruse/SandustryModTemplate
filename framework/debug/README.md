@@ -1,8 +1,10 @@
 # Debug framework
 
-Shared dev-only runtime helpers for Sandustry mods: global `window.api`, DevTools shortcuts, splash skip, main-menu auto-boot, and renderer hot reload.
+Shared dev-only runtime helpers for Sandustry mods: DevTools globals (`sandkit`, `api`, `enums`, `react`), DevTools shortcuts, splash skip, main-menu auto-boot, and renderer hot reload.
 
-Mod-specific debug setup and dev-only patches live in [`src/debug/`](../../src/debug/). That folder imports this module and adds mod-only behaviour.
+Splash skip uses both `splash.ts` (runtime poll) and [`../patches/debug/skip-startup-splash.js`](../patches/debug/skip-startup-splash.js) (bundle rewrite). That `.js` file is raw injected source: leading `// @file`, `// @find`, and `// @expectedMatches` comments set the patch fields, and the rest of the file is the `code`. The filename is the id. Debug builds only. Full format: [`src/patches/README.md`](../../src/patches/README.md).
+
+Mod-specific debug setup lives in [`src/debug/`](../../src/debug/). That folder imports this module and adds mod-only behaviour.
 
 **Release builds do not compile this code.** `npm run build` stubs `src/debug` to `empty.ts`, so neither this folder nor mod debug code is bundled.
 
