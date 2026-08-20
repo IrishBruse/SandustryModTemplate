@@ -96,7 +96,9 @@ function loadDump() {
     console.log(`Migrated ${TXT_SOURCE} -> ${JSON_SOURCE}`);
     return dump;
   }
-  throw new Error(`Missing runtime dump. Paste into ${JSON_SOURCE} (see scripts/api/dump-api-console.js).`);
+  throw new Error(
+    `Missing runtime dump. Paste into ${JSON_SOURCE} (see scripts/api/dump-api-console.js).`,
+  );
 }
 
 function pascal(segment) {
@@ -165,7 +167,9 @@ function writeNamespaceFile(rootKey, rootNode, docs) {
 
   const nsDoc = getDocEntry(docs, [rootKey]);
   const nsDescription =
-    nsDoc && typeof nsDoc.description === "string" ? nsDoc.description.trim() : NAMESPACE_NOTES[rootKey];
+    nsDoc && typeof nsDoc.description === "string"
+      ? nsDoc.description.trim()
+      : NAMESPACE_NOTES[rootKey];
 
   const header = [
     "/**",
@@ -203,7 +207,9 @@ applyTypeCuration(docs);
 if (existsSync(OFFICIAL_SOURCE)) {
   const official = loadOfficialReference(readFileSync, OFFICIAL_SOURCE);
   applyOfficialReference(docs, official);
-  console.log(`Applied ${docs.meta?.officialReferenceMatches ?? 0} official API signatures from ${OFFICIAL_SOURCE}`);
+  console.log(
+    `Applied ${docs.meta?.officialReferenceMatches ?? 0} official API signatures from ${OFFICIAL_SOURCE}`,
+  );
 } else {
   console.warn(`Missing ${OFFICIAL_SOURCE} — skip official reference merge`);
 }
@@ -223,7 +229,9 @@ for (const rootKey of rootKeys) {
 
   const nsDoc = getDocEntry(docs, [rootKey]);
   const nsDescription =
-    nsDoc && typeof nsDoc.description === "string" ? nsDoc.description.trim() : NAMESPACE_NOTES[rootKey];
+    nsDoc && typeof nsDoc.description === "string"
+      ? nsDoc.description.trim()
+      : NAMESPACE_NOTES[rootKey];
 
   if (rootNode.members.size > 0) {
     indexImports.push(`import type { ${ifaceName([rootKey])} } from "./${rootKey}";`);

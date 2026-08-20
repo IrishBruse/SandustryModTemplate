@@ -5,10 +5,11 @@
  * do the job. Keep replacements small, set `expectedMatches`, and put runtime
  * helpers on `globalThis` (patch code runs outside the bundle IIFE).
  *
- * Define patches with `definePatches` in root `patches.ts`.
+ * Define patches with `definePatches` in root `mod.ts`.
  *
  * @example
  * ```ts
+ * // mod.ts
  * export const patches = definePatches([
  *   {
  *     id: "bundle-log-prefix",

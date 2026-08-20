@@ -1,5 +1,5 @@
 /**
- * Write patches.json from `patches.ts` (`patches` + optional `debugPatches`).
+ * Write patches.json from `mod.ts` (`patches` + optional `debugPatches`).
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -9,11 +9,10 @@ import * as esbuild from "esbuild";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const FRAMEWORK_DIR = join(ROOT, "framework");
-const PATCHES_TS = join(ROOT, "patches.ts");
+const MOD_TS = join(ROOT, "mod.ts");
 /** Ephemeral esbuild output — lives under the system temp dir, not the repo. */
 export const CACHE_DIR = join(tmpdir(), "sandustry-mod-template");
 export const PATCHES_CACHE = join(CACHE_DIR, "patches.mjs");
-export const PATCHES_WATCH_CACHE = join(CACHE_DIR, "patches-watch.js");
 const JS_PATCH_PATH = /^js\/[^/]+\.js$/;
 const OPERATIONS = new Set(["insertBefore", "replace", "wrap"]);
 
@@ -91,11 +90,11 @@ function validatePatches(patches) {
   }
 }
 
-/** Bundle and import root `patches.ts`. */
+/** Bundle and import root `mod.ts` patch exports. */
 export async function loadPatchesModule() {
   mkdirSync(CACHE_DIR, { recursive: true });
   await esbuild.build({
-    entryPoints: [PATCHES_TS],
+    entryPoints: [MOD_TS],
     outfile: PATCHES_CACHE,
     bundle: true,
     platform: "node",
@@ -119,10 +118,10 @@ export async function buildPatches(outDir, modDebug = false) {
 
   const { patches: production, debugPatches } = await loadPatchesModule();
   if (!Array.isArray(production)) {
-    throw new Error("patches.ts must export a `patches` array");
+    throw new Error("mod.ts must export a `patches` array");
   }
   if (!Array.isArray(debugPatches)) {
-    throw new Error("patches.ts must export a `debugPatches` array");
+    throw new Error("mod.ts must export a `debugPatches` array");
   }
 
   const patches = modDebug ? [...production, ...debugPatches] : [...production];

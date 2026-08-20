@@ -3,7 +3,7 @@ import { cpSync, existsSync, mkdirSync, readdirSync, writeFileSync } from "node:
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { buildPatches, PATCHES_WATCH_CACHE } from "./build-patches.js";
+import { buildPatches } from "./build-patches.js";
 import { MOD_DIR } from "../sandustry/mod-path.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
@@ -103,6 +103,21 @@ function frameworkAliasPlugin() {
   };
 }
 
+/**
+ * Browser bundle must not embed patch payloads (`globals` imports `modinfo` from `mod.ts`).
+ * Build-time `build-patches.js` still resolves the real `@framework/patches`.
+ */
+function browserPatchesStubPlugin() {
+  return {
+    name: "browser-patches-stub",
+    setup(build) {
+      build.onResolve({ filter: /^@framework\/patches$/ }, () => ({
+        path: join(FRAMEWORK_DIR, "patches.empty.ts"),
+      }));
+    },
+  };
+}
+
 /** @returns {import('esbuild').Plugin} */
 function releaseDebugStubPlugin() {
   return {
@@ -132,7 +147,7 @@ const options = {
     "react/jsx-runtime": join(ROOT, "framework/jsx-runtime.ts"),
     "react/jsx-dev-runtime": join(ROOT, "framework/jsx-dev-runtime.ts"),
   },
-  plugins: [frameworkAliasPlugin(), releaseDebugStubPlugin()],
+  plugins: [browserPatchesStubPlugin(), frameworkAliasPlugin(), releaseDebugStubPlugin()],
   jsx: "automatic",
   jsxImportSource: "react",
   banner: {
@@ -151,6 +166,7 @@ if (watch) {
   const mainCtx = await esbuild.context({
     ...options,
     plugins: [
+      browserPatchesStubPlugin(),
       frameworkAliasPlugin(),
       releaseDebugStubPlugin(),
       {
@@ -165,28 +181,7 @@ if (watch) {
     ],
   });
 
-  const patchCtx = await esbuild.context({
-    entryPoints: [join(ROOT, "patches.ts")],
-    outfile: PATCHES_WATCH_CACHE,
-    bundle: true,
-    platform: "node",
-    format: "esm",
-    plugins: [
-      frameworkAliasPlugin(),
-      {
-        name: "emit-patches-json",
-        setup(build) {
-          build.onEnd(async (result) => {
-            if (result.errors.length > 0) return;
-            await buildPatches(MOD_OUT_DIR, modDebug);
-          });
-        },
-      },
-    ],
-    logLevel: "silent",
-  });
-
-  await Promise.all([mainCtx.watch(), patchCtx.watch()]);
+  await mainCtx.watch();
   console.log(`watching ${join(ROOT, "src")} -> ${OUT_MAIN}`);
 } else {
   const result = await esbuild.build(options);

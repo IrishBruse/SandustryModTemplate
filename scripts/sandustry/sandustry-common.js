@@ -129,7 +129,10 @@ export function sandustryMaximizeOnLeftMonitor(monX, monY) {
 }
 
 /** @param {string[]} args @param {{ cwd?: string; detached?: boolean; stdio?: "inherit" | "ignore" | "pipe" }} [options] */
-export function spawnSandustry(args, { cwd = SANDUSTRY_DIR, detached = false, stdio = "inherit" } = {}) {
+export function spawnSandustry(
+  args,
+  { cwd = SANDUSTRY_DIR, detached = false, stdio = "inherit" } = {},
+) {
   const child = spawn(SANDUSTRY, args, {
     cwd,
     detached,
@@ -143,12 +146,7 @@ export function spawnSandustry(args, { cwd = SANDUSTRY_DIR, detached = false, st
 
 /** @param {string[]} args */
 export function sandustryLaunchArgs(mon, extra = []) {
-  return [
-    "--no-sandbox",
-    `--window-position=${mon.x},${mon.y}`,
-    "--start-maximized",
-    ...extra,
-  ];
+  return ["--no-sandbox", `--window-position=${mon.x},${mon.y}`, "--start-maximized", ...extra];
 }
 
 /** @param {string} mainPort @param {string} rendererPort @param {{ x: number; y: number }} mon */

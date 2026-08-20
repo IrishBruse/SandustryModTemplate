@@ -80,7 +80,8 @@ export function parseTextDump(md) {
 
     const [, path, kind, detail] = match;
     const parts = path.split(".");
-    const { params, arity } = kind === "function" ? parseFunctionDetail(detail) : { params: null, arity: null };
+    const { params, arity } =
+      kind === "function" ? parseFunctionDetail(detail) : { params: null, arity: null };
 
     upsertPath(roots, parts, {
       kind,
@@ -243,7 +244,7 @@ export function mergeApiDocs(existing, dump, namespaceNotes) {
       description:
         typeof prevNs.description === "string" && prevNs.description
           ? prevNs.description
-          : namespaceNotes[nsKey] ?? "",
+          : (namespaceNotes[nsKey] ?? ""),
       members,
     };
   }
@@ -298,7 +299,9 @@ function mergeDocMembers(out, prevMembers, dumpMembers) {
             : "",
       };
       const prevType =
-        prevParam && typeof prevParam === "object" && typeof prevParam.type === "string" ? prevParam.type.trim() : "";
+        prevParam && typeof prevParam === "object" && typeof prevParam.type === "string"
+          ? prevParam.type.trim()
+          : "";
       const inferredType = inferParamType(param, key, i);
       param.type = prevType && prevType !== "unknown" ? prevType : inferredType;
       params.push(param);
@@ -312,7 +315,9 @@ function mergeDocMembers(out, prevMembers, dumpMembers) {
 
     if (node.kind === "function") {
       const prevReturn =
-        typeof prevMember.returnType === "string" && prevMember.returnType.trim() ? prevMember.returnType.trim() : "";
+        typeof prevMember.returnType === "string" && prevMember.returnType.trim()
+          ? prevMember.returnType.trim()
+          : "";
       member.returnType = prevReturn || inferReturnType(member, key);
     }
 
@@ -370,7 +375,10 @@ export function inferParamType(param, methodKey, paramIndex) {
     return "string";
   }
 
-  if (labelLower === "component" || /callback|handler|\brender\b|listener|\bfn\b|\bfunction\b/.test(text)) {
+  if (
+    labelLower === "component" ||
+    /callback|handler|\brender\b|listener|\bfn\b|\bfunction\b/.test(text)
+  ) {
     return "(...args: unknown[]) => unknown";
   }
   if (
@@ -380,11 +388,19 @@ export function inferParamType(param, methodKey, paramIndex) {
   ) {
     return "number";
   }
-  if (/flag|whether|enabled|locked|active|collectable|blocked|ready|held|loaded|empty|terrain|focused|clear|falling|ground|colliding/.test(text)) {
+  if (
+    /flag|whether|enabled|locked|active|collectable|blocked|ready|held|loaded|empty|terrain|focused|clear|falling|ground|colliding/.test(
+      text,
+    )
+  ) {
     return "boolean";
   }
   if (/string/.test(desc)) return "string";
-  if (/object|options|settings|definition|config|data|payload|recipe|profile|blueprint|pattern|metadata/.test(text)) {
+  if (
+    /object|options|settings|definition|config|data|payload|recipe|profile|blueprint|pattern|metadata/.test(
+      text,
+    )
+  ) {
     return "Record<string, unknown>";
   }
   return "unknown";
@@ -408,7 +424,8 @@ export function inferReturnType(docEntry, methodKey) {
   if (key === "prompt" || /prompt dialog/i.test(desc)) return "Promise<string | null>";
   if (key === "alert" || /alert dialog/i.test(desc)) return "Promise<void>";
   if (/promise/i.test(desc)) return "Promise<unknown>";
-  if (/^get|^is|^has|^can|^find|^map|^createCircle|^key$|^t$|^translatable$/.test(key)) return "unknown";
+  if (/^get|^is|^has|^can|^find|^map|^createCircle|^key$|^t$|^translatable$/.test(key))
+    return "unknown";
   return "void";
 }
 
@@ -449,7 +466,9 @@ export function formatFunctionSignature(docEntry, dumpNode, methodKey) {
   const paramList = params
     .map((p, i) => {
       const param = /** @type {Record<string, unknown>} */ (p);
-      const name = sanitizeParamName(/** @type {Record<string, string>} */ (param.label || param.name));
+      const name = sanitizeParamName(
+        /** @type {Record<string, string>} */ (param.label || param.name),
+      );
       const optional = param.optional === true ? "?" : "";
       return `${name}${optional}: ${inferParamType(param, methodKey, i)}`;
     })

@@ -1,9 +1,5 @@
 /** Startup splash logos in dist/index.html (logo 3 may appear in future builds). */
-export const SPLASH_LOGO_IDS = [
-  "splash-logo-1",
-  "splash-logo-2",
-  "splash-logo-3",
-] as const;
+export const SPLASH_LOGO_IDS = ["splash-logo-1", "splash-logo-2", "splash-logo-3"] as const;
 
 function isSplashLogoVisible(id: string): boolean {
   const el = document.getElementById(id);

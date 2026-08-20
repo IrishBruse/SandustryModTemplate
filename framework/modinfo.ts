@@ -6,7 +6,7 @@ export function defineModInfo<const T extends ModManifest>(manifest: T): T {
   return manifest;
 }
 
-/** Type-safe patch list builder — use in `patches.ts`. Writes to `patches.json` at build. */
+/** Type-safe patch list builder — use in `mod.ts`. Writes to `patches.json` at build. */
 export function definePatches<const T extends readonly Patch[]>(patches: T): T {
   return patches;
 }

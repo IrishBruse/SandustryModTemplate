@@ -32,10 +32,12 @@ const mon = sandustryLeftMonitor();
 const args = sandustryDebugArgs(mainPort, rendererPort, mon);
 
 if (process.env.SANDUSTRY_DEBUG_FOREGROUND === "1") {
-  console.log(
-    `Sandustry debug (foreground) — main ${mainPort}, renderer ${rendererPort}`,
-  );
-  const result = spawnSync(SANDUSTRY, args, { stdio: "inherit", cwd: SANDUSTRY_DIR, env: process.env });
+  console.log(`Sandustry debug (foreground) — main ${mainPort}, renderer ${rendererPort}`);
+  const result = spawnSync(SANDUSTRY, args, {
+    stdio: "inherit",
+    cwd: SANDUSTRY_DIR,
+    env: process.env,
+  });
   process.exit(result.status ?? 0);
 }
 

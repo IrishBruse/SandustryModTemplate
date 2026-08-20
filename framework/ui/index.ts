@@ -6,10 +6,7 @@ export { ResourceRow } from "./resources/ResourceRow";
 export { SectionHeading } from "./headings/SectionHeading";
 export { PanelCard } from "./panels/PanelCard";
 export { ObjectiveCard } from "./objectives/ObjectiveCard";
-export {
-  SecondaryObjectiveRow,
-  ObjectiveHighlight,
-} from "./objectives/SecondaryObjectiveRow";
+export { SecondaryObjectiveRow, ObjectiveHighlight } from "./objectives/SecondaryObjectiveRow";
 export { ShortcutChip } from "./shortcuts/ShortcutChip";
 export {
   ShortcutBar,

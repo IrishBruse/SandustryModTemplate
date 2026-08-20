@@ -68,9 +68,7 @@ export function resetContinueButtonReady(): void {
 
 function dispatchClick(el: HTMLElement): void {
   el.click();
-  el.dispatchEvent(
-    new MouseEvent("click", { bubbles: true, cancelable: true, view: window }),
-  );
+  el.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
 }
 
 /** Click the main menu Continue button if it is ready. */

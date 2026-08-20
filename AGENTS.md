@@ -13,8 +13,7 @@ Detail docs:
 ## Layout
 
 ```
-mod.ts                  Typed manifest (`modinfo`) → modinfo.json at build
-patches.ts              Typed patches → patches.json at build
+mod.ts                  Typed manifest + patches → modinfo.json / patches.json at build
 src/                    This mod (entry, UI, mod debug)
 framework/              Shared kit (sdk, react, debug, patches, types)
 types/                  Sandkit API types (submodule: sandustry-modding-types)
@@ -26,26 +25,26 @@ dist/                   Symlink to ~/.config/sandustry/mods/Example Mod (dev out
 
 ### `src/`
 
-| Path | Role |
-|---|---|
-| `src/main.ts` | Mod entry. Import debug from `./debug` (not `framework/debug`) so release can stub it. |
-| `src/globals.ts` | `MOD_ID` (from `mod.ts`) and `installGlobals` |
-| `src/ui/` | React overlays (import `react`, resolved to `framework/react.ts`) |
-| `src/debug/` | Mod debug entry: calls `framework/debug`, re-exports `onDispose` / `isHotReloadEval` |
-| `src/patches/README.md` | How to define patches in `patches.ts` |
+| Path                    | Role                                                                                   |
+| ----------------------- | -------------------------------------------------------------------------------------- |
+| `src/main.ts`           | Mod entry. Import debug from `./debug` (not `framework/debug`) so release can stub it. |
+| `src/globals.ts`        | `MOD_ID` (from `mod.ts`) and `installGlobals`                                          |
+| `src/ui/`               | React overlays (import `react`, resolved to `framework/react.ts`)                      |
+| `src/debug/`            | Mod debug entry: calls `framework/debug`, re-exports `onDispose` / `isHotReloadEval`   |
+| `src/patches/README.md` | How to define patches in `mod.ts`                                                      |
 
 ### `framework/`
 
-| Path | Role |
-|---|---|
-| `framework/modinfo.ts` | `defineModInfo` / `definePatches` |
-| `framework/patches.ts` | Shared debug patches (`frameworkDebugPatches`) |
-| `framework/react.ts` | Runtime React from `sandkit.react` (`jsxImportSource`) |
-| `framework/jsx-runtime.ts` | JSX automatic runtime |
-| `framework/sdk/` | `safe`, `isEnabled`, `debugEnabled`, `inGame`, `registerRetroGame` |
-| `framework/debug/` | DevTools globals, F12, splash skip, main-menu boot, hot reload |
+| Path                       | Role                                                                                 |
+| -------------------------- | ------------------------------------------------------------------------------------ |
+| `framework/modinfo.ts`     | `defineModInfo` / `definePatches`                                                    |
+| `framework/patches.ts`     | Shared debug patches (`frameworkDebugPatches`)                                       |
+| `framework/react.ts`       | Runtime React from `sandkit.react` (`jsxImportSource`)                               |
+| `framework/jsx-runtime.ts` | JSX automatic runtime                                                                |
+| `framework/sdk/`           | `safe`, `isEnabled`, `debugEnabled`, `inGame`, `registerRetroGame`                   |
+| `framework/debug/`         | DevTools globals, F12, splash skip, main-menu boot, hot reload                       |
 | `framework/debug/empty.ts` | Release stub for `./debug` (`installDebug` / `onDispose` / `isHotReloadEval` no-ops) |
-| `framework/types/` | Manifest, patch, and Sandkit shims (`types/api`, `types/sandkit`, `types/engine`) |
+| `framework/types/`         | Manifest, patch, and Sandkit shims (`types/api`, `types/sandkit`, `types/engine`)    |
 
 Do not import `onDispose` or `isHotReloadEval` from `framework/debug` in `src/main.ts`. Import them from `./debug`.
 
@@ -53,36 +52,36 @@ Do not import `onDispose` or `isHotReloadEval` from `framework/debug` in `src/ma
 
 Git submodule: [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types). Definitions live under `types/src/` (`main`, `shared`, `worker`, `common-types`).
 
-| Path | Role |
-|---|---|
-| `types/src/main/` | Main-thread Sandkit API |
-| `types/src/shared/` | Shared main/worker API |
-| `types/src/worker/` | Worker-thread API |
-| `types/src/common-types/` | Shared domain shapes |
+| Path                      | Role                    |
+| ------------------------- | ----------------------- |
+| `types/src/main/`         | Main-thread Sandkit API |
+| `types/src/shared/`       | Shared main/worker API  |
+| `types/src/worker/`       | Worker-thread API       |
+| `types/src/common-types/` | Shared domain shapes    |
 
 Path aliases: `@framework/*` → `./framework/*`; `types/api` / `types/sandkit` / `types/engine` → `./framework/types/`; `types/*` → `./types/*`.
 
 ### `scripts/`
 
-| Path | Role |
-|---|---|
-| `scripts/build/esbuild.config.mjs` | Bundle `src/main.ts` → `main.js`, write `modinfo.json` + `patches.json` |
-| `scripts/build/build-patches.js` | Load `patches.ts` and write `patches.json` |
-| `scripts/build/dev.js` | Watch + write to the game mods folder |
-| `scripts/sandustry/mod-path.js` | `MOD_DIR` = `~/.config/sandustry/mods/Example Mod` |
-| `scripts/sandustry/launch-sandustry.js` | Build (debug) and launch the game |
-| `scripts/api/generate-api-types.js` | `npm run generate-types` |
-| `scripts/git/commit-msg.js` | Fail commits whose subject lacks `feat:` / `fix:` / `docs:` / `chore:` / … |
-| `scripts/git/install-hooks.js` | `npm prepare` links `commit-msg` into this repo's `.git/hooks` |
-| `scripts/git/hooks-path-commit-msg.sh` | Copy to a global `core.hooksPath` as `commit-msg` if local hooks do not run |
+| Path                                    | Role                                                                        |
+| --------------------------------------- | --------------------------------------------------------------------------- |
+| `scripts/build/esbuild.config.mjs`      | Bundle `src/main.ts` → `main.js`, write `modinfo.json` + `patches.json`     |
+| `scripts/build/build-patches.js`        | Load `mod.ts` patch exports and write `patches.json`                        |
+| `scripts/build/dev.js`                  | Watch + write to the game mods folder                                       |
+| `scripts/sandustry/mod-path.js`         | `MOD_DIR` = `~/.config/sandustry/mods/Example Mod`                          |
+| `scripts/sandustry/launch-sandustry.js` | Build (debug) and launch the game                                           |
+| `scripts/api/generate-api-types.js`     | `npm run generate-types`                                                    |
+| `scripts/git/commit-msg.js`             | Fail commits whose subject lacks `feat:` / `fix:` / `docs:` / `chore:` / …  |
+| `scripts/git/install-hooks.js`          | `npm prepare` links `commit-msg` into this repo's `.git/hooks`              |
+| `scripts/git/hooks-path-commit-msg.sh`  | Copy to a global `core.hooksPath` as `commit-msg` if local hooks do not run |
 
 ## Builds
 
-| Command | Debug helpers | `debugPatches` | Output |
-|---|---|---|---|
-| `npm run build` | Stub (`framework/debug/empty.ts`) | Omitted | `dist/` (symlink) |
-| `npm run dev` | Included | Included | `~/.config/sandustry/mods/Example Mod` |
-| `npm run sandustry` / `--game` / `--debug` | Included | Included | Game mods folder |
+| Command                                    | Debug helpers                     | `debugPatches` | Output                                 |
+| ------------------------------------------ | --------------------------------- | -------------- | -------------------------------------- |
+| `npm run build`                            | Stub (`framework/debug/empty.ts`) | Omitted        | `dist/` (symlink)                      |
+| `npm run dev`                              | Included                          | Included       | `~/.config/sandustry/mods/Example Mod` |
+| `npm run sandustry` / `--game` / `--debug` | Included                          | Included       | Game mods folder                       |
 
 `--no-debug` forces a release-style bundle.
 
@@ -90,7 +89,7 @@ In-game **Debug** (`api.settings.get("debug")`) is omitted from release `modinfo
 
 ## Patches
 
-Define patches in root `patches.ts` with `definePatches`. Production list is `patches`; debug-only list is `debugPatches`.
+Define patches in root `mod.ts` with `definePatches`. Production list is `patches`; debug-only list is `debugPatches`.
 
 ```ts
 export const patches = definePatches([

@@ -18,9 +18,7 @@ export function ShortcutChip({
   style,
   onClick,
 }: ShortcutChipProps) {
-  const activeClass = active
-    ? "text-yellow-200 drop-shadow-[0_0_8px_rgba(255,231,0,0.5)]"
-    : "";
+  const activeClass = active ? "text-yellow-200 drop-shadow-[0_0_8px_rgba(255,231,0,0.5)]" : "";
 
   return (
     <div

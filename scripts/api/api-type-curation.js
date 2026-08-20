@@ -20,7 +20,9 @@ export const MEMBER_CURATION = {
   "collector.getValueFromCellId": { returnType: "number" },
   "cooldown.check": { params: { 0: { label: "cooldownId", type: "string" } } },
   "cooldown.isReady": { params: { 0: { label: "cooldownId", type: "string" } } },
-  "elements.addInteractionInfo": { params: { 1: { label: "interaction", type: "Record<string, unknown>" } } },
+  "elements.addInteractionInfo": {
+    params: { 1: { label: "interaction", type: "Record<string, unknown>" } },
+  },
   "elements.findFreeCellInStructure": { returnType: "{ x: number; y: number } | null" },
   "elements.getDataFieldAtCell": { returnType: "number" },
   "elements.getDefinitionByType": { returnType: "Record<string, unknown> | undefined" },
@@ -34,7 +36,9 @@ export const MEMBER_CURATION = {
   "elements.getTypeFromId": { returnType: "string" },
   "elements.getVelocityAtCell": { returnType: "{ x: number; y: number }" },
   "elements.setDataFieldAtCellWhenIdle": { params: { 3: { label: "value", type: "number" } } },
-  "elements.setPhysicsAtCellWhenIdle": { params: { 2: { label: "physicsState", type: "Record<string, unknown>" } } },
+  "elements.setPhysicsAtCellWhenIdle": {
+    params: { 2: { label: "physicsState", type: "Record<string, unknown>" } },
+  },
   "energy.getNetworkAtCell": { returnType: "Record<string, unknown> | undefined" },
   "energy.getNetworkFreeCapacityAtCell": { returnType: "number" },
   "events.emit": {
@@ -100,8 +104,12 @@ export const MEMBER_CURATION = {
   "settings.get": { returnType: "string | number | boolean | undefined" },
   "settings.getAll": { returnType: "Record<string, string | number | boolean>" },
   "shared.buffers.get": { returnType: "SharedArrayBuffer | undefined" },
-  "signals.targets.register": { params: { 1: { label: "apply", type: "(...args: unknown[]) => unknown" } } },
-  "sound.calculateDistanceOptionsAtWorld": { params: { 2: { label: "baseVolume", type: "number" } } },
+  "signals.targets.register": {
+    params: { 1: { label: "apply", type: "(...args: unknown[]) => unknown" } },
+  },
+  "sound.calculateDistanceOptionsAtWorld": {
+    params: { 2: { label: "baseVolume", type: "number" } },
+  },
   "sound.playLayers": { params: { 0: { label: "layers", type: "Record<string, unknown>[]" } } },
   "sprites.getById": { returnType: "Record<string, unknown> | undefined" },
   "storage.get": { returnType: "unknown" },
@@ -120,9 +128,13 @@ export const MEMBER_CURATION = {
       1: { label: "thresholds", type: "number[]" },
     },
   },
-  "structures.removeAtCellsWhenIdle": { params: { 0: { label: "positions", type: "{ x: number; y: number }[]" } } },
+  "structures.removeAtCellsWhenIdle": {
+    params: { 0: { label: "positions", type: "{ x: number; y: number }[]" } },
+  },
   "structures.setData": { params: { 0: { label: "structure", type: "Record<string, unknown>" } } },
-  "structures.setSpritesheetIndex": { params: { 0: { label: "structure", type: "Record<string, unknown>" } } },
+  "structures.setSpritesheetIndex": {
+    params: { 0: { label: "structure", type: "Record<string, unknown>" } },
+  },
   "structures.setSpritesheetIndexByValue": {
     params: {
       0: { label: "structure", type: "Record<string, unknown>" },
@@ -145,7 +157,9 @@ export const MEMBER_CURATION = {
   "time.getTick": { returnType: "number" },
   "time.getTimeMs": { returnType: "number" },
   "tools.grabber.getSize": { returnType: "number" },
-  "ui.navigation.useFocusable": { params: { 0: { label: "options", type: "Record<string, unknown>" } } },
+  "ui.navigation.useFocusable": {
+    params: { 0: { label: "options", type: "Record<string, unknown>" } },
+  },
   "ui.prompt": { params: { 2: { label: "placeholder", type: "string" } } },
   "upgrades.getAvailableLevelById": { returnType: "number" },
   "upgrades.getLevelById": { returnType: "number" },
@@ -172,11 +186,17 @@ export const MEMBER_CURATION = {
   },
   "utils.getDistance": { returnType: "number" },
   "world.getCellIdAtCell": { returnType: "number" },
-  "world.pickups.destroy": { params: { 0: { label: "worldItem", type: "Record<string, unknown>" } } },
+  "world.pickups.destroy": {
+    params: { 0: { label: "worldItem", type: "Record<string, unknown>" } },
+  },
   "world.pickups.getAll": { returnType: "Record<string, unknown>[]" },
   "world.pickups.getById": { returnType: "Record<string, unknown> | undefined" },
-  "world.pickups.pickUp": { params: { 0: { label: "worldItem", type: "Record<string, unknown>" } } },
-  "world.pickups.spawnAtWorld": { params: { 4: { label: "light", type: "Record<string, unknown> | undefined" } } },
+  "world.pickups.pickUp": {
+    params: { 0: { label: "worldItem", type: "Record<string, unknown>" } },
+  },
+  "world.pickups.spawnAtWorld": {
+    params: { 4: { label: "light", type: "Record<string, unknown> | undefined" } },
+  },
   "world.redrawAroundCellWhenIdle": { params: { 2: { label: "range", type: "number" } } },
 };
 

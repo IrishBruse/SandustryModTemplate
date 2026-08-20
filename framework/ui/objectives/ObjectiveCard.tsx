@@ -26,14 +26,10 @@ export function ObjectiveCard({
         ...style,
       }}
     >
-      {icon ? (
-        <div className="absolute right-2 top-2 opacity-60">{icon}</div>
-      ) : null}
+      {icon ? <div className="absolute right-2 top-2 opacity-60">{icon}</div> : null}
       <div className="relative z-10 flex flex-col gap-1 pr-5">
         <div className="flex items-center">
-          <span
-            className={`text-[10px] font-bold uppercase tracking-widest ${categoryClassName}`}
-          >
+          <span className={`text-[10px] font-bold uppercase tracking-widest ${categoryClassName}`}>
             {category}
           </span>
         </div>

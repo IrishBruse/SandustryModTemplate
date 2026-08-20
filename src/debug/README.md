@@ -4,13 +4,13 @@ Optional dev-only hooks for this mod. Release builds resolve `./debug` to [`fram
 
 ## What lives here
 
-| Path | Role |
-|---|---|
+| Path       | Role                                                                                           |
+| ---------- | ---------------------------------------------------------------------------------------------- |
 | `index.ts` | Mod debug entry — calls [`framework/debug`](../../framework/debug/) and re-exports `onDispose` |
 
 Framework helpers live in [`framework/debug/`](../../framework/debug/). That README lists every debug feature (globals, DevTools, splash skip, auto-boot, hot reload, patches). Edit `index.ts` when this mod needs extra behaviour on top of that.
 
-Debug bundle patches live in root [`patches.ts`](../../patches.ts) (`debugPatches` export) and shared helpers in [`framework/patches.ts`](../../framework/patches.ts). See [`src/patches/README.md`](../patches/README.md).
+Debug bundle patches live in root [`mod.ts`](../../mod.ts) (`debugPatches` export) and shared helpers in [`framework/patches.ts`](../../framework/patches.ts). See [`src/patches/README.md`](../patches/README.md).
 
 ## Build behaviour
 

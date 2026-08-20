@@ -14,10 +14,10 @@ TypeScript, React, and Tailwind template for [Sandustry](https://store.steampowe
 
 4. Edit identity in one place, then keep the folder name in sync:
 
-   | File | What to change |
-   |---|---|
-   | `mod.ts` | `id`, `name`, `author`, `description` |
-   | `scripts/sandustry/mod-path.js` | `MOD_FOLDER_NAME` (game mods folder) |
+   | File                            | What to change                        |
+   | ------------------------------- | ------------------------------------- |
+   | `mod.ts`                        | `id`, `name`, `author`, `description` |
+   | `scripts/sandustry/mod-path.js` | `MOD_FOLDER_NAME` (game mods folder)  |
 
    `src/globals.ts` reads `id` from `mod.ts`. Do not hard-code a second copy.
 
@@ -37,13 +37,13 @@ In game, **Alt+E** opens the example overlay. The Retro Console also gets a **No
 
 ## Commands
 
-| Command | Effect |
-|---|---|
-| `npm run dev` | Watch and write to `~/.config/sandustry/mods/<folder>` |
-| `npm run build` | Release bundle (no debug helpers) |
-| `npm run typecheck` | TypeScript check |
-| `npm run sandustry` | Debug build and launch |
-| `npm run sandustry:debug` | Same, with inspector ports |
+| Command                   | Effect                                                 |
+| ------------------------- | ------------------------------------------------------ |
+| `npm run dev`             | Watch and write to `~/.config/sandustry/mods/<folder>` |
+| `npm run build`           | Release bundle (no debug helpers)                      |
+| `npm run typecheck`       | TypeScript check                                       |
+| `npm run sandustry`       | Debug build and launch                                 |
+| `npm run sandustry:debug` | Same, with inspector ports                             |
 
 ## Layout
 

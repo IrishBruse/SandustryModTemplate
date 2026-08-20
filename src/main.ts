@@ -58,9 +58,7 @@ function registerNoiseTest() {
       if (input.x > 0) threshold = Math.min(0.95, threshold + 0.05);
       if (input.y < 0) animate = !animate;
       if (input.y > 0) seed += 25;
-      console.log(
-        `noise: threshold=${threshold.toFixed(2)} seed=${seed} animate=${animate}`,
-      );
+      console.log(`noise: threshold=${threshold.toFixed(2)} seed=${seed} animate=${animate}`);
       return { ...state, threshold, seed, animate };
     },
   });

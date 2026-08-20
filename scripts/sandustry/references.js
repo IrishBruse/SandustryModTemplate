@@ -118,9 +118,7 @@ function syncWorkshopMods() {
 
   console.log(`Workshop source: ${WORKSHOP}`);
 
-  const entries = readdirSync(WORKSHOP, { withFileTypes: true }).filter((d) =>
-    d.isDirectory(),
-  );
+  const entries = readdirSync(WORKSHOP, { withFileTypes: true }).filter((d) => d.isDirectory());
 
   for (const entry of entries) {
     const src = join(WORKSHOP, entry.name);

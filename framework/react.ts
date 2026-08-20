@@ -2,12 +2,5 @@
 const runtime = sandkit.react;
 
 export default runtime;
-export const {
-  createElement,
-  useState,
-  useEffect,
-  useCallback,
-  useMemo,
-  useRef,
-  Fragment,
-} = runtime;
+export const { createElement, useState, useEffect, useCallback, useMemo, useRef, Fragment } =
+  runtime;

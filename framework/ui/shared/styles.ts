@@ -28,8 +28,7 @@ export const sectionGradientRight: CSSProperties = {
 };
 
 export const hotbarSlotBackground: CSSProperties = {
-  background:
-    "radial-gradient(circle, rgba(100, 100, 100, 0.9) 0%, rgba(0, 0, 0, 0.9) 100%)",
+  background: "radial-gradient(circle, rgba(100, 100, 100, 0.9) 0%, rgba(0, 0, 0, 0.9) 100%)",
 };
 
 export const menuButtonShineStyle: CSSProperties = {

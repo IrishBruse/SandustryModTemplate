@@ -4,13 +4,7 @@
  * using agent-browser. Writes PNGs next to preview.html.
  */
 import { createServer } from "node:http";
-import {
-  existsSync,
-  readFileSync,
-  readdirSync,
-  statSync,
-  writeFileSync,
-} from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { execFile } from "node:child_process";

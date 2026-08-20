@@ -10,8 +10,7 @@ let booted = false;
 let pollTimer: ReturnType<typeof setInterval> | null = null;
 
 function openDevTools(): void {
-  const bridge = (window as Window & { electron?: { openDevTools(): void } })
-    .electron;
+  const bridge = (window as Window & { electron?: { openDevTools(): void } }).electron;
   bridge?.openDevTools();
 }
 
@@ -33,7 +32,7 @@ export function registerDevToolsShortcut(): void {
       event.stopPropagation();
       openDevTools();
     },
-    true
+    true,
   );
 }
 
@@ -58,8 +57,8 @@ function registerBootTrigger(api: SandkitApi, modId: string): void {
   safe(() =>
     api.triggers.register(`${modId}:main-menu-boot`, {
       interval: BOOT_INTERVAL_MS,
-      callback: () => tryBoot(api)
-    })
+      callback: () => tryBoot(api),
+    }),
   );
 }
 

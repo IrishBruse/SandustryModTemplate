@@ -77,9 +77,7 @@ export function parseSignatureLine(line) {
   if (!match) return null;
 
   const pathKey = match[1];
-  const params = splitParamList(match[2])
-    .map(parseParam)
-    .filter(Boolean);
+  const params = splitParamList(match[2]).map(parseParam).filter(Boolean);
 
   const returnType = normalizeOfficialType(match[3]);
 

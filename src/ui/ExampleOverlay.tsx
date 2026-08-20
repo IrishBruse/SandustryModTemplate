@@ -33,12 +33,11 @@ export function ExampleOverlay() {
           <UiBox className="bg-black bg-opacity-85 p-4 shadow-lg card-2 w-[28rem] text-white">
             <SectionHeading size="md">Example Mod</SectionHeading>
             <p className="text-sm opacity-80 mb-3">
-              Replace this overlay with your UI. Tailwind classes and the
-              framework kit both work here.
+              Replace this overlay with your UI. Tailwind classes and the framework kit both work
+              here.
             </p>
             <p className="text-sm flex items-center gap-1">
-              Press <HotkeyBadge>Alt</HotkeyBadge>+<HotkeyBadge>E</HotkeyBadge> to
-              close.
+              Press <HotkeyBadge>Alt</HotkeyBadge>+<HotkeyBadge>E</HotkeyBadge> to close.
             </p>
           </UiBox>
         </Interactive>

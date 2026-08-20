@@ -1,4 +1,5 @@
-import { defineModInfo } from "@framework/modinfo";
+import { defineModInfo, definePatches } from "@framework/modinfo";
+import { frameworkDebugPatches } from "@framework/patches";
 
 export const modinfo = defineModInfo({
   manifestVersion: 1,
@@ -16,14 +17,19 @@ export const modinfo = defineModInfo({
       type: "boolean",
       default: true,
       labelKey: "Mod enabled",
-      descriptionKey: "Turn the mod off without unsubscribing."
+      descriptionKey: "Turn the mod off without unsubscribing.",
     },
     debug: {
       type: "boolean",
       default: true,
       labelKey: "Debug",
-      descriptionKey:
-        "DevTools, splash skip, and main-menu auto-boot. Dev builds only."
-    }
-  }
+      descriptionKey: "DevTools, splash skip, and main-menu auto-boot. Dev builds only.",
+    },
+  },
 });
+
+/** Production patches — always written to `patches.json`. */
+export const patches = definePatches([]);
+
+/** Debug-only patches — included in dev / `--debug` builds only. */
+export const debugPatches = definePatches([...frameworkDebugPatches]);
