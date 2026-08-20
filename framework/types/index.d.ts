@@ -1,6 +1,6 @@
 /**
  * Framework types — manifest, patches, and other kit contracts.
- * Sandkit game API types live in `types/api/`.
+ * Sandkit game API types live in the `types/` submodule (`types/src/`).
  *
  * Patch **source** files (`src/patches`, `framework/patches`) are raw JS with
  * `// @file` / `// @find` / `// @expectedMatches` comments. See `src/patches/README.md`.

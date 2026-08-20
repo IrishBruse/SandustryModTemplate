@@ -10,12 +10,18 @@
     "references": "node scripts/sandustry/references.js",
     "ui:previews": "node scripts/ui/generate-previews.mjs",
     "sandustry": "node scripts/sandustry/launch-sandustry.js",
-    "sandustry:debug": "node scripts/sandustry/launch-sandustry-debug.js"
+    "sandustry:debug": "node scripts/sandustry/launch-sandustry-debug.js",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check"
   },
   "devDependencies": {
     "@electron/asar": "^4.3.0",
     "@types/react": "^19.2.18",
     "esbuild": "^0.28.2",
+    "oxfmt": "^0.64.0",
+    "oxlint": "^1.79.0",
     "typescript": "^7.0.2"
   }
 }

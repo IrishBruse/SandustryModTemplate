@@ -16,7 +16,7 @@ Set the other fields with leading `// @key value` comments:
 
 At build time the build scans the folders below and writes `patches.json`. The game loader applies those patches to Sandustry JavaScript files (for example `js/bundle.js`).
 
-Patch shapes live in `types/framework/patch.d.ts`.
+Patch shapes live in `framework/types/patch.d.ts`.
 
 ## When to use patches
 

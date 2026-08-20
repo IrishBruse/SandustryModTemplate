@@ -15,8 +15,8 @@ Detail docs:
 ```
 modinfo.ts              Typed manifest → modinfo.json at build
 src/                    This mod (entry, UI, mod debug, mod patches)
-framework/              Shared kit (sdk, react, debug, patches)
-types/                  Sandkit + framework TypeScript definitions
+framework/              Shared kit (sdk, react, debug, patches, types)
+types/                  Sandkit API types (submodule: sandustry-modding-types)
 scripts/build/          esbuild, patches.json
 scripts/sandustry/      Launch / stop the game, mod output path
 scripts/api/            Generate types from runtime dump + official reference
@@ -46,22 +46,22 @@ dist/                   Symlink to ~/.config/sandustry/mods/Example Mod (dev out
 | `framework/debug/empty.ts` | Release stub for `./debug` (`installDebug` / `onDispose` / `isHotReloadEval` no-ops) |
 | `framework/patches/*.js` | Shared production patches |
 | `framework/patches/debug/*.js` | Shared debug patches (splash skip) |
+| `framework/types/` | Manifest and patch TypeScript definitions |
 
 Do not import `onDispose` or `isHotReloadEval` from `framework/debug` in `src/main.ts`. Import them from `./debug`.
 
 ### `types/`
 
+Git submodule: [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types). Definitions live under `types/src/` (`main`, `shared`, `worker`, `common-types`).
+
 | Path | Role |
 |---|---|
-| `types/api/generated/` | Auto-generated API stubs. Do not edit by hand. |
-| `types/api/source/` | Runtime dump, official reference, `api-docs.json` |
-| `types/api/domain.d.ts` | Opaque domain aliases for generated signatures |
-| `types/framework/manifest.d.ts` | `modinfo.ts` shapes |
-| `types/framework/patch.d.ts` | Compiled `patches.json` objects (not the source `.js` files) |
-| `types/sandkit.d.ts` / `types/global.d.ts` | `sandkit` / `api` / `__MOD_DEBUG__` |
-| `types/engine.d.ts` | `sandkit.engine.api` (`retroConsole`) |
+| `types/src/main/` | Main-thread Sandkit API |
+| `types/src/shared/` | Shared main/worker API |
+| `types/src/worker/` | Worker-thread API |
+| `types/src/common-types/` | Shared domain shapes |
 
-Path alias: `types/*` → `./types/*`.
+Path aliases: `@framework/*` → `./framework/*`; `types/*` → `./types/*`.
 
 ### `scripts/`
 
