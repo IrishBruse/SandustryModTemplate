@@ -21,11 +21,11 @@ let server = null;
 /** @type {ReturnType<typeof setTimeout> | null} */
 let debounceTimer = null;
 
-/** @type {{ changed?: string[]; restart?: string[] } | null} */
+/** @type {{ changed?: string[] } | null} */
 let pending = null;
 
 /**
- * @param {{ changed?: string[]; restart?: string[] }} payload
+ * @param {{ changed?: string[] }} payload
  */
 export function notifyHotReload(payload) {
   if (!server) return;
@@ -48,16 +48,14 @@ export function notifyHotReload(payload) {
 }
 
 /**
- * @param {{ changed?: string[]; restart?: string[] } | null} a
- * @param {{ changed?: string[]; restart?: string[] }} b
+ * @param {{ changed?: string[] } | null} a
+ * @param {{ changed?: string[] }} b
  */
 function mergePayload(a, b) {
-  if (!a) return { ...b, changed: b.changed ? [...b.changed] : undefined };
+  if (!a) return { changed: b.changed ? [...b.changed] : undefined };
   const changed = new Set([...(a.changed ?? []), ...(b.changed ?? [])]);
-  const restart = new Set([...(a.restart ?? []), ...(b.restart ?? [])]);
   return {
     changed: changed.size > 0 ? [...changed] : undefined,
-    restart: restart.size > 0 ? [...restart] : undefined,
   };
 }
 

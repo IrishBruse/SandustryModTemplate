@@ -10,6 +10,7 @@ import {
   TAILWIND_CSS_FILTER,
 } from "./compile-tailwind.js";
 import { MOD_DIR } from "../sandustry/mod-path.js";
+import { hotReloadUrl, notifyHotReload, startHotReloadServer } from "./hot-reload-server.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const MODKIT_DIR = join(ROOT, "modkit");
@@ -112,6 +113,8 @@ function logBuildResult(result) {
 
 const define = {
   __MOD_DEBUG__: modDebug ? "true" : "false",
+  // Only `npm run dev` (--watch) starts the SSE server and embeds its URL.
+  __HOT_RELOAD_URL__: watch ? JSON.stringify(hotReloadUrl()) : '""',
 };
 
 /** Resolve `@modkit/...` to `modkit/...`. */
@@ -320,8 +323,23 @@ let tailwindCss = await compileFromBundleGraph();
 
 if (watch) {
   mkdirSync(dirname(OUT_MODKIT), { recursive: true });
+  startHotReloadServer();
 
-  const kitCtx = await esbuild.context(modkitOptions);
+  const kitCtx = await esbuild.context({
+    ...modkitOptions,
+    plugins: [
+      ...modkitOptions.plugins,
+      {
+        name: "hot-reload-modkit",
+        setup(build) {
+          build.onEnd((result) => {
+            if (result.errors.length > 0) return;
+            notifyHotReload({ changed: ["modkit/index.js"] });
+          });
+        },
+      },
+    ],
+  });
   const mainCtx = await esbuild.context({
     ...mainOptions,
     metafile: true,
@@ -344,6 +362,7 @@ if (watch) {
               return;
             }
             await syncModFiles();
+            notifyHotReload({ changed: ["main.js"] });
             logBuildResult(result);
           });
         },
