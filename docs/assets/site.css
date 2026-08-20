@@ -29,6 +29,34 @@ html[data-smt-docs-theme="dark"] {
   --link-color: #ff9900;
   --code-inline-bg: #202020;
   --blockquote-bg: #1a1a1a;
+  color-scheme: dark;
+  scrollbar-width: thin;
+  scrollbar-color: #3a3a3a #1a1a1a;
+}
+
+html[data-smt-docs-theme="dark"] ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+html[data-smt-docs-theme="dark"] ::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+html[data-smt-docs-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #3a3a3a;
+  border-radius: 4px;
+  border: 2px solid #1a1a1a;
+}
+
+html[data-smt-docs-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #4a4a4a;
+}
+
+html[data-smt-docs-theme="dark"] ::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 /* Hide Docsify GitHub corner if a repo option is re-added later. */
@@ -527,6 +555,8 @@ iframe.ui-canvas {
   border-radius: 4px;
   background: #1a2332;
   margin: 0 0 1.5rem;
+  overflow: hidden;
+  color-scheme: dark;
 }
 
 .ui-gallery {

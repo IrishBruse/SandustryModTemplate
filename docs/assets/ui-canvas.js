@@ -12,7 +12,16 @@ window.smtDocsifyUiCanvasPlugin = function (hook) {
 
     // Box shadows (ui-box / hotkey-badge) sit outside getBoundingClientRect.
     const shadowPad = 56;
-    return Math.ceil(Math.max(rect.height + padY + shadowPad, body.scrollHeight, 140));
+    // Small slack so embed overflow:hidden does not clip after font/layout settle.
+    const slack = 4;
+    return Math.ceil(
+      Math.max(
+        rect.height + padY + shadowPad,
+        body.scrollHeight,
+        doc.documentElement.scrollHeight,
+        140,
+      ) + slack,
+    );
   }
 
   function sizeUiCanvas(iframe) {
