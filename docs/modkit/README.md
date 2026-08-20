@@ -8,7 +8,7 @@ Shared kit for Sandustry mods. It includes:
 - **Debug / hot reload** — dev-only globals, DevTools, splash skip, main-menu boot, file watch reload
 - **Modinfo helpers** — `defineModInfo` / `definePatches` with colocated manifest and patch types
 
-Mods import this folder through the `@modkit/*` path alias. The game still loads a single bundled `main.js` (esbuild IIFE). Do not emit `import` / `export` in the output.
+Mods import this folder through the `@modkit/*` path alias. The build emits `modkit/index.js` next to `main.js`. Sandkit still evaluates only `main.js` (esbuild IIFE); that file sync-loads the kit into `globalThis.__modkit`. Do not emit `import` / `export` in either output.
 
 Sibling mods (for example `sandustry-doom-mod`) can use a symlink to this folder instead of a copy.
 

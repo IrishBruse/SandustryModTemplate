@@ -2,6 +2,13 @@
 
 The game runs `main.js` as a script body (`new Function`). `sandkit` is already in scope. The bundle must not emit `import` / `export` (esbuild IIFE).
 
+The build writes two IIFE files:
+
+| Output            | Role                                                                |
+| ----------------- | ------------------------------------------------------------------- |
+| `main.js`         | Mod entry. Banner sync-loads `modkit/index.js`, then runs mod code. |
+| `modkit/index.js` | Shared kit on `globalThis.__modkit` (sdk, react, ui, debug).        |
+
 ## Debug vs release
 
 | Command                                    | Debug helpers                  | `debugPatches` | Output                                 |
@@ -22,7 +29,7 @@ See [modkit/debug.md](modkit/debug.md) for what debug helpers do at runtime.
 
 The game ships Tailwind **v3.4.19** inside `bundle.js`. That stylesheet is purged: only classes the HUD uses are present. A class such as `w-[28rem]` has no rule until the mod adds it.
 
-Sandkit loads `main.js` only. There is no CSS file in the mod manifest. The build still has to insert a `<style>` tag. The compiled sheet is **only the utilities this bundle uses**: esbuild lists the source files it packed, then Tailwind scans those files. Unused `modkit/ui` components do not add CSS.
+Sandkit loads `main.js` only. There is no CSS file in the mod manifest. The build still has to insert a `<style>` tag. The compiled sheet is **only the utilities this mod uses**: a full-graph scan (mod + reachable modkit) lists source files, then Tailwind scans those files.
 
 The insert lives in [src/main.ts](../src/main.ts) (`style#<mod-id>-tailwind`). Hot reload removes that tag before it inserts a new one.
 

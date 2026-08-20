@@ -28,7 +28,7 @@ dist/                   Symlink to ~/.config/sandustry/mods/Example Mod (dev out
 
 | Path                    | Role                                                                                 |
 | ----------------------- | ------------------------------------------------------------------------------------ |
-| `modkit/modinfo.ts`     | `defineModInfo` / `definePatches` plus manifest and patch types                      |
+| `modkit/browser.ts`     | Browser entry: installs `globalThis.__modkit` for the split `main.js` bundle         |
 | `modkit/sandkit.ts`     | Host-injected `sandkit` export (not DevTools globals)                                |
 | `modkit/patches.ts`     | Shared debug patches (`modkitDebugPatches`)                                          |
 | `modkit/react.ts`       | Runtime React from `sandkit.react` (`jsxImportSource`)                               |
@@ -58,18 +58,24 @@ Path aliases: `@modkit/*` → `./modkit/*`; `types/*` → `./types/*`.
 
 ## Build scripts
 
-| Path                                    | Role                                                              |
-| --------------------------------------- | ----------------------------------------------------------------- |
-| `scripts/build/esbuild.config.mjs`      | Bundle `src/main.ts` → `main.js`, compile used Tailwind utilities |
-| `scripts/build/compile-tailwind.js`     | Shared Tailwind compile (mod bundle + UI previews)                |
-| `scripts/ui/compile-preview-css.mjs`    | `npm run ui:css` — Tailwind for `docs/ui/canvas`                  |
-| `scripts/ui/generate-previews.mjs`      | `npm run ui:previews` — screenshot canvases into PNGs             |
-| `scripts/build/build-patches.js`        | Load `mod.ts` patch exports and write `patches.json`              |
-| `scripts/build/dev.js`                  | Watch + write to the game mods folder                             |
-| `scripts/sandustry/mod-path.js`         | `MOD_DIR` = `~/.config/sandustry/mods/Example Mod`                |
-| `scripts/sandustry/launch-sandustry.js` | Build (debug) and launch the game                                 |
-| `scripts/api/generate-api-types.js`     | `npm run generate-types`                                          |
+| Path                                    | Role                                                                                                          |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `scripts/build/esbuild.config.mjs`      | Bundle `src/main.ts` → `main.js` and `modkit/browser.ts` → `modkit/index.js`; compile used Tailwind utilities |
+| `scripts/build/compile-tailwind.js`     | Shared Tailwind compile (mod bundle + UI previews)                                                            |
+| `scripts/ui/compile-preview-css.mjs`    | `npm run ui:css` — Tailwind for `docs/ui/canvas`                                                              |
+| `scripts/ui/generate-previews.mjs`      | `npm run ui:previews` — screenshot canvases into PNGs                                                         |
+| `scripts/build/build-patches.js`        | Load `mod.ts` patch exports and write `patches.json`                                                          |
+| `scripts/build/dev.js`                  | Watch + write to the game mods folder                                                                         |
+| `scripts/sandustry/mod-path.js`         | `MOD_DIR` = `~/.config/sandustry/mods/Example Mod`                                                            |
+| `scripts/sandustry/launch-sandustry.js` | Build (debug) and launch the game                                                                             |
+| `scripts/api/generate-api-types.js`     | `npm run generate-types`                                                                                      |
 
 ## Output
 
 `dist/` is a symlink to the game mods folder during development. Release builds write the same files there.
+
+| Path                            | Role                                                         |
+| ------------------------------- | ------------------------------------------------------------ |
+| `main.js`                       | Mod entry (IIFE). Loads `modkit/index.js`, then runs `src/`. |
+| `modkit/index.js`               | Shared kit IIFE on `globalThis.__modkit`.                    |
+| `modinfo.json` / `patches.json` | Manifest and patches from `mod.ts`.                          |

@@ -13,7 +13,7 @@ const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 ensureModDir();
 linkRepoDistToModOutput(ROOT);
 
-console.log(`Watching src/ -> ${MOD_DIR}/main.js`);
+console.log(`Watching src/ + modkit/ -> ${MOD_DIR}/main.js + ${MOD_DIR}/modkit/index.js`);
 
 const child = spawn("node", [join(ROOT, "scripts/build/esbuild.config.mjs"), "--watch"], {
   stdio: "inherit",

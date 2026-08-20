@@ -1,6 +1,6 @@
 # Agent notes
 
-This repo is a **Sandustry** mod template. `src/` is the mod. `modkit/` is the shared kit. The game runs `main.js` as a script body (`new Function`); `sandkit` is already in scope. Do not emit `import` / `export` in the bundle (esbuild IIFE).
+This repo is a **Sandustry** mod template. `src/` is the mod. `modkit/` is the shared kit. The game runs `main.js` as a script body (`new Function`); `sandkit` is already in scope. Do not emit `import` / `export` in the output (esbuild IIFE). The build also writes `modkit/index.js`; `main.js` sync-loads it into `globalThis.__modkit`.
 
 Prefer Sandkit API. Use patches only when the public API cannot do the job. Keep behaviour next to its caller.
 
@@ -18,12 +18,13 @@ Detail docs:
 ```
 mod.ts                  Typed manifest + patches → modinfo.json / patches.json at build
 src/                    This mod (entry, UI, mod debug)
-modkit/              Shared kit (sdk, react, debug, patches, modinfo)
+modkit/                 Shared kit (sdk, react, debug, patches, modinfo)
 types/                  Sandkit API types (submodule: sandustry-modding-types)
 scripts/build/          esbuild, patches.json
 scripts/sandustry/      Launch / stop the game, mod output path
 scripts/api/            Generate types from runtime dump + official reference
 dist/                   Symlink to ~/.config/sandustry/mods/Example Mod (dev output)
+                        → main.js + modkit/index.js + modinfo.json + patches.json
 ```
 
 ### `src/`
@@ -32,7 +33,7 @@ dist/                   Symlink to ~/.config/sandustry/mods/Example Mod (dev out
 | ----------------------- | ----------------------------------------------------------------------------------- |
 | `src/main.ts`           | Mod entry. Import debug from `./debug` (not `modkit/debug`) so release can stub it. |
 | `src/globals.ts`        | `MOD_ID` (from `mod.ts`) and `installGlobals`                                       |
-| `src/ui/`               | React overlays (import `react`, resolved to `modkit/react.ts`)                      |
+| `src/ui/`               | React overlays (import `react`, resolved via `globalThis.__modkit` at runtime)      |
 | `src/debug/`            | Mod debug entry: calls `modkit/debug`, re-exports `onDispose` / `isHotReloadEval`   |
 | `src/patches/README.md` | Points at [`docs/patches.md`](docs/patches.md)                                      |
 
@@ -40,6 +41,7 @@ dist/                   Symlink to ~/.config/sandustry/mods/Example Mod (dev out
 
 | Path                    | Role                                                                                 |
 | ----------------------- | ------------------------------------------------------------------------------------ |
+| `modkit/browser.ts`     | Browser entry → `dist/modkit/index.js` (`globalThis.__modkit`)                       |
 | `modkit/modinfo.ts`     | `defineModInfo` / `definePatches` plus manifest and patch types                      |
 | `modkit/sandkit.ts`     | Host-injected `sandkit` export (not DevTools globals)                                |
 | `modkit/patches.ts`     | Shared debug patches (`modkitDebugPatches`)                                          |
@@ -69,14 +71,14 @@ Path aliases: `@modkit/*` → `./modkit/*`; `types/*` → `./types/*`.
 
 ### `scripts/`
 
-| Path                                    | Role                                                                    |
-| --------------------------------------- | ----------------------------------------------------------------------- |
-| `scripts/build/esbuild.config.mjs`      | Bundle `src/main.ts` → `main.js`, write `modinfo.json` + `patches.json` |
-| `scripts/build/build-patches.js`        | Load `mod.ts` patch exports and write `patches.json`                    |
-| `scripts/build/dev.js`                  | Watch + write to the game mods folder                                   |
-| `scripts/sandustry/mod-path.js`         | `MOD_DIR` = `~/.config/sandustry/mods/Example Mod`                      |
-| `scripts/sandustry/launch-sandustry.js` | Build (debug) and launch the game                                       |
-| `scripts/api/generate-api-types.js`     | `npm run generate-types`                                                |
+| Path                                    | Role                                                                        |
+| --------------------------------------- | --------------------------------------------------------------------------- |
+| `scripts/build/esbuild.config.mjs`      | Bundle `main.js` + `modkit/index.js`, write `modinfo.json` + `patches.json` |
+| `scripts/build/build-patches.js`        | Load `mod.ts` patch exports and write `patches.json`                        |
+| `scripts/build/dev.js`                  | Watch + write to the game mods folder                                       |
+| `scripts/sandustry/mod-path.js`         | `MOD_DIR` = `~/.config/sandustry/mods/Example Mod`                          |
+| `scripts/sandustry/launch-sandustry.js` | Build (debug) and launch the game                                           |
+| `scripts/api/generate-api-types.js`     | `npm run generate-types`                                                    |
 
 ## Builds
 

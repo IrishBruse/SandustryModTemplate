@@ -10,7 +10,8 @@ import { debugEnabled, safe } from "../sdk";
  * path stays in place until the game restarts.
  *
  * Stages (honest, as in SandLoader):
- * - `renderer` — `main.js` changed: dispose, then evaluate the new source.
+ * - `renderer` — `main.js` or `modkit/index.js` changed: dispose, then evaluate
+ *   the new `main.js` (clears `__modkit` when the kit file changed).
  * - `restart` — `patches.json`, `modinfo.json`, or a declared `workerEntry`
  *   changed: tell the player to restart. This loader cannot rebuild patches
  *   or workers.
@@ -19,7 +20,10 @@ import { debugEnabled, safe } from "../sdk";
 const POLL_MS = 400;
 const DEBOUNCE_MS = 250;
 const MAIN_ENTRY = "main.js";
+/** Split modkit IIFE loaded by the `main.js` banner into `globalThis.__modkit`. */
+const MODKIT_ENTRY = "modkit/index.js";
 const RESTART_FILES = ["patches.json", "modinfo.json"] as const;
+const RENDER_ENTRIES = [MAIN_ENTRY, MODKIT_ENTRY] as const;
 
 type Host = {
   modId: string;
@@ -213,8 +217,14 @@ function modDisplayName(host: Host): string {
 }
 
 async function captureBaseline(host: Host): Promise<void> {
-  const entry = await readAsset(host.api, host.entry);
-  if (entry != null) host.sources[host.entry] = entry;
+  let entryOk = false;
+  for (const file of RENDER_ENTRIES) {
+    const text = await readAsset(host.api, file);
+    if (text != null) {
+      host.sources[file] = text;
+      if (file === host.entry) entryOk = true;
+    }
+  }
 
   for (const file of RESTART_FILES) {
     const text = await readAsset(host.api, file);
@@ -227,12 +237,12 @@ async function captureBaseline(host: Host): Promise<void> {
     if (text != null) host.sources[worker] = text;
   }
 
-  host.ready = entry != null;
+  host.ready = entryOk;
 }
 
 async function changedRestartFile(host: Host): Promise<string | null> {
   for (const file of Object.keys(host.sources)) {
-    if (file === host.entry) continue;
+    if ((RENDER_ENTRIES as readonly string[]).includes(file)) continue;
     const text = await readAsset(host.api, file);
     if (text == null) continue;
     if (text !== host.sources[file]) {
@@ -243,7 +253,11 @@ async function changedRestartFile(host: Host): Promise<string | null> {
   return null;
 }
 
-function reloadRenderer(host: Host, source: string): void {
+function clearModkitGlobal(): void {
+  Reflect.deleteProperty(globalThis, "__modkit");
+}
+
+function reloadRenderer(host: Host, source: string, clearModkit: boolean): void {
   if (host.reloading) return;
   host.reloading = true;
   host.sources[host.entry] = source;
@@ -252,6 +266,8 @@ function reloadRenderer(host: Host, source: string): void {
   console.log(
     `[${host.modId}] disposed for reload (${report.ran} callback(s), ${report.failed} failed)`,
   );
+
+  if (clearModkit) clearModkitGlobal();
 
   try {
     runSource(source);
@@ -264,6 +280,15 @@ function reloadRenderer(host: Host, source: string): void {
   } finally {
     host.reloading = false;
   }
+}
+
+async function changedRenderEntry(host: Host): Promise<string | null> {
+  for (const file of RENDER_ENTRIES) {
+    const text = await readAsset(host.api, file);
+    if (text == null) continue;
+    if (text !== host.sources[file]) return file;
+  }
+  return null;
 }
 
 async function poll(host: Host): Promise<void> {
@@ -280,14 +305,22 @@ async function poll(host: Host): Promise<void> {
     }
 
     const restartFile = await changedRestartFile(host);
-    const entry = await readAsset(host.api, host.entry);
-    if (entry == null) return;
-
-    if (entry !== host.sources[host.entry]) {
+    const changedFile = await changedRenderEntry(host);
+    if (changedFile) {
       await sleep(DEBOUNCE_MS);
-      const again = await readAsset(host.api, host.entry);
-      if (again != null && again !== host.sources[host.entry]) {
-        reloadRenderer(host, again);
+      let clearModkit = false;
+      let mainSource: string | null = null;
+      for (const file of RENDER_ENTRIES) {
+        const text = await readAsset(host.api, file);
+        if (text == null) continue;
+        if (text !== host.sources[file]) {
+          host.sources[file] = text;
+          if (file === MODKIT_ENTRY) clearModkit = true;
+        }
+        if (file === host.entry) mainSource = text;
+      }
+      if (mainSource != null) {
+        reloadRenderer(host, mainSource, clearModkit || changedFile === MODKIT_ENTRY);
       }
     }
 
@@ -320,7 +353,7 @@ function syncWatching(host: Host): void {
 }
 
 /**
- * Watch `main.js` and reload the renderer when it changes.
+ * Watch `main.js` and `modkit/index.js`; reload the renderer when either changes.
  * Call once from `installDebug`. A later eval replaces the poller so new
  * watch logic takes effect without a game restart.
  */
@@ -342,6 +375,6 @@ export function installHotReload(api: SandkitApi, modId: string): void {
   stopPolling(host);
   syncWatching(host);
   if (host.pollTimer != null) {
-    console.log(`[${modId}] hot reload watching ${host.entry}`);
+    console.log(`[${modId}] hot reload watching ${RENDER_ENTRIES.join(", ")}`);
   }
 }

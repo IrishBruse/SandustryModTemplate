@@ -64,7 +64,7 @@ When the Debug setting is on, the helper waits until a **Continue** control is v
 
 ## Hot reload
 
-With `npm run dev` (or any debug build) and the Debug setting on, the helper polls `api.assets.getUrl("main.js")`. When the file changes, it runs `onDispose` callbacks in reverse order, then evaluates the new source with `new Function("sandkit", source)`. The game keeps running.
+With `npm run dev` (or any debug build) and the Debug setting on, the helper polls `main.js` and `modkit/index.js`. When either file changes, it runs `onDispose` callbacks in reverse order, clears `globalThis.__modkit` if the kit changed, then evaluates `main.js` with `new Function("sandkit", source)`. The game keeps running.
 
 JavaScript cannot be unloaded. The loader only reclaims what you register:
 
@@ -76,10 +76,11 @@ onDispose(stop);
 onDispose(() => clearInterval(timer));
 ```
 
-| Change                                                 | Result                                |
-| ------------------------------------------------------ | ------------------------------------- |
-| `main.js`                                              | Dispose, then evaluate the new source |
-| `patches.json`, `modinfo.json`, declared `workerEntry` | Toast: restart the game               |
+| Change                                                 | Result                                                           |
+| ------------------------------------------------------ | ---------------------------------------------------------------- |
+| `main.js`                                              | Dispose, then evaluate the new source                            |
+| `modkit/index.js`                                      | Dispose, clear `__modkit`, then evaluate `main.js` (reloads kit) |
+| `patches.json`, `modinfo.json`, declared `workerEntry` | Toast: restart the game                                          |
 
 A monkey-patch or a trigger with no unregister path stays until the game restarts.
 
@@ -93,14 +94,14 @@ Define debug-only patches in root `mod.ts` as `debugPatches`. Shared splash skip
 
 ## Files
 
-| Path            | Role                                                               |
-| --------------- | ------------------------------------------------------------------ |
-| `index.ts`      | `installDebug`, globals, re-exports                                |
-| `empty.ts`      | Release stub: no-op `installDebug`, `onDispose`, `isHotReloadEval` |
-| `boot-menu.ts`  | DevTools on load, F12, auto-boot schedule                          |
-| `menu.ts`       | Find and click the main-menu Continue row                          |
-| `splash.ts`     | Runtime splash click poll                                          |
-| `hot-reload.ts` | Watch `main.js`, `onDispose`, `isHotReloadEval`                    |
+| Path            | Role                                                                |
+| --------------- | ------------------------------------------------------------------- |
+| `index.ts`      | `installDebug`, globals, re-exports                                 |
+| `empty.ts`      | Release stub: no-op `installDebug`, `onDispose`, `isHotReloadEval`  |
+| `boot-menu.ts`  | DevTools on load, F12, auto-boot schedule                           |
+| `menu.ts`       | Find and click the main-menu Continue row                           |
+| `splash.ts`     | Runtime splash click poll                                           |
+| `hot-reload.ts` | Watch `main.js` + `modkit/index.js`, `onDispose`, `isHotReloadEval` |
 
 ## Wiring
 

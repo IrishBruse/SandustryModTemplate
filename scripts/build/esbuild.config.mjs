@@ -22,6 +22,8 @@ const sourcemapFlag = args.includes("--sourcemap");
 
 const MOD_OUT_DIR = game || watch ? MOD_DIR : join(ROOT, "dist");
 const OUT_MAIN = join(MOD_OUT_DIR, "main.js");
+const OUT_MODKIT = join(MOD_OUT_DIR, "modkit", "index.js");
+const MODKIT_ASSET = "modkit/index.js";
 
 /** @returns {boolean} */
 function resolveModDebug() {
@@ -34,6 +36,7 @@ const modDebug = resolveModDebug();
 
 console.log(`mod output: ${MOD_OUT_DIR}`);
 console.log(`main bundle: ${OUT_MAIN}`);
+console.log(`modkit bundle: ${OUT_MODKIT}`);
 console.log(`mod debug: ${modDebug ? "on" : "off"}`);
 
 /** Copy static mod files and generate patches.json into the output folder. */
@@ -123,21 +126,127 @@ function browserPatchesStubPlugin() {
   };
 }
 
-/** @returns {import('esbuild').Plugin} */
+/** Stub `./debug` to empty when release builds omit debug helpers. */
 function releaseDebugStubPlugin() {
   return {
     name: "release-debug-stub",
     setup(build) {
       if (modDebug) return;
       build.onResolve({ filter: /^\.\/debug$/ }, (args) => {
-        if (!args.importer.endsWith(`${join("src", "main.ts")}`)) return;
+        const importer = args.importer.replace(/\\/g, "/");
+        if (!importer.endsWith("/src/main.ts") && !importer.endsWith("/modkit/browser.ts")) {
+          return;
+        }
         return { path: join(ROOT, "modkit/debug/empty.ts") };
       });
     },
   };
 }
 
-const basePlugins = [browserPatchesStubPlugin(), modkitAliasPlugin(), releaseDebugStubPlugin()];
+/**
+ * Map `@modkit/*` and `react` imports in `main.js` to `globalThis.__modkit`
+ * (filled by `modkit/index.js`).
+ */
+function modkitGlobalPlugin() {
+  /** @type {Record<string, string>} */
+  const namespaces = {
+    "@modkit/sandkit": "sandkit",
+    "@modkit/sdk": "sdk",
+    "@modkit/debug": "debug",
+    "@modkit/ui": "ui",
+    react: "react",
+    "react/jsx-runtime": "jsxRuntime",
+    "react/jsx-dev-runtime": "jsxDevRuntime",
+  };
+
+  return {
+    name: "modkit-global",
+    setup(build) {
+      build.onResolve({ filter: /.*/ }, (args) => {
+        const key = namespaces[args.path];
+        if (!key) return;
+        return { path: args.path, namespace: "modkit-global", pluginData: { key } };
+      });
+      build.onLoad({ filter: /.*/, namespace: "modkit-global" }, (args) => ({
+        contents: `module.exports = globalThis.__modkit[${JSON.stringify(args.pluginData.key)}];`,
+        loader: "js",
+      }));
+    },
+  };
+}
+
+/** Sync-load `modkit/index.js` before the main IIFE (Sandkit only evaluates `main.js`). */
+const loadModkitBanner = [
+  "// Generated — edit src/ and run npm run dev.",
+  "// Runs as a plain script via new Function(...). No import/export.",
+  "// sandkit is already in scope.",
+  "// Loads dist/modkit/index.js into globalThis.__modkit when missing.",
+  `(function (sk) {`,
+  `  if (globalThis.__modkit) return;`,
+  `  var url = sk.api.assets.getUrl(${JSON.stringify(MODKIT_ASSET)});`,
+  `  var req = new XMLHttpRequest();`,
+  `  req.open("GET", url, false);`,
+  `  req.send(null);`,
+  `  var ok = req.status === 0 || (req.status >= 200 && req.status < 300);`,
+  `  if (!ok) throw new Error("Failed to load ${MODKIT_ASSET}: HTTP " + req.status);`,
+  `  (new Function("sandkit", req.responseText))(sk);`,
+  `  if (!globalThis.__modkit) throw new Error("${MODKIT_ASSET} did not install globalThis.__modkit");`,
+  `})(sandkit);`,
+].join("\n");
+
+const reactAliases = {
+  react: join(ROOT, "modkit/react.ts"),
+  "react/jsx-runtime": join(ROOT, "modkit/jsx-runtime.ts"),
+  "react/jsx-dev-runtime": join(ROOT, "modkit/jsx-dev-runtime.ts"),
+};
+
+const sharedBrowserOptions = {
+  bundle: true,
+  format: "iife",
+  platform: "browser",
+  target: "es2020",
+  sourcemap,
+  define,
+  jsx: "automatic",
+  jsxImportSource: "react",
+  logLevel: "info",
+};
+
+/** @type {import('esbuild').BuildOptions} */
+const modkitOptions = {
+  ...sharedBrowserOptions,
+  entryPoints: [join(ROOT, "modkit/browser.ts")],
+  outfile: OUT_MODKIT,
+  alias: reactAliases,
+  plugins: [modkitAliasPlugin(), releaseDebugStubPlugin()],
+  banner: {
+    js: [
+      "// Generated modkit — edit modkit/ and run npm run dev.",
+      "// Loaded from main.js into globalThis.__modkit. sandkit is in scope.",
+    ].join("\n"),
+  },
+};
+
+/** @type {import('esbuild').BuildOptions} */
+const mainOptions = {
+  ...sharedBrowserOptions,
+  entryPoints: [join(ROOT, "src/main.ts")],
+  outfile: OUT_MAIN,
+  plugins: [browserPatchesStubPlugin(), modkitGlobalPlugin(), releaseDebugStubPlugin()],
+  banner: { js: loadModkitBanner },
+};
+
+/** Full graph (mod + modkit) for Tailwind content — not the split emit. */
+const tailwindScanOptions = {
+  ...sharedBrowserOptions,
+  entryPoints: [join(ROOT, "src/main.ts")],
+  outfile: OUT_MAIN,
+  write: false,
+  logLevel: "silent",
+  metafile: true,
+  alias: reactAliases,
+  plugins: [browserPatchesStubPlugin(), modkitAliasPlugin(), releaseDebugStubPlugin()],
+};
 
 /** Empty CSS so the first graph pass can list bundled sources without a CSS cycle. */
 function stubCssPlugin() {
@@ -162,63 +271,53 @@ function cssTextPlugin(getCss) {
   };
 }
 
-/** Scan only files this bundle includes, then compile `@tailwind utilities`. */
+/** Scan files a full main+modkit bundle includes, then compile `@tailwind utilities`. */
 async function compileFromBundleGraph() {
   const result = await esbuild.build({
-    ...options,
-    write: false,
-    logLevel: "silent",
-    metafile: true,
-    plugins: [...basePlugins, stubCssPlugin()],
+    ...tailwindScanOptions,
+    plugins: [...tailwindScanOptions.plugins, stubCssPlugin()],
   });
   return compileTailwindUtilities(bundledContentFiles(result.metafile, ROOT));
 }
 
-/** @type {import('esbuild').BuildOptions} */
-const options = {
-  entryPoints: [join(ROOT, "src/main.ts")],
-  outfile: OUT_MAIN,
-  bundle: true,
-  format: "iife",
-  platform: "browser",
-  target: "es2020",
-  sourcemap,
-  define,
-  alias: {
-    react: join(ROOT, "modkit/react.ts"),
-    "react/jsx-runtime": join(ROOT, "modkit/jsx-runtime.ts"),
-    "react/jsx-dev-runtime": join(ROOT, "modkit/jsx-dev-runtime.ts"),
-  },
-  plugins: basePlugins,
-  jsx: "automatic",
-  jsxImportSource: "react",
-  banner: {
-    js: [
-      "// Generated — edit src/ and run npm run dev.",
-      "// Runs as a plain script via new Function(...). No import/export.",
-      "// sandkit is already in scope.",
-    ].join("\n"),
-  },
-  logLevel: "info",
-};
+/**
+ * @param {string} css
+ * @returns {Promise<import('esbuild').BuildResult[]>}
+ */
+async function buildOnce(css) {
+  mkdirSync(dirname(OUT_MODKIT), { recursive: true });
+  const kit = await esbuild.build(modkitOptions);
+  const main = await esbuild.build({
+    ...mainOptions,
+    plugins: [...mainOptions.plugins, cssTextPlugin(() => css)],
+  });
+  return [kit, main];
+}
 
 await syncModFiles();
 
 let tailwindCss = await compileFromBundleGraph();
 
 if (watch) {
+  mkdirSync(dirname(OUT_MODKIT), { recursive: true });
+
+  const kitCtx = await esbuild.context(modkitOptions);
   const mainCtx = await esbuild.context({
-    ...options,
+    ...mainOptions,
     metafile: true,
     plugins: [
-      ...basePlugins,
+      ...mainOptions.plugins,
       cssTextPlugin(() => tailwindCss),
       {
         name: "sync-mod",
         setup(build) {
           build.onEnd(async (result) => {
             if (result.errors.length > 0) return;
-            const next = await compileTailwindUtilities(bundledContentFiles(result.metafile, ROOT));
+            const scan = await esbuild.build({
+              ...tailwindScanOptions,
+              plugins: [...tailwindScanOptions.plugins, stubCssPlugin()],
+            });
+            const next = await compileTailwindUtilities(bundledContentFiles(scan.metafile, ROOT));
             if (next !== tailwindCss) {
               tailwindCss = next;
               await mainCtx.rebuild();
@@ -232,12 +331,10 @@ if (watch) {
     ],
   });
 
+  await kitCtx.watch();
   await mainCtx.watch();
-  console.log(`watching ${join(ROOT, "src")} -> ${OUT_MAIN}`);
+  console.log(`watching src/ + modkit/ -> ${OUT_MAIN} + ${OUT_MODKIT}`);
 } else {
-  const result = await esbuild.build({
-    ...options,
-    plugins: [...basePlugins, cssTextPlugin(() => tailwindCss)],
-  });
-  logBuildResult(result);
+  const results = await buildOnce(tailwindCss);
+  for (const result of results) logBuildResult(result);
 }
