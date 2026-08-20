@@ -17,13 +17,5 @@
       "types/*": ["./types/*"]
     }
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "framework/**/*.ts",
-    "framework/**/*.tsx",
-    "mod.ts",
-    "types/**/*.d.ts",
-    "types/**/*.ts"
-  ]
+  "include": ["src", "framework", "mod.ts", "types"]
 }
