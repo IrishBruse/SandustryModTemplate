@@ -1,3 +1,0 @@
-- [GitHub](https://github.com/IrishBruse/SandustryModTemplate)
-- [Types](https://github.com/flamableassassin/sandustry-modding-types)
-- [Sandustry](https://store.steampowered.com/app/2764460/Sandustry/)
