@@ -2,11 +2,11 @@
 - [Folder layout](layout.md)
 - [Builds](builds.md)
 
-- Framework
-  - [Overview](framework/README.md)
-  - [React](framework/react.md)
-  - [SDK](framework/sdk.md)
-  - [Debug](framework/debug.md)
+- Modkit
+  - [Overview](modkit/README.md)
+  - [React](modkit/react.md)
+  - [SDK](modkit/sdk.md)
+  - [Debug](modkit/debug.md)
 
 - UI kit
   - [Overview](ui/README.md)

@@ -2,7 +2,7 @@
 
 Define patches in root [`mod.ts`](../mod.ts) with `definePatches`. The build writes `patches.json`. The game loader applies those patches to Sandustry JavaScript files (for example `js/bundle.js`).
 
-Patch shapes live in [`framework/modinfo.ts`](../framework/modinfo.ts).
+Patch shapes live in [`modkit/modinfo.ts`](../modkit/modinfo.ts).
 
 ## When to use patches
 
@@ -14,11 +14,11 @@ Patch `code` runs outside the game bundle IIFE. Put shared runtime helpers on `g
 
 ## Layout
 
-| Export                                            | Role                                                           |
-| ------------------------------------------------- | -------------------------------------------------------------- |
-| `patches` in `mod.ts`                             | Production patches (always written)                            |
-| `debugPatches` in `mod.ts`                        | Debug-only patches (dev / `--debug` builds)                    |
-| `frameworkDebugPatches` in `framework/patches.ts` | Shared debug patches (splash skip); spread into `debugPatches` |
+| Export                                      | Role                                                           |
+| ------------------------------------------- | -------------------------------------------------------------- |
+| `patches` in `mod.ts`                       | Production patches (always written)                            |
+| `debugPatches` in `mod.ts`                  | Debug-only patches (dev / `--debug` builds)                    |
+| `modkitDebugPatches` in `modkit/patches.ts` | Shared debug patches (splash skip); spread into `debugPatches` |
 
 Release builds (`npm run build`) omit `debugPatches`. Dev builds (`npm run dev`, VS Code debug tasks, `npm run sandustry`) include them.
 
@@ -52,8 +52,8 @@ Always set `expectedMatches`. The mod loader fails if the match count differs â€
 
 ```ts
 // mod.ts
-import { definePatches } from "@framework/modinfo";
-import { frameworkDebugPatches } from "@framework/patches";
+import { definePatches } from "@modkit/modinfo";
+import { modkitDebugPatches } from "@modkit/patches";
 
 export const patches = definePatches([
   {
@@ -66,10 +66,10 @@ export const patches = definePatches([
   },
 ]);
 
-export const debugPatches = definePatches([...frameworkDebugPatches]);
+export const debugPatches = definePatches([...modkitDebugPatches]);
 ```
 
-Shared debug example: [`framework/patches.ts`](../framework/patches.ts) (`skip-startup-splash`). The browser bundle stubs that module so patch payloads stay out of `main.js`.
+Shared debug example: [`modkit/patches.ts`](../modkit/patches.ts) (`skip-startup-splash`). The browser bundle stubs that module so patch payloads stay out of `main.js`.
 
 ## Build output
 

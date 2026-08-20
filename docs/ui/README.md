@@ -1,9 +1,9 @@
 # UI kit
 
-Shared React components under `framework/ui/`. Import from `@framework/ui`.
+Shared React components under `modkit/ui/`. Import from `@modkit/ui`.
 
 ```ts
-import { OverlayRoot, FixedAnchor, Interactive, PanelCard } from "@framework/ui";
+import { OverlayRoot, FixedAnchor, Interactive, PanelCard } from "@modkit/ui";
 ```
 
 Each page has a live preview (Storybook-style iframe) plus props and a usage snippet. Browse all previews on the [gallery](gallery.md).
@@ -35,7 +35,7 @@ Each page has a live preview (Storybook-style iframe) plus props and a usage sni
 
 ## Shared styles
 
-`@framework/ui` re-exports `framework/ui/shared/styles.ts`:
+`@modkit/ui` re-exports `modkit/ui/shared/styles.ts`:
 
 | Export                 | Role                                   |
 | ---------------------- | -------------------------------------- |
@@ -48,7 +48,7 @@ Each page has a live preview (Storybook-style iframe) plus props and a usage sni
 | `menuButtonShineStyle` | Shine sweep size for menu buttons      |
 
 ```ts
-import { ACCENT, hotkeyBadgeStyle } from "@framework/ui";
+import { ACCENT, hotkeyBadgeStyle } from "@modkit/ui";
 ```
 
 ## Tailwind in overlays

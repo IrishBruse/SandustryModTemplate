@@ -20,7 +20,7 @@ A secondary objective line with optional trailing text and click handling.
 ## Usage
 
 ```tsx
-import { ObjectiveCard, SecondaryObjectiveRow } from "@framework/ui";
+import { ObjectiveCard, SecondaryObjectiveRow } from "@modkit/ui";
 
 <SecondaryObjectiveRow trailing="3/5" onClick={() => {}}>
   Collect sand

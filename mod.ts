@@ -1,5 +1,5 @@
-import { defineModInfo, definePatches } from "@framework/modinfo";
-import { frameworkDebugPatches } from "@framework/patches";
+import { defineModInfo, definePatches } from "@modkit/modinfo";
+import { modkitDebugPatches } from "@modkit/patches";
 
 export const modinfo = defineModInfo({
   manifestVersion: 1,
@@ -32,4 +32,4 @@ export const modinfo = defineModInfo({
 export const patches = definePatches([]);
 
 /** Debug-only patches — included in dev / `--debug` builds only. */
-export const debugPatches = definePatches([...frameworkDebugPatches]);
+export const debugPatches = definePatches([...modkitDebugPatches]);

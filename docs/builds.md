@@ -4,11 +4,11 @@ The game runs `main.js` as a script body (`new Function`). `sandkit` is already 
 
 ## Debug vs release
 
-| Command                                    | Debug helpers                     | `debugPatches` | Output                                 |
-| ------------------------------------------ | --------------------------------- | -------------- | -------------------------------------- |
-| `npm run build`                            | Stub (`framework/debug/empty.ts`) | Omitted        | `dist/` (symlink)                      |
-| `npm run dev`                              | Included                          | Included       | `~/.config/sandustry/mods/Example Mod` |
-| `npm run sandustry` / `--game` / `--debug` | Included                          | Included       | Game mods folder                       |
+| Command                                    | Debug helpers                  | `debugPatches` | Output                                 |
+| ------------------------------------------ | ------------------------------ | -------------- | -------------------------------------- |
+| `npm run build`                            | Stub (`modkit/debug/empty.ts`) | Omitted        | `dist/` (symlink)                      |
+| `npm run dev`                              | Included                       | Included       | `~/.config/sandustry/mods/Example Mod` |
+| `npm run sandustry` / `--game` / `--debug` | Included                       | Included       | Game mods folder                       |
 
 `--no-debug` forces a release-style bundle even when watch or game flags are set.
 
@@ -16,19 +16,19 @@ In-game **Debug** (`api.settings.get("debug")`) is omitted from release `modinfo
 
 `__MOD_DEBUG__` is `true` in dev builds and `false` in release.
 
-See [framework/debug.md](framework/debug.md) for what debug helpers do at runtime.
+See [modkit/debug.md](modkit/debug.md) for what debug helpers do at runtime.
 
 ## Tailwind CSS
 
 The game ships Tailwind **v3.4.19** inside `bundle.js`. That stylesheet is purged: only classes the HUD uses are present. A class such as `w-[28rem]` has no rule until the mod adds it.
 
-Sandkit loads `main.js` only. There is no CSS file in the mod manifest. The build still has to insert a `<style>` tag. The compiled sheet is **only the utilities this bundle uses**: esbuild lists the source files it packed, then Tailwind scans those files. Unused `framework/ui` components do not add CSS.
+Sandkit loads `main.js` only. There is no CSS file in the mod manifest. The build still has to insert a `<style>` tag. The compiled sheet is **only the utilities this bundle uses**: esbuild lists the source files it packed, then Tailwind scans those files. Unused `modkit/ui` components do not add CSS.
 
 The insert lives in [src/main.ts](../src/main.ts) (`style#<mod-id>-tailwind`). Hot reload removes that tag before it inserts a new one.
 
 Do not enable Tailwind preflight. The game already resets `*, ::before, ::after`. A second preflight can change the HUD.
 
-Docs canvases use the same compiler. `npm run ui:css` writes [docs/ui/canvas/_preview/utilities.css](ui/canvas/_preview/utilities.css). Live `preview.html` pages and PNGs live under [docs/ui/canvas](ui/canvas/) (not in `framework/ui`).
+Docs canvases use the same compiler. `npm run ui:css` writes [docs/ui/canvas/_preview/utilities.css](ui/canvas/_preview/utilities.css). Live `preview.html` pages and PNGs live under [docs/ui/canvas](ui/canvas/) (not in `modkit/ui`).
 
 ### Verify
 

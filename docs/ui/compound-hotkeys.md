@@ -17,7 +17,7 @@ This component has no `className` or `style` props.
 ## Usage
 
 ```tsx
-import { ShortcutBar, ShortcutBarItem, CompoundHotkeys } from "@framework/ui";
+import { ShortcutBar, ShortcutBarItem, CompoundHotkeys } from "@modkit/ui";
 
 <ShortcutBarItem hotkeys={<CompoundHotkeys keys={["Ctrl", "Shift", "S"]} />} label="Save" />;
 ```

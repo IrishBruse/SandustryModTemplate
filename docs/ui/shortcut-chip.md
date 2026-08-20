@@ -20,7 +20,7 @@ A vertical shortcut tile with hotkey, label, and optional active state.
 ## Usage
 
 ```tsx
-import { ShortcutChip } from "@framework/ui";
+import { ShortcutChip } from "@modkit/ui";
 
 <ShortcutChip hotkey="1" label="Build" active onClick={() => {}} />;
 ```

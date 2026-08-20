@@ -18,7 +18,7 @@ This component has no `className` or `style` props. It applies bold weight and `
 ## Usage
 
 ```tsx
-import { SecondaryObjectiveRow, ObjectiveHighlight } from "@framework/ui";
+import { SecondaryObjectiveRow, ObjectiveHighlight } from "@modkit/ui";
 
 <SecondaryObjectiveRow>
   Mine <ObjectiveHighlight>Gold</ObjectiveHighlight>

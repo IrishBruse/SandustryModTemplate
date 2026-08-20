@@ -4,7 +4,7 @@ Start a Sandustry mod on the Steam **[mods] branch** — the beta that loads loc
 
 ## Docs
 
-Full layout, framework, debug, patches, and UI kit: [Docs](docs/) and [https://ethanconneely.com/SandustryModTemplate/](https://ethanconneely.com/SandustryModTemplate/).
+Full layout, modkit, debug, patches, and UI kit: [Docs](docs/) and [https://ethanconneely.com/SandustryModTemplate/](https://ethanconneely.com/SandustryModTemplate/).
 
 ## Features
 
@@ -62,6 +62,6 @@ In game, **Alt+E** opens the example overlay. The Retro Console also gets a **No
 | `npm run sandustry`       | Debug build and launch                                 |
 | `npm run sandustry:debug` | Same, with inspector ports                             |
 
-Folder layout and framework details: [Docs](docs/).
+Folder layout and modkit details: [Docs](docs/).
 
 Agent notes: [`AGENTS.md`](AGENTS.md).

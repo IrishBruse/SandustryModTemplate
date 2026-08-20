@@ -12,7 +12,7 @@ import {
 import { MOD_DIR } from "../sandustry/mod-path.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
-const FRAMEWORK_DIR = join(ROOT, "framework");
+const MODKIT_DIR = join(ROOT, "modkit");
 const args = process.argv.slice(2);
 const watch = args.includes("--watch");
 const game = args.includes("--game");
@@ -63,7 +63,7 @@ async function loadModManifest() {
     bundle: true,
     platform: "node",
     format: "esm",
-    plugins: [frameworkAliasPlugin()],
+    plugins: [modkitAliasPlugin()],
     logLevel: "silent",
   });
   const mod = await import(pathToFileURL(MODINFO_CACHE).href);
@@ -91,17 +91,17 @@ const define = {
   __MOD_DEBUG__: modDebug ? "true" : "false",
 };
 
-/** Resolve `@framework/...` to `framework/...`. */
-function frameworkAliasPlugin() {
+/** Resolve `@modkit/...` to `modkit/...`. */
+function modkitAliasPlugin() {
   return {
-    name: "framework-alias",
+    name: "modkit-alias",
     setup(build) {
-      build.onResolve({ filter: /^@framework(?:\/|$)/ }, (args) => {
-        const rest = args.path === "@framework" ? "" : args.path.slice("@framework/".length);
+      build.onResolve({ filter: /^@modkit(?:\/|$)/ }, (args) => {
+        const rest = args.path === "@modkit" ? "" : args.path.slice("@modkit/".length);
         return build.resolve(rest === "" ? "." : `./${rest}`, {
           kind: args.kind,
           importer: args.importer,
-          resolveDir: FRAMEWORK_DIR,
+          resolveDir: MODKIT_DIR,
         });
       });
     },
@@ -110,14 +110,14 @@ function frameworkAliasPlugin() {
 
 /**
  * Browser bundle must not embed patch payloads (`globals` imports `modinfo` from `mod.ts`).
- * Build-time `build-patches.js` still resolves the real `@framework/patches`.
+ * Build-time `build-patches.js` still resolves the real `@modkit/patches`.
  */
 function browserPatchesStubPlugin() {
   return {
     name: "browser-patches-stub",
     setup(build) {
-      build.onResolve({ filter: /^@framework\/patches$/ }, () => ({
-        path: join(FRAMEWORK_DIR, "patches.empty.ts"),
+      build.onResolve({ filter: /^@modkit\/patches$/ }, () => ({
+        path: join(MODKIT_DIR, "patches.empty.ts"),
       }));
     },
   };
@@ -131,13 +131,13 @@ function releaseDebugStubPlugin() {
       if (modDebug) return;
       build.onResolve({ filter: /^\.\/debug$/ }, (args) => {
         if (!args.importer.endsWith(`${join("src", "main.ts")}`)) return;
-        return { path: join(ROOT, "framework/debug/empty.ts") };
+        return { path: join(ROOT, "modkit/debug/empty.ts") };
       });
     },
   };
 }
 
-const basePlugins = [browserPatchesStubPlugin(), frameworkAliasPlugin(), releaseDebugStubPlugin()];
+const basePlugins = [browserPatchesStubPlugin(), modkitAliasPlugin(), releaseDebugStubPlugin()];
 
 /** Empty CSS so the first graph pass can list bundled sources without a CSS cycle. */
 function stubCssPlugin() {
@@ -185,9 +185,9 @@ const options = {
   sourcemap,
   define,
   alias: {
-    react: join(ROOT, "framework/react.ts"),
-    "react/jsx-runtime": join(ROOT, "framework/jsx-runtime.ts"),
-    "react/jsx-dev-runtime": join(ROOT, "framework/jsx-dev-runtime.ts"),
+    react: join(ROOT, "modkit/react.ts"),
+    "react/jsx-runtime": join(ROOT, "modkit/jsx-runtime.ts"),
+    "react/jsx-dev-runtime": join(ROOT, "modkit/jsx-dev-runtime.ts"),
   },
   plugins: basePlugins,
   jsx: "automatic",

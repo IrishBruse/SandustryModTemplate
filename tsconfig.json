@@ -13,9 +13,9 @@
     "types": ["react"],
     "paths": {
       "*": ["./*"],
-      "@framework/*": ["./framework/*"],
+      "@modkit/*": ["./modkit/*"],
       "types/*": ["./types/*"]
     }
   },
-  "include": ["src", "framework", "mod.ts", "types"]
+  "include": ["src", "modkit", "mod.ts", "types"]
 }

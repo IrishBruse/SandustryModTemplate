@@ -17,7 +17,7 @@ Full-screen fixed overlay root that matches `#ui` fixed layers. Pointer events p
 ## Usage
 
 ```tsx
-import { OverlayRoot, FixedAnchor, Interactive, PanelCard } from "@framework/ui";
+import { OverlayRoot, FixedAnchor, Interactive, PanelCard } from "@modkit/ui";
 
 <OverlayRoot>
   <FixedAnchor anchor="top-right">

@@ -1,6 +1,6 @@
 # UI gallery
 
-Live canvases for every `framework/ui` component. Open a name to see props and usage. Isolated preview pages use `?embed=Name`.
+Live canvases for every `modkit/ui` component. Open a name to see props and usage. Isolated preview pages use `?embed=Name`.
 
 <section class="ui-gallery">
 

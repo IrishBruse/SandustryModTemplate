@@ -18,7 +18,7 @@ This component has no `style` prop.
 ## Usage
 
 ```tsx
-import { OverlayRoot, FixedAnchor, Interactive, MenuButton } from "@framework/ui";
+import { OverlayRoot, FixedAnchor, Interactive, MenuButton } from "@modkit/ui";
 
 <OverlayRoot>
   <FixedAnchor anchor="top-left">

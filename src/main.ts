@@ -1,6 +1,6 @@
 import { installDebug, isHotReloadEval, onDispose } from "./debug";
-import { sandkit } from "@framework/sandkit";
-import { isEnabled, registerRetroGame, safe } from "@framework/sdk";
+import { sandkit } from "@modkit/sandkit";
+import { isEnabled, registerRetroGame, safe } from "@modkit/sdk";
 import { installGlobals, MOD_ID } from "./globals";
 import { ExampleOverlay } from "./ui/ExampleOverlay";
 import tailwindCss from "./ui/tailwind.css";

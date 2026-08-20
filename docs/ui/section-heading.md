@@ -19,7 +19,7 @@ A section title with optional alignment, size, and gradient background.
 ## Usage
 
 ```tsx
-import { SectionHeading } from "@framework/ui";
+import { SectionHeading } from "@modkit/ui";
 
 <SectionHeading align="right" size="lg">
   Objectives

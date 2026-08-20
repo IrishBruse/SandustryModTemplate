@@ -28,7 +28,7 @@ export async function compileTailwindUtilities(content) {
 }
 
 /**
- * Source files esbuild actually bundled. Unused framework UI is omitted.
+ * Source files esbuild actually bundled. Unused modkit UI is omitted.
  *
  * @param {import('esbuild').Metafile} metafile
  * @param {string} root

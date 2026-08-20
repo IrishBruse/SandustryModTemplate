@@ -19,7 +19,7 @@ A dark, rounded panel card with optional click handling.
 ## Usage
 
 ```tsx
-import { PanelCard } from "@framework/ui";
+import { PanelCard } from "@modkit/ui";
 
 <PanelCard width={220} onClick={() => {}}>
   Clickable panel

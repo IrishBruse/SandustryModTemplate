@@ -1,9 +1,9 @@
 # SDK
 
-Small helpers under `framework/sdk/`. Import from `@framework/sdk`.
+Small helpers under `modkit/sdk/`. Import from `@modkit/sdk`.
 
 ```ts
-import { safe, isEnabled, debugEnabled, inGame, registerRetroGame } from "@framework/sdk";
+import { safe, isEnabled, debugEnabled, inGame, registerRetroGame } from "@modkit/sdk";
 ```
 
 ## `safe`
@@ -17,7 +17,7 @@ Runs `fn` in a try/catch. On success, returns the result. On error, returns `fal
 Use it when Sandkit calls may throw or return unexpected shapes (for example settings or scene queries).
 
 ```ts
-import { safe } from "@framework/sdk";
+import { safe } from "@modkit/sdk";
 
 const value = safe(() => api.settings.get("enabled"));
 ```
@@ -32,7 +32,7 @@ Both read a boolean from `api.settings.get(...)`. When the setting is missing or
 | `debugEnabled(api)` | `"debug"`   | `true`               |
 
 ```ts
-import { debugEnabled, isEnabled } from "@framework/sdk";
+import { debugEnabled, isEnabled } from "@modkit/sdk";
 
 if (!isEnabled(api)) return;
 if (debugEnabled(api)) {
@@ -53,7 +53,7 @@ Returns `false` on main-menu and intro scenes; `true` everywhere else.
 Uses `sandkit.api.scene.getActive()` and `sandkit.enums.Scene` when available. Falls back to numeric scene ids `1` (MainMenu) and `2` (Intro) when enums are missing.
 
 ```ts
-import { inGame } from "@framework/sdk";
+import { inGame } from "@modkit/sdk";
 
 if (!inGame()) return null;
 ```
@@ -68,7 +68,7 @@ Registers a game on the in-world Retro Console via `sandkit.engine.api.retroCons
 
 Returns `false` when `retroConsole.registerGame` is not available (logs a warning). Returns `true` after a successful registration.
 
-Types re-exported from `@framework/sdk`:
+Types re-exported from `@modkit/sdk`:
 
 | Type                      | Role                                 |
 | ------------------------- | ------------------------------------ |
@@ -82,8 +82,8 @@ Types re-exported from `@framework/sdk`:
 Full shapes live in `types/engine` (see the [types repo](https://github.com/flamableassassin/sandustry-modding-types)).
 
 ```ts
-import { registerRetroGame } from "@framework/sdk";
-import type { RetroConsoleGame } from "@framework/sdk";
+import { registerRetroGame } from "@modkit/sdk";
+import type { RetroConsoleGame } from "@modkit/sdk";
 
 const game: RetroConsoleGame<MyState> = {
   // ...

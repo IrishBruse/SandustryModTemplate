@@ -1,31 +1,31 @@
-# Debug framework
+# Debug modkit
 
 Shared dev-only helpers for Sandustry mods. Call `installDebug(api, modId)` from the mod debug entry (`src/debug` in this repo). Release builds stub that import, so none of this folder is bundled in production.
 
 ## When it is included
 
-| Build   | Command                                       | This folder                       | `debugPatches` | `configSchema.debug`        |
-| ------- | --------------------------------------------- | --------------------------------- | -------------- | --------------------------- |
-| Release | `npm run build`                               | Stub (`framework/debug/empty.ts`) | Omitted        | Omitted from `modinfo.json` |
-| Dev     | `npm run dev`, `--watch`, `--game`, `--debug` | Bundled                           | Included       | Present                     |
+| Build   | Command                                       | This folder                    | `debugPatches` | `configSchema.debug`        |
+| ------- | --------------------------------------------- | ------------------------------ | -------------- | --------------------------- |
+| Release | `npm run build`                               | Stub (`modkit/debug/empty.ts`) | Omitted        | Omitted from `modinfo.json` |
+| Dev     | `npm run dev`, `--watch`, `--game`, `--debug` | Bundled                        | Included       | Present                     |
 
 The in-game **Debug** setting (`api.settings.get("debug")`) turns some helpers on or off at runtime without a rebuild. If the setting is missing, it defaults to on.
 
 `__MOD_DEBUG__` is `true` in dev builds and `false` in release.
 
-Mod-only extra debug code lives in [`src/debug/`](../../src/debug/). That folder re-exports `onDispose` and `isHotReloadEval` so release stubs work. Import those from `./debug`, not from `framework/debug`.
+Mod-only extra debug code lives in [`src/debug/`](../../src/debug/). That folder re-exports `onDispose` and `isHotReloadEval` so release stubs work. Import those from `./debug`, not from `modkit/debug`.
 
 ## Features
 
-| Feature               | File                                                                               | Debug setting           | Notes                                              |
-| --------------------- | ---------------------------------------------------------------------------------- | ----------------------- | -------------------------------------------------- |
-| DevTools globals      | `index.ts`                                                                         | Always in a debug build | `sandkit`, `api`, `enums`, `react` on `globalThis` |
-| Open DevTools on load | `boot-menu.ts`                                                                     | Always in a debug build | Retries until the Electron bridge is ready         |
-| F12 opens DevTools    | `boot-menu.ts`                                                                     | Always in a debug build | Capture-phase keydown; skipped on hot-reload eval  |
-| Splash skip (runtime) | `splash.ts`                                                                        | Always in a debug build | Clicks the splash while logos are visible          |
-| Splash skip (bundle)  | [`../../framework/patches.ts`](../../framework/patches.ts) (`skip-startup-splash`) | Debug **build**         | Rewrites `js/bundle.js`; not toggled at runtime    |
-| Main-menu auto-boot   | `boot-menu.ts` + `menu.ts`                                                         | Must be on              | Clicks **Continue** after it has been visible      |
-| Renderer hot reload   | `hot-reload.ts`                                                                    | Must be on              | Dispose + eval new `main.js`; no game restart      |
+| Feature               | File                                                                         | Debug setting           | Notes                                              |
+| --------------------- | ---------------------------------------------------------------------------- | ----------------------- | -------------------------------------------------- |
+| DevTools globals      | `index.ts`                                                                   | Always in a debug build | `sandkit`, `api`, `enums`, `react` on `globalThis` |
+| Open DevTools on load | `boot-menu.ts`                                                               | Always in a debug build | Retries until the Electron bridge is ready         |
+| F12 opens DevTools    | `boot-menu.ts`                                                               | Always in a debug build | Capture-phase keydown; skipped on hot-reload eval  |
+| Splash skip (runtime) | `splash.ts`                                                                  | Always in a debug build | Clicks the splash while logos are visible          |
+| Splash skip (bundle)  | [`../../modkit/patches.ts`](../../modkit/patches.ts) (`skip-startup-splash`) | Debug **build**         | Rewrites `js/bundle.js`; not toggled at runtime    |
+| Main-menu auto-boot   | `boot-menu.ts` + `menu.ts`                                                   | Must be on              | Clicks **Continue** after it has been visible      |
+| Renderer hot reload   | `hot-reload.ts`                                                              | Must be on              | Dispose + eval new `main.js`; no game restart      |
 
 Hot-reload eval skips DevTools shortcut, splash polling, and auto-boot so those do not stack on every save.
 
@@ -33,7 +33,7 @@ Hot-reload eval skips DevTools shortcut, splash polling, and auto-boot so those 
 
 `installDebug` copies the live Sandkit objects onto `globalThis` for the browser
 console and dump scripts only. Those names are not ambient TypeScript globals —
-import `sandkit` from `@framework/sandkit` in mod code.
+import `sandkit` from `@modkit/sandkit` in mod code.
 
 - `sandkit`
 - `api` (`sandkit.api`)
@@ -51,7 +51,7 @@ After the mod has loaded, you can paste a runtime API dump script into DevTools.
 
 Two layers, both debug-build only:
 
-1. **Bundle patch** — [`skip-startup-splash`](../../framework/patches.ts) in `frameworkDebugPatches` registers a `requestAnimationFrame` click loop next to the game splash listeners. Format: [patches.md](../patches.md).
+1. **Bundle patch** — [`skip-startup-splash`](../../modkit/patches.ts) in `modkitDebugPatches` registers a `requestAnimationFrame` click loop next to the game splash listeners. Format: [patches.md](../patches.md).
 2. **Runtime poll** — `startSplashSkipPolling` clicks `document` every 100 ms while `#splash-logo-1` / `#splash-logo-2` / `#splash-logo-3` or `#splash-screen` is visible, until `sessionStorage.splashShown` is set.
 
 ## Main-menu auto-boot
@@ -89,7 +89,7 @@ Turning Debug off stops the file poller. Turning it on starts the poller again.
 
 ## Debug patches
 
-Define debug-only patches in root `mod.ts` as `debugPatches`. Shared splash skip lives in [`framework/patches.ts`](../../framework/patches.ts) (`frameworkDebugPatches`). See [patches.md](../patches.md).
+Define debug-only patches in root `mod.ts` as `debugPatches`. Shared splash skip lives in [`modkit/patches.ts`](../../modkit/patches.ts) (`modkitDebugPatches`). See [patches.md](../patches.md).
 
 ## Files
 
@@ -106,14 +106,14 @@ Define debug-only patches in root `mod.ts` as `debugPatches`. Shared splash skip
 
 ```ts
 // src/debug/index.ts — debug builds
-import { installDebug as installFrameworkDebug } from "@framework/debug";
-export { isHotReloadEval, onDispose } from "@framework/debug";
+import { installDebug as installModkitDebug } from "@modkit/debug";
+export { isHotReloadEval, onDispose } from "@modkit/debug";
 export function installDebug(api: SandkitApi, modId: string): void {
-  installFrameworkDebug(api, modId);
+  installModkitDebug(api, modId);
 }
 
 // src/main.ts
 import { installDebug, isHotReloadEval, onDispose } from "./debug";
 ```
 
-Release builds resolve `./debug` (from `src/main.ts`) to `framework/debug/empty.ts` (`installDebug` no-op, `onDispose` no-op, `isHotReloadEval` false).
+Release builds resolve `./debug` (from `src/main.ts`) to `modkit/debug/empty.ts` (`installDebug` no-op, `onDispose` no-op, `isHotReloadEval` false).

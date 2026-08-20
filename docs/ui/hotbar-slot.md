@@ -21,7 +21,7 @@ A single hotbar cell with slot number, icon area, and optional outline.
 ## Usage
 
 ```tsx
-import { HotbarSlot, HotbarIcon } from "@framework/ui";
+import { HotbarSlot, HotbarIcon } from "@modkit/ui";
 
 <HotbarSlot slot={1} outlined onClick={() => {}}>
   <HotbarIcon src="/sprites/drill.png" />

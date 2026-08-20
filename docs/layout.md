@@ -3,7 +3,7 @@
 ```
 mod.ts                  Typed manifest + patches → modinfo.json / patches.json at build
 src/                    This mod (entry, UI, mod debug)
-framework/              Shared kit (sdk, react, debug, patches, modinfo)
+modkit/              Shared kit (sdk, react, debug, patches, modinfo)
 docs/                   Docsify site; UI canvases under docs/ui/canvas/
 assets/                 Symlink to docs/assets (so README image paths work on GitHub and Docsify)
 types/                  Sandkit API types (submodule: sandustry-modding-types)
@@ -16,29 +16,29 @@ dist/                   Symlink to ~/.config/sandustry/mods/Example Mod (dev out
 
 ## `src/`
 
-| Path                    | Role                                                                                   |
-| ----------------------- | -------------------------------------------------------------------------------------- |
-| `src/main.ts`           | Mod entry. Import debug from `./debug` (not `framework/debug`) so release can stub it. |
-| `src/globals.ts`        | `MOD_ID` (from `mod.ts`) and `installGlobals`                                          |
-| `src/ui/`               | React overlays and `tailwind.css` (`@tailwind utilities`)                              |
-| `src/debug/`            | Mod debug entry: calls `framework/debug`, re-exports `onDispose` / `isHotReloadEval`   |
-| `src/patches/README.md` | Points at [patches.md](patches.md)                                                     |
+| Path                    | Role                                                                                |
+| ----------------------- | ----------------------------------------------------------------------------------- |
+| `src/main.ts`           | Mod entry. Import debug from `./debug` (not `modkit/debug`) so release can stub it. |
+| `src/globals.ts`        | `MOD_ID` (from `mod.ts`) and `installGlobals`                                       |
+| `src/ui/`               | React overlays and `tailwind.css` (`@tailwind utilities`)                           |
+| `src/debug/`            | Mod debug entry: calls `modkit/debug`, re-exports `onDispose` / `isHotReloadEval`   |
+| `src/patches/README.md` | Points at [patches.md](patches.md)                                                  |
 
-## `framework/`
+## `modkit/`
 
-| Path                       | Role                                                                                 |
-| -------------------------- | ------------------------------------------------------------------------------------ |
-| `framework/modinfo.ts`     | `defineModInfo` / `definePatches` plus manifest and patch types                      |
-| `framework/sandkit.ts`     | Host-injected `sandkit` export (not DevTools globals)                                |
-| `framework/patches.ts`     | Shared debug patches (`frameworkDebugPatches`)                                       |
-| `framework/react.ts`       | Runtime React from `sandkit.react` (`jsxImportSource`)                               |
-| `framework/jsx-runtime.ts` | JSX automatic runtime                                                                |
-| `framework/sdk/`           | `safe`, `isEnabled`, `debugEnabled`, `inGame`, `registerRetroGame`                   |
-| `framework/debug/`         | DevTools globals, F12, splash skip, main-menu boot, hot reload                       |
-| `framework/debug/empty.ts` | Release stub for `./debug` (`installDebug` / `onDispose` / `isHotReloadEval` no-ops) |
-| `framework/ui/`            | Shared React UI components only (no preview HTML / PNGs)                             |
+| Path                    | Role                                                                                 |
+| ----------------------- | ------------------------------------------------------------------------------------ |
+| `modkit/modinfo.ts`     | `defineModInfo` / `definePatches` plus manifest and patch types                      |
+| `modkit/sandkit.ts`     | Host-injected `sandkit` export (not DevTools globals)                                |
+| `modkit/patches.ts`     | Shared debug patches (`modkitDebugPatches`)                                          |
+| `modkit/react.ts`       | Runtime React from `sandkit.react` (`jsxImportSource`)                               |
+| `modkit/jsx-runtime.ts` | JSX automatic runtime                                                                |
+| `modkit/sdk/`           | `safe`, `isEnabled`, `debugEnabled`, `inGame`, `registerRetroGame`                   |
+| `modkit/debug/`         | DevTools globals, F12, splash skip, main-menu boot, hot reload                       |
+| `modkit/debug/empty.ts` | Release stub for `./debug` (`installDebug` / `onDispose` / `isHotReloadEval` no-ops) |
+| `modkit/ui/`            | Shared React UI components only (no preview HTML / PNGs)                             |
 
-Do not import `onDispose` or `isHotReloadEval` from `framework/debug` in `src/main.ts`. Import them from `./debug`.
+Do not import `onDispose` or `isHotReloadEval` from `modkit/debug` in `src/main.ts`. Import them from `./debug`.
 
 ## `types/`
 
@@ -54,7 +54,7 @@ Git submodule: [sandustry-modding-types](https://github.com/flamableassassin/san
 | `types/sandkit.d.ts`      | `sandkit` global shape            |
 | `types/engine.d.ts`       | Retro Console engine shapes       |
 
-Path aliases: `@framework/*` → `./framework/*`; `types/*` → `./types/*`.
+Path aliases: `@modkit/*` → `./modkit/*`; `types/*` → `./types/*`.
 
 ## Build scripts
 

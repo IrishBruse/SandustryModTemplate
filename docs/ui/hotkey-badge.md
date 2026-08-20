@@ -17,7 +17,7 @@ Shows a single keyboard key label with Sandustry HUD badge styling.
 ## Usage
 
 ```tsx
-import { HotkeyBadge } from "@framework/ui";
+import { HotkeyBadge } from "@modkit/ui";
 
 <HotkeyBadge>E</HotkeyBadge>;
 ```

@@ -8,7 +8,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import * as esbuild from "esbuild";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
-const FRAMEWORK_DIR = join(ROOT, "framework");
+const MODKIT_DIR = join(ROOT, "modkit");
 const MOD_TS = join(ROOT, "mod.ts");
 /** Ephemeral esbuild output — lives under the system temp dir, not the repo. */
 export const CACHE_DIR = join(tmpdir(), "sandustry-mod-template");
@@ -16,17 +16,17 @@ export const PATCHES_CACHE = join(CACHE_DIR, "patches.mjs");
 const JS_PATCH_PATH = /^js\/[^/]+\.js$/;
 const OPERATIONS = new Set(["insertBefore", "replace", "wrap"]);
 
-/** Resolve `@framework/...` to `framework/...`. */
-function frameworkAliasPlugin() {
+/** Resolve `@modkit/...` to `modkit/...`. */
+function modkitAliasPlugin() {
   return {
-    name: "framework-alias",
+    name: "modkit-alias",
     setup(build) {
-      build.onResolve({ filter: /^@framework(?:\/|$)/ }, (args) => {
-        const rest = args.path === "@framework" ? "" : args.path.slice("@framework/".length);
+      build.onResolve({ filter: /^@modkit(?:\/|$)/ }, (args) => {
+        const rest = args.path === "@modkit" ? "" : args.path.slice("@modkit/".length);
         return build.resolve(rest === "" ? "." : `./${rest}`, {
           kind: args.kind,
           importer: args.importer,
-          resolveDir: FRAMEWORK_DIR,
+          resolveDir: MODKIT_DIR,
         });
       });
     },
@@ -99,7 +99,7 @@ export async function loadPatchesModule() {
     bundle: true,
     platform: "node",
     format: "esm",
-    plugins: [frameworkAliasPlugin()],
+    plugins: [modkitAliasPlugin()],
     logLevel: "silent",
   });
   const mod = await import(`${pathToFileURL(PATCHES_CACHE).href}?t=${Date.now()}`);

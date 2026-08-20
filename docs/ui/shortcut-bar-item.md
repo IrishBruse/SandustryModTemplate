@@ -21,7 +21,7 @@ This component has no `style` prop.
 ## Usage
 
 ```tsx
-import { ShortcutBar, ShortcutBarItem, CompoundHotkeys } from "@framework/ui";
+import { ShortcutBar, ShortcutBarItem, CompoundHotkeys } from "@modkit/ui";
 
 <ShortcutBar>
   <ShortcutBarItem

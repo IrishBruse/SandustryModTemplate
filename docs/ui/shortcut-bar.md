@@ -17,7 +17,7 @@ A horizontal bar that groups shortcut items.
 ## Usage
 
 ```tsx
-import { ShortcutBar, ShortcutBarItem, ShortcutBarDivider, CompoundHotkeys } from "@framework/ui";
+import { ShortcutBar, ShortcutBarItem, ShortcutBarDivider, CompoundHotkeys } from "@modkit/ui";
 
 <ShortcutBar>
   <ShortcutBarItem hotkeys={<CompoundHotkeys keys={["Ctrl", "Z"]} />} label="Undo" />

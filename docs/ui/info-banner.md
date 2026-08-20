@@ -18,7 +18,7 @@ A compact label and value row with an optional action button.
 ## Usage
 
 ```tsx
-import { InfoBanner } from "@framework/ui";
+import { InfoBanner } from "@modkit/ui";
 
 <InfoBanner label="Energy" value="1,240" actionLabel="Collect" onAction={() => {}} />;
 ```

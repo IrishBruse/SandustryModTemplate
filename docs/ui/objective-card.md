@@ -20,7 +20,7 @@ A primary objective card with category label, title, and optional icon.
 ## Usage
 
 ```tsx
-import { ObjectiveCard } from "@framework/ui";
+import { ObjectiveCard } from "@modkit/ui";
 
 <ObjectiveCard category="Main" title="Build a conveyor belt" icon={<span>📦</span>} />;
 ```

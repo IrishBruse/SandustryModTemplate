@@ -1,6 +1,6 @@
 import { sandkit } from "./sandkit";
 
-/** Runtime React from Sandustry — import via the `react` alias (resolves to `framework/react.ts` at build time). */
+/** Runtime React from Sandustry — import via the `react` alias (resolves to `modkit/react.ts` at build time). */
 const runtime = sandkit.react;
 
 export default runtime;

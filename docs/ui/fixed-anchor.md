@@ -19,7 +19,7 @@ A fixed-position HUD anchor with `pointer-events-none` shell. Use `Interactive` 
 ## Usage
 
 ```tsx
-import { OverlayRoot, FixedAnchor, Interactive } from "@framework/ui";
+import { OverlayRoot, FixedAnchor, Interactive } from "@modkit/ui";
 
 <OverlayRoot>
   <FixedAnchor anchor="bottom-center" zIndex={10000}>

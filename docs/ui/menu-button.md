@@ -22,7 +22,7 @@ A menu row with icon, label, highlighted first letter, and hotkey badge.
 ## Usage
 
 ```tsx
-import { MenuButton } from "@framework/ui";
+import { MenuButton } from "@modkit/ui";
 
 <MenuButton icon={<span>⚙</span>} label="Settings" hotkey="S" onClick={() => {}} />;
 ```

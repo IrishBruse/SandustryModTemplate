@@ -17,7 +17,7 @@ A simple container with the `ui-box` class for Sandustry panel chrome.
 ## Usage
 
 ```tsx
-import { UiBox } from "@framework/ui";
+import { UiBox } from "@modkit/ui";
 
 <UiBox className="p-4 text-white">Panel content</UiBox>;
 ```

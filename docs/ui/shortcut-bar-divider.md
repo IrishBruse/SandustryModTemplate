@@ -13,7 +13,7 @@ This component has no props.
 ## Usage
 
 ```tsx
-import { ShortcutBar, ShortcutBarItem, ShortcutBarDivider } from "@framework/ui";
+import { ShortcutBar, ShortcutBarItem, ShortcutBarDivider } from "@modkit/ui";
 
 <ShortcutBar>
   <ShortcutBarItem hotkeys="Q" label="Grab" />

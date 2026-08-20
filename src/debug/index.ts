@@ -1,9 +1,9 @@
 import type { SandkitApi } from "types/api";
-import { installDebug as installFrameworkDebug } from "@framework/debug";
+import { installDebug as installModkitDebug } from "@modkit/debug";
 
-export { isHotReloadEval, onDispose } from "@framework/debug";
+export { isHotReloadEval, onDispose } from "@modkit/debug";
 
-/** Mod debug entry — framework helpers plus mod-specific dev setup. */
+/** Mod debug entry — modkit helpers plus mod-specific dev setup. */
 export function installDebug(api: SandkitApi, modId: string): void {
-  installFrameworkDebug(api, modId);
+  installModkitDebug(api, modId);
 }

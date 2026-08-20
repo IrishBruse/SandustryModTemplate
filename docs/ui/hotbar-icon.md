@@ -20,7 +20,7 @@ A pixel-art sprite scaled for display inside `HotbarSlot`.
 ## Usage
 
 ```tsx
-import { HotbarSlot, HotbarIcon } from "@framework/ui";
+import { HotbarSlot, HotbarIcon } from "@modkit/ui";
 
 <HotbarSlot slot={3}>
   <HotbarIcon src="/sprites/grabber.png" width={16} height={16} scale={2} />

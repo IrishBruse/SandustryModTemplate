@@ -1,7 +1,7 @@
-import { definePatches } from "@framework/modinfo";
+import { definePatches } from "@modkit/modinfo";
 
 /** Shared debug-only bundle patches. Include from the mod `debugPatches` export. */
-export const frameworkDebugPatches = definePatches([
+export const modkitDebugPatches = definePatches([
   {
     id: "skip-startup-splash",
     file: "js/bundle.js",

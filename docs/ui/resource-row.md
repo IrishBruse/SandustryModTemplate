@@ -19,7 +19,7 @@ A resource counter row with icon and value on a left gradient background.
 ## Usage
 
 ```tsx
-import { ResourceRow } from "@framework/ui";
+import { ResourceRow } from "@modkit/ui";
 
 <ResourceRow icon={<span>💎</span>} value="42" />;
 ```
