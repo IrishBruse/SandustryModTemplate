@@ -9,13 +9,25 @@ const api = sandkit.api;
 
 const SPACER_ATTR = "data-modkit-management-spacer";
 const SPACER_HEIGHT_PX = 42;
-/** Vanilla collapsed management rows are icon-only (~square). */
-const COLLAPSED_WIDTH_PX = 80;
+/** Vanilla `animate.width` when `managementCollapsed` is true. */
+const COLLAPSED_WIDTH_PX = 52;
 
 /** Registration order so stacked rows stay under Upgrades without overlap. */
 const rowOrder: string[] = [];
 const spacers = new Map<string, HTMLDivElement>();
 const anchorListeners = new Map<string, (anchor: ManagementAnchor | null) => void>();
+let upgradesResizeObserver: ResizeObserver | null = null;
+let observedUpgrades: HTMLElement | null = null;
+
+function ensureUpgradesResizeObserver(upgrades: HTMLElement): void {
+  if (!upgradesResizeObserver) {
+    upgradesResizeObserver = new ResizeObserver(() => placeAll());
+  }
+  if (observedUpgrades === upgrades) return;
+  if (observedUpgrades) upgradesResizeObserver.unobserve(observedUpgrades);
+  upgradesResizeObserver.observe(upgrades);
+  observedUpgrades = upgrades;
+}
 
 export type ManagementAnchor = {
   spacer: HTMLDivElement;
@@ -43,18 +55,30 @@ function findUpgradesButton(): HTMLElement | null {
   return null;
 }
 
+/**
+ * Vanilla toggles `store.options.managementCollapsed` on the ◀/▶ control.
+ * Read that chevron so collapse flips immediately (not after width/opacity finish).
+ */
 function isManagementCollapsed(upgrades: HTMLElement): boolean {
-  const label = upgrades.querySelector<HTMLElement>(".tracking-wider");
-  if (label) {
-    const opacity = Number.parseFloat(getComputedStyle(label).opacity);
-    if (opacity === 0) return true;
+  const parent = upgrades.parentElement;
+  if (parent) {
+    for (const child of parent.children) {
+      const text = child.textContent?.trim();
+      if (text === "▶") return true;
+      if (text === "◀") return false;
+    }
   }
-  return upgrades.getBoundingClientRect().width < COLLAPSED_WIDTH_PX;
+  // offsetWidth ignores parent UI scale (getBoundingClientRect does not).
+  return upgrades.offsetWidth <= COLLAPSED_WIDTH_PX + 1;
 }
 
 function placeAll() {
   const upgrades = findUpgradesButton();
   if (!upgrades) {
+    if (observedUpgrades && upgradesResizeObserver) {
+      upgradesResizeObserver.unobserve(observedUpgrades);
+      observedUpgrades = null;
+    }
     for (const id of rowOrder) {
       const spacer = spacers.get(id);
       if (spacer?.parentElement) spacer.remove();
@@ -63,8 +87,12 @@ function placeAll() {
     return;
   }
 
-  const width = upgrades.getBoundingClientRect().width;
+  ensureUpgradesResizeObserver(upgrades);
+
   const collapsed = isManagementCollapsed(upgrades);
+  // Follow the live layout width (framer animates 208→52). offsetWidth ignores UI scale.
+  const width =
+    upgrades.offsetWidth > 0 ? upgrades.offsetWidth : collapsed ? COLLAPSED_WIDTH_PX : 208;
   let previous: HTMLElement = upgrades;
 
   for (const id of rowOrder) {

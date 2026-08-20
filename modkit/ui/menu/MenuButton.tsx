@@ -32,9 +32,23 @@ export function MenuButton({
 }: MenuButtonProps) {
   const letter = highlightLetter ?? label.charAt(0);
   const rest = label.slice(letter.length);
+  // minWidth:0 beats HotkeyBadge min-w / flex min-width:auto so width can reach 0.
   const detailStyle: CSSProperties = collapsed
-    ? { opacity: 0, width: 0, overflow: "hidden", marginLeft: 0 }
-    : { opacity: 1, width: "auto" };
+    ? {
+        opacity: 0,
+        width: 0,
+        minWidth: 0,
+        overflow: "hidden",
+        marginLeft: 0,
+        pointerEvents: "none",
+        transition: "opacity 0.2s, width 0.2s, margin-left 0.2s",
+      }
+    : {
+        opacity: 1,
+        width: "auto",
+        minWidth: 0,
+        transition: "opacity 0.2s, width 0.2s, margin-left 0.2s",
+      };
 
   return (
     <div
@@ -50,7 +64,7 @@ export function MenuButton({
         className="w-full text-white bg-black bg-opacity-25 rounded-tr-md rounded-bl-md cursor-pointer flex items-center justify-between shadow-md skew-x-0 active:scale-90 px-4 overflow-hidden before:ease before:absolute before:right-0 before:top-0 before:h-12 before:w-6 before:translate-x-12 before:rotate-6 before:bg-white before:opacity-10 before:duration-700 shine-sweep relative left-0 group-hover:left-2"
         style={menuButtonShineStyle}
       >
-        <div className="flex items-center overflow-hidden whitespace-nowrap">
+        <div className="flex items-center overflow-hidden whitespace-nowrap min-w-0">
           <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center transition-colors group-hover:text-[#ffe700]">
             {icon}
           </div>
