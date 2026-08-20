@@ -1,5 +1,6 @@
 /**
  * Write patches.json from `mod.ts` (`patches` + optional `debugPatches`).
+ * Debug builds also merge `modkitDebugPatches` from the framework.
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -31,6 +32,26 @@ function modkitAliasPlugin() {
       });
     },
   };
+}
+
+/**
+ * Bundle a TypeScript entry and import it as Node ESM.
+ * @param {string} entryPoint
+ * @param {string} cacheName
+ */
+export async function bundleAndImport(entryPoint, cacheName) {
+  mkdirSync(CACHE_DIR, { recursive: true });
+  const outfile = join(CACHE_DIR, cacheName);
+  await esbuild.build({
+    entryPoints: [entryPoint],
+    outfile,
+    bundle: true,
+    platform: "node",
+    format: "esm",
+    plugins: [modkitAliasPlugin()],
+    logLevel: "silent",
+  });
+  return import(`${pathToFileURL(outfile).href}?t=${Date.now()}`);
 }
 
 /**
@@ -90,22 +111,16 @@ function validatePatches(patches) {
   }
 }
 
-/** Bundle and import root `mod.ts` patch exports. */
+/** Bundle and import root `mod.ts` patch exports plus framework debug patches. */
 export async function loadPatchesModule() {
-  mkdirSync(CACHE_DIR, { recursive: true });
-  await esbuild.build({
-    entryPoints: [MOD_TS],
-    outfile: PATCHES_CACHE,
-    bundle: true,
-    platform: "node",
-    format: "esm",
-    plugins: [modkitAliasPlugin()],
-    logLevel: "silent",
-  });
-  const mod = await import(`${pathToFileURL(PATCHES_CACHE).href}?t=${Date.now()}`);
+  const [mod, kit] = await Promise.all([
+    bundleAndImport(MOD_TS, "patches.mjs"),
+    bundleAndImport(join(MODKIT_DIR, "patches.ts"), "modkit-patches.mjs"),
+  ]);
   return {
     patches: structuredClone(mod.patches ?? []),
     debugPatches: structuredClone(mod.debugPatches ?? []),
+    modkitDebugPatches: structuredClone(kit.modkitDebugPatches ?? []),
   };
 }
 
@@ -116,15 +131,20 @@ export async function loadPatchesModule() {
 export async function buildPatches(outDir, modDebug = false) {
   mkdirSync(outDir, { recursive: true });
 
-  const { patches: production, debugPatches } = await loadPatchesModule();
+  const { patches: production, debugPatches, modkitDebugPatches } = await loadPatchesModule();
   if (!Array.isArray(production)) {
     throw new Error("mod.ts must export a `patches` array");
   }
-  if (!Array.isArray(debugPatches)) {
-    throw new Error("mod.ts must export a `debugPatches` array");
+  if (debugPatches != null && !Array.isArray(debugPatches)) {
+    throw new Error("mod.ts `debugPatches` must be an array when exported");
+  }
+  if (!Array.isArray(modkitDebugPatches)) {
+    throw new Error("modkit/patches.ts must export a `modkitDebugPatches` array");
   }
 
-  const patches = modDebug ? [...production, ...debugPatches] : [...production];
+  const patches = modDebug
+    ? [...production, ...modkitDebugPatches, ...(debugPatches ?? [])]
+    : [...production];
   validatePatches(patches);
 
   const dest = join(outDir, "patches.json");

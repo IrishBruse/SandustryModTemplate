@@ -1,6 +1,6 @@
 import { definePatches } from "@modkit/modinfo";
 
-/** Shared debug-only bundle patches. Include from the mod `debugPatches` export. */
+/** Shared debug-only bundle patches. The build merges these into debug `patches.json`. */
 export const modkitDebugPatches = definePatches([
   {
     id: "skip-startup-splash",

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Watch src/ and build the mod into ~/.config/sandustry/mods/Example Mod.
+ * Watch src/ and build the mod into ~/.config/sandustry/mods/<modinfo.name>.
  * Usage: npm run dev
  */
 import { spawn } from "node:child_process";
@@ -13,7 +13,7 @@ const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 ensureModDir();
 linkRepoDistToModOutput(ROOT);
 
-console.log(`Watching src/ + modkit/ -> ${MOD_DIR}/main.js + ${MOD_DIR}/modkit/index.js`);
+console.log(`Watching src/ -> ${MOD_DIR}/main.js`);
 
 const child = spawn("node", [join(ROOT, "scripts/build/esbuild.config.mjs"), "--watch"], {
   stdio: "inherit",

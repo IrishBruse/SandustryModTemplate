@@ -13,8 +13,8 @@ import { debugEnabled, safe } from "../utils";
  * an SSE server. One-shot builds leave the URL empty — no subscribe, no poll.
  *
  * Stages (honest, as in SandLoader):
- * - `renderer` — build notify for `main.js` / `modkit/index.js`: dispose, then
- *   evaluate the new `main.js` (clears `__modkit` when the kit file changed).
+ * - `renderer` — build notify for `main.js`: dispose, then evaluate the new
+ *   source.
  * - `restart` — `patches.json`, `modinfo.json`, or a declared `workerEntry`
  *   changed: tell the player to restart. This loader cannot rebuild patches
  *   or workers.
@@ -23,10 +23,7 @@ import { debugEnabled, safe } from "../utils";
 declare const __HOT_RELOAD_URL__: string;
 
 const MAIN_ENTRY = "main.js";
-/** Split modkit IIFE loaded by the `main.js` banner into `globalThis.__modkit`. */
-const MODKIT_ENTRY = "modkit/index.js";
 const RESTART_FILES = ["patches.json", "modinfo.json"] as const;
-const RENDER_ENTRIES = [MAIN_ENTRY, MODKIT_ENTRY] as const;
 const RECONNECT_MS = 1000;
 
 type Host = {
@@ -221,11 +218,7 @@ function modDisplayName(host: Host): string {
   return host.modId;
 }
 
-function clearModkitGlobal(): void {
-  Reflect.deleteProperty(globalThis, "__modkit");
-}
-
-function reloadRenderer(host: Host, source: string, clearModkit: boolean): void {
+function reloadRenderer(host: Host, source: string): void {
   if (host.reloading) return;
   host.reloading = true;
   host.sources[host.entry] = source;
@@ -234,8 +227,6 @@ function reloadRenderer(host: Host, source: string, clearModkit: boolean): void 
   console.log(
     `[${host.modId}] disposed for reload (${report.ran} callback(s), ${report.failed} failed)`,
   );
-
-  if (clearModkit) clearModkitGlobal();
 
   try {
     runSource(source);
@@ -251,7 +242,7 @@ function reloadRenderer(host: Host, source: string, clearModkit: boolean): void 
 }
 
 async function refreshTrackedFiles(host: Host): Promise<void> {
-  for (const file of [...RENDER_ENTRIES, ...RESTART_FILES]) {
+  for (const file of [MAIN_ENTRY, ...RESTART_FILES]) {
     const text = await readAsset(host.api, file);
     if (text != null) host.sources[file] = text;
   }
@@ -262,28 +253,16 @@ async function refreshTrackedFiles(host: Host): Promise<void> {
   }
 }
 
-async function handleNotify(host: Host, payload: NotifyPayload): Promise<void> {
+async function handleNotify(host: Host, _payload: NotifyPayload): Promise<void> {
   if (host.reloading) return;
 
-  const changed = new Set(payload.changed ?? []);
-
-  let clearModkit = changed.has(MODKIT_ENTRY);
-  let mainChanged = changed.has(MAIN_ENTRY);
-  let mainSource: string | null = null;
-
-  for (const file of RENDER_ENTRIES) {
-    const text = await readAsset(host.api, file);
-    if (text == null) continue;
-    if (text !== host.sources[file]) {
-      host.sources[file] = text;
-      if (file === MODKIT_ENTRY) clearModkit = true;
-      if (file === host.entry) mainChanged = true;
-    }
-    if (file === host.entry) mainSource = text;
+  const mainSource = await readAsset(host.api, host.entry);
+  if (mainSource != null && mainSource !== host.sources[host.entry]) {
+    reloadRenderer(host, mainSource);
   }
 
   for (const file of Object.keys(host.sources)) {
-    if ((RENDER_ENTRIES as readonly string[]).includes(file)) continue;
+    if (file === host.entry) continue;
     const text = await readAsset(host.api, file);
     if (text == null) continue;
     if (text !== host.sources[file]) {
@@ -291,10 +270,6 @@ async function handleNotify(host: Host, payload: NotifyPayload): Promise<void> {
       toast(host.api, `${file} changed. Restart the game to apply it.`);
       console.warn(`[${host.modId}] ${file} changed — restart the game`);
     }
-  }
-
-  if ((mainChanged || clearModkit) && mainSource != null) {
-    reloadRenderer(host, mainSource, clearModkit);
   }
 }
 
@@ -346,7 +321,7 @@ function startListening(host: Host): void {
     try {
       payload = JSON.parse(String(event.data)) as NotifyPayload;
     } catch {
-      payload = { changed: [...RENDER_ENTRIES] };
+      payload = { changed: [MAIN_ENTRY] };
     }
     void handleNotify(host, payload);
   };
