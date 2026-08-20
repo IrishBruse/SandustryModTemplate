@@ -27,6 +27,7 @@
     "framework/**/*.tsx",
     "framework/**/*.d.ts",
     "mod.ts",
+    "patches.ts",
     "types/**/*.d.ts",
     "types/**/*.ts"
   ]

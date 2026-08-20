@@ -1,181 +1,112 @@
 /**
- * Compile patch files to patches.json.
- *
- * Each `*.js` file is raw injected source. Leading `// @key value` comments
- * set file, find, and expectedMatches. The filename (without .js) is the id.
- *
- * Production: framework/patches, src/patches
- * Debug: framework/patches/debug, src/patches/debug
+ * Write patches.json from `patches.ts` (`patches` + optional `debugPatches`).
  */
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { basename, dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import * as esbuild from "esbuild";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
-const PATCHES_PROD_DIRS = [join(ROOT, "framework/patches"), join(ROOT, "src/patches")];
-const PATCHES_DEBUG_DIRS = [
-  join(ROOT, "framework/patches/debug"),
-  join(ROOT, "src/patches/debug"),
-];
+const FRAMEWORK_DIR = join(ROOT, "framework");
+const PATCHES_TS = join(ROOT, "patches.ts");
 /** Ephemeral esbuild output — lives under the system temp dir, not the repo. */
 export const CACHE_DIR = join(tmpdir(), "sandustry-mod-template");
+export const PATCHES_CACHE = join(CACHE_DIR, "patches.mjs");
 export const PATCHES_WATCH_CACHE = join(CACHE_DIR, "patches-watch.js");
-export const PATCHES_ENTRY = join(CACHE_DIR, "patches-entry.js");
 const JS_PATCH_PATH = /^js\/[^/]+\.js$/;
-const META_LINE = /^\/\/\s*@([A-Za-z][A-Za-z0-9]*)\s+(.*)$/;
 const OPERATIONS = new Set(["insertBefore", "replace", "wrap"]);
 
-/** @param {string} dir */
-function listPatchFiles(dir) {
-  if (!existsSync(dir)) return [];
-  return readdirSync(dir)
-    .filter((name) => name.endsWith(".js"))
-    .sort()
-    .map((name) => join(dir, name));
-}
-
-/** @param {string[]} dirs */
-function listPatchFilesFrom(dirs) {
-  return dirs.flatMap(listPatchFiles);
-}
-
-/** @param {string[]} files */
-function assertUniquePatchIds(files) {
-  /** @type {Map<string, string>} */
-  const byId = new Map();
-  for (const file of files) {
-    const id = basename(file, ".js");
-    const existing = byId.get(id);
-    if (existing) {
-      throw new Error(`Duplicate patch id "${id}":\n  ${existing}\n  ${file}`);
-    }
-    byId.set(id, file);
-  }
-}
-
-/** @param {boolean} modDebug */
-export function patchSourceFiles(modDebug) {
-  const files = listPatchFilesFrom(PATCHES_PROD_DIRS);
-  if (modDebug) files.push(...listPatchFilesFrom(PATCHES_DEBUG_DIRS));
-  return files;
-}
-
-/** Write a dummy module so esbuild can watch patch files. */
-export function writePatchWatchStub() {
-  mkdirSync(CACHE_DIR, { recursive: true });
-  writeFileSync(PATCHES_ENTRY, "export {};\n");
+/** Resolve `@framework/...` to `framework/...`. */
+function frameworkAliasPlugin() {
+  return {
+    name: "framework-alias",
+    setup(build) {
+      build.onResolve({ filter: /^@framework(?:\/|$)/ }, (args) => {
+        const rest = args.path === "@framework" ? "" : args.path.slice("@framework/".length);
+        return build.resolve(rest === "" ? "." : `./${rest}`, {
+          kind: args.kind,
+          importer: args.importer,
+          resolveDir: FRAMEWORK_DIR,
+        });
+      });
+    },
+  };
 }
 
 /**
- * @param {string} source
- * @param {string} id
+ * @param {unknown} patch
+ * @param {string} label
  */
-function parsePatchSource(source, id) {
-  const lines = source.split(/\r?\n/);
-  /** @type {Record<string, string>} */
-  const meta = {};
-  let index = 0;
-
-  while (index < lines.length) {
-    const trimmed = lines[index].trim();
-    if (trimmed === "") {
-      index += 1;
-      continue;
-    }
-    const match = trimmed.match(META_LINE);
-    if (!match) break;
-    const [, key, value] = match;
-    if (Object.hasOwn(meta, key)) {
-      throw new Error(`Patch "${id}": duplicate @${key}`);
-    }
-    meta[key] = value.trimEnd();
-    index += 1;
+function assertPatch(patch, label) {
+  if (!patch || typeof patch !== "object") {
+    throw new Error(`${label}: each patch must be an object`);
   }
 
-  const code = lines.slice(index).join("\n").replace(/^\n+/, "").replace(/\s+$/, "");
-  const file = meta.file;
-  const operation = meta.operation ?? "replace";
-  const expectedRaw = meta.expectedMatches;
-  const expectedMatches = expectedRaw === undefined ? Number.NaN : Number(expectedRaw);
+  const { id, file, operation, expectedMatches } = /** @type {Record<string, unknown>} */ (patch);
 
-  if (!file) throw new Error(`Patch "${id}": missing // @file`);
-  if (!JS_PATCH_PATH.test(file)) {
-    throw new Error(`Patch "${id}": @file must be a relative JavaScript path under js/ (got "${file}")`);
+  if (typeof id !== "string" || !id) {
+    throw new Error(`${label}: each patch must have a string id`);
   }
-  if (!OPERATIONS.has(operation)) {
-    throw new Error(`Patch "${id}": @operation must be insertBefore, replace, or wrap (got "${operation}")`);
+  if (typeof file !== "string" || !JS_PATCH_PATH.test(file)) {
+    throw new Error(
+      `Patch "${id}": file must be a relative JavaScript path under js/ (got ${JSON.stringify(file)})`,
+    );
+  }
+  if (typeof operation !== "string" || !OPERATIONS.has(operation)) {
+    throw new Error(
+      `Patch "${id}": operation must be insertBefore, replace, or wrap (got ${JSON.stringify(operation)})`,
+    );
   }
   if (!Number.isInteger(expectedMatches)) {
-    throw new Error(`Patch "${id}": missing or invalid // @expectedMatches`);
-  }
-  if (Boolean(meta.find) === Boolean(meta.regex)) {
-    throw new Error(`Patch "${id}": set exactly one of // @find or // @regex`);
+    throw new Error(`Patch "${id}": expectedMatches must be an integer`);
   }
 
-  /** @type {Record<string, unknown>} */
-  const patch = { id, file, operation, expectedMatches };
-
-  if (meta.find) patch.find = meta.find;
-  if (meta.regex) {
-    patch.regex = meta.regexFlags
-      ? { pattern: meta.regex, flags: meta.regexFlags }
-      : { pattern: meta.regex };
+  const hasFind = typeof patch.find === "string" && patch.find.length > 0;
+  const hasRegex = patch.regex != null && typeof patch.regex === "object";
+  if (hasFind === hasRegex) {
+    throw new Error(`Patch "${id}": set exactly one of find or regex`);
   }
-  if (meta.atomicGroup) patch.atomicGroup = meta.atomicGroup;
 
   if (operation === "wrap") {
-    if (!meta.before || !meta.after) {
-      throw new Error(`Patch "${id}": wrap requires // @before and // @after`);
+    if (typeof patch.before !== "string" || typeof patch.after !== "string") {
+      throw new Error(`Patch "${id}": wrap requires before and after strings`);
     }
-    patch.before = meta.before;
-    patch.after = meta.after;
-  } else {
-    if (!code) throw new Error(`Patch "${id}": file body is empty (it becomes the code field)`);
-    patch.code = code;
+  } else if (typeof patch.code !== "string" || !patch.code) {
+    throw new Error(`Patch "${id}": ${operation} requires a non-empty code string`);
   }
-
-  return patch;
 }
 
 /** @param {unknown[]} patches */
 function validatePatches(patches) {
   const seen = new Set();
 
-  for (const patch of patches) {
-    if (!patch || typeof patch !== "object") {
-      throw new Error("Each patch must be an object");
-    }
-
-    const { id, file } = patch;
-    if (typeof id !== "string" || !id) {
-      throw new Error("Each patch must have a string id");
-    }
+  for (const [index, patch] of patches.entries()) {
+    assertPatch(patch, `patches[${index}]`);
+    const id = /** @type {{ id: string }} */ (patch).id;
     if (seen.has(id)) {
       throw new Error(`Duplicate patch id "${id}"`);
     }
     seen.add(id);
-
-    if (typeof file !== "string" || !JS_PATCH_PATH.test(file)) {
-      throw new Error(
-        `Patch "${id}": file must be a relative JavaScript path under js/ (got "${file}")`,
-      );
-    }
   }
 }
 
-/** @returns {import('esbuild').Plugin} */
-export function patchSourcesPlugin(modDebug) {
+/** Bundle and import root `patches.ts`. */
+export async function loadPatchesModule() {
+  mkdirSync(CACHE_DIR, { recursive: true });
+  await esbuild.build({
+    entryPoints: [PATCHES_TS],
+    outfile: PATCHES_CACHE,
+    bundle: true,
+    platform: "node",
+    format: "esm",
+    plugins: [frameworkAliasPlugin()],
+    logLevel: "silent",
+  });
+  const mod = await import(`${pathToFileURL(PATCHES_CACHE).href}?t=${Date.now()}`);
   return {
-    name: "patch-sources",
-    setup(build) {
-      build.onStart(() => {
-        writePatchWatchStub();
-        for (const file of patchSourceFiles(modDebug)) {
-          build.watchFiles.add(file);
-        }
-      });
-    },
+    patches: structuredClone(mod.patches ?? []),
+    debugPatches: structuredClone(mod.debugPatches ?? []),
   };
 }
 
@@ -183,18 +114,18 @@ export function patchSourcesPlugin(modDebug) {
  * @param {string} outDir
  * @param {boolean} [modDebug=false]
  */
-export function buildPatches(outDir, modDebug = false) {
+export async function buildPatches(outDir, modDebug = false) {
   mkdirSync(outDir, { recursive: true });
 
-  const files = patchSourceFiles(modDebug);
-  assertUniquePatchIds(files);
+  const { patches: production, debugPatches } = await loadPatchesModule();
+  if (!Array.isArray(production)) {
+    throw new Error("patches.ts must export a `patches` array");
+  }
+  if (!Array.isArray(debugPatches)) {
+    throw new Error("patches.ts must export a `debugPatches` array");
+  }
 
-  const patches = files.map((file) => {
-    const id = basename(file, ".js");
-    const source = readFileSync(file, "utf8");
-    return parsePatchSource(source, id);
-  });
-
+  const patches = modDebug ? [...production, ...debugPatches] : [...production];
   validatePatches(patches);
 
   const dest = join(outDir, "patches.json");

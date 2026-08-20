@@ -1,6 +1,6 @@
 /**
  * Mod manifest shapes — canonical example: `mod.ts` at repo root.
- * Use `defineMod` from `framework/modinfo.ts` for type-safe manifest definitions.
+ * Use `defineModInfo` from `framework/modinfo.ts` for type-safe manifest definitions.
  *
  * Read mod settings from `configSchema` via `api.settings.get(key)`.
  * Put feature switches in `configSchema` rather than hard-coded flags.

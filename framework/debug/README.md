@@ -4,7 +4,7 @@ Shared dev-only helpers for Sandustry mods. Call `installDebug(api, modId)` from
 
 ## When it is included
 
-| Build | Command | This folder | `patches/debug/` | `configSchema.debug` |
+| Build | Command | This folder | `debugPatches` | `configSchema.debug` |
 |---|---|---|---|---|
 | Release | `npm run build` | Stub (`framework/debug/empty.ts`) | Omitted | Omitted from `modinfo.json` |
 | Dev | `npm run dev`, `--watch`, `--game`, `--debug` | Bundled | Included | Present |
@@ -23,7 +23,7 @@ Mod-only extra debug code lives in [`src/debug/`](../../src/debug/). That folder
 | Open DevTools on load | `boot-menu.ts` | Always in a debug build | Retries until the Electron bridge is ready |
 | F12 opens DevTools | `boot-menu.ts` | Always in a debug build | Capture-phase keydown; skipped on hot-reload eval |
 | Splash skip (runtime) | `splash.ts` | Always in a debug build | Clicks the splash while logos are visible |
-| Splash skip (bundle) | [`../patches/debug/skip-startup-splash.js`](../patches/debug/skip-startup-splash.js) | Debug **build** | Rewrites `js/bundle.js`; not toggled at runtime |
+| Splash skip (bundle) | [`../patches.ts`](../patches.ts) (`skip-startup-splash`) | Debug **build** | Rewrites `js/bundle.js`; not toggled at runtime |
 | Main-menu auto-boot | `boot-menu.ts` + `menu.ts` | Must be on | Clicks **Continue** after it has been visible |
 | Renderer hot reload | `hot-reload.ts` | Must be on | Dispose + eval new `main.js`; no game restart |
 
@@ -49,7 +49,7 @@ Paste [`types/api/source/dump-api-console.js`](../../types/api/source/dump-api-c
 
 Two layers, both debug-build only:
 
-1. **Bundle patch** — [`skip-startup-splash.js`](../patches/debug/skip-startup-splash.js) is raw injected source. Leading `// @file`, `// @find`, and `// @expectedMatches` comments set the patch fields; the rest of the file is `code`; the filename is the id. It registers a `requestAnimationFrame` click loop next to the game splash listeners. Format: [`src/patches/README.md`](../../src/patches/README.md).
+1. **Bundle patch** — [`skip-startup-splash`](../patches.ts) in `frameworkDebugPatches` registers a `requestAnimationFrame` click loop next to the game splash listeners. Format: [`src/patches/README.md`](../../src/patches/README.md).
 2. **Runtime poll** — `startSplashSkipPolling` clicks `document` every 100 ms while `#splash-logo-1` / `#splash-logo-2` / `#splash-logo-3` or `#splash-screen` is visible, until `sessionStorage.splashShown` is set.
 
 ## Main-menu auto-boot
@@ -87,10 +87,7 @@ Turning Debug off stops the file poller. Turning it on starts the poller again.
 
 ## Debug patches
 
-Shared debug patches: `framework/patches/debug/*.js`.  
-Mod debug patches: `src/patches/debug/*.js`.
-
-Each file is raw JavaScript. Comments set `@file`, `@find`, and `@expectedMatches`. See [`src/patches/README.md`](../../src/patches/README.md).
+Define debug-only patches in root `patches.ts` as `debugPatches`. Shared splash skip lives in [`framework/patches.ts`](../patches.ts) (`frameworkDebugPatches`). See [`src/patches/README.md`](../../src/patches/README.md).
 
 ## Files
 

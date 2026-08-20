@@ -4,9 +4,8 @@
  * `api.d.ts`, `sandkit.d.ts`, and `engine.d.ts` compose those namespaces for
  * the `types/api`, `types/sandkit`, and `types/engine` import paths.
  *
- * Patch **source** files (`src/patches`, `framework/patches`) are raw JS with
- * `// @file` / `// @find` / `// @expectedMatches` comments. See `src/patches/README.md`.
- * `patch.d.ts` describes the compiled `patches.json` objects.
+ * Define patches with `definePatches` in root `patches.ts` (see that file and
+ * `src/patches/README.md`). `patch.d.ts` describes the `patches.json` objects.
  */
 
 export type * from "./manifest";

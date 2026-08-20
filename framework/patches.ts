@@ -1,0 +1,16 @@
+import { definePatches } from "@framework/modinfo";
+
+/** Shared debug-only bundle patches. Include from the mod `debugPatches` export. */
+export const frameworkDebugPatches = definePatches([
+  {
+    id: "skip-startup-splash",
+    file: "js/bundle.js",
+    find: 'document.addEventListener("keydown",p),document.addEventListener("click",h);',
+    operation: "replace",
+    expectedMatches: 1,
+    code: `document.addEventListener("keydown", p), document.addEventListener("click", h), requestAnimationFrame(function _skipStartupSplash() {
+  document.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+  if (!sessionStorage.getItem("splashShown")) requestAnimationFrame(_skipStartupSplash);
+});`,
+  },
+]);

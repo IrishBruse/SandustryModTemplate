@@ -7,14 +7,15 @@ Prefer Sandkit API. Use patches only when the public API cannot do the job. Keep
 Detail docs:
 
 - Debug features: [`framework/debug/README.md`](framework/debug/README.md)
-- Patch file format: [`src/patches/README.md`](src/patches/README.md)
+- Patch definitions: [`src/patches/README.md`](src/patches/README.md)
 - API types: [`types/README.md`](types/README.md)
 
 ## Layout
 
 ```
 mod.ts                  Typed manifest (`modinfo`) → modinfo.json at build
-src/                    This mod (entry, UI, mod debug, mod patches)
+patches.ts              Typed patches → patches.json at build
+src/                    This mod (entry, UI, mod debug)
 framework/              Shared kit (sdk, react, debug, patches, types)
 types/                  Sandkit API types (submodule: sandustry-modding-types)
 scripts/build/          esbuild, patches.json
@@ -31,21 +32,19 @@ dist/                   Symlink to ~/.config/sandustry/mods/Example Mod (dev out
 | `src/globals.ts` | `MOD_ID` (from `mod.ts`) and `installGlobals` |
 | `src/ui/` | React overlays (import `react`, resolved to `framework/react.ts`) |
 | `src/debug/` | Mod debug entry: calls `framework/debug`, re-exports `onDispose` / `isHotReloadEval` |
-| `src/patches/*.js` | Production bundle patches for this mod |
-| `src/patches/debug/*.js` | Debug-only patches for this mod |
+| `src/patches/README.md` | How to define patches in `patches.ts` |
 
 ### `framework/`
 
 | Path | Role |
 |---|---|
-| `framework/modinfo.ts` | `defineMod` for `mod.ts` |
+| `framework/modinfo.ts` | `defineModInfo` / `definePatches` |
+| `framework/patches.ts` | Shared debug patches (`frameworkDebugPatches`) |
 | `framework/react.ts` | Runtime React from `sandkit.react` (`jsxImportSource`) |
 | `framework/jsx-runtime.ts` | JSX automatic runtime |
 | `framework/sdk/` | `safe`, `isEnabled`, `debugEnabled`, `inGame`, `registerRetroGame` |
 | `framework/debug/` | DevTools globals, F12, splash skip, main-menu boot, hot reload |
 | `framework/debug/empty.ts` | Release stub for `./debug` (`installDebug` / `onDispose` / `isHotReloadEval` no-ops) |
-| `framework/patches/*.js` | Shared production patches |
-| `framework/patches/debug/*.js` | Shared debug patches (splash skip) |
 | `framework/types/` | Manifest, patch, and Sandkit shims (`types/api`, `types/sandkit`, `types/engine`) |
 
 Do not import `onDispose` or `isHotReloadEval` from `framework/debug` in `src/main.ts`. Import them from `./debug`.
@@ -68,7 +67,7 @@ Path aliases: `@framework/*` → `./framework/*`; `types/api` / `types/sandkit` 
 | Path | Role |
 |---|---|
 | `scripts/build/esbuild.config.mjs` | Bundle `src/main.ts` → `main.js`, write `modinfo.json` + `patches.json` |
-| `scripts/build/build-patches.js` | Parse patch `.js` files into `patches.json` |
+| `scripts/build/build-patches.js` | Load `patches.ts` and write `patches.json` |
 | `scripts/build/dev.js` | Watch + write to the game mods folder |
 | `scripts/sandustry/mod-path.js` | `MOD_DIR` = `~/.config/sandustry/mods/Example Mod` |
 | `scripts/sandustry/launch-sandustry.js` | Build (debug) and launch the game |
@@ -76,7 +75,7 @@ Path aliases: `@framework/*` → `./framework/*`; `types/api` / `types/sandkit` 
 
 ## Builds
 
-| Command | Debug helpers | `patches/debug/` | Output |
+| Command | Debug helpers | `debugPatches` | Output |
 |---|---|---|---|
 | `npm run build` | Stub (`framework/debug/empty.ts`) | Omitted | `dist/` (symlink) |
 | `npm run dev` | Included | Included | `~/.config/sandustry/mods/Example Mod` |
@@ -88,17 +87,22 @@ In-game **Debug** (`api.settings.get("debug")`) is omitted from release `modinfo
 
 ## Patches
 
-Each `*.js` file is raw injected source. The filename without `.js` is the id. Leading comments set the other fields:
+Define patches in root `patches.ts` with `definePatches`. Production list is `patches`; debug-only list is `debugPatches`.
 
-```js
-// @file js/bundle.js
-// @find initializing workers
-// @expectedMatches 1
-
-[patched]
+```ts
+export const patches = definePatches([
+  {
+    id: "bundle-log-prefix",
+    file: "js/bundle.js",
+    find: "initializing workers",
+    operation: "insertBefore",
+    code: "[patched]",
+    expectedMatches: 1,
+  },
+]);
 ```
 
-`@operation` defaults to `replace`. Scan is not recursive: `patches/*.js` does not include `patches/debug/*.js`. Full format: [`src/patches/README.md`](src/patches/README.md).
+Full format: [`src/patches/README.md`](src/patches/README.md).
 
 ## Commands
 

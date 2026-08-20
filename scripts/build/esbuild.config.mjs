@@ -3,13 +3,7 @@ import { cpSync, existsSync, mkdirSync, readdirSync, writeFileSync } from "node:
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import {
-  buildPatches,
-  PATCHES_ENTRY,
-  PATCHES_WATCH_CACHE,
-  patchSourcesPlugin,
-  writePatchWatchStub,
-} from "./build-patches.js";
+import { buildPatches, PATCHES_WATCH_CACHE } from "./build-patches.js";
 import { MOD_DIR } from "../sandustry/mod-path.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
@@ -171,17 +165,14 @@ if (watch) {
     ],
   });
 
-  writePatchWatchStub();
   const patchCtx = await esbuild.context({
-    entryPoints: [PATCHES_ENTRY],
+    entryPoints: [join(ROOT, "patches.ts")],
     outfile: PATCHES_WATCH_CACHE,
     bundle: true,
     platform: "node",
     format: "esm",
-    define,
-    logLevel: "silent",
     plugins: [
-      patchSourcesPlugin(modDebug),
+      frameworkAliasPlugin(),
       {
         name: "emit-patches-json",
         setup(build) {
@@ -192,6 +183,7 @@ if (watch) {
         },
       },
     ],
+    logLevel: "silent",
   });
 
   await Promise.all([mainCtx.watch(), patchCtx.watch()]);
