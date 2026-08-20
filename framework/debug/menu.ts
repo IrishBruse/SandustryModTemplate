@@ -1,6 +1,9 @@
 /** Keyboard-nav id on the main menu — not a DOM id. */
 export const CONTINUE_FOCUS_ID = "main-menu-continue";
 
+/** Pause/escape menu uses the same Continue label with focus id `pause-continue`. */
+export const PAUSE_CONTINUE_FOCUS_ID = "pause-continue";
+
 const SETTLE_MS = 400;
 
 let visibleSince = 0;
@@ -14,7 +17,7 @@ function isContinueLabel(text: string): boolean {
   return label === "continue" || label.endsWith(" continue");
 }
 
-/** Find the main-menu Continue row by visible label text. */
+/** Find a visible Continue row by label text (main menu or pause menu). */
 export function findContinueButton(): HTMLElement | null {
   const candidates = document.querySelectorAll<HTMLElement>(
     "button, [role='button'], .cursor-pointer, [class*='cursor-pointer']",
@@ -66,18 +69,13 @@ export function resetContinueButtonReady(): void {
   visibleSince = 0;
 }
 
-function dispatchClick(el: HTMLElement): void {
-  el.click();
-  el.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
-}
-
-/** Click the main menu Continue button if it is ready. */
+/** Click the Continue control once (do not also dispatch a synthetic click). */
 export function clickContinueButton(): boolean {
   if (!isContinueButtonReady()) return false;
 
   const el = findContinueButton();
   if (!el) return false;
 
-  dispatchClick(el);
+  el.click();
   return true;
 }

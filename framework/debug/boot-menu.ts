@@ -1,13 +1,34 @@
 import type { SandkitApi } from "types/api";
-import { debugEnabled, safe } from "../sdk";
+import { debugEnabled, inGame, safe } from "../sdk";
 import { clickContinueButton, isContinueButtonReady } from "./menu";
 import { startSplashSkipPolling } from "./splash";
 
 const BOOT_INTERVAL_MS = 250;
 const FALLBACK_MS = 1000;
+/** Survives hot-reload eval so Escape-menu Continue is never auto-clicked. */
+const BOOT_SESSION_KEY = "sandkit-debug-main-menu-booted";
 
-let booted = false;
+let booted = readBootedFromSession();
+let triggerRegistered = false;
 let pollTimer: ReturnType<typeof setInterval> | null = null;
+
+function readBootedFromSession(): boolean {
+  try {
+    return sessionStorage.getItem(BOOT_SESSION_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function markBooted(): void {
+  booted = true;
+  try {
+    sessionStorage.setItem(BOOT_SESSION_KEY, "1");
+  } catch {
+    /* ignore quota / private mode */
+  }
+  stopBootPolling();
+}
 
 function openDevTools(): void {
   const bridge = (window as Window & { electron?: { openDevTools(): void } }).electron;
@@ -45,15 +66,19 @@ function stopBootPolling(): void {
 
 function tryBoot(api: SandkitApi): void {
   if (booted || !debugEnabled(api)) return;
+  // Pause/escape menu also has a Continue row — only auto-click on the main menu.
+  if (inGame()) return;
   if (!isContinueButtonReady()) return;
-  if (!clickContinueButton()) return;
 
-  booted = true;
-  stopBootPolling();
+  // Claim before click so interval + trigger cannot both fire.
+  markBooted();
+  clickContinueButton();
   openDevTools();
 }
 
 function registerBootTrigger(api: SandkitApi, modId: string): void {
+  if (triggerRegistered) return;
+  triggerRegistered = true;
   safe(() =>
     api.triggers.register(`${modId}:main-menu-boot`, {
       interval: BOOT_INTERVAL_MS,
