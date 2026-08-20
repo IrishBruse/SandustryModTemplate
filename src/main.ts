@@ -10,8 +10,14 @@ installDebug(api, MOD_ID);
 
 const OVERLAY_ID = "example-overlay";
 
-const WIDTH = 32;
-const HEIGHT = 24;
+const WIDTH = 160;
+const HEIGHT = 100;
+
+/** Stable hash noise in 0..1. No Math.random flicker. */
+function noise(x: number, y: number, seed: number): number {
+  const n = Math.sin(x * 12.9898 + y * 78.233 + seed * 0.017) * 43758.5453;
+  return n - Math.floor(n);
+}
 
 function registerUi() {
   const dispose = api.ui.inject(OVERLAY_ID, ExampleOverlay);
@@ -24,23 +30,46 @@ function registerUi() {
 
 function registerNoiseTest() {
   const registered = registerRetroGame({
-    id: "example",
-    name: "Example Mod",
+    id: "noise-test",
+    name: "Noise Test",
     options: { width: WIDTH, height: HEIGHT },
     init(display) {
-      display.clearScreen(true);
-      return { tick: 0 };
+      display.clearScreen(false);
+      return {
+        tick: 0,
+        threshold: 0.5,
+        seed: 0,
+        animate: true,
+      };
     },
     update(display, state) {
-      const tick = state.tick + 1;
-      display.clearScreen(Math.floor(tick / 10) % 2 === 0);
-      return { tick };
+      const { width, height } = display;
+      const seed = state.animate ? state.seed + state.tick : state.seed;
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          display.drawPixel(x, y, noise(x, y, seed) < state.threshold);
+        }
+      }
+      return { ...state, tick: state.tick + 1 };
     },
-    handleInput(_display, state) {
-      return state;
+    handleInput(_display, state, input) {
+      let { threshold, seed, animate } = state;
+      if (input.x < 0) threshold = Math.max(0.05, threshold - 0.05);
+      if (input.x > 0) threshold = Math.min(0.95, threshold + 0.05);
+      if (input.y < 0) animate = !animate;
+      if (input.y > 0) seed += 25;
+      console.log(
+        `noise: threshold=${threshold.toFixed(2)} seed=${seed} animate=${animate}`,
+      );
+      return { ...state, threshold, seed, animate };
     },
   });
-  if (registered) console.log(`[${MOD_ID}] Example Mod registered at ${WIDTH}x${HEIGHT}`);
+  if (!registered) return;
+  console.log(`[${MOD_ID}] Noise test registered at ${WIDTH}x${HEIGHT}`);
+  console.log("Controls (focus the Retro Console first):");
+  console.log("  Left/Right  — less/more noise density");
+  console.log("  Up          — pause/resume animation");
+  console.log("  Down        — jump to a new pattern");
 }
 
 if (isEnabled(api)) {

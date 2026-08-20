@@ -16,13 +16,14 @@ export const modManifest = defineMod({
       type: "boolean",
       default: true,
       labelKey: "Mod enabled",
-      descriptionKey: "Turn the mod off without unsubscribing.",
+      descriptionKey: "Turn the mod off without unsubscribing."
     },
     debug: {
       type: "boolean",
       default: true,
       labelKey: "Debug",
-      descriptionKey: "DevTools, splash skip, and main-menu auto-boot. Dev builds only.",
-    },
-  },
+      descriptionKey:
+        "DevTools, splash skip, and main-menu auto-boot. Dev builds only."
+    }
+  }
 });
