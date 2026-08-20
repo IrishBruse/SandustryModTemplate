@@ -2,7 +2,9 @@
 
 A horizontal shortcut entry inside `ShortcutBar`.
 
-**Preview:** [shortcuts/preview.html](../../framework/ui/shortcuts/preview.html)
+**Preview:**
+
+<iframe class="ui-canvas" title="ShortcutBarItem" src="ui/canvas/shortcuts/preview.html?embed=ShortcutBarItem"></iframe>
 
 ## Props
 

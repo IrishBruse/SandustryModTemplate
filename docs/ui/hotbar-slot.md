@@ -2,7 +2,9 @@
 
 A single hotbar cell with slot number, icon area, and optional outline.
 
-**Preview:** [hotbar/preview.html](../../framework/ui/hotbar/preview.html)
+**Preview:**
+
+<iframe class="ui-canvas" title="HotbarSlot" src="ui/canvas/hotbar/preview.html?embed=HotbarSlot"></iframe>
 
 ## Props
 

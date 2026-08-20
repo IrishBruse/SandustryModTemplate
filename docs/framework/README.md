@@ -4,7 +4,7 @@ Shared kit for Sandustry mods. It includes:
 
 - **React runtime** — `sandkit.react` wired through `framework/react.ts` and JSX runtimes
 - **SDK** — small helpers (`safe`, settings, scene checks, retro console registration)
-- **UI** — shared React components under `framework/ui/`
+- **UI** — shared React components under `framework/ui/`. Live canvases and PNGs live under `docs/ui/canvas/` (`npm run ui:css` / `ui:previews`).
 - **Debug / hot reload** — dev-only globals, DevTools, splash skip, main-menu boot, file watch reload
 - **Modinfo helpers** — `defineModInfo` / `definePatches` with colocated manifest and patch types
 

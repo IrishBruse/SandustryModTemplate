@@ -10,6 +10,7 @@
 
 - UI kit
   - [Overview](ui/README.md)
+  - [Gallery](ui/gallery.md)
   - [HotkeyBadge](ui/hotkey-badge.md)
   - [UiBox](ui/ui-box.md)
   - [InfoBanner](ui/info-banner.md)

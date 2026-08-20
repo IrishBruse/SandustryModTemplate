@@ -2,7 +2,9 @@
 
 Wraps children so they receive pointer events inside a `pointer-events-none` overlay shell.
 
-**Preview:** [layout/preview.html](../../framework/ui/layout/preview.html)
+**Preview:**
+
+<iframe class="ui-canvas" title="Interactive" src="ui/canvas/layout/preview.html?embed=Interactive"></iframe>
 
 ## Props
 

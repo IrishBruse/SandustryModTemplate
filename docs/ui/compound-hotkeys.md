@@ -2,7 +2,9 @@
 
 Renders multi-key hotkeys in `Ctrl` + `Z` style with `HotkeyBadge` and `+` separators.
 
-**Preview:** [shortcuts/preview.html](../../framework/ui/shortcuts/preview.html)
+**Preview:**
+
+<iframe class="ui-canvas" title="CompoundHotkeys" src="ui/canvas/shortcuts/preview.html?embed=CompoundHotkeys"></iframe>
 
 ## Props
 

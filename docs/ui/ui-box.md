@@ -2,7 +2,9 @@
 
 A simple container with the `ui-box` class for Sandustry panel chrome.
 
-**Preview:** [panels/preview.html](../../framework/ui/panels/preview.html)
+**Preview:**
+
+<iframe class="ui-canvas" title="UiBox" src="ui/canvas/panels/preview.html?embed=UiBox"></iframe>
 
 ## Props
 

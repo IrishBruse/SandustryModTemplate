@@ -10,11 +10,11 @@
       <p class="preview-label">ObjectiveCard</p>
       <div
         data-ui-preview="ObjectiveCard"
-        class="relative w-200 overflow-hidden px-3 py-2.5"
+        class="relative w-[200px] overflow-hidden px-3 py-2.5"
         style="border-radius: 0px 8px; background: rgba(0, 0, 0, 0.6)"
       >
         <div class="relative z-10 flex flex-col gap-1 pr-5">
-          <span class="text-micro font-bold uppercase tracking-widest text-purple-400"
+          <span class="text-[10px] font-bold uppercase tracking-widest text-purple-400"
             >Signal Detected</span
           >
           <span class="text-sm font-medium leading-snug opacity-90">Investigate Anomaly</span>
@@ -24,9 +24,9 @@
 
     <div class="preview-block">
       <p class="preview-label">SecondaryObjectiveRow</p>
-      <div data-ui-preview="SecondaryObjectiveRow" class="py-1 relative w-200">
+      <div data-ui-preview="SecondaryObjectiveRow" class="py-1 relative w-[200px]">
         <div
-          class="relative rounded-r-sm flex items-center justify-between px-2 py-0.5 border-l-2 border-white-20"
+          class="relative rounded-r-sm flex items-center justify-between px-2 py-0.5 border-l-2 border-white/20"
           style="background: linear-gradient(to right, rgba(0, 0, 0, 0.12), transparent)"
         >
           <div class="text-xs font-bold pr-2 text-white objective-text">
@@ -35,5 +35,13 @@
         </div>
       </div>
     </div>
+
+    <div class="preview-block">
+      <p class="preview-label">ObjectiveHighlight</p>
+      <span data-ui-preview="ObjectiveHighlight" class="text-xs font-bold text-white objective-text"
+        >Mine <span class="font-bold" style="color: rgb(249, 117, 255)">Gold</span></span
+      >
+    </div>
+    <script src="../_preview/embed.js"></script>
   </body>
 </html>

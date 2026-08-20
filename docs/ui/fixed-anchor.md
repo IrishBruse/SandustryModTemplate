@@ -2,7 +2,9 @@
 
 A fixed-position HUD anchor with `pointer-events-none` shell. Use `Interactive` inside for clickable children.
 
-**Preview:** [layout/preview.html](../../framework/ui/layout/preview.html)
+**Preview:**
+
+<iframe class="ui-canvas" title="FixedAnchor" src="ui/canvas/layout/preview.html?embed=FixedAnchor"></iframe>
 
 ## Props
 

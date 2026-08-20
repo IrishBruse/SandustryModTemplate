@@ -2,7 +2,9 @@
 
 Shows a single keyboard key label with Sandustry HUD badge styling.
 
-**Preview:** [badges/preview.html](../../framework/ui/badges/preview.html)
+**Preview:**
+
+<iframe class="ui-canvas" title="HotkeyBadge" src="ui/canvas/badges/preview.html?embed=HotkeyBadge"></iframe>
 
 ## Props
 

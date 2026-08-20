@@ -2,7 +2,9 @@
 
 A section title with optional alignment, size, and gradient background.
 
-**Preview:** [headings/preview.html](../../framework/ui/headings/preview.html)
+**Preview:**
+
+<iframe class="ui-canvas" title="SectionHeading" src="ui/canvas/headings/preview.html?embed=SectionHeading"></iframe>
 
 ## Props
 

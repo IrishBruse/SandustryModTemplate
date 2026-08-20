@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Sandustry Mod Template Docs</title>
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@5/dist/themes/core.min.css" />
+    <script src="assets/ui-canvas.js"></script>
   </head>
   <body class="loading">
     <div id="app"></div>
@@ -18,6 +19,11 @@
         auto2top: true,
         relativePath: true,
         search: "auto",
+        plugins: [
+          window.smtDocsifyUiCanvasPlugin,
+        ].filter(function (p) {
+          return typeof p === "function";
+        }),
       };
     </script>
     <script src="//cdn.jsdelivr.net/npm/docsify@5"></script>

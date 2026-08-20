@@ -2,7 +2,9 @@
 
 A dark, rounded panel card with optional click handling.
 
-**Preview:** [panels/preview.html](../../framework/ui/panels/preview.html)
+**Preview:**
+
+<iframe class="ui-canvas" title="PanelCard" src="ui/canvas/panels/preview.html?embed=PanelCard"></iframe>
 
 ## Props
 

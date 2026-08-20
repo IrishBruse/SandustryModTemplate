@@ -2,7 +2,9 @@
 
 A horizontal bar that groups shortcut items.
 
-**Preview:** [shortcuts/preview.html](../../framework/ui/shortcuts/preview.html)
+**Preview:**
+
+<iframe class="ui-canvas" title="ShortcutBar" src="ui/canvas/shortcuts/preview.html?embed=ShortcutBar"></iframe>
 
 ## Props
 

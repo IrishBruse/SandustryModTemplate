@@ -17,4 +17,5 @@ Sandkit API types come from the [sandustry-modding-types](https://github.com/fla
 | SDK helpers          | [framework/sdk.md](framework/sdk.md)       |
 | Debug and hot reload | [framework/debug.md](framework/debug.md)   |
 | UI kit               | [ui/README.md](ui/README.md)               |
+| UI gallery           | [ui/gallery.md](ui/gallery.md)             |
 | Bundle patches       | [patches.md](patches.md)                   |

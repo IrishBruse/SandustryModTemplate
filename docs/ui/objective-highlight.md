@@ -2,7 +2,9 @@
 
 An inline span to highlight resource names inside objective text.
 
-**Preview:** [objectives/preview.html](../../framework/ui/objectives/preview.html)
+**Preview:**
+
+<iframe class="ui-canvas" title="ObjectiveHighlight" src="ui/canvas/objectives/preview.html?embed=ObjectiveHighlight"></iframe>
 
 ## Props
 

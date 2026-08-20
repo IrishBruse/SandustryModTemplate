@@ -2,7 +2,9 @@
 
 A pixel-art sprite scaled for display inside `HotbarSlot`.
 
-**Preview:** [hotbar/preview.html](../../framework/ui/hotbar/preview.html)
+**Preview:**
+
+<iframe class="ui-canvas" title="HotbarIcon" src="ui/canvas/hotbar/preview.html?embed=HotbarIcon"></iframe>
 
 ## Props
 

@@ -2,7 +2,9 @@
 
 A secondary objective line with optional trailing text and click handling.
 
-**Preview:** [objectives/preview.html](../../framework/ui/objectives/preview.html)
+**Preview:**
+
+<iframe class="ui-canvas" title="SecondaryObjectiveRow" src="ui/canvas/objectives/preview.html?embed=SecondaryObjectiveRow"></iframe>
 
 ## Props
 

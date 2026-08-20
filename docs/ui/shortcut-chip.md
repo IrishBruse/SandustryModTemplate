@@ -2,7 +2,9 @@
 
 A vertical shortcut tile with hotkey, label, and optional active state.
 
-**Preview:** [shortcuts/preview.html](../../framework/ui/shortcuts/preview.html)
+**Preview:**
+
+<iframe class="ui-canvas" title="ShortcutChip" src="ui/canvas/shortcuts/preview.html?embed=ShortcutChip"></iframe>
 
 ## Props
 

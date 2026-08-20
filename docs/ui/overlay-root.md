@@ -2,7 +2,9 @@
 
 Full-screen fixed overlay root that matches `#ui` fixed layers. Pointer events pass through by default.
 
-**Preview:** [layout/preview.html](../../framework/ui/layout/preview.html)
+**Preview:**
+
+<iframe class="ui-canvas" title="OverlayRoot" src="ui/canvas/layout/preview.html?embed=OverlayRoot"></iframe>
 
 ## Props
 

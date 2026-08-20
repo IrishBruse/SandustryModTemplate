@@ -2,7 +2,9 @@
 
 A primary objective card with category label, title, and optional icon.
 
-**Preview:** [objectives/preview.html](../../framework/ui/objectives/preview.html)
+**Preview:**
+
+<iframe class="ui-canvas" title="ObjectiveCard" src="ui/canvas/objectives/preview.html?embed=ObjectiveCard"></iframe>
 
 ## Props
 

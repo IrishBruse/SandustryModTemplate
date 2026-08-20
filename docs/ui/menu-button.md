@@ -2,7 +2,9 @@
 
 A menu row with icon, label, highlighted first letter, and hotkey badge.
 
-**Preview:** [menu/preview.html](../../framework/ui/menu/preview.html)
+**Preview:**
+
+<iframe class="ui-canvas" title="MenuButton" src="ui/canvas/menu/preview.html?embed=MenuButton"></iframe>
 
 ## Props
 

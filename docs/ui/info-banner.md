@@ -2,7 +2,9 @@
 
 A compact label and value row with an optional action button.
 
-**Preview:** [panels/preview.html](../../framework/ui/panels/preview.html)
+**Preview:**
+
+<iframe class="ui-canvas" title="InfoBanner" src="ui/canvas/panels/preview.html?embed=InfoBanner"></iframe>
 
 ## Props
 

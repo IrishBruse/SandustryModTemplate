@@ -4,8 +4,10 @@
 mod.ts                  Typed manifest + patches → modinfo.json / patches.json at build
 src/                    This mod (entry, UI, mod debug)
 framework/              Shared kit (sdk, react, debug, patches, modinfo)
+docs/                   Docsify site; UI canvases under docs/ui/canvas/
 types/                  Sandkit API types (submodule: sandustry-modding-types)
 scripts/build/          esbuild, patches.json
+scripts/ui/             Preview CSS + screenshot tools for docs/ui/canvas
 scripts/sandustry/      Launch / stop the game, mod output path
 scripts/api/            Generate types from runtime dump + official reference
 dist/                   Symlink to ~/.config/sandustry/mods/Example Mod (dev output)
@@ -33,7 +35,7 @@ dist/                   Symlink to ~/.config/sandustry/mods/Example Mod (dev out
 | `framework/sdk/`           | `safe`, `isEnabled`, `debugEnabled`, `inGame`, `registerRetroGame`                   |
 | `framework/debug/`         | DevTools globals, F12, splash skip, main-menu boot, hot reload                       |
 | `framework/debug/empty.ts` | Release stub for `./debug` (`installDebug` / `onDispose` / `isHotReloadEval` no-ops) |
-| `framework/ui/`            | Shared React UI components                                                           |
+| `framework/ui/`            | Shared React UI components only (no preview HTML / PNGs)                             |
 
 Do not import `onDispose` or `isHotReloadEval` from `framework/debug` in `src/main.ts`. Import them from `./debug`.
 
@@ -55,14 +57,16 @@ Path aliases: `@framework/*` → `./framework/*`; `types/*` → `./types/*`.
 
 ## Build scripts
 
-| Path                                    | Role                                                                    |
-| --------------------------------------- | ----------------------------------------------------------------------- |
+| Path                                    | Role                                                              |
+| --------------------------------------- | ----------------------------------------------------------------- |
 | `scripts/build/esbuild.config.mjs`      | Bundle `src/main.ts` → `main.js`, compile used Tailwind utilities |
 | `scripts/build/compile-tailwind.js`     | Shared Tailwind compile (mod bundle + UI previews)                |
+| `scripts/ui/compile-preview-css.mjs`    | `npm run ui:css` — Tailwind for `docs/ui/canvas`                  |
+| `scripts/ui/generate-previews.mjs`      | `npm run ui:previews` — screenshot canvases into PNGs             |
 | `scripts/build/build-patches.js`        | Load `mod.ts` patch exports and write `patches.json`              |
-| `scripts/build/dev.js`                  | Watch + write to the game mods folder                                   |
-| `scripts/sandustry/mod-path.js`         | `MOD_DIR` = `~/.config/sandustry/mods/Example Mod`                      |
-| `scripts/sandustry/launch-sandustry.js` | Build (debug) and launch the game                                       |
+| `scripts/build/dev.js`                  | Watch + write to the game mods folder                             |
+| `scripts/sandustry/mod-path.js`         | `MOD_DIR` = `~/.config/sandustry/mods/Example Mod`                |
+| `scripts/sandustry/launch-sandustry.js` | Build (debug) and launch the game                                 |
 | `scripts/api/generate-api-types.js`     | `npm run generate-types`                                          |
 
 ## Output

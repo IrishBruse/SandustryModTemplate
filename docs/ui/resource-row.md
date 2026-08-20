@@ -2,7 +2,9 @@
 
 A resource counter row with icon and value on a left gradient background.
 
-**Preview:** [resources/preview.html](../../framework/ui/resources/preview.html)
+**Preview:**
+
+<iframe class="ui-canvas" title="ResourceRow" src="ui/canvas/resources/preview.html?embed=ResourceRow"></iframe>
 
 ## Props
 

@@ -28,6 +28,8 @@ The insert lives in [src/main.ts](../src/main.ts) (`style#<mod-id>-tailwind`). H
 
 Do not enable Tailwind preflight. The game already resets `*, ::before, ::after`. A second preflight can change the HUD.
 
+Docs canvases use the same compiler. `npm run ui:css` writes [docs/ui/canvas/_preview/utilities.css](ui/canvas/_preview/utilities.css). Live `preview.html` pages and PNGs live under [docs/ui/canvas](ui/canvas/) (not in `framework/ui`).
+
 ### Verify
 
 Static check against an extracted `references/source/dist/js/bundle.js`:
@@ -55,4 +57,6 @@ npm run typecheck
 npm run generate-types   # after a new runtime dump
 npm run sandustry        # build debug + launch
 npm run sandustry:debug  # same, with inspector ports
+npm run ui:css           # compile docs/ui/canvas preview Tailwind
+npm run ui:previews      # compile preview CSS, then screenshot preview.html
 ```

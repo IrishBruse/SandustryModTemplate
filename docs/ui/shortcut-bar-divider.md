@@ -2,7 +2,9 @@
 
 A vertical divider line between items in `ShortcutBar`.
 
-**Preview:** [shortcuts/preview.html](../../framework/ui/shortcuts/preview.html)
+**Preview:**
+
+<iframe class="ui-canvas" title="ShortcutBarDivider" src="ui/canvas/shortcuts/preview.html?embed=ShortcutBarDivider"></iframe>
 
 ## Props
 
