@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import type { CSSProperties, ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import { sandkit } from "../../sandkit";
 import { safe } from "../../utils/safe";
 import { Interactive } from "../layout/OverlayPanel";
@@ -9,11 +9,18 @@ const api = sandkit.api;
 
 const SPACER_ATTR = "data-modkit-management-spacer";
 const SPACER_HEIGHT_PX = 42;
+/** Vanilla collapsed management rows are icon-only (~square). */
+const COLLAPSED_WIDTH_PX = 80;
 
 /** Registration order so stacked rows stay under Upgrades without overlap. */
 const rowOrder: string[] = [];
 const spacers = new Map<string, HTMLDivElement>();
-const styleListeners = new Map<string, (style: CSSProperties | null) => void>();
+const anchorListeners = new Map<string, (anchor: ManagementAnchor | null) => void>();
+
+export type ManagementAnchor = {
+  spacer: HTMLDivElement;
+  collapsed: boolean;
+};
 
 function playMenuHover() {
   safe(() => api.sound.play("blip", { playbackRate: 4, volume: 0.05 }));
@@ -36,23 +43,33 @@ function findUpgradesButton(): HTMLElement | null {
   return null;
 }
 
+function isManagementCollapsed(upgrades: HTMLElement): boolean {
+  const label = upgrades.querySelector<HTMLElement>(".tracking-wider");
+  if (label) {
+    const opacity = Number.parseFloat(getComputedStyle(label).opacity);
+    if (opacity === 0) return true;
+  }
+  return upgrades.getBoundingClientRect().width < COLLAPSED_WIDTH_PX;
+}
+
 function placeAll() {
   const upgrades = findUpgradesButton();
   if (!upgrades) {
     for (const id of rowOrder) {
       const spacer = spacers.get(id);
       if (spacer?.parentElement) spacer.remove();
-      styleListeners.get(id)?.(null);
+      anchorListeners.get(id)?.(null);
     }
     return;
   }
 
   const width = upgrades.getBoundingClientRect().width;
+  const collapsed = isManagementCollapsed(upgrades);
   let previous: HTMLElement = upgrades;
 
   for (const id of rowOrder) {
     const spacer = spacers.get(id);
-    const notify = styleListeners.get(id);
+    const notify = anchorListeners.get(id);
     if (!spacer || !notify) continue;
 
     spacer.style.width = `${width}px`;
@@ -66,18 +83,11 @@ function placeAll() {
     }
     previous = spacer;
 
-    const rect = spacer.getBoundingClientRect();
-    notify({
-      position: "fixed",
-      top: rect.top,
-      left: rect.left,
-      width: rect.width,
-      zIndex: 9999,
-    });
+    notify({ spacer, collapsed });
   }
 }
 
-function registerRow(id: string, setStyle: (style: CSSProperties | null) => void): () => void {
+function registerRow(id: string, setAnchor: (anchor: ManagementAnchor | null) => void): () => void {
   if (!rowOrder.includes(id)) rowOrder.push(id);
 
   let spacer = spacers.get(id);
@@ -90,45 +100,39 @@ function registerRow(id: string, setStyle: (style: CSSProperties | null) => void
     spacers.set(id, spacer);
   }
 
-  styleListeners.set(id, setStyle);
+  anchorListeners.set(id, setAnchor);
   placeAll();
 
   return () => {
     const index = rowOrder.indexOf(id);
     if (index >= 0) rowOrder.splice(index, 1);
-    styleListeners.delete(id);
+    anchorListeners.delete(id);
     const el = spacers.get(id);
     el?.remove();
     spacers.delete(id);
-    setStyle(null);
+    setAnchor(null);
     placeAll();
   };
 }
 
 /**
- * Keep flow spacers after Upgrades (so later rows shift down) and return a
- * fixed style that paints the MenuButton over that spacer.
+ * Keep flow spacers after Upgrades (so later rows shift down) and expose the
+ * spacer node so the row paints inside the management column stacking context.
  */
-function useManagementAnchor(id: string, active: boolean): CSSProperties | null {
-  const [style, setStyle] = useState<CSSProperties | null>(null);
-  const styleRef = useRef(setStyle);
-  styleRef.current = setStyle;
+function useManagementAnchor(id: string, active: boolean): ManagementAnchor | null {
+  const [anchor, setAnchor] = useState<ManagementAnchor | null>(null);
+  const setAnchorRef = useRef(setAnchor);
+  setAnchorRef.current = setAnchor;
 
   useEffect(() => {
     if (!active) {
-      setStyle(null);
+      setAnchor(null);
       return;
     }
 
     const unregister = registerRow(id, (next) => {
-      styleRef.current((prev) => {
-        if (
-          prev &&
-          next &&
-          prev.top === next.top &&
-          prev.left === next.left &&
-          prev.width === next.width
-        ) {
+      setAnchorRef.current((prev) => {
+        if (prev && next && prev.spacer === next.spacer && prev.collapsed === next.collapsed) {
           return prev;
         }
         return next;
@@ -148,7 +152,12 @@ function useManagementAnchor(id: string, active: boolean): CSSProperties | null 
     };
   }, [id, active]);
 
-  return style;
+  return active ? anchor : null;
+}
+
+function returnRowHome(home: HTMLElement | null, row: HTMLElement | null) {
+  if (!home || !row) return;
+  if (row.parentElement !== home) home.appendChild(row);
 }
 
 export type ManagementMenuButtonProps = {
@@ -166,6 +175,9 @@ export type ManagementMenuButtonProps = {
 /**
  * Vanilla-style management column row under Upgrades (Toolbox / Building / …).
  * Plays the same hover `blip` / click `click` cues when those sounds exist.
+ *
+ * The row DOM is moved into a flow spacer under Upgrades so it shares that
+ * column's stacking context (fixed + high z-index painted above Debug panels).
  */
 export function ManagementMenuButton({
   id,
@@ -176,27 +188,49 @@ export function ManagementMenuButton({
   active = true,
   onClick,
 }: ManagementMenuButtonProps) {
-  const menuStyle = useManagementAnchor(id, active);
+  const anchor = useManagementAnchor(id, active);
+  const homeRef = useRef<HTMLDivElement>(null);
+  const rowRef = useRef<HTMLDivElement>(null);
+  const mounted = Boolean(active && anchor);
 
-  if (!menuStyle) return null;
+  // Before React commits an unmount, put the row back under its React parent.
+  if (!mounted) {
+    returnRowHome(homeRef.current, rowRef.current);
+  }
+
+  useLayoutEffect(() => {
+    if (!mounted || !anchor) return;
+    const row = rowRef.current;
+    if (!row) return;
+    if (row.parentElement !== anchor.spacer) anchor.spacer.appendChild(row);
+
+    return () => {
+      returnRowHome(homeRef.current, row);
+    };
+  }, [mounted, anchor]);
+
+  if (!mounted || !anchor) return null;
 
   return (
-    <div style={menuStyle} className="pointer-events-none">
-      <Interactive>
-        <MenuButton
-          icon={icon}
-          label={label}
-          hotkey={hotkey}
-          highlightLetter={highlightLetter}
-          width="100%"
-          className="!mb-0"
-          onMouseEnter={playMenuHover}
-          onClick={() => {
-            playMenuClick();
-            onClick?.();
-          }}
-        />
-      </Interactive>
+    <div ref={homeRef} hidden aria-hidden>
+      <div ref={rowRef} className="pointer-events-none w-full h-full">
+        <Interactive>
+          <MenuButton
+            icon={icon}
+            label={label}
+            hotkey={hotkey}
+            highlightLetter={highlightLetter}
+            width="100%"
+            collapsed={anchor.collapsed}
+            className="!mb-0"
+            onMouseEnter={playMenuHover}
+            onClick={() => {
+              playMenuClick();
+              onClick?.();
+            }}
+          />
+        </Interactive>
+      </div>
     </div>
   );
 }

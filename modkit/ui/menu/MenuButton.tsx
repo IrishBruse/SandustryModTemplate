@@ -8,6 +8,8 @@ type MenuButtonProps = {
   hotkey: string;
   highlightLetter?: string;
   width?: number | string;
+  /** When true, hide label + hotkey like the vanilla management column collapse. */
+  collapsed?: boolean;
   className?: string;
   style?: CSSProperties;
   onClick?: () => void;
@@ -21,6 +23,7 @@ export function MenuButton({
   hotkey,
   highlightLetter,
   width = 208,
+  collapsed = false,
   className = "",
   style,
   onClick,
@@ -29,6 +32,9 @@ export function MenuButton({
 }: MenuButtonProps) {
   const letter = highlightLetter ?? label.charAt(0);
   const rest = label.slice(letter.length);
+  const detailStyle: CSSProperties = collapsed
+    ? { opacity: 0, width: 0, overflow: "hidden", marginLeft: 0 }
+    : { opacity: 1, width: "auto" };
 
   return (
     <div
@@ -48,14 +54,17 @@ export function MenuButton({
           <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center transition-colors group-hover:text-[#ffe700]">
             {icon}
           </div>
-          <div className="tracking-wider" style={{ marginLeft: 12 }}>
+          <div
+            className="tracking-wider"
+            style={{ ...detailStyle, marginLeft: collapsed ? 0 : 12 }}
+          >
             <span className="inline-block whitespace-nowrap">
               <span className="transition-colors group-hover:text-[#ffe700]">{letter}</span>
               {rest}
             </span>
           </div>
         </div>
-        <div>
+        <div style={detailStyle}>
           <span className="inline-block whitespace-nowrap">
             <HotkeyBadge>{hotkey}</HotkeyBadge>
           </span>

@@ -4,5 +4,13 @@ import { sandkit } from "./sandkit";
 const runtime = sandkit.react;
 
 export default runtime;
-export const { createElement, useState, useEffect, useCallback, useMemo, useRef, Fragment } =
-  runtime;
+export const {
+  createElement,
+  useState,
+  useEffect,
+  useLayoutEffect,
+  useCallback,
+  useMemo,
+  useRef,
+  Fragment,
+} = runtime;
