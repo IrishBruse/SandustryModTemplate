@@ -1,21 +1,28 @@
 # Mod debug
 
-Optional dev-only hooks for this mod. Release builds resolve `./debug` to [`framework/debug/empty.ts`](../../framework/debug/empty.ts), so nothing in this folder is bundled in production.
+Import debug from `./debug` in `src/main.ts` (not `@framework/debug`) so release builds can stub it via `framework/debug/empty.ts`.
 
-## What lives here
+| Path       | Role                                                                   |
+| ---------- | ---------------------------------------------------------------------- |
+| `index.ts` | Calls `@framework/debug`, re-exports `onDispose` and `isHotReloadEval` |
 
-| Path       | Role                                                                                           |
-| ---------- | ---------------------------------------------------------------------------------------------- |
-| `index.ts` | Mod debug entry — calls [`framework/debug`](../../framework/debug/) and re-exports `onDispose` |
+Full feature list: [docs/framework/debug.md](../../docs/framework/debug.md).
 
-Framework helpers live in [`framework/debug/`](../../framework/debug/). That README lists every debug feature (globals, DevTools, splash skip, auto-boot, hot reload, patches). Edit `index.ts` when this mod needs extra behaviour on top of that.
+Patch format and debug patches: [docs/patches.md](../../docs/patches.md).
 
-Debug bundle patches live in root [`mod.ts`](../../mod.ts) (`debugPatches` export) and shared helpers in [`framework/patches.ts`](../../framework/patches.ts). See [`src/patches/README.md`](../patches/README.md).
+## Wiring
 
-## Build behaviour
+```ts
+// src/debug/index.ts — debug builds
+import { installDebug as installFrameworkDebug } from "@framework/debug";
+export { isHotReloadEval, onDispose } from "@framework/debug";
 
-**Release** (`npm run build`): esbuild resolves `./debug` to [`framework/debug/empty.ts`](../../framework/debug/empty.ts). `debugPatches` is omitted from `patches.json`.
+export function installDebug(api: SandkitApi, modId: string): void {
+  installFrameworkDebug(api, modId);
+}
 
-**Dev** (`npm run dev`, VS Code debug tasks): full `index.ts` is bundled and `debugPatches` is included.
+// src/main.ts
+import { installDebug, isHotReloadEval, onDispose } from "./debug";
+```
 
-The mod config **Debug** toggle (`api.settings.get("debug")`) controls runtime behaviour without rebuilding.
+Release builds resolve `./debug` to `framework/debug/empty.ts` (`installDebug`, `onDispose`, and `isHotReloadEval` are no-ops).

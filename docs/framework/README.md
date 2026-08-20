@@ -1,0 +1,27 @@
+# Framework
+
+Shared kit for Sandustry mods. It includes:
+
+- **React runtime** — `sandkit.react` wired through `framework/react.ts` and JSX runtimes
+- **SDK** — small helpers (`safe`, settings, scene checks, retro console registration)
+- **UI** — shared React components under `framework/ui/`
+- **Debug / hot reload** — dev-only globals, DevTools, splash skip, main-menu boot, file watch reload
+- **Type shims** — manifest and patch types plus `types/api`, `types/sandkit`, `types/engine` aliases
+
+Mods import this folder through the `@framework/*` path alias. The game still loads a single bundled `main.js` (esbuild IIFE). Do not emit `import` / `export` in the output.
+
+Sibling mods (for example `sandustry-doom-mod`) can use a symlink to this folder instead of a copy.
+
+## Topics
+
+| Topic                | Page                               |
+| -------------------- | ---------------------------------- |
+| React and JSX        | [react.md](react.md)               |
+| SDK helpers          | [sdk.md](sdk.md)                   |
+| Debug and hot reload | [debug.md](debug.md)               |
+| UI components        | [../ui/README.md](../ui/README.md) |
+| Bundle patches       | [../patches.md](../patches.md)     |
+
+## TODO
+
+- [ ] Move this framework into a published npm package so mods can depend on a versioned release instead of a copied or symlinked `framework/` folder.

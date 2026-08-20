@@ -1,18 +1,4 @@
-# Agent notes
-
-This repo is a **Sandustry** mod template. `src/` is the mod. `framework/` is the shared kit. The game runs `main.js` as a script body (`new Function`); `sandkit` is already in scope. Do not emit `import` / `export` in the bundle (esbuild IIFE).
-
-Prefer Sandkit API. Use patches only when the public API cannot do the job. Keep behaviour next to its caller.
-
-Detail docs:
-
-- Debug: [`docs/framework/debug.md`](docs/framework/debug.md)
-- Patches: [`docs/patches.md`](docs/patches.md)
-- Framework: [`docs/framework/README.md`](docs/framework/README.md)
-- Layout: [`docs/layout.md`](docs/layout.md)
-- API types: [`types/README.md`](types/README.md)
-
-## Layout
+# Folder layout
 
 ```
 mod.ts                  Typed manifest + patches → modinfo.json / patches.json at build
@@ -25,7 +11,7 @@ scripts/api/            Generate types from runtime dump + official reference
 dist/                   Symlink to ~/.config/sandustry/mods/Example Mod (dev output)
 ```
 
-### `src/`
+## `src/`
 
 | Path                    | Role                                                                                   |
 | ----------------------- | -------------------------------------------------------------------------------------- |
@@ -33,9 +19,9 @@ dist/                   Symlink to ~/.config/sandustry/mods/Example Mod (dev out
 | `src/globals.ts`        | `MOD_ID` (from `mod.ts`) and `installGlobals`                                          |
 | `src/ui/`               | React overlays (import `react`, resolved to `framework/react.ts`)                      |
 | `src/debug/`            | Mod debug entry: calls `framework/debug`, re-exports `onDispose` / `isHotReloadEval`   |
-| `src/patches/README.md` | Points at [`docs/patches.md`](docs/patches.md)                                         |
+| `src/patches/README.md` | Points at [patches.md](patches.md)                                                     |
 
-### `framework/`
+## `framework/`
 
 | Path                       | Role                                                                                 |
 | -------------------------- | ------------------------------------------------------------------------------------ |
@@ -47,10 +33,11 @@ dist/                   Symlink to ~/.config/sandustry/mods/Example Mod (dev out
 | `framework/debug/`         | DevTools globals, F12, splash skip, main-menu boot, hot reload                       |
 | `framework/debug/empty.ts` | Release stub for `./debug` (`installDebug` / `onDispose` / `isHotReloadEval` no-ops) |
 | `framework/types/`         | Manifest, patch, and Sandkit shims (`types/api`, `types/sandkit`, `types/engine`)    |
+| `framework/ui/`            | Shared React UI components                                                           |
 
 Do not import `onDispose` or `isHotReloadEval` from `framework/debug` in `src/main.ts`. Import them from `./debug`.
 
-### `types/`
+## `types/`
 
 Git submodule: [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types). Definitions live under `types/src/` (`main`, `shared`, `worker`, `common-types`).
 
@@ -63,7 +50,7 @@ Git submodule: [sandustry-modding-types](https://github.com/flamableassassin/san
 
 Path aliases: `@framework/*` → `./framework/*`; `types/api` / `types/sandkit` / `types/engine` → `./framework/types/`; `types/*` → `./types/*`.
 
-### `scripts/`
+## Build scripts
 
 | Path                                    | Role                                                                    |
 | --------------------------------------- | ----------------------------------------------------------------------- |
@@ -74,44 +61,6 @@ Path aliases: `@framework/*` → `./framework/*`; `types/api` / `types/sandkit` 
 | `scripts/sandustry/launch-sandustry.js` | Build (debug) and launch the game                                       |
 | `scripts/api/generate-api-types.js`     | `npm run generate-types`                                                |
 
-## Builds
+## Output
 
-| Command                                    | Debug helpers                     | `debugPatches` | Output                                 |
-| ------------------------------------------ | --------------------------------- | -------------- | -------------------------------------- |
-| `npm run build`                            | Stub (`framework/debug/empty.ts`) | Omitted        | `dist/` (symlink)                      |
-| `npm run dev`                              | Included                          | Included       | `~/.config/sandustry/mods/Example Mod` |
-| `npm run sandustry` / `--game` / `--debug` | Included                          | Included       | Game mods folder                       |
-
-`--no-debug` forces a release-style bundle.
-
-In-game **Debug** (`api.settings.get("debug")`) is omitted from release `modinfo.json`. Missing setting defaults to on.
-
-## Patches
-
-Define patches in root `mod.ts` with `definePatches`. Production list is `patches`; debug-only list is `debugPatches`.
-
-```ts
-export const patches = definePatches([
-  {
-    id: "bundle-log-prefix",
-    file: "js/bundle.js",
-    find: "initializing workers",
-    operation: "insertBefore",
-    code: "[patched]",
-    expectedMatches: 1,
-  },
-]);
-```
-
-Full format: [`docs/patches.md`](docs/patches.md).
-
-## Commands
-
-```bash
-npm run dev              # watch, debug on
-npm run build            # release
-npm run typecheck
-npm run generate-types   # after a new runtime dump
-npm run sandustry        # build debug + launch
-npm run sandustry:debug  # same, with inspector ports
-```
+`dist/` is a symlink to the game mods folder during development. Release builds write the same files there.

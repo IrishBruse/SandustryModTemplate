@@ -1,6 +1,23 @@
 # Sandustry Mod Template
 
-TypeScript, React, and Tailwind template for [Sandustry](https://store.steampowered.com/app/2764460/Sandustry/) mods. Includes a small SDK, hot reload, and Sandkit API types.
+Start a Sandustry mod on the Steam **[mods] branch** — the beta that loads local mods and Workshop content. Get the game on [Steam](https://store.steampowered.com/app/2764460/Sandustry/) and browse mods on the [Workshop](https://steamcommunity.com/app/2764460/workshop/).
+
+**Opt in:** Steam Library → Sandustry → Properties → Betas → select `mods`.
+
+## Features
+
+- TypeScript
+- React via `sandkit.react` (JSX; no extra React package)
+- HUD UI kit
+- Small SDK (`safe`, settings, retro console)
+- Hot reload without a game restart
+- Debug: F12 DevTools, splash skip, main-menu auto-boot, console globals
+- Typed `mod.ts` / patches
+- Sandkit API types from [flamableassassin/sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types)
+
+## Docs
+
+Full layout, framework, debug, patches, and UI kit: [Docs](docs/) and [https://ethanconneely.com/SandustryModTemplate/](https://ethanconneely.com/SandustryModTemplate/).
 
 ## Start a mod
 
@@ -11,6 +28,8 @@ TypeScript, React, and Tailwind template for [Sandustry](https://store.steampowe
    ```bash
    git submodule update --init --recursive
    ```
+
+   API types come from [flamableassassin/sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types) (the `types/` submodule).
 
 4. Edit identity in one place, then keep the folder name in sync:
 
@@ -29,10 +48,6 @@ TypeScript, React, and Tailwind template for [Sandustry](https://store.steampowe
 
 6. Run `npm run dev`, then launch the game (`npm run sandustry`).
 
-`npm install` also installs a `commit-msg` hook in `.git/hooks`. A commit fails when the subject does not start with a conventional type (`feat:`, `fix:`, `docs:`, `chore:`, `refactor:`, …).
-
-If Git uses a global `core.hooksPath`, copy [`scripts/git/hooks-path-commit-msg.sh`](scripts/git/hooks-path-commit-msg.sh) to that hooks directory as `commit-msg` so this check still runs.
-
 In game, **Alt+E** opens the example overlay. The Retro Console also gets a **Noise Test** sample.
 
 ## Commands
@@ -45,11 +60,6 @@ In game, **Alt+E** opens the example overlay. The Retro Console also gets a **No
 | `npm run sandustry`       | Debug build and launch                                 |
 | `npm run sandustry:debug` | Same, with inspector ports                             |
 
-## Layout
-
-- `src/` — your mod (entry, UI, patches)
-- `framework/` — React runtime, SDK, debug/hot reload, UI kit
-- `types/` — Sandkit API types (submodule)
-- `scripts/` — esbuild, game launch, type generation
+Folder layout and framework details: [Docs](docs/).
 
 Agent notes: [`AGENTS.md`](AGENTS.md).

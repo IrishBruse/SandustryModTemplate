@@ -12,8 +12,7 @@
     "sandustry": "node scripts/sandustry/launch-sandustry.js",
     "sandustry:debug": "node scripts/sandustry/launch-sandustry-debug.js",
     "lint": "oxlint && oxfmt --check",
-    "lint:fix": "oxlint --fix && oxfmt",
-    "prepare": "node scripts/git/install-hooks.js"
+    "lint:fix": "oxlint --fix && oxfmt"
   },
   "devDependencies": {
     "@electron/asar": "^4.3.0",
