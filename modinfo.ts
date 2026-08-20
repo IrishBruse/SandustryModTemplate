@@ -7,8 +7,8 @@ export const modManifest = defineMod({
   version: "0.0.1",
   apiVersion: 1,
   entry: "main.js",
-  author: "IrishBruse",
-  description: "Embeds Example Mod inside Sandustry.",
+  author: "Your Name",
+  description: "A Sandustry mod built from the TypeScript template.",
   dependencies: [],
   loadOrder: 0,
   configSchema: {

@@ -12,7 +12,11 @@
     "lib": ["ES2020", "DOM"],
     "types": ["react"],
     "paths": {
+      "*": ["./*"],
       "@framework/*": ["./framework/*"],
+      "types/api": ["./framework/types/api"],
+      "types/sandkit": ["./framework/types/sandkit"],
+      "types/engine": ["./framework/types/engine"],
       "types/*": ["./types/*"]
     }
   },

@@ -1,6 +1,6 @@
 # Agent notes
 
-This repo is a **Sandustry** mod (`author.example-mod`). `src/` is this mod. `framework/` is the shared kit. The game runs `main.js` as a script body (`new Function`); `sandkit` is already in scope. Do not emit `import` / `export` in the bundle (esbuild IIFE).
+This repo is a **Sandustry** mod template. `src/` is the mod. `framework/` is the shared kit. The game runs `main.js` as a script body (`new Function`); `sandkit` is already in scope. Do not emit `import` / `export` in the bundle (esbuild IIFE).
 
 Prefer Sandkit API. Use patches only when the public API cannot do the job. Keep behaviour next to its caller.
 
@@ -28,7 +28,7 @@ dist/                   Symlink to ~/.config/sandustry/mods/Example Mod (dev out
 | Path | Role |
 |---|---|
 | `src/main.ts` | Mod entry. Import debug from `./debug` (not `framework/debug`) so release can stub it. |
-| `src/globals.ts` | `MOD_ID` and `installGlobals` |
+| `src/globals.ts` | `MOD_ID` (from `modinfo.ts`) and `installGlobals` |
 | `src/ui/` | React overlays (import `react`, resolved to `framework/react.ts`) |
 | `src/debug/` | Mod debug entry: calls `framework/debug`, re-exports `onDispose` / `isHotReloadEval` |
 | `src/patches/*.js` | Production bundle patches for this mod |
@@ -46,7 +46,7 @@ dist/                   Symlink to ~/.config/sandustry/mods/Example Mod (dev out
 | `framework/debug/empty.ts` | Release stub for `./debug` (`installDebug` / `onDispose` / `isHotReloadEval` no-ops) |
 | `framework/patches/*.js` | Shared production patches |
 | `framework/patches/debug/*.js` | Shared debug patches (splash skip) |
-| `framework/types/` | Manifest and patch TypeScript definitions |
+| `framework/types/` | Manifest, patch, and Sandkit shims (`types/api`, `types/sandkit`, `types/engine`) |
 
 Do not import `onDispose` or `isHotReloadEval` from `framework/debug` in `src/main.ts`. Import them from `./debug`.
 
@@ -61,7 +61,7 @@ Git submodule: [sandustry-modding-types](https://github.com/flamableassassin/san
 | `types/src/worker/` | Worker-thread API |
 | `types/src/common-types/` | Shared domain shapes |
 
-Path aliases: `@framework/*` → `./framework/*`; `types/*` → `./types/*`.
+Path aliases: `@framework/*` → `./framework/*`; `types/api` / `types/sandkit` / `types/engine` → `./framework/types/`; `types/*` → `./types/*`.
 
 ### `scripts/`
 

@@ -1,6 +1,8 @@
 /**
  * Framework types — manifest, patches, and other kit contracts.
  * Sandkit game API types live in the `types/` submodule (`types/src/`).
+ * `api.d.ts`, `sandkit.d.ts`, and `engine.d.ts` compose those namespaces for
+ * the `types/api`, `types/sandkit`, and `types/engine` import paths.
  *
  * Patch **source** files (`src/patches`, `framework/patches`) are raw JS with
  * `// @file` / `// @find` / `// @expectedMatches` comments. See `src/patches/README.md`.
@@ -12,3 +14,10 @@ export type * from "./patch";
 
 export type { ModManifest, ConfigSchema } from "./manifest";
 export type { Patch, PatchOperation } from "./patch";
+export type { SandkitApi } from "./api";
+export type { SandkitGlobal } from "./sandkit";
+export type {
+  RetroConsoleApi,
+  RetroConsoleDisplay,
+  RetroConsoleGame,
+} from "./engine";

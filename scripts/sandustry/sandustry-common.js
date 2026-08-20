@@ -3,12 +3,14 @@
  */
 import { execSync, spawn, spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
+import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
 import { ensureModDir } from "./mod-path.js";
 
 export const SANDUSTRY =
-  process.env.SANDUSTRY ?? "/home/econn/games/SteamLibrary/steamapps/common/Sandustry/sandustry";
+  process.env.SANDUSTRY ??
+  join(homedir(), "games/SteamLibrary/steamapps/common/Sandustry/sandustry");
 export const SANDUSTRY_DIR = dirname(SANDUSTRY);
 
 export const DEFAULT_MAIN_DEBUG_PORT = "9230";
