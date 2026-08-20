@@ -17,6 +17,7 @@ types/
     patch.d.ts     Output shapes for patches.json (sources: see src/patches/README.md)
     index.d.ts     Framework types entry
   common.d.ts      Shared primitives (CellPos, DataBag, …)
+  enums.d.ts       sandkit.enums maps from the runtime dump
   sandkit.d.ts     sandkit global (api, react, state, enums, engine)
   global.d.ts      Declares sandkit and api in global scope
   index.d.ts       Package entry for IDE imports
@@ -27,6 +28,7 @@ types/
 | File | Role |
 |---|---|
 | `types/api/source/runtime-dump.json` | Paste from DevTools (`scripts/api/dump-api-console.js`). Lists API members from the game. |
+| `types/api/source/runtime-enums.json` | Paste `JSON.stringify(sandkit.enums, null, 2)` from DevTools. Source for `types/enums.d.ts`. |
 | `types/api/source/official-api-reference.txt` | Vendored Sandkit API signatures (from [SandLoader](https://github.com/LopeKinz/SandLoader)). Merged on each generate run. |
 | `types/api/source/api-docs.json` | Descriptions, param labels, `params[].type`, and `returnType`. Merged on each generate run. |
 | `types/api/domain.d.ts` | Opaque domain type aliases used by generated signatures. |

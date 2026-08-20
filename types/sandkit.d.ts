@@ -1,4 +1,5 @@
 import type { SandkitApi } from "./api";
+import type { SandkitEnums } from "./enums";
 
 /**
  * Sandkit runtime globals.
@@ -17,7 +18,7 @@ export interface SandkitGlobal {
   api: SandkitApi;
   react: typeof import("react");
   state: unknown;
-  enums: Record<string, unknown>;
+  enums: SandkitEnums;
   engine: SandkitEngine;
 }
 

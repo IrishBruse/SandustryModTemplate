@@ -198,6 +198,19 @@ function workerEntryPath(modinfo: string | undefined): string | null {
   }
 }
 
+function modDisplayName(host: Host): string {
+  const modinfo = host.sources["modinfo.json"];
+  if (modinfo) {
+    try {
+      const parsed = JSON.parse(modinfo) as { name?: unknown };
+      if (typeof parsed.name === "string" && parsed.name.length > 0) return parsed.name;
+    } catch {
+      // Use modId when modinfo.json is missing or invalid.
+    }
+  }
+  return host.modId;
+}
+
 async function captureBaseline(host: Host): Promise<void> {
   const entry = await readAsset(host.api, host.entry);
   if (entry != null) host.sources[host.entry] = entry;
@@ -241,7 +254,7 @@ function reloadRenderer(host: Host, source: string): void {
 
   try {
     runSource(source);
-    toast(host.api, "Mod reloaded");
+    toast(host.api, `${modDisplayName(host)} reloaded`);
     console.log(`[${host.modId}] hot reloaded`);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

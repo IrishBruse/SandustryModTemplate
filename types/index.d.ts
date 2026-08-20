@@ -23,6 +23,7 @@
  */
 
 export type * from "./common";
+export type * from "./enums";
 export type * from "./sandkit";
 export type * from "./framework";
 export type * from "./api";
