@@ -29,7 +29,7 @@ Full layout, framework, debug, patches, and UI kit: [Docs](docs/) and [https://e
    git submodule update --init --recursive
    ```
 
-   API types come from [flamableassassin/sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types) (the `types/` submodule).
+   API types come from [flamableassassin/sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types) (the `types/` submodule). This submodule is temporary; a package will replace it when that package is available.
 
 4. Edit identity in one place, then keep the folder name in sync:
 
