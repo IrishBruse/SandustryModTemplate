@@ -14,9 +14,6 @@
     "paths": {
       "*": ["./*"],
       "@framework/*": ["./framework/*"],
-      "types/api": ["./framework/types/api"],
-      "types/sandkit": ["./framework/types/sandkit"],
-      "types/engine": ["./framework/types/engine"],
       "types/*": ["./types/*"]
     }
   },
@@ -25,7 +22,6 @@
     "src/**/*.tsx",
     "framework/**/*.ts",
     "framework/**/*.tsx",
-    "framework/**/*.d.ts",
     "mod.ts",
     "types/**/*.d.ts",
     "types/**/*.ts"

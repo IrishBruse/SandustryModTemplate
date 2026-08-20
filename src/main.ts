@@ -1,4 +1,5 @@
 import { installDebug, isHotReloadEval, onDispose } from "./debug";
+import { sandkit } from "@framework/sandkit";
 import { isEnabled, registerRetroGame, safe } from "@framework/sdk";
 import { installGlobals, MOD_ID } from "./globals";
 import { ExampleOverlay } from "./ui/ExampleOverlay";

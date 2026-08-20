@@ -2,7 +2,7 @@
 
 Define patches in root [`mod.ts`](../mod.ts) with `definePatches`. The build writes `patches.json`. The game loader applies those patches to Sandustry JavaScript files (for example `js/bundle.js`).
 
-Patch shapes live in `framework/types/patch.d.ts`.
+Patch shapes live in [`framework/modinfo.ts`](../framework/modinfo.ts).
 
 ## When to use patches
 

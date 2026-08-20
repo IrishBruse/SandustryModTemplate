@@ -1,16 +1,14 @@
 import type { SandkitApi } from "types/api";
+import { sandkit } from "../sandkit";
 import { registerDevToolsShortcut, scheduleMainMenuBoot } from "./boot-menu";
 import { installHotReload, isHotReloadEval } from "./hot-reload";
 
 export { isHotReloadEval, onDispose } from "./hot-reload";
 
-/** Expose sandkit on globalThis for DevTools and dump scripts. */
+/** Expose sandkit on globalThis for DevTools and dump scripts (console only). */
 function registerSandkitGlobals(api: SandkitApi): void {
   const { enums, react } = sandkit;
-  globalThis.sandkit = sandkit;
-  globalThis.api = api;
-  globalThis.enums = enums;
-  globalThis.react = react;
+  Object.assign(globalThis, { sandkit, api, enums, react });
 }
 
 /** DevTools, splash skip, main-menu auto-boot, and hot reload (debug setting). */

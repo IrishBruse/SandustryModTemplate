@@ -1,3 +1,4 @@
+import { sandkit } from "../sandkit";
 import { safe } from "./safe";
 
 /** Hide on menu scenes; show everywhere else. */

@@ -31,7 +31,9 @@ Hot-reload eval skips DevTools shortcut, splash polling, and auto-boot so those 
 
 ## DevTools globals
 
-`installDebug` copies the live Sandkit objects onto `globalThis` (and `window`) for the console and dump scripts:
+`installDebug` copies the live Sandkit objects onto `globalThis` for the browser
+console and dump scripts only. Those names are not ambient TypeScript globals —
+import `sandkit` from `@framework/sandkit` in mod code.
 
 - `sandkit`
 - `api` (`sandkit.api`)

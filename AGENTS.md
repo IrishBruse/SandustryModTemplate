@@ -17,7 +17,7 @@ Detail docs:
 ```
 mod.ts                  Typed manifest + patches → modinfo.json / patches.json at build
 src/                    This mod (entry, UI, mod debug)
-framework/              Shared kit (sdk, react, debug, patches, types)
+framework/              Shared kit (sdk, react, debug, patches, modinfo)
 types/                  Sandkit API types (submodule: sandustry-modding-types)
 scripts/build/          esbuild, patches.json
 scripts/sandustry/      Launch / stop the game, mod output path
@@ -39,14 +39,14 @@ dist/                   Symlink to ~/.config/sandustry/mods/Example Mod (dev out
 
 | Path                       | Role                                                                                 |
 | -------------------------- | ------------------------------------------------------------------------------------ |
-| `framework/modinfo.ts`     | `defineModInfo` / `definePatches`                                                    |
+| `framework/modinfo.ts`     | `defineModInfo` / `definePatches` plus manifest and patch types                      |
+| `framework/sandkit.ts`     | Host-injected `sandkit` export (not DevTools globals)                                |
 | `framework/patches.ts`     | Shared debug patches (`frameworkDebugPatches`)                                       |
 | `framework/react.ts`       | Runtime React from `sandkit.react` (`jsxImportSource`)                               |
 | `framework/jsx-runtime.ts` | JSX automatic runtime                                                                |
 | `framework/sdk/`           | `safe`, `isEnabled`, `debugEnabled`, `inGame`, `registerRetroGame`                   |
 | `framework/debug/`         | DevTools globals, F12, splash skip, main-menu boot, hot reload                       |
 | `framework/debug/empty.ts` | Release stub for `./debug` (`installDebug` / `onDispose` / `isHotReloadEval` no-ops) |
-| `framework/types/`         | Manifest, patch, and Sandkit shims (`types/api`, `types/sandkit`, `types/engine`)    |
 
 Do not import `onDispose` or `isHotReloadEval` from `framework/debug` in `src/main.ts`. Import them from `./debug`.
 
@@ -54,14 +54,17 @@ Do not import `onDispose` or `isHotReloadEval` from `framework/debug` in `src/ma
 
 Git submodule: [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types). Definitions live under `types/src/` (`main`, `shared`, `worker`, `common-types`).
 
-| Path                      | Role                    |
-| ------------------------- | ----------------------- |
-| `types/src/main/`         | Main-thread Sandkit API |
-| `types/src/shared/`       | Shared main/worker API  |
-| `types/src/worker/`       | Worker-thread API       |
-| `types/src/common-types/` | Shared domain shapes    |
+| Path                      | Role                                          |
+| ------------------------- | --------------------------------------------- |
+| `types/src/main/`         | Main-thread Sandkit API                       |
+| `types/src/shared/`       | Shared main/worker API                        |
+| `types/src/worker/`       | Worker-thread API                             |
+| `types/src/common-types/` | Shared domain shapes                          |
+| `types/api.d.ts`          | Composed main-thread `SandkitApi`             |
+| `types/sandkit.d.ts`      | `sandkit` global shape                        |
+| `types/engine.d.ts`       | Retro Console engine shapes                   |
 
-Path aliases: `@framework/*` → `./framework/*`; `types/api` / `types/sandkit` / `types/engine` → `./framework/types/`; `types/*` → `./types/*`.
+Path aliases: `@framework/*` → `./framework/*`; `types/*` → `./types/*`.
 
 ### `scripts/`
 

@@ -6,7 +6,7 @@ Shared kit for Sandustry mods. It includes:
 - **SDK** — small helpers (`safe`, settings, scene checks, retro console registration)
 - **UI** — shared React components under `framework/ui/`
 - **Debug / hot reload** — dev-only globals, DevTools, splash skip, main-menu boot, file watch reload
-- **Type shims** — manifest and patch types plus `types/api`, `types/sandkit`, `types/engine` aliases
+- **Modinfo helpers** — `defineModInfo` / `definePatches` with colocated manifest and patch types
 
 Mods import this folder through the `@framework/*` path alias. The game still loads a single bundled `main.js` (esbuild IIFE). Do not emit `import` / `export` in the output.
 

@@ -1,4 +1,5 @@
 import type { SandkitApi } from "types/api";
+import { sandkit } from "../sandkit";
 import { debugEnabled, safe } from "../sdk";
 
 /**
