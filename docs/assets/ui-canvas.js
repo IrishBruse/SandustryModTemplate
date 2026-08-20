@@ -4,14 +4,11 @@ window.smtDocsifyUiCanvasPlugin = function (hook) {
     if (!body) return 0;
 
     const preview =
-      body.querySelector("[data-ui-preview]") ||
-      body.querySelector(".preview-block") ||
-      body;
+      body.querySelector("[data-ui-preview]") || body.querySelector(".preview-block") || body;
 
     const rect = preview.getBoundingClientRect();
     const styles = doc.defaultView.getComputedStyle(body);
-    const padY =
-      (parseFloat(styles.paddingTop) || 0) + (parseFloat(styles.paddingBottom) || 0);
+    const padY = (parseFloat(styles.paddingTop) || 0) + (parseFloat(styles.paddingBottom) || 0);
 
     // Box shadows (ui-box / hotkey-badge) sit outside getBoundingClientRect.
     const shadowPad = 56;

@@ -54,15 +54,15 @@ Do not import `onDispose` or `isHotReloadEval` from `framework/debug` in `src/ma
 
 Git submodule: [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types). Definitions live under `types/src/` (`main`, `shared`, `worker`, `common-types`).
 
-| Path                      | Role                                          |
-| ------------------------- | --------------------------------------------- |
-| `types/src/main/`         | Main-thread Sandkit API                       |
-| `types/src/shared/`       | Shared main/worker API                        |
-| `types/src/worker/`       | Worker-thread API                             |
-| `types/src/common-types/` | Shared domain shapes                          |
-| `types/api.d.ts`          | Composed main-thread `SandkitApi`             |
-| `types/sandkit.d.ts`      | `sandkit` global shape                        |
-| `types/engine.d.ts`       | Retro Console engine shapes                   |
+| Path                      | Role                              |
+| ------------------------- | --------------------------------- |
+| `types/src/main/`         | Main-thread Sandkit API           |
+| `types/src/shared/`       | Shared main/worker API            |
+| `types/src/worker/`       | Worker-thread API                 |
+| `types/src/common-types/` | Shared domain shapes              |
+| `types/api.d.ts`          | Composed main-thread `SandkitApi` |
+| `types/sandkit.d.ts`      | `sandkit` global shape            |
+| `types/engine.d.ts`       | Retro Console engine shapes       |
 
 Path aliases: `@framework/*` → `./framework/*`; `types/*` → `./types/*`.
 
