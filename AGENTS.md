@@ -41,7 +41,7 @@ dist/                   Symlink to ~/.config/sandustry/mods/Example Mod (dev out
 | `framework/modinfo.ts` | `defineMod` for `modinfo.ts` |
 | `framework/react.ts` | Runtime React from `sandkit.react` (`jsxImportSource`) |
 | `framework/jsx-runtime.ts` | JSX automatic runtime |
-| `framework/sdk/` | `safe`, `isEnabled`, `debugEnabled`, `inGame` |
+| `framework/sdk/` | `safe`, `isEnabled`, `debugEnabled`, `inGame`, `registerRetroGame` |
 | `framework/debug/` | DevTools globals, F12, splash skip, main-menu boot, hot reload |
 | `framework/debug/empty.ts` | Release stub for `./debug` (`installDebug` / `onDispose` / `isHotReloadEval` no-ops) |
 | `framework/patches/*.js` | Shared production patches |
@@ -59,6 +59,7 @@ Do not import `onDispose` or `isHotReloadEval` from `framework/debug` in `src/ma
 | `types/framework/manifest.d.ts` | `modinfo.ts` shapes |
 | `types/framework/patch.d.ts` | Compiled `patches.json` objects (not the source `.js` files) |
 | `types/sandkit.d.ts` / `types/global.d.ts` | `sandkit` / `api` / `__MOD_DEBUG__` |
+| `types/engine.d.ts` | `sandkit.engine.api` (`retroConsole`) |
 
 Path alias: `types/*` → `./types/*`.
 

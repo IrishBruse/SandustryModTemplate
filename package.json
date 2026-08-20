@@ -8,6 +8,7 @@
     "typecheck": "tsc --noEmit",
     "generate-types": "node scripts/api/generate-api-types.js",
     "references": "node scripts/sandustry/references.js",
+    "ui:previews": "node scripts/ui/generate-previews.mjs",
     "sandustry": "node scripts/sandustry/launch-sandustry.js",
     "sandustry:debug": "node scripts/sandustry/launch-sandustry-debug.js"
   },

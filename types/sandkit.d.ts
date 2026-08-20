@@ -1,4 +1,5 @@
 import type { SandkitApi } from "./api";
+import type { SandkitEngineApi } from "./engine";
 import type { SandkitEnums } from "./enums";
 
 /**
@@ -23,6 +24,6 @@ export interface SandkitGlobal {
 }
 
 export interface SandkitEngine {
-  api: unknown;
+  api: SandkitEngineApi;
   state: unknown;
 }

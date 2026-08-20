@@ -19,6 +19,7 @@ types/
   common.d.ts      Shared primitives (CellPos, DataBag, …)
   enums.d.ts       sandkit.enums maps from the runtime dump
   sandkit.d.ts     sandkit global (api, react, state, enums, engine)
+  engine.d.ts      sandkit.engine.api (retroConsole)
   global.d.ts      Declares sandkit and api in global scope
   index.d.ts       Package entry for IDE imports
 ```
