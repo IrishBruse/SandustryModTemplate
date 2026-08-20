@@ -17,6 +17,7 @@
   - [InfoBanner](ui/info-banner.md)
   - [PanelCard](ui/panel-card.md)
   - [MenuButton](ui/menu-button.md)
+  - [ManagementMenuButton](ui/management-menu-button.md)
   - [ResourceRow](ui/resource-row.md)
   - [SectionHeading](ui/section-heading.md)
 

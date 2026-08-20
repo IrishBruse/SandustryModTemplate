@@ -2,6 +2,8 @@ export { HotkeyBadge } from "./badges/HotkeyBadge";
 export { UiBox } from "./panels/UiBox";
 export { InfoBanner } from "./panels/InfoBanner";
 export { MenuButton } from "./menu/MenuButton";
+export { ManagementMenuButton } from "./menu/ManagementMenuButton";
+export type { ManagementMenuButtonProps } from "./menu/ManagementMenuButton";
 export { ResourceRow } from "./resources/ResourceRow";
 export { SectionHeading } from "./headings/SectionHeading";
 export { PanelCard } from "./panels/PanelCard";

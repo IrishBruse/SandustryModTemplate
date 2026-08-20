@@ -19,7 +19,9 @@ The build writes two IIFE files:
 
 `--no-debug` forces a release-style bundle even when watch or game flags are set.
 
-In-game **Debug** (`api.settings.get("debug")`) is omitted from release `modinfo.json`. When the setting is missing, it defaults to on.
+Debug builds emit **inline** source maps on `main.js` and `modkit/index.js` (needed for `new Function` eval). Use `--sourcemap` to force maps on a release build, or `--no-sourcemap` to omit them from a debug build.
+
+In-game **Debug** (`api.settings.get("debug")`) and the other `modkitDebugConfigSchema` keys are omitted from release `modinfo.json`. When the Debug setting is missing, it defaults to on.
 
 `__MOD_DEBUG__` is `true` in dev builds and `false` in release.
 

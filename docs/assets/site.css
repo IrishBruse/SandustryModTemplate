@@ -6,17 +6,29 @@
   --sidebar-toggle-alignment: flex-start;
   --table-header-bg: var(--color-mono-2);
 
-  /* Sandustry yellow — darker on light for contrast */
-  --theme-color: #b89600;
+  /* Hooded Horse wiki–inspired gold (light: darker for contrast) */
+  --smt-wiki-gold: #c99400;
+  --smt-wiki-gold-bright: #ffb800;
+  --smt-wiki-link: #d48900;
+  --theme-color: var(--smt-wiki-gold);
   --sidebar-link-color-active: var(--theme-color);
-  --link-color: var(--theme-color);
+  --link-color: var(--smt-wiki-link);
 }
 
 html[data-smt-docs-theme="dark"] {
-  --table-header-bg: var(--color-mono-3);
-  --theme-color: #ffe700;
+  /* Charcoal + golden orange, close to wiki.hoodedhorse.com */
+  --color-bg: #121212;
+  --sidebar-bg: #1c1c1c;
+  --color-text: #dddddd;
+  --heading-color: #f0f0f0;
+  --border-color: #2a2a2a;
+  --table-header-bg: #202020;
+  --table-row-alt-bg: #181818;
+  --theme-color: var(--smt-wiki-gold-bright);
   --sidebar-link-color-active: var(--theme-color);
-  --link-color: var(--theme-color);
+  --link-color: #ff9900;
+  --code-inline-bg: #202020;
+  --blockquote-bg: #1a1a1a;
 }
 
 /* Hide Docsify GitHub corner if a repo option is re-added later. */
@@ -87,10 +99,10 @@ html[data-smt-docs-theme="dark"] {
 .smt-page-toc-title {
   margin: 0 0 0.5rem 0;
   font-size: var(--font-size-xs, 0.75rem);
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--color-mono-5, #666);
+  letter-spacing: 0.06em;
+  color: var(--theme-color);
 }
 #smt-page-toc ul {
   list-style: none;
@@ -256,16 +268,44 @@ body:has(.sidebar.show) .sidebar-toggle .smt-sidebar-toggle-icon {
   }
 }
 
-/* Prose links: theme-colored text, no underline (Docsify core uses underline + --link-color). */
-.markdown-section :not(pre) a:not(.button):not(.anchor) {
+/* Sidebar body: keep links readable (Docsify nests can shrink). */
+.sidebar-nav {
+  font-size: 0.9375rem;
+}
+.sidebar-nav ul ul {
+  font-size: inherit;
+}
+.sidebar-nav a {
+  font-size: inherit;
+}
+
+/* Group titles only (plain text). Top-level page links also wrap in <p>. */
+.sidebar-nav > ul > li > p:not(:has(a)) {
+  margin: 1.1em 0 0.35em;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--theme-color);
+}
+
+/* Prose links: wiki orange, no underline */
+.markdown-section :not(pre) a:not(.button):not(.anchor) {
+  color: var(--link-color, var(--theme-color));
   text-decoration: none;
 }
 @media screen and (any-hover) {
   .markdown-section :not(pre) a:not(.button):not(.anchor):hover {
-    color: #fff;
-    text-decoration: none;
+    color: var(--theme-color);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
   }
+}
+
+/* Section headers: thin gold rule (wiki Materials-style) */
+.markdown-section h2 {
+  padding-bottom: 0.35em;
+  border-bottom: 1px solid color-mix(in srgb, var(--theme-color) 55%, var(--border-color, #ddd));
 }
 
 /* Heading permalink: icon sits next to title (not full-width space-between). */
@@ -483,8 +523,8 @@ iframe.ui-canvas {
   display: block;
   width: 100%;
   min-height: 10rem;
-  border: 1px solid var(--border-color, #334155);
-  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--theme-color) 35%, var(--border-color, #334155));
+  border-radius: 4px;
   background: #1a2332;
   margin: 0 0 1.5rem;
 }

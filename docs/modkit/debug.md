@@ -26,6 +26,18 @@ Mod-only extra debug code lives in [`src/debug/`](../../src/debug/). That folder
 | Splash skip (bundle)  | [`../../modkit/patches.ts`](../../modkit/patches.ts) (`skip-startup-splash`) | Debug **build**         | Rewrites `js/bundle.js`; not toggled at runtime    |
 | Main-menu auto-boot   | `boot-menu.ts` + `menu.ts`                                                   | Must be on              | Clicks **Continue** after it has been visible      |
 | Renderer hot reload   | `hot-reload.ts`                                                              | Must be on              | Dispose + eval new `main.js`; no game restart      |
+| F3 debug toggle       | `toggle/`                                                                    | Always in a debug build | Management row + panel for engine debug flags      |
+
+### F3 debug toggle
+
+Dev builds inject a **Debug** management row under Upgrades and bind **F3** to the same panel. The panel toggles the engine flags from `references/uolkx-debug-toggle` (`active`, `drawChunks`, cell inspector, lights, and so on).
+
+| Control            | Setting           | Notes                                                                                             |
+| ------------------ | ----------------- | ------------------------------------------------------------------------------------------------- |
+| Sidebar Debug row  | `debugMenuButton` | Default on. Turn off to hide the row; **F3 still works** and cannot be disabled in a debug build. |
+| Engine flag fields | `debugActive`, …  | Same schema as the reference mod; omitted from release `modinfo.json`.                            |
+
+Schema helpers: `modkitDebugConfigSchema` / `debugOnlyConfigKeys` from `@modkit/debug/config-schema` (spread into `mod.ts`).
 
 Hot-reload eval skips DevTools shortcut, splash polling, and auto-boot so those do not stack on every save.
 
@@ -94,14 +106,16 @@ Define debug-only patches in root `mod.ts` as `debugPatches`. Shared splash skip
 
 ## Files
 
-| Path            | Role                                                                |
-| --------------- | ------------------------------------------------------------------- |
-| `index.ts`      | `installDebug`, globals, re-exports                                 |
-| `empty.ts`      | Release stub: no-op `installDebug`, `onDispose`, `isHotReloadEval`  |
-| `boot-menu.ts`  | DevTools on load, F12, auto-boot schedule                           |
-| `menu.ts`       | Find and click the main-menu Continue row                           |
-| `splash.ts`     | Runtime splash click poll                                           |
-| `hot-reload.ts` | Watch `main.js` + `modkit/index.js`, `onDispose`, `isHotReloadEval` |
+| Path               | Role                                                                |
+| ------------------ | ------------------------------------------------------------------- |
+| `index.ts`         | `installDebug`, globals, re-exports                                 |
+| `empty.ts`         | Release stub: no-op `installDebug`, `onDispose`, `isHotReloadEval`  |
+| `config-schema.ts` | Dev-only settings schema + keys omitted from release                |
+| `boot-menu.ts`     | DevTools on load, F12, auto-boot schedule                           |
+| `menu.ts`          | Find and click the main-menu Continue row                           |
+| `splash.ts`        | Runtime splash click poll                                           |
+| `hot-reload.ts`    | Watch `main.js` + `modkit/index.js`, `onDispose`, `isHotReloadEval` |
+| `toggle/`          | F3 / management Debug panel for engine flags                        |
 
 ## Wiring
 

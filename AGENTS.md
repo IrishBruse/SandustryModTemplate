@@ -88,7 +88,7 @@ Path aliases: `@modkit/*` → `./modkit/*`; `types/*` → `./types/*`.
 | `npm run dev`                              | Included                       | Included       | `~/.config/sandustry/mods/Example Mod` |
 | `npm run sandustry` / `--game` / `--debug` | Included                       | Included       | Game mods folder                       |
 
-`--no-debug` forces a release-style bundle.
+`--no-debug` forces a release-style bundle. Debug builds emit inline source maps; `--sourcemap` / `--no-sourcemap` override.
 
 In-game **Debug** (`api.settings.get("debug")`) is omitted from release `modinfo.json`. Missing setting defaults to on.
 

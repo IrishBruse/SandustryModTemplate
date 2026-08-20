@@ -17,7 +17,7 @@ import { debugEnabled, safe } from "../sdk";
  *   or workers.
  */
 
-const POLL_MS = 400;
+const POLL_MS = 1000;
 const DEBOUNCE_MS = 250;
 const MAIN_ENTRY = "main.js";
 /** Split modkit IIFE loaded by the `main.js` banner into `globalThis.__modkit`. */

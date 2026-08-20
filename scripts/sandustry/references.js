@@ -5,8 +5,8 @@
  * Usage: npm run references
  *
  * Layout:
+ *   logs/                symlink to ~/.config/sandustry/logs (workspace root)
  *   references/source/   game JS/JSON/HTML/CSS from app.asar
- *   references/logs/     symlink to ~/.config/sandustry/logs
  *   references/<mod-id>/ workshop copies
  */
 import { extractFile, listPackage } from "@electron/asar";
@@ -35,7 +35,9 @@ const WORKSHOP = join(STEAM_APPS, "workshop/content", SANDUSTRY_APP_ID);
 const REFERENCES = join(ROOT, "references");
 const SOURCE_DEST = join(REFERENCES, "source");
 const LOGS_SRC = join(homedir(), ".config/sandustry/logs");
-const LOGS_DEST = join(REFERENCES, "logs");
+const LOGS_DEST = join(ROOT, "logs");
+/** Previous location of the logs symlink, before it moved to the workspace root. */
+const LEGACY_LOGS_DEST = join(REFERENCES, "logs");
 
 /** Old asar extracts that used to sit in references/. */
 const LEGACY_ASAR_FILES = ["preload.js", "main.js", "local-mod-publisher.js"];
@@ -89,7 +91,15 @@ function extractGameSource() {
   console.log(`Extracted ${count} game source files -> references/source/`);
 }
 
+function removeLegacyLogsLink() {
+  if (!existsSync(LEGACY_LOGS_DEST)) return;
+  rmSync(LEGACY_LOGS_DEST, { recursive: true, force: true });
+  console.log("Removed legacy references/logs");
+}
+
 function syncLogs() {
+  removeLegacyLogsLink();
+
   if (!existsSync(LOGS_SRC)) {
     console.warn(`Sandustry logs not found: ${LOGS_SRC}`);
     return;
@@ -98,7 +108,7 @@ function syncLogs() {
   try {
     const stat = lstatSync(LOGS_DEST);
     if (stat.isSymbolicLink() && readlinkSync(LOGS_DEST) === LOGS_SRC) {
-      console.log(`Symlink references/logs -> ${LOGS_SRC} (already linked)`);
+      console.log(`Symlink logs -> ${LOGS_SRC} (already linked)`);
       return;
     }
     rmSync(LOGS_DEST, { recursive: true, force: true });
@@ -107,7 +117,7 @@ function syncLogs() {
   }
 
   symlinkSync(LOGS_SRC, LOGS_DEST);
-  console.log(`Symlinked references/logs -> ${LOGS_SRC}`);
+  console.log(`Symlinked logs -> ${LOGS_SRC}`);
 }
 
 function syncWorkshopMods() {

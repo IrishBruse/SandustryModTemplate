@@ -1,5 +1,8 @@
+import { modkitDebugConfigSchema, debugOnlyConfigKeys } from "@modkit/debug/config-schema";
 import { defineModInfo, definePatches } from "@modkit/modinfo";
 import { modkitDebugPatches } from "@modkit/patches";
+
+export { debugOnlyConfigKeys };
 
 export const modinfo = defineModInfo({
   manifestVersion: 1,
@@ -19,12 +22,7 @@ export const modinfo = defineModInfo({
       labelKey: "Mod enabled",
       descriptionKey: "Turn the mod off without unsubscribing.",
     },
-    debug: {
-      type: "boolean",
-      default: true,
-      labelKey: "Debug",
-      descriptionKey: "DevTools, splash skip, and main-menu auto-boot. Dev builds only.",
-    },
+    ...modkitDebugConfigSchema,
   },
 });
 
