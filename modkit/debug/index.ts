@@ -6,16 +6,6 @@ import { installDebugToggle } from "./toggle/install";
 
 export { isHotReloadEval, onDispose } from "./hot-reload";
 export { debugOnlyConfigKeys, modkitDebugConfigSchema } from "./config-schema";
-export {
-  BOOT_FLAGS,
-  DEBUG_FLAGS,
-  applyAllFlags,
-  debugMenuButtonEnabled,
-  initFlagsFromSettings,
-  onDebugSettingsChange,
-  readFlag,
-  setFlag,
-} from "./toggle/flags";
 
 /** Expose sandkit on globalThis for DevTools and dump scripts (console only). */
 function registerSandkitGlobals(api: SandkitApi): void {
