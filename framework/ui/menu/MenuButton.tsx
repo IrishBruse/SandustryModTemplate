@@ -11,6 +11,8 @@ type MenuButtonProps = {
   className?: string;
   style?: CSSProperties;
   onClick?: () => void;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 };
 
 export function MenuButton({
@@ -22,6 +24,8 @@ export function MenuButton({
   className = "",
   style,
   onClick,
+  onMouseEnter,
+  onMouseLeave,
 }: MenuButtonProps) {
   const letter = highlightLetter ?? label.charAt(0);
   const rest = label.slice(letter.length);
@@ -31,6 +35,8 @@ export function MenuButton({
       className={`mb-2 relative group cursor-pointer pointer-events-auto ${className}`}
       style={{ width, ...style }}
       onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
     >
