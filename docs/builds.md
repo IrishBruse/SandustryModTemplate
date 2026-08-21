@@ -65,4 +65,4 @@ npm run ui:previews      # compile preview CSS, then screenshot preview.html
 
 **F5** (VS Code `Sandustry` compound) stops any running game and launches with debug ports. It does not rebuild the mod — keep `npm run dev` running for the bundle, hot reload, and file logs.
 
-Renderer attach loads source maps from the OS mods folder (`~/.config/sandustry/mods/` or `%APPDATA%/sandustry/mods/`) and `dist/<folder>/`. Debug builds rewrite those maps to absolute paths and add `sourceURL` so breakpoints in `src/<name>/` bind through `new Function` eval.
+Renderer attach loads source maps from scripts named `sandkit-workshop://<modId>/main.js` (and from the OS mods folder / `dist/`). Debug builds rewrite inline maps to `file://` sources, add a sandkit loader line offset, and set matching `sourceURL` so breakpoints in `src/<name>/` bind through `new Function` eval. Do not press **F12** while the IDE debugger is attached — Electron DevTools steals that session.

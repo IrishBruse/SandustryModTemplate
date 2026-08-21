@@ -200,17 +200,43 @@ const SOURCE_MAP_DATA_MARKER = "//# sourceMappingURL=data:application/json;base6
 const SOURCE_URL_RE = /\n\/\/# sourceURL=.*$/;
 
 /**
- * Make inline maps work for VS Code / CDP on `new Function` eval:
- * - absolute `sources` (maps resolve even when the script URL is a VM id)
- * - `sourceURL` pointing at the real `main.js` on disk
+ * Sandkit loads `main.js` via `new Function("__sandkit", body)` where `body` is:
+ *   "use strict";\nconst sandkit = __sandkit;\nreturn (async () => {\n<source>\n})();\n
+ * The Function header is two lines, then three body lines — five lines before `<source>`.
+ * Hot reload in `modkit/debug/hot-reload.ts` must use the same wrapper.
  */
-function rewriteMainJsDebugMaps(filePath) {
+const SANDKIT_LOADER_LINE_OFFSET = 5;
+
+/**
+ * Source-map `sources` must be `file://` URLs. A data: map has no file base, so
+ * absolute filesystem paths do not resolve in VS Code / CDP.
+ * @param {string} source
+ * @param {string} outDir
+ */
+function toSourceMapFileUrl(source, outDir) {
+  if (typeof source !== "string" || source.length === 0) return source;
+  if (source.startsWith("file:")) return source;
+  const abs = isAbsolute(source) ? normalize(source) : normalize(join(outDir, source));
+  return pathToFileURL(abs).href;
+}
+
+/**
+ * Make inline maps work for VS Code / CDP on sandkit `new Function` eval:
+ * - `file://` `sources` (maps resolve when the script URL is `sandkit-workshop://…`)
+ * - indexed map offset matching the sandkit loader wrapper
+ * - `sourceURL` matching the game (`sandkit-workshop://<modId>/main.js`)
+ * @param {string} filePath
+ * @param {string} modId
+ */
+function rewriteMainJsDebugMaps(filePath, modId) {
   let code = readFileSync(filePath, "utf8");
   code = code.replace(SOURCE_URL_RE, "");
 
+  const sourceURL = `sandkit-workshop://${modId}/main.js`;
   const mapIdx = code.lastIndexOf(SOURCE_MAP_DATA_MARKER);
   if (mapIdx < 0) {
-    writeFileSync(filePath, `${code}\n//# sourceURL=${pathToFileURL(filePath).href}\n`);
+    console.warn(`no inline source map in ${filePath}`);
+    writeFileSync(filePath, `${code}\n//# sourceURL=${sourceURL}\n`);
     return;
   }
 
@@ -218,26 +244,29 @@ function rewriteMainJsDebugMaps(filePath) {
   const mapLineEnd = lineEnd === -1 ? code.length : lineEnd;
   const b64 = code.slice(mapIdx + SOURCE_MAP_DATA_MARKER.length, mapLineEnd).trim();
 
-  /** @type {{ sources?: string[]; sourceRoot?: string }} */
+  /** @type {{ version?: number; sources?: string[]; sourceRoot?: string; mappings?: string; names?: string[]; sourcesContent?: string[] }} */
   let map;
   try {
     map = JSON.parse(Buffer.from(b64, "base64").toString("utf8"));
   } catch {
+    console.warn(`invalid inline source map in ${filePath}`);
     return;
   }
 
   const outDir = dirname(filePath);
-  map.sources = (map.sources ?? []).map((source) => {
-    if (typeof source !== "string" || source.length === 0) return source;
-    if (isAbsolute(source)) return normalize(source);
-    return normalize(join(outDir, source));
-  });
+  map.sources = (map.sources ?? []).map((source) => toSourceMapFileUrl(source, outDir));
   delete map.sourceRoot;
 
-  const nextB64 = Buffer.from(JSON.stringify(map)).toString("base64");
+  /** @type {{ version: number; sections: { offset: { line: number; column: number }; map: typeof map }[] }} */
+  const indexed = {
+    version: 3,
+    sections: [{ offset: { line: SANDKIT_LOADER_LINE_OFFSET, column: 0 }, map }],
+  };
+
+  const nextB64 = Buffer.from(JSON.stringify(indexed)).toString("base64");
   writeFileSync(
     filePath,
-    `${code.slice(0, mapIdx)}${SOURCE_MAP_DATA_MARKER}${nextB64}\n//# sourceURL=${pathToFileURL(filePath).href}\n`,
+    `${code.slice(0, mapIdx)}${SOURCE_MAP_DATA_MARKER}${nextB64}\n//# sourceURL=${sourceURL}\n`,
   );
 }
 
@@ -247,7 +276,8 @@ function rewriteMainJsDebugMaps(filePath) {
 function maybeRewriteDebugMaps(mod) {
   const outMain = join(mod.outDir, "main.js");
   if (!sourcemap || !existsSync(outMain)) return;
-  rewriteMainJsDebugMaps(outMain);
+  const modId = typeof mod.manifest.id === "string" && mod.manifest.id.length > 0 ? mod.manifest.id : "mod";
+  rewriteMainJsDebugMaps(outMain, modId);
 }
 
 /**

@@ -10,33 +10,38 @@
       "runtimeArgs": ["${workspaceFolder}/scripts/sandustry/sandustry-vscode-launch.js"],
       "outputCapture": "std",
       "timeout": 120000,
-      "autoAttachChildProcesses": true
+      "autoAttachChildProcesses": false
     },
     {
       "name": "Sandustry Renderer",
       "type": "chrome",
       "request": "attach",
+      "address": "127.0.0.1",
       "port": 9222,
       "webRoot": "${workspaceFolder}",
       "sourceMaps": true,
+      "enableContentValidation": false,
+      "pauseForSourceMap": true,
       "resolveSourceMapLocations": [
+        "sandkit-workshop://**",
         "${workspaceFolder}/**",
         "${workspaceFolder}/dist/**",
         "${userHome}/.config/sandustry/mods/**",
         "${env:APPDATA}/sandustry/mods/**",
         "!**/node_modules/**"
       ],
-      "sourceMapPathOverrides": {
-        "/~/*": "${userHome}/*",
-        "webpack:///./*": "${workspaceFolder}/*",
-        "webpack:///./~/*": "${userHome}/*"
-      },
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js",
+        "${userHome}/.config/sandustry/mods/**/*.js",
+        "${env:APPDATA}/sandustry/mods/**/*.js"
+      ],
       "timeout": 120000
     },
     {
       "name": "Sandustry: Attach (npm run sandustry:vscode)",
       "type": "node",
       "request": "attach",
+      "address": "127.0.0.1",
       "port": 9230,
       "restart": true,
       "timeout": 120000
@@ -45,21 +50,25 @@
       "name": "Sandustry Renderer: Attach (npm run sandustry:vscode)",
       "type": "chrome",
       "request": "attach",
+      "address": "127.0.0.1",
       "port": 9222,
       "webRoot": "${workspaceFolder}",
       "sourceMaps": true,
+      "enableContentValidation": false,
+      "pauseForSourceMap": true,
       "resolveSourceMapLocations": [
+        "sandkit-workshop://**",
         "${workspaceFolder}/**",
         "${workspaceFolder}/dist/**",
         "${userHome}/.config/sandustry/mods/**",
         "${env:APPDATA}/sandustry/mods/**",
         "!**/node_modules/**"
       ],
-      "sourceMapPathOverrides": {
-        "/~/*": "${userHome}/*",
-        "webpack:///./*": "${workspaceFolder}/*",
-        "webpack:///./~/*": "${userHome}/*"
-      },
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js",
+        "${userHome}/.config/sandustry/mods/**/*.js",
+        "${env:APPDATA}/sandustry/mods/**/*.js"
+      ],
       "timeout": 120000
     }
   ],

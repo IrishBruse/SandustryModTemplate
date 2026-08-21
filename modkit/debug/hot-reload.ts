@@ -190,9 +190,21 @@ function disposeRegistered(host: Host): { ran: number; failed: number } {
   return { ran, failed };
 }
 
-function runSource(source: string): void {
-  const run = new Function("sandkit", source) as (sk: typeof sandkit) => void;
-  run(sandkit);
+/**
+ * Match sandkit's loader wrapper so inline source maps (offset by 5 lines at
+ * build time) stay aligned after a hot reload. See `SANDKIT_LOADER_LINE_OFFSET`
+ * in `scripts/build/esbuild.config.mjs`.
+ */
+function runSource(source: string, modId: string): void {
+  const body = `"use strict";
+const sandkit = __sandkit;
+return (async () => {
+${source}
+})();
+//# sourceURL=sandkit-workshop://${modId}/main.js
+`;
+  const run = new Function("__sandkit", body) as (sk: typeof sandkit) => unknown;
+  void run(sandkit);
 }
 
 function workerEntryPath(modinfo: string | undefined): string | null {
@@ -231,7 +243,7 @@ function reloadRenderer(host: Host, source: string): void {
   );
 
   try {
-    runSource(source);
+    runSource(source, host.modId);
     toast(host.api, `${modDisplayName(host)} reloaded`);
     console.log(`[${host.modId}] hot reloaded`);
   } catch (error) {
