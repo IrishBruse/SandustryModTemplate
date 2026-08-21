@@ -11,6 +11,7 @@ import {
   DEFAULT_RENDERER_DEBUG_PORT,
   sandustryBuildMod,
   sandustryDebugArgs,
+  sandustryDebugEnv,
   sandustryLeftMonitor,
   sandustryMaximizeOnLeftMonitor,
   sandustryRequireBinary,
@@ -36,13 +37,17 @@ if (process.env.SANDUSTRY_DEBUG_FOREGROUND === "1") {
   const result = spawnSync(SANDUSTRY, args, {
     stdio: "inherit",
     cwd: SANDUSTRY_DIR,
-    env: process.env,
+    env: { ...process.env, ...sandustryDebugEnv() },
   });
   process.exit(result.status ?? 0);
 }
 
 console.log(`Sandustry debug — main ${mainPort}, renderer ${rendererPort}`);
 
-const child = spawnSandustry(args, { detached: true, stdio: "inherit" });
+const child = spawnSandustry(args, {
+  detached: true,
+  stdio: "inherit",
+  env: sandustryDebugEnv(),
+});
 sandustryMaximizeOnLeftMonitor(mon.x, mon.y);
 console.log(`Launched Sandustry with debug ports (pid ${child.pid ?? "?"}).`);

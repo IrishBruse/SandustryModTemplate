@@ -13,6 +13,8 @@ const BOOT_SESSION_KEY = "sandkit-debug-main-menu-booted";
  * Electron DevTools on top of that drops the IDE debugger session.
  */
 const REMOTE_DEBUG_PORT = 9222;
+/** Set by F5 / sandustry:vscode (`sandustryDebugEnv`). Avoids HTTP to the CDP port. */
+const IDE_DEBUG_ENV = "SANDUSTRY_IDE_DEBUG";
 
 let booted = readBootedFromSession();
 let triggerRegistered = false;
@@ -38,24 +40,25 @@ function markBooted(): void {
   stopBootPolling();
 }
 
+function readIdeDebugFlag(): boolean {
+  try {
+    const proc = (
+      globalThis as { process?: { env?: Record<string, string | undefined>; argv?: string[] } }
+    ).process;
+    if (proc?.env?.[IDE_DEBUG_ENV] === "1") return true;
+    return Boolean(proc?.argv?.some((arg) => arg.startsWith("--remote-debugging-port=")));
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * True when the IDE launched with CDP. Do not `fetch` `:9222` from this page —
+ * that HTTP call deadlocks Chromium once VS Code is attached.
+ */
 function isRemoteDebuggingActive(): Promise<boolean> {
   if (remoteDebuggingProbe) return remoteDebuggingProbe;
-
-  remoteDebuggingProbe = (async () => {
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 300);
-    try {
-      const res = await fetch(`http://127.0.0.1:${REMOTE_DEBUG_PORT}/json/version`, {
-        signal: ctrl.signal,
-      });
-      return res.ok;
-    } catch {
-      return false;
-    } finally {
-      clearTimeout(timer);
-    }
-  })();
-
+  remoteDebuggingProbe = Promise.resolve(readIdeDebugFlag());
   return remoteDebuggingProbe;
 }
 

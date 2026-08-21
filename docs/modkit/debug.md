@@ -30,7 +30,7 @@ Mod-only extra debug code lives in each mod’s `debug/` folder (for example [`s
 
 ### F3 debug toggle
 
-When the **Debug** setting is on, the mod injects a **Debug** management row under Upgrades and binds **F3**. Both open the engine Debug window (Spawn / Overlays / Lighting / Game / Audio / Stats).
+When the **Debug** setting is on, the first loaded debug mod injects one **Debug** management row under Upgrades and binds **F3**. Both open the engine Debug window (Spawn / Overlays / Lighting / Game / Audio / Stats). Extra mods do not add more Debug rows.
 
 The same **Debug** setting turns engine `debug.active` on or off (live config + boot localStorage). The engine's plain Debug / Stats buttons under the management column are hidden while Debug is on.
 
@@ -53,7 +53,7 @@ After the mod has loaded, you can paste a runtime API dump script into DevTools.
 
 ## DevTools
 
-- On first load, `openDevToolsOnStartup` calls `window.electron.openDevTools()` immediately and again at 250 ms, 750 ms, 1500 ms, and 3000 ms — **unless** CDP remote debugging is already listening on `127.0.0.1:9222` (F5 / `sandustry:vscode`). Opening Electron DevTools on top of that attach drops the IDE debugger.
+- On first load, `openDevToolsOnStartup` calls `window.electron.openDevTools()` immediately and again at 250 ms, 750 ms, 1500 ms, and 3000 ms — **unless** F5 / `sandustry:vscode` set `SANDUSTRY_IDE_DEBUG` (CDP on `:9222`). Opening Electron DevTools on top of that attach drops the IDE debugger. The renderer does not fetch `:9222` — that HTTP call can freeze the game while the IDE is attached.
 - **F12** still opens Electron DevTools (force). That can disconnect an IDE CDP session; prefer the IDE debugger panel when you launched with F5.
 - The listener uses capture phase so the game does not swallow the key. Preload patches cannot target `preload.js`, so this runs in the renderer.
 

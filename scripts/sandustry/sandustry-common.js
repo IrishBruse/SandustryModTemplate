@@ -14,8 +14,14 @@ export const SANDUSTRY = resolveSandustryBinary();
 export const SANDUSTRY_DIR = sandustryInstallDir(SANDUSTRY);
 const SANDUSTRY_EXE = sandustryBinaryName(SANDUSTRY);
 
+export const IDE_DEBUG_ENV = "SANDUSTRY_IDE_DEBUG";
 export const DEFAULT_MAIN_DEBUG_PORT = "9230";
 export const DEFAULT_RENDERER_DEBUG_PORT = "9222";
+
+/** Env for F5 / sandustry:vscode so the renderer can skip CDP HTTP and Electron DevTools. */
+export function sandustryDebugEnv() {
+  return { [IDE_DEBUG_ENV]: "1" };
+}
 
 /** Sync wait that works on cmd/PowerShell (no Unix `sleep`). */
 function sleepSync(ms) {
@@ -273,17 +279,17 @@ export function sandustryMaximizeOnLeftMonitor(monX, monY) {
   })();
 }
 
-/** @param {string[]} args @param {{ cwd?: string; detached?: boolean; stdio?: "inherit" | "ignore" | "pipe" }} [options] */
+/** @param {string[]} args @param {{ cwd?: string; detached?: boolean; stdio?: "inherit" | "ignore" | "pipe"; env?: NodeJS.ProcessEnv }} [options] */
 export function spawnSandustry(
   args,
-  { cwd = SANDUSTRY_DIR, detached = false, stdio = "inherit" } = {},
+  { cwd = SANDUSTRY_DIR, detached = false, stdio = "inherit", env } = {},
 ) {
   // No shell: keeps Program Files spaces safe on Windows.
   const child = spawn(SANDUSTRY, args, {
     cwd,
     detached,
     stdio,
-    env: process.env,
+    env: env ? { ...process.env, ...env } : process.env,
   });
 
   if (detached) child.unref();
@@ -299,6 +305,8 @@ export function sandustryLaunchArgs(mon, extra = []) {
 /** @param {string} mainPort @param {string} rendererPort @param {{ x: number; y: number }} mon */
 export function sandustryDebugArgs(mainPort, rendererPort, mon) {
   return sandustryLaunchArgs(mon, [
+    // Chrome 111+ / Electron 33 rejects the VS Code CDP websocket without this.
+    `--remote-allow-origins=*`,
     `--inspect=${mainPort}`,
     `--remote-debugging-port=${rendererPort}`,
   ]);

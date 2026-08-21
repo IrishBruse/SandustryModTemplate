@@ -7,6 +7,7 @@ import {
   DEFAULT_MAIN_DEBUG_PORT,
   DEFAULT_RENDERER_DEBUG_PORT,
   sandustryDebugArgs,
+  sandustryDebugEnv,
   sandustryLeftMonitor,
   sandustryMaximizeOnLeftMonitor,
   sandustryRequireBinary,
@@ -24,7 +25,11 @@ const mon = sandustryLeftMonitor();
 sandustryMaximizeOnLeftMonitor(mon.x, mon.y);
 
 const args = [...sandustryDebugArgs(mainPort, rendererPort, mon), ...extraArgs];
-const child = spawnSandustry(args, { cwd: SANDUSTRY_DIR, stdio: "inherit" });
+const child = spawnSandustry(args, {
+  cwd: SANDUSTRY_DIR,
+  stdio: "inherit",
+  env: sandustryDebugEnv(),
+});
 
 child.on("exit", (code, signal) => {
   if (signal) process.kill(process.pid, signal);
