@@ -74,7 +74,7 @@ When the Debug setting is on, the helper waits until a **Continue** control is v
 
 ## Hot reload
 
-Hot reload runs only with **`npm run dev`**. That watch build starts an SSE server on `http://127.0.0.1:19147/hot-reload` and embeds the URL in the debug bundle. With the Debug setting on, the mod opens `EventSource` to that URL. Each successful rebuild pushes a notify event; the client then re-reads `main.js`, runs `onDispose` callbacks, and evaluates the new source with `new Function("sandkit", source)`.
+Hot reload runs only with **`npm run dev`**. That watch build starts an SSE server on `http://127.0.0.1:19147/hot-reload` and embeds the URL in the debug bundle. With the Debug setting on, the mod opens `EventSource` to that URL. Each successful rebuild pushes a notify event; the client then re-reads `main.js`, runs `onDispose` callbacks, and evaluates the new source with `new Function("sandkit", source)`. In the watch terminal, **Ctrl+R** forces the same path even when `main.js` has not changed.
 
 One-shot builds (`npm run build`, `npm run sandustry`, `--game`) leave the hot-reload URL empty **unless** the watch SSE server is already up. **F5** does not build — run `npm run dev` first so the watch owns `main.js`.
 

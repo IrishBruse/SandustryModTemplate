@@ -47,6 +47,8 @@ type GlobalHotReload = {
 type NotifyPayload = {
   v?: number;
   changed?: string[];
+  /** Re-run main.js even when the file bytes match the last load (Ctrl+R in `npm run dev`). */
+  force?: boolean;
 };
 
 function globals(): typeof globalThis & GlobalHotReload {
@@ -253,11 +255,11 @@ async function refreshTrackedFiles(host: Host): Promise<void> {
   }
 }
 
-async function handleNotify(host: Host, _payload: NotifyPayload): Promise<void> {
+async function handleNotify(host: Host, payload: NotifyPayload): Promise<void> {
   if (host.reloading) return;
 
   const mainSource = await readAsset(host.api, host.entry);
-  if (mainSource != null && mainSource !== host.sources[host.entry]) {
+  if (mainSource != null && (payload.force === true || mainSource !== host.sources[host.entry])) {
     reloadRenderer(host, mainSource);
   }
 

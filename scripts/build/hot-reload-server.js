@@ -50,7 +50,7 @@ let debounceTimer = null;
 let pending = null;
 
 /**
- * @param {{ changed?: string[] }} payload
+ * @param {{ changed?: string[]; force?: boolean }} payload
  */
 export function notifyHotReload(payload) {
   if (!server) return;
@@ -73,15 +73,40 @@ export function notifyHotReload(payload) {
 }
 
 /**
- * @param {{ changed?: string[] } | null} a
- * @param {{ changed?: string[] }} b
+ * @param {{ changed?: string[]; force?: boolean } | null} a
+ * @param {{ changed?: string[]; force?: boolean }} b
  */
 function mergePayload(a, b) {
-  if (!a) return { changed: b.changed ? [...b.changed] : undefined };
+  if (!a) {
+    return {
+      changed: b.changed ? [...b.changed] : undefined,
+      force: b.force === true ? true : undefined,
+    };
+  }
   const changed = new Set([...(a.changed ?? []), ...(b.changed ?? [])]);
   return {
     changed: changed.size > 0 ? [...changed] : undefined,
+    force: a.force === true || b.force === true ? true : undefined,
   };
+}
+
+/** Ctrl+R in the `npm run dev` TTY forces a client reload even if main.js is unchanged. */
+function installForceReloadKey() {
+  if (!process.stdin.isTTY || process.stdin.isRaw) return;
+
+  process.stdin.setRawMode(true);
+  process.stdin.resume();
+  process.stdin.setEncoding("utf8");
+  process.stdin.on("data", (key) => {
+    if (key === "\u0003") {
+      process.exit(0);
+      return;
+    }
+    if (key !== "\u0012") return;
+    notifyHotReload({ changed: ["main.js"], force: true });
+    console.log("forced hot reload (Ctrl+R)");
+  });
+  console.log("press Ctrl+R to force a hot reload");
 }
 
 /** Start the SSE server once. No-op if already listening. */
@@ -109,7 +134,8 @@ export function startHotReloadServer() {
         try {
           const parsed = JSON.parse(raw);
           if (parsed && typeof parsed === "object") {
-            if (typeof parsed.modId === "string" && parsed.modId.trim()) modId = parsed.modId.trim();
+            if (typeof parsed.modId === "string" && parsed.modId.trim())
+              modId = parsed.modId.trim();
             if (typeof parsed.line === "string") line = parsed.line;
           }
         } catch {
@@ -146,6 +172,7 @@ export function startHotReloadServer() {
 
   server.listen(HOT_RELOAD_PORT, "127.0.0.1", () => {
     console.log(`hot reload notify: ${hotReloadUrl()}`);
+    installForceReloadKey();
   });
 
   server.on("error", (error) => {
