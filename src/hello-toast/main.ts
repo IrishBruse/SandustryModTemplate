@@ -1,0 +1,17 @@
+import { installDebug, isHotReloadEval } from "./debug";
+import { sandkit } from "@modkit/sandkit";
+import { isEnabled, safe } from "@modkit/utils";
+import { installGlobals, MOD_ID } from "./globals";
+
+const api = sandkit.api;
+const reloaded = isHotReloadEval(MOD_ID);
+installGlobals(api);
+installDebug(api, MOD_ID);
+
+if (isEnabled(api)) {
+  safe(() => {
+    if (!reloaded) api.ui.toast("Hello Toast loaded", {});
+  });
+}
+
+console.log(`[${MOD_ID}] ${reloaded ? "reloaded" : "loaded"} — use api in DevTools`);

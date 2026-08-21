@@ -2,13 +2,13 @@ import { defineModInfo, definePatches } from "@modkit/modinfo";
 
 export const modinfo = defineModInfo({
   manifestVersion: 1,
-  id: "author.example-mod",
-  name: "Example Mod",
+  id: "author.overlay-hotkey",
+  name: "Overlay Hotkey",
   version: "0.0.1",
   apiVersion: 1,
   entry: "main.js",
   author: "Your Name",
-  description: "A Sandustry mod built from the TypeScript template.",
+  description: "React overlay toggled with Alt+E, plus Tailwind inject.",
   dependencies: [],
   loadOrder: 0,
   configSchema: {

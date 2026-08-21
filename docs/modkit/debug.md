@@ -13,7 +13,7 @@ The in-game **Debug** setting (`api.settings.get("debug")`) turns some helpers o
 
 `__MOD_DEBUG__` is `true` in dev builds and `false` in release.
 
-Mod-only extra debug code lives in [`src/example/debug/`](../../src/example/debug/). That folder re-exports `onDispose` and `isHotReloadEval` so release stubs work. Import those from `./debug`, not from `modkit/debug`.
+Mod-only extra debug code lives in each mod’s `debug/` folder (for example [`src/hello-toast/debug/`](../../src/hello-toast/debug/)). That folder re-exports `onDispose` and `isHotReloadEval` so release stubs work. Import those from `./debug`, not from `modkit/debug`.
 
 ## Features
 
@@ -130,14 +130,14 @@ The build merges [`modkitDebugPatches`](../../modkit/patches.ts) into the first 
 ## Wiring
 
 ```ts
-// src/example/debug/index.ts — debug builds
+// src/hello-toast/debug/index.ts — debug builds
 import { installDebug as installModkitDebug } from "@modkit/debug";
 export { isHotReloadEval, onDispose } from "@modkit/debug";
 export function installDebug(api: SandkitApi, modId: string): void {
   installModkitDebug(api, modId);
 }
 
-// src/example/main.ts
+// src/hello-toast/main.ts
 import { installDebug, isHotReloadEval, onDispose } from "./debug";
 ```
 

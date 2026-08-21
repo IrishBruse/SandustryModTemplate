@@ -29,15 +29,24 @@ cd <my-folder-name-here>
 npm install
 ```
 
-### Configure the mod
+### Configure a mod
 
-Set `id`, `name`, `author`, and `description` in [`src/example/mod.ts`](src/example/mod.ts). The mods folder uses `name`. Add another folder under `src/` with its own `mod.ts` to ship a second mod. Mods cannot import from each other.
+Copy [`src/hello-toast/`](src/hello-toast/) to `src/<your-mod>/` (or edit one of the demos). Set `id`, `name`, `author`, and `description` in that folder’s `mod.ts`. The mods folder uses `name`. Each `src/<name>/` with a `mod.ts` is a separate mod. Mods cannot import from each other.
+
+### Examples
+
+| Folder | Shows |
+| --- | --- |
+| [`src/hello-toast/`](src/hello-toast/) | Toast on load |
+| [`src/overlay-hotkey/`](src/overlay-hotkey/) | React overlay + Tailwind; **Alt+E** |
+| [`src/retro-noise/`](src/retro-noise/) | Retro Console Noise Test |
+| [`src/management-button/`](src/management-button/) | Management-column row under Upgrades |
 
 ### Run
 
 Run `npm run dev`, then **F5** in VS Code (or `npm run sandustry`). F5 only stops and launches the game — the watch owns the bundle. See [builds](https://ethanconneely.com/SandustryModTemplate/#/builds).
 
-In game, **Alt+E** opens the example overlay. More: [docs site](https://ethanconneely.com/SandustryModTemplate/) · [modkit](https://ethanconneely.com/SandustryModTemplate/#/modkit/) · [`AGENTS.md`](AGENTS.md)
+In game, **Alt+E** opens the overlay from `overlay-hotkey`. More: [docs site](https://ethanconneely.com/SandustryModTemplate/) · [modkit](https://ethanconneely.com/SandustryModTemplate/#/modkit/) · [`AGENTS.md`](AGENTS.md)
 
 ## Commands
 

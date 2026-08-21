@@ -19,7 +19,7 @@ Logs: Linux `~/.config/sandustry/logs`; Windows `%APPDATA%/sandustry/logs`.
 
 ## `src/`
 
-Each `src/<name>/` folder with a `mod.ts` is a separate game mod. The template example is [`src/example/`](../src/example/). A mod may import `@modkit/*`, `types/*`, and files in its own folder. It must not import another `src/<name>/` tree. Shared code stays in `modkit/`.
+Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized demos: [`hello-toast`](../src/hello-toast/), [`overlay-hotkey`](../src/overlay-hotkey/), [`retro-noise`](../src/retro-noise/), [`management-button`](../src/management-button/). A mod may import `@modkit/*`, `types/*`, and files in its own folder. It must not import another `src/<name>/` tree. Shared code stays in `modkit/`.
 
 | Path                           | Role                                                                                |
 | ------------------------------ | ----------------------------------------------------------------------------------- |
