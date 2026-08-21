@@ -1,7 +1,7 @@
 import * as esbuild from "esbuild";
-import { cpSync, existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { dirname, isAbsolute, join, normalize } from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { buildPatches, bundleAndImport } from "./build-patches.js";
 import {
   bundledContentFiles,
@@ -193,6 +193,56 @@ function cssTextPlugin(getCss) {
   };
 }
 
+const SOURCE_MAP_DATA_MARKER = "//# sourceMappingURL=data:application/json;base64,";
+const SOURCE_URL_RE = /\n\/\/# sourceURL=.*$/;
+
+/**
+ * Make inline maps work for VS Code / CDP on `new Function` eval:
+ * - absolute `sources` (maps resolve even when the script URL is a VM id)
+ * - `sourceURL` pointing at the real `main.js` on disk
+ */
+function rewriteMainJsDebugMaps(filePath) {
+  let code = readFileSync(filePath, "utf8");
+  code = code.replace(SOURCE_URL_RE, "");
+
+  const mapIdx = code.lastIndexOf(SOURCE_MAP_DATA_MARKER);
+  if (mapIdx < 0) {
+    writeFileSync(filePath, `${code}\n//# sourceURL=${pathToFileURL(filePath).href}\n`);
+    return;
+  }
+
+  const lineEnd = code.indexOf("\n", mapIdx);
+  const mapLineEnd = lineEnd === -1 ? code.length : lineEnd;
+  const b64 = code.slice(mapIdx + SOURCE_MAP_DATA_MARKER.length, mapLineEnd).trim();
+
+  /** @type {{ sources?: string[]; sourceRoot?: string }} */
+  let map;
+  try {
+    map = JSON.parse(Buffer.from(b64, "base64").toString("utf8"));
+  } catch {
+    return;
+  }
+
+  const outDir = dirname(filePath);
+  map.sources = (map.sources ?? []).map((source) => {
+    if (typeof source !== "string" || source.length === 0) return source;
+    if (isAbsolute(source)) return normalize(source);
+    return normalize(join(outDir, source));
+  });
+  delete map.sourceRoot;
+
+  const nextB64 = Buffer.from(JSON.stringify(map)).toString("base64");
+  writeFileSync(
+    filePath,
+    `${code.slice(0, mapIdx)}${SOURCE_MAP_DATA_MARKER}${nextB64}\n//# sourceURL=${pathToFileURL(filePath).href}\n`,
+  );
+}
+
+function maybeRewriteDebugMaps() {
+  if (!sourcemap || !existsSync(OUT_MAIN)) return;
+  rewriteMainJsDebugMaps(OUT_MAIN);
+}
+
 /** @type {import('esbuild').BuildOptions} */
 const options = {
   entryPoints: [join(ROOT, "src/main.ts")],
@@ -259,6 +309,7 @@ if (watch) {
               await mainCtx.rebuild();
               return;
             }
+            maybeRewriteDebugMaps();
             await syncModFiles();
             notifyHotReload({ changed: ["main.js"] });
             logBuildResult(result);
@@ -275,5 +326,6 @@ if (watch) {
     ...options,
     plugins: [...basePlugins, cssTextPlugin(() => tailwindCss)],
   });
+  maybeRewriteDebugMaps();
   logBuildResult(result);
 }

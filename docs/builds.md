@@ -63,3 +63,5 @@ npm run ui:previews      # compile preview CSS, then screenshot preview.html
 ```
 
 **F5** (VS Code `Sandustry` compound) stops any running game and launches with debug ports. It does not rebuild the mod — keep `npm run dev` running for the bundle, hot reload, and file logs.
+
+Renderer attach loads source maps from `~/.config/sandustry/mods/` (and `dist/`). Debug builds rewrite those maps to absolute paths and add `sourceURL` so breakpoints in `src/` bind through `new Function` eval.

@@ -19,9 +19,16 @@
       "port": 9222,
       "webRoot": "${workspaceFolder}",
       "sourceMaps": true,
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "${workspaceFolder}/dist/**",
+        "${env:HOME}/.config/sandustry/mods/**",
+        "!**/node_modules/**"
+      ],
       "sourceMapPathOverrides": {
         "/~/*": "${env:HOME}/*",
-        "webpack:///./*": "${workspaceFolder}/*"
+        "webpack:///./*": "${workspaceFolder}/*",
+        "webpack:///./~/*": "${env:HOME}/*"
       },
       "timeout": 120000
     },
@@ -40,9 +47,16 @@
       "port": 9222,
       "webRoot": "${workspaceFolder}",
       "sourceMaps": true,
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "${workspaceFolder}/dist/**",
+        "${env:HOME}/.config/sandustry/mods/**",
+        "!**/node_modules/**"
+      ],
       "sourceMapPathOverrides": {
         "/~/*": "${env:HOME}/*",
-        "webpack:///./*": "${workspaceFolder}/*"
+        "webpack:///./*": "${workspaceFolder}/*",
+        "webpack:///./~/*": "${env:HOME}/*"
       },
       "timeout": 120000
     }
