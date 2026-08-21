@@ -10,7 +10,7 @@ const reloaded = isHotReloadEval(MOD_ID);
 installGlobals(api);
 installDebug(api, MOD_ID);
 
-const OVERLAY_ID = "overlay-hotkey";
+const OVERLAY_ID = "overlay-hotkey-example";
 
 /** Sandkit loads `main.js` only. Insert the compiled utilities into the document. */
 function installTailwind() {

@@ -33,7 +33,7 @@ Logs: Linux `~/.config/sandustry/logs`; Windows `%APPDATA%/sandustry/logs`.
 
 ### `src/`
 
-Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized demos: `hello-toast`, `overlay-hotkey`, `retro-noise`, `management-button`. Mods cannot import from each other.
+Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized demos: `hello-toast-example`, `overlay-hotkey-example`, `retro-game-example`, `management-button-example`. Mods cannot import from each other.
 
 | Path                           | Role                                                                                |
 | ------------------------------ | ----------------------------------------------------------------------------------- |
@@ -143,7 +143,7 @@ In **debug** builds, esbuild injects [`modkit/console.ts`](modkit/console.ts) so
 
 ```ts
 console.log("[my-tag]", { width, collapsed });
-// DevTools + logs/author.hello-toast.log
+// DevTools + logs/author.hello-toast-example.log
 ```
 
 Release builds do not inject the shim. Restart `npm run dev` after changing `scripts/build/hot-reload-server.js` (the POST `/log` route lives there).

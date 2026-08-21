@@ -31,7 +31,7 @@ export function Overlay() {
       <FixedAnchor anchor="top-left">
         <Interactive>
           <UiBox className="bg-black bg-opacity-85 p-4 shadow-lg card-2 w-[28rem] text-white">
-            <SectionHeading size="md">Overlay Hotkey</SectionHeading>
+            <SectionHeading size="md">Overlay Hotkey Example</SectionHeading>
             <p className="text-sm opacity-80 mb-3 underline">
               Replace this overlay with your UI. Tailwind classes and modkit both work here.
             </p>

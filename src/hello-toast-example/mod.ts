@@ -2,13 +2,13 @@ import { defineModInfo, definePatches } from "@modkit/modinfo";
 
 export const modinfo = defineModInfo({
   manifestVersion: 1,
-  id: "author.management-button",
-  name: "Management Button",
+  id: "author.hello-toast-example",
+  name: "Hello Toast Example",
   version: "0.0.1",
   apiVersion: 1,
   entry: "main.js",
   author: "Your Name",
-  description: "Adds a management-column row under Upgrades.",
+  description: "Minimal mod: toast on load.",
   dependencies: [],
   loadOrder: 0,
   configSchema: {

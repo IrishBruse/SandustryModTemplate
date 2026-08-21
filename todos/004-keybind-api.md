@@ -19,4 +19,4 @@ Overlays and debug helpers each wire `window.addEventListener("keydown", …, tr
 
 ## Origin
 
-Repeated capture-phase keydown wiring in `src/overlay-hotkey/ui/Overlay.tsx`, `modkit/debug/toggle/DebugToggleOverlay.tsx`, and `modkit/debug/boot-menu.ts`.
+Repeated capture-phase keydown wiring in `src/overlay-hotkey-example/ui/Overlay.tsx`, `modkit/debug/toggle/DebugToggleOverlay.tsx`, and `modkit/debug/boot-menu.ts`.

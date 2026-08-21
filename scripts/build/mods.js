@@ -81,14 +81,14 @@ export function parseModFilter(argv) {
   if (flag >= 0) {
     const value = argv[flag + 1];
     if (!value || value.startsWith("-")) {
-      throw new Error("--mod requires a src folder name (for example --mod hello-toast)");
+      throw new Error("--mod requires a src folder name (for example --mod hello-toast-example)");
     }
     return value;
   }
   const eq = argv.find((arg) => arg.startsWith("--mod="));
   if (eq) {
     const value = eq.slice("--mod=".length).trim();
-    if (!value) throw new Error("--mod requires a src folder name (for example --mod=hello-toast)");
+    if (!value) throw new Error("--mod requires a src folder name (for example --mod=hello-toast-example)");
     return value;
   }
   return null;

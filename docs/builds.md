@@ -26,7 +26,7 @@ The game ships Tailwind **v3.4.19** inside `bundle.js`. That stylesheet is purge
 
 Sandkit loads `main.js` only. There is no CSS file in the mod manifest. The build still has to insert a `<style>` tag. The compiled sheet is **only the utilities this bundle uses**: esbuild lists the source files it packed, then Tailwind scans those files. Unused `modkit/ui` components do not add CSS.
 
-The insert lives in [src/overlay-hotkey/main.ts](../src/overlay-hotkey/main.ts) (`style#<mod-id>-tailwind`). Hot reload removes that tag before it inserts a new one.
+The insert lives in [src/overlay-hotkey-example/main.ts](../src/overlay-hotkey-example/main.ts) (`style#<mod-id>-tailwind`). Hot reload removes that tag before it inserts a new one.
 
 Do not enable Tailwind preflight. The game already resets `*, ::before, ::after`. A second preflight can change the HUD.
 
@@ -54,9 +54,9 @@ In game:
 
 ```bash
 npm run dev              # watch all src/ mods, debug on (required before F5)
-npm run dev -- --mod overlay-hotkey
+npm run dev -- --mod overlay-hotkey-example
 npm run build            # release all mods
-npm run build -- --mod overlay-hotkey
+npm run build -- --mod overlay-hotkey-example
 npm run typecheck
 npm run generate-types   # after a new runtime dump
 npm run sandustry        # debug build and launch

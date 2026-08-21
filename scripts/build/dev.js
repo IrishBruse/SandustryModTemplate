@@ -3,7 +3,7 @@
  * Watch src/<name>/ and build each mod into the game mods folder
  * (Linux: ~/.config/sandustry/mods/<modinfo.name>;
  *  Windows: %APPDATA%/sandustry/mods/<modinfo.name>).
- * Usage: npm run dev [-- --mod hello-toast]
+ * Usage: npm run dev [-- --mod hello-toast-example]
  */
 import { spawn } from "node:child_process";
 import { dirname, join } from "node:path";

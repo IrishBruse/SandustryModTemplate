@@ -10,7 +10,7 @@ installDebug(api, MOD_ID);
 
 if (isEnabled(api)) {
   safe(() => {
-    if (!reloaded) api.ui.toast("Hello Toast loaded", {});
+    if (!reloaded) api.ui.toast("Hello Toast Example loaded", {});
   });
 }
 

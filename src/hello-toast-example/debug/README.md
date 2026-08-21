@@ -1,6 +1,6 @@
 # Mod debug
 
-Import debug from `./debug` in `src/hello-toast/main.ts` (not `@modkit/debug`) so release builds can stub it via `modkit/debug/empty.ts`.
+Import debug from `./debug` in `src/hello-toast-example/main.ts` (not `@modkit/debug`) so release builds can stub it via `modkit/debug/empty.ts`.
 
 | Path       | Role                                                                |
 | ---------- | ------------------------------------------------------------------- |
@@ -13,7 +13,7 @@ Patch format and debug patches: [docs/patches.md](../../../docs/patches.md).
 ## Wiring
 
 ```ts
-// src/hello-toast/debug/index.ts — debug builds
+// src/hello-toast-example/debug/index.ts — debug builds
 import { installDebug as installModkitDebug } from "@modkit/debug";
 export { isHotReloadEval, onDispose } from "@modkit/debug";
 
@@ -21,7 +21,7 @@ export function installDebug(api: SandkitApi, modId: string): void {
   installModkitDebug(api, modId);
 }
 
-// src/hello-toast/main.ts
+// src/hello-toast-example/main.ts
 import { installDebug, isHotReloadEval, onDispose } from "./debug";
 ```
 

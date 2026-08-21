@@ -2,13 +2,13 @@ import { defineModInfo, definePatches } from "@modkit/modinfo";
 
 export const modinfo = defineModInfo({
   manifestVersion: 1,
-  id: "author.retro-noise",
-  name: "Retro Noise",
+  id: "author.management-button-example",
+  name: "Management Button Example",
   version: "0.0.1",
   apiVersion: 1,
   entry: "main.js",
   author: "Your Name",
-  description: "Registers a Noise Test game on the Retro Console.",
+  description: "Adds a management-column row under Upgrades.",
   dependencies: [],
   loadOrder: 0,
   configSchema: {
