@@ -6,7 +6,7 @@ Give mods a small, typed way to declare keybinds (in `mod.ts` or a colocated hel
 
 ## Why
 
-Overlays and debug helpers each wire `window.addEventListener("keydown", …, true)` by hand (`ExampleOverlay`, F3 debug toggle, F12 DevTools). The badge label can drift from the real binding. Sandkit already has `api.input.registerBinding`, but there is no modkit helper that ties declaration, display label, handler, and `onDispose` together.
+Overlays and debug helpers each wire `window.addEventListener("keydown", …, true)` by hand (`Overlay`, F3 debug toggle, F12 DevTools). The badge label can drift from the real binding. Sandkit already has `api.input.registerBinding`, but there is no modkit helper that ties declaration, display label, handler, and `onDispose` together.
 
 ## Acceptance
 

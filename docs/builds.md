@@ -47,7 +47,7 @@ Static check against an extracted `references/source/dist/js/bundle.js`:
 In game:
 
 1. Run `npm run sandustry`.
-2. Press **Alt+E**. The example panel must be 28rem (448px) wide. The help sentence must be underlined.
+2. Press **Alt+E**. The overlay panel must be 28rem (448px) wide. The help sentence must be underlined.
 3. In DevTools, `document.getElementById("<mod-id>-tailwind")` must exist.
 
 ## Commands
