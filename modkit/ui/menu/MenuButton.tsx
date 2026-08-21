@@ -20,6 +20,7 @@ type MenuButtonProps = {
   onClick?: () => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
+  onPointerLeave?: () => void;
 };
 
 /** Vanilla rest: `opacity 1; width auto; margin-left 12px` vs `opacity 0; width 0px`. */
@@ -53,6 +54,7 @@ export function MenuButton({
   onClick,
   onMouseEnter,
   onMouseLeave,
+  onPointerLeave,
 }: MenuButtonProps) {
   const letter = highlightLetter ?? label.charAt(0);
   const rest = label.slice(letter.length);
@@ -66,6 +68,7 @@ export function MenuButton({
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      onPointerLeave={onPointerLeave}
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
     >
@@ -89,7 +92,7 @@ export function MenuButton({
         </div>
         <div style={liveSync ? undefined : detailStyle(collapsed, false)}>
           <span className="inline-block whitespace-nowrap">
-            <HotkeyBadge className="!mx-0">{hotkey}</HotkeyBadge>
+            <HotkeyBadge>{hotkey}</HotkeyBadge>
           </span>
         </div>
       </div>

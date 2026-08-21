@@ -12,10 +12,33 @@ const ROW_ATTR = "data-modkit-management-row";
 const SPACER_HEIGHT_PX = 42;
 const COLLAPSED_WIDTH_PX = 52;
 const DEFAULT_EXPANDED_WIDTH_PX = 208;
+const STOP_KEY = "__modkitManagementLayoutStops";
+
+type StopBag = Set<() => void>;
+
+function stopBag(): StopBag {
+  const g = globalThis as typeof globalThis & { [STOP_KEY]?: StopBag };
+  if (!g[STOP_KEY]) g[STOP_KEY] = new Set();
+  return g[STOP_KEY];
+}
+
+/** Kill layout loops from a previous hot-reload eval before this bundle starts. */
+for (const stop of stopBag()) stop();
+stopBag().clear();
+
+function trackStop(stop: () => void): () => void {
+  const bag = stopBag();
+  bag.add(stop);
+  return () => {
+    stop();
+    bag.delete(stop);
+  };
+}
 
 const rowOrder: string[] = [];
 const spacers = new Map<string, HTMLDivElement>();
 const anchorListeners = new Map<string, (anchor: ManagementAnchor | null) => void>();
+const columnListeners = new Set<() => void>();
 
 export type ManagementAnchor = {
   spacer: HTMLDivElement;
@@ -57,7 +80,9 @@ function installCollapsedHook(options: { managementCollapsed?: boolean }): void 
       return value;
     },
     set(next: boolean) {
-      value = next === true;
+      const v = next === true;
+      if (v === value) return;
+      value = v;
       for (const fn of collapsedListeners) fn(value);
     },
   });
@@ -105,13 +130,32 @@ function vanillaColumnRows(): HTMLElement[] {
   return out;
 }
 
-/** Resting vanilla row (not hovered) so we copy column collapse, not hover-expand. */
+function rowStyleWidth(row: HTMLElement): number {
+  const sw = row.style.width;
+  if (sw.endsWith("px")) return Number.parseFloat(sw);
+  return row.getBoundingClientRect().width;
+}
+
+/**
+ * Resting vanilla row so we copy column collapse, not another row's hover tween.
+ * After Toolbox unhover, that row is no longer `:hover` but still 208→52 — skip it
+ * and follow a sibling already at the column width (Building / Research / Upgrades).
+ */
 function findPackRow(): HTMLElement | null {
-  for (const row of vanillaColumnRows()) {
+  const rows = vanillaColumnRows();
+  if (rows.length === 0) return null;
+  const expected = getManagementCollapsed() ? COLLAPSED_WIDTH_PX : DEFAULT_EXPANDED_WIDTH_PX;
+  let best: HTMLElement | null = null;
+  let bestDist = Infinity;
+  for (const row of rows) {
     if (row.matches(":hover")) continue;
-    return row;
+    const dist = Math.abs(rowStyleWidth(row) - expected);
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = row;
+    }
   }
-  return vanillaColumnRows()[0] ?? null;
+  return best ?? rows[0];
 }
 
 /**
@@ -136,19 +180,29 @@ function easeInOut(t: number): number {
   return ((ay * x + by) * x + cy) * x;
 }
 
-function setRowWidth(dest: HTMLElement, spacer: HTMLDivElement, wrap: HTMLElement, w: number): void {
+function setRowWidth(
+  dest: HTMLElement,
+  spacer: HTMLDivElement,
+  wrap: HTMLElement,
+  w: number,
+  _expanded: number,
+): void {
   const px = `${w}px`;
+  // Vanilla row style is only `width: Npx` (engine also uses min-width:0).
+  // Keep overflow visible on the row so label/hotkey flex boxes are not crushed.
   dest.style.transition = "none";
-  spacer.style.transition = "none";
-  wrap.style.transition = "none";
   dest.style.setProperty("width", px);
   dest.style.minWidth = "0";
-  dest.style.overflow = "hidden";
+  dest.style.overflow = "";
+  spacer.style.transition = "none";
   spacer.style.setProperty("width", px);
   spacer.style.minWidth = "0";
   spacer.style.overflow = "hidden";
   spacer.style.alignSelf = "flex-start";
+  wrap.style.transition = "none";
   wrap.style.width = px;
+  wrap.style.minWidth = "";
+  wrap.style.overflow = "";
 }
 
 function detailProgress(rowWidth: number, expanded: number): number {
@@ -170,10 +224,24 @@ function cacheNaturals(dest: HTMLElement, pack: HTMLElement, measured: MeasuredD
   const packLabel = pack.querySelector<HTMLElement>(".tracking-wider");
   const destHot = rowHotkey(dest);
   const packHot = rowHotkey(pack);
-  if (destLabel) measured.destLabel = destLabel.offsetWidth || measured.destLabel;
-  if (destHot) measured.destHot = destHot.offsetWidth || measured.destHot;
-  if (packLabel) measured.packLabel = packLabel.offsetWidth || measured.packLabel;
-  if (packHot) measured.packHot = packHot.offsetWidth || measured.packHot;
+  // Only raise naturals — never shrink them mid-tween (framer writes px widths
+  // while the row is still 208px at collapse start).
+  if (destLabel) {
+    const w = destLabel.scrollWidth || destLabel.offsetWidth;
+    if (w > measured.destLabel) measured.destLabel = w;
+  }
+  if (destHot) {
+    const w = destHot.scrollWidth || destHot.offsetWidth;
+    if (w > measured.destHot) measured.destHot = w;
+  }
+  if (packLabel) {
+    const w = packLabel.scrollWidth || packLabel.offsetWidth;
+    if (w > measured.packLabel) measured.packLabel = w;
+  }
+  if (packHot) {
+    const w = packHot.scrollWidth || packHot.offsetWidth;
+    if (w > measured.packHot) measured.packHot = w;
+  }
 }
 
 function widthProgress(src: HTMLElement, natural: number): number {
@@ -187,28 +255,58 @@ function widthProgress(src: HTMLElement, natural: number): number {
   return Math.min(1, Math.max(0, laid / natural));
 }
 
-function applyFollow(src: HTMLElement | undefined, dst: HTMLElement | undefined, srcNatural: number, dstNatural: number, withMargin: boolean): void {
+/**
+ * Mirror a vanilla label/hotkey node.
+ * Collapse: opacity 1 while width shrinks, then 0 at `0px`.
+ * Expand: opacity 0 while width grows, then 1 + `width: auto` at rest.
+ * Copy opacity from the pack node — do not derive it from width progress.
+ * Never set min-width:0 on these nodes (vanilla keeps min-width:auto so flex
+ * cannot crush the animated width).
+ */
+function applyFollow(
+  src: HTMLElement | undefined,
+  dst: HTMLElement | undefined,
+  srcNatural: number,
+  dstNatural: number,
+  withMargin: boolean,
+): void {
   if (!src || !dst) return;
-  const p = widthProgress(src, srcNatural);
-  dst.style.minWidth = "0px";
+  const sw = src.style.width;
   dst.style.overflow = "";
-  dst.style.opacity = p <= 0.001 ? "0" : "1";
-  if (p <= 0.001) {
+  dst.style.minWidth = "";
+  dst.style.opacity =
+    src.style.opacity !== "" ? src.style.opacity : getComputedStyle(src).opacity;
+
+  if (sw === "0px" || sw === "0") {
     dst.style.width = "0px";
     if (withMargin) dst.style.marginLeft = "0px";
     return;
   }
-  if (p >= 0.999) {
+
+  // Rest open only — framer uses `auto`. Explicit px (even ≈ natural) must stay px
+  // so collapse start (auto→fullPx) stays in lockstep.
+  if (sw === "auto" || sw === "") {
     dst.style.width = "auto";
     if (withMargin) dst.style.marginLeft = src.style.marginLeft || "12px";
+    return;
+  }
+
+  const p = widthProgress(src, srcNatural);
+  if (p <= 0.001) {
+    dst.style.width = "0px";
+    if (withMargin) dst.style.marginLeft = "0px";
     return;
   }
   dst.style.width = `${dstNatural * p}px`;
   if (withMargin) dst.style.marginLeft = src.style.marginLeft || `${12 * p}px`;
 }
 
-/** Match vanilla label/hotkey: clip width, keep opacity 1 until width is 0. */
-function applyDetailsFromPack(dest: HTMLElement, pack: HTMLElement, measured: MeasuredDetails): void {
+/** Match vanilla label/hotkey styles driven by the ◀/▶ column toggle. */
+function applyDetailsFromPack(
+  dest: HTMLElement,
+  pack: HTMLElement,
+  measured: MeasuredDetails,
+): void {
   const packLabel = pack.querySelector<HTMLElement>(".tracking-wider");
   const destLabel = dest.querySelector<HTMLElement>(".tracking-wider");
   const packHot = rowHotkey(pack);
@@ -217,19 +315,39 @@ function applyDetailsFromPack(dest: HTMLElement, pack: HTMLElement, measured: Me
   if (destLabel && measured.destLabel <= 0) measured.destLabel = destLabel.scrollWidth;
   if (packHot && measured.packHot <= 0) measured.packHot = packHot.scrollWidth;
   if (destHot && measured.destHot <= 0) measured.destHot = destHot.scrollWidth;
-  applyFollow(packLabel ?? undefined, destLabel ?? undefined, measured.packLabel, measured.destLabel, true);
+  applyFollow(
+    packLabel ?? undefined,
+    destLabel ?? undefined,
+    measured.packLabel,
+    measured.destLabel,
+    true,
+  );
   applyFollow(packHot, destHot, measured.packHot, measured.destHot, false);
 }
 
-/** Hover tween: same clip behaviour, progress from dest row width. */
-function applyDetails(dest: HTMLElement, p: number, measured: MeasuredDetails): void {
+/**
+ * Hover / local tween details. Same reveal rules we see on vanilla column rows:
+ * open → opacity stays 0 until width settles, then 1 + `auto`;
+ * close → opacity stays 1 while width shrinks, then 0.
+ * (Framer targets: opacity/width/marginLeft with duration 0.2.)
+ */
+function applyDetails(
+  dest: HTMLElement,
+  p: number,
+  measured: MeasuredDetails,
+  towardOpen: boolean,
+): void {
   const label = dest.querySelector<HTMLElement>(".tracking-wider");
   const hot = rowHotkey(dest);
   const apply = (el: HTMLElement | undefined, withMargin: boolean, natural: number) => {
     if (!el) return;
     el.style.overflow = "";
-    el.style.minWidth = "0px";
-    el.style.opacity = p <= 0.001 ? "0" : "1";
+    el.style.minWidth = "";
+    if (towardOpen) {
+      el.style.opacity = p >= 0.999 ? "1" : "0";
+    } else {
+      el.style.opacity = p <= 0.001 ? "0" : "1";
+    }
     if (p >= 0.999) {
       el.style.width = "auto";
       if (withMargin) el.style.marginLeft = "12px";
@@ -247,107 +365,63 @@ function applyDetails(dest: HTMLElement, p: number, measured: MeasuredDetails): 
   apply(hot, false, measured.destHot);
 }
 
-function px(n: number): number {
-  return Math.round(n * 10) / 10;
-}
-
-function rowMotion(row: HTMLElement): Record<string, unknown> {
-  const label = row.querySelector<HTMLElement>(".tracking-wider");
-  const hot = rowHotkey(row);
-  const text = (row.textContent ?? "").replace(/\s+/g, " ").trim().slice(0, 20);
-  return {
-    text,
-    sw: row.style.width,
-    w: px(row.getBoundingClientRect().width),
-    lop: label?.style.opacity ?? "",
-    cop: label ? getComputedStyle(label).opacity : "",
-    lw: label?.style.width ?? "",
-    lr: label ? px(label.getBoundingClientRect().width) : 0,
-    hop: hot?.style.opacity ?? "",
-    hw: hot?.style.width ?? "",
-    hr: hot ? px(hot.getBoundingClientRect().width) : 0,
-  };
-}
-
-function isMovingWidth(w: number): boolean {
-  return w > COLLAPSED_WIDTH_PX + 1 && w < DEFAULT_EXPANDED_WIDTH_PX - 1;
-}
-
 function rowHotkey(row: HTMLElement): HTMLElement | undefined {
   return row.firstElementChild?.children[1] as HTMLElement | undefined;
 }
 
-function rowBadge(row: HTMLElement): HTMLElement | null {
-  const hot = rowHotkey(row);
-  if (!hot) return null;
-  const ours = hot.querySelector<HTMLElement>("span.inline-flex");
-  if (ours) return ours;
-  const nodes = [hot, ...Array.from(hot.querySelectorAll<HTMLElement>("*"))];
-  for (let i = nodes.length - 1; i >= 0; i--) {
-    if (getComputedStyle(nodes[i]).boxShadow !== "none") return nodes[i];
-  }
-  return hot;
+let placeRaf = 0;
+let layoutWatchers = 0;
+let layoutObserver: MutationObserver | null = null;
+let observedRoot: Node | null = null;
+
+function connectLayoutObserver(): void {
+  const root = findVanillaColumn() ?? document.body;
+  if (observedRoot === root && layoutObserver) return;
+  layoutObserver?.disconnect();
+  observedRoot = root;
+  layoutObserver = new MutationObserver(schedulePlaceAll);
+  layoutObserver.observe(root, {
+    childList: true,
+    subtree: root === document.body,
+  });
 }
 
-function rowBar(row: HTMLElement): HTMLElement | null {
-  return row.firstElementChild as HTMLElement | null;
+function schedulePlaceAll(): void {
+  if (placeRaf) return;
+  placeRaf = requestAnimationFrame(() => {
+    placeRaf = 0;
+    placeAll();
+    if (layoutWatchers > 0) connectLayoutObserver();
+  });
 }
 
-/** Ancestors whose overflow is not visible and whether they cut the badge bottom. */
-function clipChain(badge: HTMLElement): Array<Record<string, unknown>> {
-  const br = badge.getBoundingClientRect();
-  const hits: Array<Record<string, unknown>> = [];
-  let node: HTMLElement | null = badge;
-  let depth = 0;
-  while (node && depth < 16) {
-    const s = getComputedStyle(node);
-    if (s.overflowX !== "visible" || s.overflowY !== "visible") {
-      const r = node.getBoundingClientRect();
-      hits.push({
-        d: depth,
-        id: node.getAttribute(ROW_ATTR) ?? node.getAttribute(SPACER_ATTR) ?? "",
-        cls: String(node.className).replace(/\s+/g, " ").slice(0, 72),
-        ov: `${s.overflowX}/${s.overflowY}`,
-        h: px(r.height),
-        bottom: px(r.bottom),
-        badgeBottom: px(br.bottom),
-        clipY: br.bottom > r.bottom + 0.5,
-        clipX: br.right > r.right + 0.5,
-      });
-    }
-    node = node.parentElement;
-    depth += 1;
-  }
-  return hits;
+function retainLayoutWatch(): void {
+  layoutWatchers += 1;
+  if (layoutWatchers !== 1) return;
+  connectLayoutObserver();
+  window.addEventListener("resize", schedulePlaceAll);
 }
 
-function menuCssSnapshot(
-  dest: HTMLElement,
-  pack: HTMLElement,
-  spacer: HTMLDivElement,
-  wrap: HTMLElement,
-  hovered: boolean,
-): Record<string, unknown> {
-  const destBadge = rowBadge(dest);
-  const packBadge = rowBadge(pack);
-  return {
-    hovered,
-    spacerH: spacer.style.height,
-    spacerOv: `${getComputedStyle(spacer).overflowX}/${getComputedStyle(spacer).overflowY}`,
-    wrap: boxSnap(wrap),
-    dest: boxSnap(dest),
-    destBar: boxSnap(rowBar(dest)),
-    destHot: boxSnap(rowHotkey(dest) ?? null),
-    destBadge: boxSnap(destBadge),
-    destLabel: boxSnap(dest.querySelector(".tracking-wider")),
-    pack: boxSnap(pack),
-    packBar: boxSnap(rowBar(pack)),
-    packHot: boxSnap(rowHotkey(pack) ?? null),
-    packBadge: boxSnap(packBadge),
-    packLabel: boxSnap(pack.querySelector(".tracking-wider")),
-    clip: destBadge ? clipChain(destBadge) : [],
-  };
+function releaseLayoutWatch(): void {
+  layoutWatchers -= 1;
+  if (layoutWatchers > 0) return;
+  layoutObserver?.disconnect();
+  layoutObserver = null;
+  observedRoot = null;
+  window.removeEventListener("resize", schedulePlaceAll);
+  if (placeRaf) cancelAnimationFrame(placeRaf);
+  placeRaf = 0;
 }
+
+trackStop(() => {
+  layoutWatchers = 0;
+  layoutObserver?.disconnect();
+  layoutObserver = null;
+  observedRoot = null;
+  window.removeEventListener("resize", schedulePlaceAll);
+  if (placeRaf) cancelAnimationFrame(placeRaf);
+  placeRaf = 0;
+});
 
 function placeAll() {
   const options = getStoreOptions();
@@ -380,6 +454,8 @@ function placeAll() {
     previous = spacer;
     notify({ spacer, expandedWidth });
   }
+
+  for (const fn of columnListeners) fn();
 }
 
 function registerRow(id: string, setAnchor: (anchor: ManagementAnchor | null) => void): () => void {
@@ -399,6 +475,7 @@ function registerRow(id: string, setAnchor: (anchor: ManagementAnchor | null) =>
   }
 
   anchorListeners.set(id, setAnchor);
+  retainLayoutWatch();
   placeAll();
 
   return () => {
@@ -409,6 +486,7 @@ function registerRow(id: string, setAnchor: (anchor: ManagementAnchor | null) =>
     el?.remove();
     spacers.delete(id);
     setAnchor(null);
+    releaseLayoutWatch();
     placeAll();
   };
 }
@@ -438,15 +516,7 @@ function useManagementAnchor(id: string, active: boolean): ManagementAnchor | nu
       });
     });
 
-    const observer = new MutationObserver(placeAll);
-    observer.observe(document.body, { childList: true, subtree: true });
-    window.addEventListener("resize", placeAll);
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", placeAll);
-      unregister();
-    };
+    return unregister;
   }, [id, active]);
 
   return active ? anchor : null;
@@ -469,7 +539,7 @@ export type ManagementMenuButtonProps = {
 
 /**
  * Vanilla-style management column row under Upgrades.
- * Collapse copies a vanilla row's live `width` (framer-motion) each frame.
+ * Collapse copies a vanilla row's live `width` when that row resizes.
  * Hover uses a local 0.2s ease-in-out tween.
  */
 export function ManagementMenuButton({
@@ -487,6 +557,7 @@ export function ManagementMenuButton({
   const hoveredRef = useRef(false);
   const collapsedRef = useRef(getManagementCollapsed());
   const tweenRef = useRef<{ from: number; to: number; start: number } | null>(null);
+  const tweenToRef = useRef<(to: number) => void>(() => {});
   const expandedRef = useRef(DEFAULT_EXPANDED_WIDTH_PX);
   const mounted = Boolean(active && anchor);
 
@@ -502,101 +573,195 @@ export function ManagementMenuButton({
 
     const spacer = anchor.spacer;
     let raf = 0;
+    let live = true;
+    let watchedPack: HTMLElement | null = null;
     const WIDTH_MS = 200;
-    let lastCssAt = 0;
     const measured: MeasuredDetails = { destLabel: 0, destHot: 0, packLabel: 0, packHot: 0 };
 
-    const targetWidth = () =>
-      collapsedRef.current && !hoveredRef.current ? COLLAPSED_WIDTH_PX : expandedRef.current;
+    const destRow = () => spacer.querySelector<HTMLElement>(`[${ROW_ATTR}]`);
 
-    const stopCollapsed = subscribeManagementCollapsed((collapsed) => {
-      collapsedRef.current = collapsed;
-      console.log("[menu-diff]", {
-        t: Math.round(performance.now()),
-        event: collapsed ? "collapse" : "expand",
-        col: Boolean(findVanillaColumn()),
-      });
-    });
-
-    const tick = (now: number) => {
-      const dest = spacer.querySelector<HTMLElement>(`[${ROW_ATTR}]`);
-      const pack = findPackRow();
-      if (!dest || !pack) {
-        raf = requestAnimationFrame(tick);
-        return;
+    const syncHoverFlag = () => {
+      const dest = destRow();
+      if (!dest) return;
+      const hot = dest.matches(":hover");
+      if (hoveredRef.current && !hot) {
+        hoveredRef.current = false;
+        tweenToRef.current(
+          collapsedRef.current ? COLLAPSED_WIDTH_PX : expandedRef.current,
+        );
       }
+    };
+
+    const ensureNaturals = (dest: HTMLElement) => {
+      const label = dest.querySelector<HTMLElement>(".tracking-wider");
+      const hot = rowHotkey(dest);
+      const labelInner = label?.querySelector<HTMLElement>("span.inline-block");
+      const hotInner = hot?.querySelector<HTMLElement>("span.inline-block");
+      // While collapsed, the wrappers are width:0 — measure the inner nowrap spans.
+      if (measured.destLabel <= 0) {
+        measured.destLabel =
+          labelInner?.scrollWidth || label?.scrollWidth || labelInner?.offsetWidth || 0;
+      }
+      if (measured.destHot <= 0) {
+        measured.destHot =
+          hotInner?.scrollWidth || hot?.scrollWidth || hotInner?.offsetWidth || 0;
+      }
+      if (measured.destLabel > 0 && measured.destHot > 0) return;
+      const pack = findPackRow();
+      if (pack) cacheNaturals(dest, pack, measured);
+    };
+
+    const applyFromPack = () => {
+      if (!live) return;
+      const dest = destRow();
+      const pack = findPackRow();
+      if (!dest || !pack) return;
       const packStyleW = pack.style.width.endsWith("px")
         ? Number.parseFloat(pack.style.width)
         : pack.getBoundingClientRect().width;
       if (packStyleW > COLLAPSED_WIDTH_PX + 8) {
         expandedRef.current = Math.max(DEFAULT_EXPANDED_WIDTH_PX, packStyleW);
       }
-      if (packStyleW >= DEFAULT_EXPANDED_WIDTH_PX - 2) {
-        cacheNaturals(dest, pack, measured);
-      }
-      const expanded = expandedRef.current;
-
-      if (hoveredRef.current || tweenRef.current) {
-        const to = targetWidth();
-        if (!tweenRef.current || tweenRef.current.to !== to) {
-          tweenRef.current = {
-            from: dest.getBoundingClientRect().width,
-            to,
-            start: now,
-          };
-        }
-        const tw = tweenRef.current;
-        const t = Math.min(1, (now - tw.start) / WIDTH_MS);
-        const w = tw.from + (tw.to - tw.from) * easeInOut(t);
-        setRowWidth(dest, spacer, wrap, w);
-        applyDetails(dest, detailProgress(w, expanded), measured);
-        if (t >= 1) tweenRef.current = null;
-      } else {
-        setRowWidth(dest, spacer, wrap, packStyleW);
-        applyDetailsFromPack(dest, pack, measured);
-      }
-
-      const destM = rowMotion(dest);
-      const vanilla = vanillaColumnRows().map(rowMotion);
-      const upgrades =
-        vanilla.find((row) => String(row.text).includes("pgrades")) ?? vanilla[vanilla.length - 1];
-      const destW = Number(destM.w);
-      const upgW = upgrades ? Number(upgrades.w) : 0;
-      const moving =
-        isMovingWidth(destW) || vanilla.some((row) => isMovingWidth(Number(row.w)));
-      const dW = px(destW - upgW);
-      if (moving || Math.abs(dW) > 0.3 || now - lastCssAt > 2000) {
-        lastCssAt = now;
-        console.log("[menu-diff]", {
-          t: Math.round(now),
-          hovered: hoveredRef.current,
-          collapsed: collapsedRef.current,
-          dW,
-          dest: destM,
-          vanilla,
-        });
-      }
-
-      raf = requestAnimationFrame(tick);
+      // Naturals only at rest (`width: auto`). Framer switches to px at collapse
+      // start while the row is still 208 — caching then poisons progress (~1).
+      const packLabel = pack.querySelector<HTMLElement>(".tracking-wider");
+      const packHot = rowHotkey(pack);
+      const atRest =
+        packStyleW >= DEFAULT_EXPANDED_WIDTH_PX - 2 &&
+        (packLabel?.style.width === "auto" || packLabel?.style.width === "") &&
+        (packHot?.style.width === "auto" || packHot?.style.width === "");
+      if (atRest) cacheNaturals(dest, pack, measured);
+      setRowWidth(dest, spacer, wrap, packStyleW, expandedRef.current);
+      applyDetailsFromPack(dest, pack, measured);
     };
-    raf = requestAnimationFrame(tick);
 
-    return () => {
+    const onPackLayout = () => {
+      if (!live) return;
+      syncHoverFlag();
+      if (hoveredRef.current || tweenRef.current) return;
+      applyFromPack();
+      armFollowLoop();
+    };
+
+    /** Framer updates label/hotkey every frame; keep lockstep even if observers batch. */
+    let followRaf = 0;
+    const armFollowLoop = () => {
+      if (followRaf) return;
+      const loop = () => {
+        followRaf = 0;
+        if (!live || hoveredRef.current || tweenRef.current) return;
+        applyFromPack();
+        const pack = findPackRow();
+        if (!pack) return;
+        const w = pack.style.width.endsWith("px")
+          ? Number.parseFloat(pack.style.width)
+          : pack.getBoundingClientRect().width;
+        const packLabel = pack.querySelector<HTMLElement>(".tracking-wider");
+        const lw = packLabel?.style.width ?? "";
+        const labelMoving = lw.endsWith("px") && Number.parseFloat(lw) > 0.5;
+        const rowMoving = w > COLLAPSED_WIDTH_PX + 0.5 && w < expandedRef.current - 0.5;
+        if (rowMoving || labelMoving) followRaf = requestAnimationFrame(loop);
+      };
+      followRaf = requestAnimationFrame(loop);
+    };
+
+    const packObserver = new ResizeObserver(onPackLayout);
+    // Framer writes label/hotkey `style` after the row width has already settled.
+    // ResizeObserver misses that final `width: auto` / opacity snap from the ◀/▶ toggle.
+    const packStyleObserver = new MutationObserver(onPackLayout);
+
+    const bindPack = () => {
+      if (!live) return;
+      const pack = findPackRow();
+      if (pack === watchedPack) return;
+      packObserver.disconnect();
+      packStyleObserver.disconnect();
+      watchedPack = pack;
+      if (!pack) return;
+      packObserver.observe(pack);
+      packStyleObserver.observe(pack, {
+        attributes: true,
+        subtree: true,
+        attributeFilter: ["style"],
+      });
+      if (!hoveredRef.current && !tweenRef.current) applyFromPack();
+    };
+
+    const tweenTick = (now: number) => {
+      raf = 0;
+      if (!live) return;
+      const dest = destRow();
+      const tw = tweenRef.current;
+      if (!dest || !tw) return;
+      const t = Math.min(1, (now - tw.start) / WIDTH_MS);
+      const w = tw.from + (tw.to - tw.from) * easeInOut(t);
+      const towardOpen = tw.to > tw.from;
+      setRowWidth(dest, spacer, wrap, w, expandedRef.current);
+      applyDetails(dest, detailProgress(w, expandedRef.current), measured, towardOpen);
+      if (t >= 1) {
+        tweenRef.current = null;
+        if (!hoveredRef.current) applyFromPack();
+        return;
+      }
+      raf = requestAnimationFrame(tweenTick);
+    };
+
+    const kickTween = () => {
+      if (!live || raf) return;
+      raf = requestAnimationFrame(tweenTick);
+    };
+
+    /** Vanilla row: `animate:{width: collapsed&&!hovered ? 52 : expanded}` over 0.2s easeInOut. */
+    tweenToRef.current = (to: number) => {
+      if (!live) return;
+      const dest = destRow();
+      if (!dest) return;
+      ensureNaturals(dest);
+      const from = dest.getBoundingClientRect().width;
+      if (Math.abs(from - to) < 0.5) {
+        tweenRef.current = null;
+        setRowWidth(dest, spacer, wrap, to, expandedRef.current);
+        applyDetails(dest, detailProgress(to, expandedRef.current), measured, to > COLLAPSED_WIDTH_PX + 1);
+        return;
+      }
+      tweenRef.current = { from, to, start: performance.now() };
+      kickTween();
+    };
+
+    const stopCollapsed = subscribeManagementCollapsed((collapsed) => {
+      collapsedRef.current = collapsed;
+      // Vanilla: `effectiveCollapsed = collapsed && !hovered` — while hovered, stay expanded.
+      if (!hoveredRef.current && !tweenRef.current) {
+        applyFromPack();
+        armFollowLoop();
+      }
+    });
+
+    bindPack();
+    columnListeners.add(bindPack);
+
+    const stop = () => {
+      live = false;
+      columnListeners.delete(bindPack);
       stopCollapsed();
-      cancelAnimationFrame(raf);
+      packObserver.disconnect();
+      packStyleObserver.disconnect();
+      tweenToRef.current = () => {};
+      if (raf) cancelAnimationFrame(raf);
+      if (followRaf) cancelAnimationFrame(followRaf);
+      raf = 0;
+      followRaf = 0;
       returnRowHome(homeRef.current, wrap);
     };
+
+    return trackStop(stop);
   }, [mounted, anchor, id]);
 
   if (!mounted || !anchor) return null;
 
   return (
     <div ref={homeRef} hidden aria-hidden>
-      <div
-        ref={wrapRef}
-        className="pointer-events-none"
-        style={{ overflow: "hidden", minWidth: 0 }}
-      >
+      <div ref={wrapRef} className="pointer-events-none">
         <Interactive>
           <MenuButton
             icon={icon}
@@ -609,26 +774,22 @@ export function ManagementMenuButton({
             onMouseEnter={() => {
               hoveredRef.current = true;
               playMenuHover();
-              const dest = wrapRef.current?.querySelector<HTMLElement>(`[${ROW_ATTR}]`);
-              if (dest) {
-                tweenRef.current = {
-                  from: dest.getBoundingClientRect().width,
-                  to: expandedRef.current,
-                  start: performance.now(),
-                };
-              }
+              // Vanilla: a = collapsed && !hovered → hover forces expandedWidth.
+              tweenToRef.current(expandedRef.current);
             }}
             onMouseLeave={() => {
               hoveredRef.current = false;
-              const dest = wrapRef.current?.querySelector<HTMLElement>(`[${ROW_ATTR}]`);
-              if (dest) {
-                const to = collapsedRef.current ? COLLAPSED_WIDTH_PX : expandedRef.current;
-                tweenRef.current = {
-                  from: dest.getBoundingClientRect().width,
-                  to,
-                  start: performance.now(),
-                };
-              }
+              // Vanilla: leave restores collapsed ? 52 : expandedWidth.
+              tweenToRef.current(
+                collapsedRef.current ? COLLAPSED_WIDTH_PX : expandedRef.current,
+              );
+            }}
+            onPointerLeave={() => {
+              if (!hoveredRef.current) return;
+              hoveredRef.current = false;
+              tweenToRef.current(
+                collapsedRef.current ? COLLAPSED_WIDTH_PX : expandedRef.current,
+              );
             }}
             onClick={() => {
               playMenuClick();
