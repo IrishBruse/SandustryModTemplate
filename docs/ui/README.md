@@ -16,8 +16,9 @@ Each page has a live preview (Storybook-style iframe) plus props and a usage sni
 | `UiBox`                 | [ui-box.md](ui-box.md)                                   |
 | `InfoBanner`            | [info-banner.md](info-banner.md)                         |
 | `PanelCard`             | [panel-card.md](panel-card.md)                           |
-| `MenuButton`            | [menu-button.md](menu-button.md)                         |
-| `ManagementMenuButton`  | [management-menu-button.md](management-menu-button.md)   |
+| `MenuButton`                     | [menu-button.md](menu-button.md)                       |
+| `registerManagementMenuButton`   | [management-menu-button.md](management-menu-button.md) |
+| `ManagementMenuButton`           | [management-menu-button.md](management-menu-button.md) |
 | `ResourceRow`           | [resource-row.md](resource-row.md)                       |
 | `SectionHeading`        | [section-heading.md](section-heading.md)                 |
 | `ObjectiveCard`         | [objective-card.md](objective-card.md)                   |

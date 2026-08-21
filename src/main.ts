@@ -76,11 +76,7 @@ function registerNoiseTest() {
     },
   });
   if (!registered) return;
-  console.log(`[${MOD_ID}] Noise test registered at ${WIDTH}x${HEIGHT}`);
-  console.log("Controls (focus the Retro Console first):");
-  console.log("  Left/Right  — less/more noise density");
-  console.log("  Up          — pause/resume animation");
-  console.log("  Down        — jump to a new pattern");
+  console.log(`Noise test registered at ${WIDTH}x${HEIGHT}`);
 }
 
 if (isEnabled(api)) {

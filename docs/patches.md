@@ -20,7 +20,7 @@ Patch `code` runs outside the game bundle IIFE. Put shared runtime helpers on `g
 | `debugPatches` in `mod.ts` (optional)       | Extra debug-only patches (dev / `--debug` builds)          |
 | `modkitDebugPatches` in `modkit/patches.ts` | Framework debug patches (splash skip); merged by the build |
 
-Release builds (`npm run build`) omit framework and mod debug patches. Dev builds (`npm run dev`, VS Code debug tasks, `npm run sandustry`) include them.
+Release builds (`npm run build`) omit framework and mod debug patches. Dev builds (`npm run dev`, `npm run sandustry`, `--game` / `--debug`) include them.
 
 ## Fields
 

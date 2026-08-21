@@ -18,7 +18,7 @@ export function hotReloadUrl() {
 
 /**
  * True when the watch SSE server is accepting connections.
- * Used so one-shot `--game` / F5 builds keep the notify URL while `npm run dev` runs.
+ * Used so one-shot `--game` builds keep the notify URL while `npm run dev` runs.
  * @param {number} [timeoutMs]
  * @returns {Promise<boolean>}
  */
@@ -99,7 +99,7 @@ export function startHotReloadServer() {
       return;
     }
 
-    if (req.method === "POST" && req.url?.startsWith("/mgmt-log")) {
+    if (req.method === "POST" && (req.url === "/log" || req.url?.startsWith("/log?"))) {
       const chunks = [];
       req.on("data", (c) => chunks.push(c));
       req.on("end", () => {

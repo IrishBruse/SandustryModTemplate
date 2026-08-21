@@ -76,7 +76,7 @@ When the Debug setting is on, the helper waits until a **Continue** control is v
 
 Hot reload runs only with **`npm run dev`**. That watch build starts an SSE server on `http://127.0.0.1:19147/hot-reload` and embeds the URL in the debug bundle. With the Debug setting on, the mod opens `EventSource` to that URL. Each successful rebuild pushes a notify event; the client then re-reads `main.js`, runs `onDispose` callbacks, and evaluates the new source with `new Function("sandkit", source)`.
 
-One-shot builds leave the URL empty **unless** the watch SSE server is already up (so F5 / `npm run sandustry` do not wipe hot reload after `npm run dev`).
+One-shot builds (`npm run build`, `npm run sandustry`, `--game`) leave the hot-reload URL empty **unless** the watch SSE server is already up. **F5** does not build — run `npm run dev` first so the watch owns `main.js`.
 
 JavaScript cannot be unloaded. The loader only reclaims what you register:
 
@@ -99,6 +99,16 @@ A monkey-patch or a trigger with no unregister path stays until the game restart
 
 Turning Debug off closes the EventSource. Turning it on connects again when the URL is present.
 
+## File logging (`console`)
+
+Debug builds use esbuild [`inject`](https://esbuild.github.io/api/#inject) with [`modkit/console.ts`](../../modkit/console.ts). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code still print in DevTools and also `POST` to `http://127.0.0.1:19147/log` while `npm run dev` is up. Lines append to `logs/<modinfo.id>.log` (workspace `logs/` → `~/.config/sandustry/logs`).
+
+```ts
+console.log("[my-feature]", payload);
+```
+
+Release builds skip the inject. The shim uses `globalThis.console` so it does not recurse. `__MOD_ID__` is defined from `mod.ts` at build time.
+
 ## Debug patches
 
 The build merges [`modkitDebugPatches`](../../modkit/patches.ts) into debug `patches.json`. Optional extra debug-only patches can still be exported from root `mod.ts` as `debugPatches`. See [patches.md](../patches.md).
@@ -110,6 +120,7 @@ The build merges [`modkitDebugPatches`](../../modkit/patches.ts) into debug `pat
 | `index.ts`         | `installDebug`, globals, re-exports                                              |
 | `empty.ts`         | Release stub: no-op `installDebug`, `onDispose`, `isHotReloadEval`               |
 | `config-schema.ts` | Dev-only settings schema; merged into debug `modinfo.json`                       |
+| `../console.ts`    | esbuild inject: mirror `console.*` to watch-server file log (debug builds)       |
 | `boot-menu.ts`     | DevTools on load, F12, auto-boot schedule                                        |
 | `menu.ts`          | Find and click the main-menu Continue row                                        |
 | `splash.ts`        | Runtime splash click poll                                                        |

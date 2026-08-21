@@ -3,18 +3,9 @@
   "tasks": [
     {
       "label": "sandustry:prepare-debug",
-      "dependsOn": ["sandustry:build-mod-debug", "sandustry:stop"],
-      "problemMatcher": []
-    },
-    {
-      "label": "sandustry:build-mod-debug",
-      "type": "shell",
-      "command": "node scripts/build/esbuild.config.mjs --game --sourcemap",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "group": "build",
-      "problemMatcher": []
+      "dependsOn": ["sandustry:stop"],
+      "problemMatcher": [],
+      "detail": "Stops the game before F5. Expect npm run dev for the mod bundle."
     },
     {
       "label": "sandustry:stop",

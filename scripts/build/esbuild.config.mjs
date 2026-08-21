@@ -51,8 +51,8 @@ function resolveSourcemap() {
 
 const sourcemap = resolveSourcemap();
 
-// Watch always embeds the URL. One-shot debug (F5 / --game) embeds it when
-// `npm run dev` is already serving notify, so prepare-debug does not wipe it.
+// Watch always embeds the URL. One-shot `--game` embeds it when
+// `npm run dev` is already serving notify (F5 does not build).
 const embedHotReloadUrl = watch || (modDebug && (await isHotReloadServerUp()));
 
 console.log(`mod output: ${MOD_OUT_DIR}`);
@@ -78,16 +78,21 @@ async function syncModFiles() {
   await buildPatches(MOD_OUT_DIR, modDebug);
 }
 
+/** @type {{ manifest: any; debugSchema: any } | null} */
+let modManifestCache = null;
+
 /** Load mod.ts + framework debug schema via esbuild so the build stays plain Node ESM. */
 async function loadModManifestAndDebugSchema() {
+  if (modManifestCache) return modManifestCache;
   const [mod, kit] = await Promise.all([
     bundleAndImport(join(ROOT, "mod.ts"), "modinfo.mjs"),
     bundleAndImport(join(MODKIT_DIR, "debug/config-schema.ts"), "modkit-debug-schema.mjs"),
   ]);
-  return {
+  modManifestCache = {
     manifest: structuredClone(mod.modinfo),
     debugSchema: structuredClone(kit.modkitDebugConfigSchema ?? {}),
   };
+  return modManifestCache;
 }
 
 /** Write modinfo.json — debug builds merge framework debug settings into configSchema. */
@@ -107,10 +112,13 @@ function logBuildResult(result) {
   console.log(`built to ${MOD_OUT_DIR}`);
 }
 
+const { manifest: modManifest } = await loadModManifestAndDebugSchema();
+
 const define = {
   __MOD_DEBUG__: modDebug ? "true" : "false",
+  __MOD_ID__: JSON.stringify(typeof modManifest.id === "string" ? modManifest.id : "mod"),
   // SSE server starts only with `--watch`. Embed the URL for watch builds and
-  // for one-shot debug builds while that server is already up (F5 / --game).
+  // for one-shot debug builds while that server is already up (`--game` / sandustry).
   __HOT_RELOAD_URL__: embedHotReloadUrl ? JSON.stringify(hotReloadUrl()) : '""',
 };
 
@@ -195,6 +203,8 @@ const options = {
   target: "es2020",
   sourcemap,
   define,
+  // Debug builds: replace bare `console` with modkit/console.ts (file mirror).
+  inject: modDebug ? [join(MODKIT_DIR, "console.ts")] : [],
   alias: {
     react: join(ROOT, "modkit/react.ts"),
     "react/jsx-runtime": join(ROOT, "modkit/jsx-runtime.ts"),

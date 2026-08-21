@@ -34,7 +34,7 @@ Set `id`, `name`, `author`, and `description` in [`mod.ts`](mod.ts). The mods fo
 
 ### Run
 
-Run `npm run dev`, then `npm run sandustry` (or **F5** in VS Code). See [builds](https://ethanconneely.com/SandustryModTemplate/#/builds).
+Run `npm run dev`, then **F5** in VS Code (or `npm run sandustry`). F5 only stops and launches the game — the watch owns the bundle. See [builds](https://ethanconneely.com/SandustryModTemplate/#/builds).
 
 In game, **Alt+E** opens the example overlay. More: [docs site](https://ethanconneely.com/SandustryModTemplate/) · [modkit](https://ethanconneely.com/SandustryModTemplate/#/modkit/) · [`AGENTS.md`](AGENTS.md)
 

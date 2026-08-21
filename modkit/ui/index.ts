@@ -4,6 +4,8 @@ export { InfoBanner } from "./panels/InfoBanner";
 export { MenuButton } from "./menu/MenuButton";
 export { ManagementMenuButton } from "./menu/ManagementMenuButton";
 export type { ManagementMenuButtonProps } from "./menu/ManagementMenuButton";
+export { registerManagementMenuButton } from "./menu/registerManagementMenuButton";
+export type { RegisterManagementMenuButtonOptions } from "./menu/registerManagementMenuButton";
 export { ResourceRow } from "./resources/ResourceRow";
 export { SectionHeading } from "./headings/SectionHeading";
 export { PanelCard } from "./panels/PanelCard";

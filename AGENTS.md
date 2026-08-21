@@ -2,7 +2,7 @@
 
 This repo is a **Sandustry** mod template. `src/` is the mod. `modkit/` is the shared kit. The game runs `main.js` as a script body (`new Function`); `sandkit` is already in scope. Do not emit `import` / `export` in the bundle (esbuild IIFE).
 
-Prefer Sandkit API. Use patches only when the public API cannot do the job. Keep behaviour next to its caller.
+Prefer Sandkit API. Use patches only when the public API cannot do the job. Keep behaviour next to its caller. For a left management-column row (under Upgrades), use `registerManagementMenuButton` from `@modkit/ui` — not a one-off DOM spacer. Docs: [`docs/ui/management-menu-button.md`](docs/ui/management-menu-button.md).
 
 Detail docs:
 
@@ -48,6 +48,7 @@ logs/                   Symlink to ~/.config/sandustry/logs (game + mod debug lo
 | `modkit/jsx-runtime.ts` | JSX automatic runtime                                                                |
 | `modkit/utils/`         | `safe`, `isEnabled`, `debugEnabled`, `inGame`, `registerRetroGame`                   |
 | `modkit/debug/`         | DevTools globals, F12, splash skip, main-menu boot, hot reload                       |
+| `modkit/console.ts`     | esbuild inject (debug): mirror `console.*` to watch-server file log                  |
 | `modkit/debug/empty.ts` | Release stub for `./debug` (`installDebug` / `onDispose` / `isHotReloadEval` no-ops) |
 | `modkit/types/`         | Composed `types/api`, `types/sandkit`, `types/engine` import shims                   |
 
@@ -123,21 +124,13 @@ npm run sandustry        # build debug + launch
 
 ## Game logs
 
-The renderer does not write `console.log` into `logs/main.log` (that file is the Electron main process). To debug in-game UI from this workspace:
+The renderer does not write `console.log` into `logs/main.log` (that file is the Electron main process).
 
-1. Run `npm run dev` (watch SSE on `127.0.0.1:19147`).
-2. From the mod, `POST` JSON `{ "modId": "<modinfo.id>", "line": "…" }` to `http://127.0.0.1:19147/mgmt-log`.
-3. Read `logs/<mod-id>.log` (same as `~/.config/sandustry/logs/<mod-id>.log`). Unsafe characters in `modId` become `_`.
-
-Example (also `console.log` so DevTools still shows it):
+In **debug** builds, esbuild injects [`modkit/console.ts`](modkit/console.ts) so bare `console.log` / `info` / `warn` / `error` / `debug` also append to `logs/<modinfo.id>.log` (symlink: `logs/` → `~/.config/sandustry/logs`) when `npm run dev` is running.
 
 ```ts
-void fetch("http://127.0.0.1:19147/mgmt-log", {
-  method: "POST",
-  mode: "cors",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ modId: MOD_ID, line: `[my-tag] ${JSON.stringify(payload)}` }),
-}).catch(() => {});
+console.log("[my-tag]", { width, collapsed });
+// DevTools + logs/author.example-mod.log
 ```
 
-Restart `npm run dev` after changing `scripts/build/hot-reload-server.js`. Route changes are not hot-reloaded into the game.
+Release builds do not inject the shim. Restart `npm run dev` after changing `scripts/build/hot-reload-server.js` (the POST `/log` route lives there).

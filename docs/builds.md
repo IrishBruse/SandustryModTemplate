@@ -53,7 +53,7 @@ In game:
 ## Commands
 
 ```bash
-npm run dev              # watch, debug on
+npm run dev              # watch, debug on (required before F5)
 npm run build            # release
 npm run typecheck
 npm run generate-types   # after a new runtime dump
@@ -61,3 +61,5 @@ npm run sandustry        # build debug + launch
 npm run ui:css           # compile docs/ui/canvas preview Tailwind
 npm run ui:previews      # compile preview CSS, then screenshot preview.html
 ```
+
+**F5** (VS Code `Sandustry` compound) stops any running game and launches with debug ports. It does not rebuild the mod — keep `npm run dev` running for the bundle, hot reload, and file logs.

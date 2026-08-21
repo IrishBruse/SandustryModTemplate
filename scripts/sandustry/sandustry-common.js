@@ -2,7 +2,7 @@
  * Shared Sandustry launch helpers (normal + debug).
  */
 import { execSync, spawn, spawnSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync, readlinkSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
@@ -37,35 +37,65 @@ export function sandustryBuildMod(root, { sourcemap = false, modDebug = true } =
   if (result.status !== 0) process.exit(result.status ?? 1);
 }
 
-function sandustryIsRunning() {
+/**
+ * PIDs whose `/proc/<pid>/exe` is the Sandustry binary.
+ * Avoids `pgrep -f` matching itself (and a 5s false wait when the game is down).
+ * @returns {number[]}
+ */
+function sandustryPids() {
+  /** @type {number[]} */
+  const pids = [];
+  let entries;
   try {
-    execSync(`pgrep -f "${SANDUSTRY_DIR}/sandustry"`, { stdio: "ignore" });
-    return true;
+    entries = readdirSync("/proc");
   } catch {
-    return false;
+    return pids;
+  }
+
+  for (const name of entries) {
+    if (!/^\d+$/.test(name)) continue;
+    try {
+      const exe = readlinkSync(`/proc/${name}/exe`);
+      // Deleted binaries show as "/path/sandustry (deleted)".
+      if (exe === SANDUSTRY || exe.startsWith(`${SANDUSTRY} `)) pids.push(Number(name));
+    } catch {
+      // No permission or process exited.
+    }
+  }
+  return pids;
+}
+
+function sandustryIsRunning() {
+  return sandustryPids().length > 0;
+}
+
+/** @param {number[]} pids @param {NodeJS.Signals} signal */
+function signalPids(pids, signal) {
+  for (const pid of pids) {
+    try {
+      process.kill(pid, signal);
+    } catch {
+      // already gone
+    }
   }
 }
 
 export function sandustryStopRunning() {
-  if (!sandustryIsRunning()) return;
+  const first = sandustryPids();
+  if (first.length === 0) return;
 
   console.log("Stopping Sandustry...");
-  try {
-    execSync(`pkill -TERM -f "${SANDUSTRY_DIR}/sandustry"`, { stdio: "ignore" });
-  } catch {
-    // already stopped
-  }
+  signalPids(first, "SIGTERM");
 
-  for (let i = 0; i < 20; i++) {
+  const deadline = Date.now() + 2000;
+  while (Date.now() < deadline) {
     if (!sandustryIsRunning()) return;
-    execSync("sleep 0.25");
+    execSync("sleep 0.05");
   }
 
-  try {
-    execSync(`pkill -KILL -f "${SANDUSTRY_DIR}/sandustry"`, { stdio: "ignore" });
-  } catch {
-    // ignore
-  }
+  const leftover = sandustryPids();
+  if (leftover.length === 0) return;
+  signalPids(leftover, "SIGKILL");
 }
 
 /** @returns {{ name: string; x: number; y: number; w: number; h: number }} */

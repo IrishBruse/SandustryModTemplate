@@ -12,29 +12,6 @@ const ROW_ATTR = "data-modkit-management-row";
 const SPACER_HEIGHT_PX = 42;
 const COLLAPSED_WIDTH_PX = 52;
 const DEFAULT_EXPANDED_WIDTH_PX = 208;
-const MGMT_LOG_URL = "http://127.0.0.1:19147/mgmt-log";
-
-/** Row id is `${modId}:…`; used as `logs/<mod-id>.log`. */
-let logModId = "mod";
-
-function setLogModId(rowId: string): void {
-  const cut = rowId.lastIndexOf(":");
-  logModId = cut > 0 ? rowId.slice(0, cut) : rowId;
-}
-
-function mgmtLog(event: string, data: Record<string, unknown> = {}): void {
-  const payload = { t: Math.round(performance.now()), event, ...data };
-  const line = `[modkit-mgmt] ${JSON.stringify(payload)}`;
-  console.log(line);
-  void fetch(MGMT_LOG_URL, {
-    method: "POST",
-    mode: "cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ modId: logModId, line }),
-  }).catch(() => {
-    /* watch SSE not running */
-  });
-}
 
 const rowOrder: string[] = [];
 const spacers = new Map<string, HTMLDivElement>();
@@ -51,30 +28,6 @@ function playMenuHover() {
 
 function playMenuClick() {
   safe(() => api.sound.play("click"));
-}
-
-function sampleCollapse(tag: string): void {
-  let n = 0;
-  const tick = () => {
-    const upgrades = findUpgradesButton();
-    const dest = document.querySelector<HTMLElement>(`[${ROW_ATTR}]`);
-    const label = dest?.querySelector<HTMLElement>(".tracking-wider");
-    mgmtLog("sample", {
-      tag,
-      n,
-      store: getManagementCollapsed(),
-      upgradesW: upgrades?.offsetWidth ?? null,
-      upgradesStyle: upgrades?.getAttribute("style"),
-      destW: dest?.offsetWidth ?? null,
-      destStyle: dest?.getAttribute("style"),
-      destTransition: dest ? getComputedStyle(dest).transition : null,
-      labelOp: label ? getComputedStyle(label).opacity : null,
-      labelW: label ? getComputedStyle(label).width : null,
-    });
-    n += 1;
-    if (n < 10) requestAnimationFrame(tick);
-  };
-  requestAnimationFrame(tick);
 }
 
 type EngineState = {
@@ -98,7 +51,6 @@ function installCollapsedHook(options: { managementCollapsed?: boolean }): void 
   if (hookedOptions.has(options)) return;
   hookedOptions.add(options);
   let value = options.managementCollapsed === true;
-  mgmtLog("hook-install", { initial: value });
   Object.defineProperty(options, "managementCollapsed", {
     configurable: true,
     enumerable: true,
@@ -107,8 +59,6 @@ function installCollapsedHook(options: { managementCollapsed?: boolean }): void 
     },
     set(next: boolean) {
       value = next === true;
-      mgmtLog("store-set", { collapsed: value });
-      sampleCollapse("store-set");
       for (const fn of collapsedListeners) fn(value);
     },
   });
@@ -267,7 +217,6 @@ export function ManagementMenuButton({
   active = true,
   onClick,
 }: ManagementMenuButtonProps) {
-  setLogModId(id);
   const anchor = useManagementAnchor(id, active);
   const [columnCollapsed, setColumnCollapsed] = useState(getManagementCollapsed);
   const [hovered, setHovered] = useState(false);
@@ -276,11 +225,7 @@ export function ManagementMenuButton({
   const mounted = Boolean(active && anchor);
 
   useEffect(() => {
-    mgmtLog("subscribe", { store: getManagementCollapsed() });
-    return subscribeManagementCollapsed((collapsed) => {
-      mgmtLog("listener", { collapsed });
-      setColumnCollapsed(collapsed);
-    });
+    return subscribeManagementCollapsed(setColumnCollapsed);
   }, []);
 
   const visuallyCollapsed = columnCollapsed && !hovered;
@@ -305,14 +250,7 @@ export function ManagementMenuButton({
     if (!mounted || !anchor) return;
     anchor.spacer.style.transition = "width 0.2s ease-in-out";
     anchor.spacer.style.width = `${width}px`;
-    mgmtLog("layout", {
-      width,
-      columnCollapsed,
-      hovered,
-      visuallyCollapsed,
-      expandedWidth,
-    });
-  }, [mounted, anchor, width, columnCollapsed, hovered, visuallyCollapsed, expandedWidth]);
+  }, [mounted, anchor, width]);
 
   if (!mounted || !anchor) return null;
 
