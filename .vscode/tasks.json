@@ -14,6 +14,34 @@
       "problemMatcher": []
     },
     {
+      "label": "sandustry:launch-debug",
+      "dependsOn": ["sandustry:stop"],
+      "dependsOrder": "sequence",
+      "type": "shell",
+      "command": "node scripts/sandustry/sandustry-vscode-launch.js",
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "SANDUSTRY_DEBUG_DETACHED": "1"
+        }
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": ".",
+          "file": 1,
+          "location": 2,
+          "message": 3
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Sandustry debug",
+          "endsPattern": "Launched Sandustry with debug ports"
+        }
+      },
+      "detail": "Stops any game, then launches with --inspect and --remote-debugging-port for attach."
+    },
+    {
       "label": "sandustry:vscode-background",
       "type": "shell",
       "command": "node scripts/sandustry/launch-sandustry-vscode.js",

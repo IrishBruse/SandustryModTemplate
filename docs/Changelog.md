@@ -37,6 +37,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Fixed
 
+- F5 **Sandustry** compound attaches to Electron main (`:9230`) and the game renderer (`:9222`) instead of debugging the Node launcher script. Renderer attach filters to `index.html` so an open DevTools page does not steal the session.
 - F5 / IDE launch sets `SANDUSTRY_IDE_DEBUG` so the renderer does not HTTP-probe `:9222` (that freeze dropped the debugger).
 - Hot reload wraps source like sandkit’s loader so indexed source maps stay aligned.
 - Watch build removes leftover OS mod folders this template used to own after a rename.

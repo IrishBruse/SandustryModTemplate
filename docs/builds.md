@@ -63,6 +63,6 @@ npm run ui:css           # compile docs/ui/canvas preview Tailwind
 npm run ui:previews      # compile preview CSS, then screenshot preview.html
 ```
 
-**F5** (VS Code `Sandustry` compound) stops any running game and launches with debug ports. It does not rebuild the mod — keep `npm run dev` running for the bundle, hot reload, and file logs.
+**F5** (VS Code `Sandustry` compound) stops any running game, launches with debug ports, then attaches the debugger to the **renderer** (`:9222`, where mods run) and Electron **main** (`:9230`). It does not rebuild the mod — keep `npm run dev` running for the bundle, hot reload, and file logs.
 
 Renderer attach loads source maps from scripts named `sandkit-workshop://<modId>/main.js` (and from the OS mods folder / `dist/`). Debug builds rewrite inline maps to `file://` sources, add a sandkit loader line offset, and set matching `sourceURL` so breakpoints in `src/<name>/` bind through `new Function` eval. Do not press **F12** while the IDE debugger is attached — Electron DevTools steals that session.

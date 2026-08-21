@@ -4,13 +4,18 @@
     {
       "name": "Sandustry Main",
       "type": "node",
-      "request": "launch",
-      "cwd": "${workspaceFolder}",
-      "runtimeExecutable": "node",
-      "runtimeArgs": ["${workspaceFolder}/scripts/sandustry/sandustry-vscode-launch.js"],
-      "outputCapture": "std",
+      "request": "attach",
+      "address": "127.0.0.1",
+      "port": 9230,
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "${workspaceFolder}",
+      "restart": true,
       "timeout": 120000,
-      "autoAttachChildProcesses": false
+      "presentation": {
+        "hidden": true,
+        "group": "sandustry",
+        "order": 2
+      }
     },
     {
       "name": "Sandustry Renderer",
@@ -19,6 +24,7 @@
       "address": "127.0.0.1",
       "port": 9222,
       "webRoot": "${workspaceFolder}",
+      "urlFilter": "*app.asar/dist/index.html*",
       "sourceMaps": true,
       "enableContentValidation": false,
       "pauseForSourceMap": true,
@@ -35,48 +41,20 @@
         "${userHome}/.config/sandustry/mods/**/*.js",
         "${env:APPDATA}/sandustry/mods/**/*.js"
       ],
-      "timeout": 120000
-    },
-    {
-      "name": "Sandustry: Attach (npm run sandustry:vscode)",
-      "type": "node",
-      "request": "attach",
-      "address": "127.0.0.1",
-      "port": 9230,
-      "restart": true,
-      "timeout": 120000
-    },
-    {
-      "name": "Sandustry Renderer: Attach (npm run sandustry:vscode)",
-      "type": "chrome",
-      "request": "attach",
-      "address": "127.0.0.1",
-      "port": 9222,
-      "webRoot": "${workspaceFolder}",
-      "sourceMaps": true,
-      "enableContentValidation": false,
-      "pauseForSourceMap": true,
-      "resolveSourceMapLocations": [
-        "sandkit-workshop://**",
-        "${workspaceFolder}/**",
-        "${workspaceFolder}/dist/**",
-        "${userHome}/.config/sandustry/mods/**",
-        "${env:APPDATA}/sandustry/mods/**",
-        "!**/node_modules/**"
-      ],
-      "outFiles": [
-        "${workspaceFolder}/dist/**/*.js",
-        "${userHome}/.config/sandustry/mods/**/*.js",
-        "${env:APPDATA}/sandustry/mods/**/*.js"
-      ],
-      "timeout": 120000
+      "timeout": 120000,
+      "presentation": {
+        "hidden": true,
+        "group": "sandustry",
+        "order": 1
+      }
     }
   ],
   "compounds": [
     {
       "name": "Sandustry",
-      "configurations": ["Sandustry Main", "Sandustry Renderer"],
-      "preLaunchTask": "sandustry:prepare-debug",
+      "configurations": ["Sandustry Renderer", "Sandustry Main"],
+      "preLaunchTask": "sandustry:launch-debug",
+      "postDebugTask": "sandustry:stop",
       "stopAll": true,
       "presentation": {
         "order": 1,
@@ -85,11 +63,9 @@
     },
     {
       "name": "Sandustry: Attach Main + Renderer (npm run sandustry:vscode)",
-      "configurations": [
-        "Sandustry: Attach (npm run sandustry:vscode)",
-        "Sandustry Renderer: Attach (npm run sandustry:vscode)"
-      ],
+      "configurations": ["Sandustry Renderer", "Sandustry Main"],
       "preLaunchTask": "sandustry:vscode-background",
+      "postDebugTask": "sandustry:stop",
       "stopAll": true,
       "presentation": {
         "order": 2,

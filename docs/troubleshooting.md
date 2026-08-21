@@ -39,6 +39,6 @@ Default probe includes `%ProgramFiles(x86)%\Steam` and `%ProgramFiles%\Steam`, p
 
 **Duplicate mods in the console** — After a rename, old folders can stay in the OS mods directory. The game loads every folder there, so you get two copies of each sample. The watch build now removes leftover game folders this template used to own. Restart the game after `npm run dev` has run.
 
-**VS Code breakpoints do not bind** — Run `npm run dev`, then select the **Sandustry** compound and press F5. The renderer debugger attaches to `127.0.0.1:9222`. Set breakpoints in `src/<name>/` TypeScript files, not in `dist/` or `main.js`. Do not press **F12** while the IDE debugger is attached. Launch configs must allow `sandkit-workshop://**` in `resolveSourceMapLocations` (the game names mod scripts that way).
+**VS Code breakpoints do not bind** — Run `npm run dev`, then select the **Sandustry** compound and press F5. That launches the game, then attaches **Renderer** (`127.0.0.1:9222`, mods) and **Main** (`9230`, Electron). Set breakpoints in `src/<name>/` TypeScript files, not in `dist/` or `main.js`. Do not press **F12** while the IDE debugger is attached — Electron DevTools steals the CDP session. Launch configs must allow `sandkit-workshop://**` in `resolveSourceMapLocations` (the game names mod scripts that way).
 
 **Types missing** — Run `git submodule update --init --recursive`. Types live in `types/` ([sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types)).
