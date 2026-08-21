@@ -56,13 +56,13 @@ export function MenuButton({
 }: MenuButtonProps) {
   const letter = highlightLetter ?? label.charAt(0);
   const rest = label.slice(letter.length);
-  const widthStyle = liveSync ? undefined : typeof width === "number" ? `${width}px` : width;
+  const widthStyle = typeof width === "number" ? `${width}px` : width;
 
   return (
     <div
       {...rowProps}
       className={`mb-2 relative group cursor-pointer pointer-events-auto ${className}`}
-      style={{ width: widthStyle, ...style }}
+      style={liveSync ? style : { width: widthStyle, ...style }}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
