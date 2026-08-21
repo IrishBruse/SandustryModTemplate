@@ -88,7 +88,8 @@ export function parseModFilter(argv) {
   const eq = argv.find((arg) => arg.startsWith("--mod="));
   if (eq) {
     const value = eq.slice("--mod=".length).trim();
-    if (!value) throw new Error("--mod requires a src folder name (for example --mod=hello-toast-example)");
+    if (!value)
+      throw new Error("--mod requires a src folder name (for example --mod=hello-toast-example)");
     return value;
   }
   return null;

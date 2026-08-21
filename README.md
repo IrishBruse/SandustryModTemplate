@@ -35,11 +35,11 @@ Copy [`src/hello-toast-example/`](src/hello-toast-example/) to `src/<your-mod>/`
 
 ### Examples
 
-| Folder | Shows |
-| --- | --- |
-| [`src/hello-toast-example/`](src/hello-toast-example/) | Toast on load |
-| [`src/overlay-hotkey-example/`](src/overlay-hotkey-example/) | React overlay + Tailwind; **Alt+E** |
-| [`src/retro-game-example/`](src/retro-game-example/) | Retro Console Noise Test |
+| Folder                                                             | Shows                                |
+| ------------------------------------------------------------------ | ------------------------------------ |
+| [`src/hello-toast-example/`](src/hello-toast-example/)             | Toast on load                        |
+| [`src/overlay-hotkey-example/`](src/overlay-hotkey-example/)       | React overlay + Tailwind; **Alt+E**  |
+| [`src/retro-game-example/`](src/retro-game-example/)               | Retro Console Noise Test             |
 | [`src/management-button-example/`](src/management-button-example/) | Management-column row under Upgrades |
 
 ### Run

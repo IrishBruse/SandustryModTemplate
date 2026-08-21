@@ -15,11 +15,11 @@ export type {
  * Returns false when `sandkit.engine.api.retroConsole` is missing.
  */
 export function registerRetroGame<TState>(game: RetroConsoleGame<TState>): boolean {
-  const retro = sandkit.engine.api.retroConsole;
-  if (typeof retro?.registerGame !== "function") {
+  const retroConsole = sandkit.engine.api.retroConsole;
+  if (typeof retroConsole?.registerGame !== "function") {
     console.warn("retroConsole.registerGame is not ready");
     return false;
   }
-  retro.registerGame(game);
+  retroConsole.registerGame(game);
   return true;
 }
