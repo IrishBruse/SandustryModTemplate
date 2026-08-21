@@ -34,7 +34,8 @@ function hideButton(button: HTMLButtonElement): void {
 
 /** Hide the engine's plain Debug / Stats buttons under the management column. */
 export function hideEngineDebugButtons(): void {
-  for (const button of document.querySelectorAll("button")) {
+  const scope = document.querySelector("#ui") ?? document;
+  for (const button of scope.querySelectorAll("button")) {
     if (!(button instanceof HTMLButtonElement)) continue;
     if (isEngineDebugOpenButton(button) || isEngineStatsButton(button)) {
       hideButton(button);

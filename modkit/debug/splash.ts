@@ -35,9 +35,10 @@ export function startSplashSkipPolling(): () => void {
   if (sessionStorage.getItem("splashShown")) return () => {};
 
   trySkipSplash();
+  const deadline = Date.now() + 5000;
   const timer = setInterval(() => {
     trySkipSplash();
-    if (sessionStorage.getItem("splashShown")) clearInterval(timer);
+    if (sessionStorage.getItem("splashShown") || Date.now() > deadline) clearInterval(timer);
   }, 100);
 
   return () => clearInterval(timer);

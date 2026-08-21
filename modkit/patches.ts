@@ -8,9 +8,13 @@ export const modkitDebugPatches = definePatches([
     find: 'document.addEventListener("keydown",p),document.addEventListener("click",h);',
     operation: "replace",
     expectedMatches: 1,
-    code: `document.addEventListener("keydown", p), document.addEventListener("click", h), requestAnimationFrame(function _skipStartupSplash() {
-  document.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
-  if (!sessionStorage.getItem("splashShown")) requestAnimationFrame(_skipStartupSplash);
-});`,
+    code: `document.addEventListener("keydown", p), document.addEventListener("click", h), (function(){
+  var n=0;
+  requestAnimationFrame(function _skipStartupSplash() {
+    document.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+    n++;
+    if (!sessionStorage.getItem("splashShown") && n<90) requestAnimationFrame(_skipStartupSplash);
+  });
+})();`,
   },
 ]);
