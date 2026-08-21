@@ -306,6 +306,12 @@ body:has(.sidebar.show) .sidebar-toggle .smt-sidebar-toggle-icon {
 .sidebar-nav a {
   font-size: inherit;
 }
+.sidebar-nav a[target="_blank"]::after,
+.markdown-section a[target="_blank"]::after {
+  content: " ↗";
+  font-size: 0.85em;
+  opacity: 0.7;
+}
 
 /* Group titles only (plain text). Top-level page links also wrap in <p>. */
 .sidebar-nav > ul > li > p:not(:has(a)) {

@@ -4,13 +4,13 @@ TypeScript template for [Sandustry](https://store.steampowered.com/app/2764460/S
 
 ## Features
 
-- **Multi-mod** — One repo, many mods. Each `src/<name>/` folder with a `mod.ts` builds to its own game folder. Mods cannot import from each other. [Folder layout](docs/layout.md)
-- **TypeScript** — Sandkit API types from [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types)
-- **React HUD** — JSX via `sandkit.react` (no extra React package). [React](docs/modkit/react.md) · [UI kit](docs/ui/README.md) · [gallery](docs/ui/gallery.md)
-- **Modkit utils** — `safe`, settings, scene checks, retro console. [Utils](modkit/utils.md)
-- **Hot reload** — `npm run dev` reloads the mod without a game restart. [Builds](docs/builds.md) · [debug](docs/modkit/debug.md)
-- **Debug helpers** — F12 DevTools, splash skip, main-menu boot, F3 engine Debug window, console globals. [Debug](docs/modkit/debug.md)
-- **Typed `mod.ts`** — one file per mod for the modinfo and [patches](docs/patches.md). [Folder layout](docs/layout.md)
+- **[Multi-mod](layout.md)** — One repo, many mods. Each `src/<name>/` folder with a `mod.ts` builds to its own game folder. Mods cannot import from each other.
+- **[TypeScript](https://github.com/flamableassassin/sandustry-modding-types ':target=_blank')** — Sandkit API types from  `flamableassassin/sandustry-modding-types`.
+- **[React HUD](modkit/react.md)** — JSX via `sandkit.react` (no extra React package), plus the [UI kit](ui/README.md) and [gallery](ui/gallery.md).
+- **[Modkit utils](modkit/utils.md)** — `safe`, settings, scene checks, and retro console helpers.
+- **[Hot reload](builds.md)** — `npm run dev` reloads the mod without a game restart.
+- **[Debug helpers](modkit/debug.md)** — F12 DevTools, splash skip, main-menu boot, F3 engine Debug window, and console globals.
+- **[Typed `mod.ts`](layout.md)** — One file per mod for the modinfo and [patches](patches.md).
 
 ## Quick start
 
@@ -35,11 +35,11 @@ Copy [`src/hello-toast-example/`](../src/hello-toast-example/) to `src/<your-mod
 
 ### Examples
 
-| Folder | Shows |
-| --- | --- |
-| [`src/hello-toast-example/`](../src/hello-toast-example/) | Toast on load |
-| [`src/overlay-hotkey-example/`](../src/overlay-hotkey-example/) | React overlay + Tailwind; **Alt+E** |
-| [`src/retro-game-example/`](../src/retro-game-example/) | Retro Console Noise Test |
+| Folder                                                                | Shows                                |
+| --------------------------------------------------------------------- | ------------------------------------ |
+| [`src/hello-toast-example/`](../src/hello-toast-example/)             | Toast on load                        |
+| [`src/overlay-hotkey-example/`](../src/overlay-hotkey-example/)       | React overlay + Tailwind; **Alt+E**  |
+| [`src/retro-game-example/`](../src/retro-game-example/)               | Retro Console Noise Test             |
 | [`src/management-button-example/`](../src/management-button-example/) | Management-column row under Upgrades |
 
 ### Run
