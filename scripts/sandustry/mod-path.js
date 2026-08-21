@@ -10,14 +10,17 @@ import {
   lstatSync,
   mkdirSync,
   readdirSync,
+  readFileSync,
   readlinkSync,
   rmSync,
   unlinkSync,
+  writeFileSync,
 } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { linkDirectory, samePath, sandustryModsDir } from "./paths.js";
 
 export const REPO_DIST_LINK = "dist";
+const OWNED_GAME_NAMES_FILE = ".owned-game-names.json";
 
 /** Remove a symlink (including a dangling one) or a real file/directory. */
 function removePath(path) {
@@ -32,6 +35,37 @@ function removePath(path) {
     return;
   }
   rmSync(path, { recursive: true, force: true });
+}
+
+function isOwnedGameDir(dir) {
+  return samePath(dirname(resolve(dir)), sandustryModsDir());
+}
+
+/** @param {string} distPath @returns {string[]} */
+function readOwnedGameNames(distPath) {
+  const file = join(distPath, OWNED_GAME_NAMES_FILE);
+  if (!existsSync(file)) return [];
+  try {
+    const data = JSON.parse(readFileSync(file, "utf8"));
+    return Array.isArray(data)
+      ? data.filter((name) => typeof name === "string" && name.length > 0)
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+/** @param {string} distPath @param {string[]} names */
+function writeOwnedGameNames(distPath, names) {
+  writeFileSync(join(distPath, OWNED_GAME_NAMES_FILE), `${JSON.stringify(names, null, 2)}\n`);
+}
+
+/** Remove a game folder this template used to own. */
+function removeOwnedGameDir(gameName) {
+  const dir = gameModDir(gameName);
+  if (!existsSync(dir) || !isOwnedGameDir(dir)) return;
+  removePath(dir);
+  console.log(`Removed leftover game mod ${dir}`);
 }
 
 /** @param {string} gameName `modinfo.name` */
@@ -70,10 +104,20 @@ export function linkRepoDistToModOutputs(repoRoot, mods, keepFolders) {
 
   const wanted = new Set(keepFolders ?? mods.map((mod) => mod.folder));
   for (const name of readdirSync(distPath)) {
-    if (wanted.has(name)) continue;
+    if (wanted.has(name) || name === OWNED_GAME_NAMES_FILE) continue;
     const child = join(distPath, name);
-    if (lstatSync(child).isSymbolicLink()) {
-      removePath(child);
+    if (!lstatSync(child).isSymbolicLink()) continue;
+    let target = "";
+    try {
+      target = resolve(distPath, readlinkSync(child));
+    } catch {
+      target = "";
+    }
+    removePath(child);
+    if (target && isOwnedGameDir(target)) {
+      removePath(target);
+      console.log(`Removed stale ${REPO_DIST_LINK}/${name} and ${target}`);
+    } else {
       console.log(`Removed stale ${REPO_DIST_LINK}/${name}`);
     }
   }
@@ -99,4 +143,11 @@ export function linkRepoDistToModOutputs(repoRoot, mods, keepFolders) {
     linkDirectory(target, linkPath);
     console.log(`Linked ${REPO_DIST_LINK}/${mod.folder} -> ${target}`);
   }
+
+  const currentNames = [...new Set(mods.map((mod) => mod.gameName))];
+  for (const name of readOwnedGameNames(distPath)) {
+    if (currentNames.includes(name)) continue;
+    removeOwnedGameDir(name);
+  }
+  writeOwnedGameNames(distPath, currentNames);
 }
