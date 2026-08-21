@@ -25,14 +25,14 @@ const stop = registerManagementMenuButton({
 onDispose(stop);
 ```
 
-| Param    | Type         | Default | Description                                              |
-| -------- | ------------ | ------- | -------------------------------------------------------- |
-| `id`     | `string`     | —       | Stable spacer id. Prefer `${modId}:name` (required).     |
-| `icon`   | `string`     | —       | SVG markup for the 20×20 slot. Use `fill="currentColor"` (required). |
-| `label`  | `string`     | —       | Row label (required).                                    |
-| `hotkey` | `string`     | —       | Badge text only (required).                              |
-| `onClick`| `() => void` | —       | Click handler.                                           |
-| `active` | `boolean`    | `true`  | When false, the row and spacer are removed.              |
+| Param     | Type         | Default | Description                                                          |
+| --------- | ------------ | ------- | -------------------------------------------------------------------- |
+| `id`      | `string`     | —       | Stable spacer id. Prefer `${modId}:name` (required).                 |
+| `icon`    | `string`     | —       | SVG markup for the 20×20 slot. Use `fill="currentColor"` (required). |
+| `label`   | `string`     | —       | Row label (required).                                                |
+| `hotkey`  | `string`     | —       | Badge text only (required).                                          |
+| `onClick` | `() => void` | —       | Click handler.                                                       |
+| `active`  | `boolean`    | `true`  | When false, the row and spacer are removed.                          |
 
 Returns a dispose function. Pass it to `onDispose` so hot reload removes the row.
 

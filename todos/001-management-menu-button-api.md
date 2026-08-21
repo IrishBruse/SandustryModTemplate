@@ -23,4 +23,4 @@ Prototyped in `sandustry-doom-mod` (`src/ui/DoomOverlay.tsx` management spacer +
 
 ## Done in template
 
-`ManagementMenuButton` in `@modkit/ui` — see [docs/ui/management-menu-button.md](../docs/ui/management-menu-button.md).
+`registerManagementMenuButton` and `ManagementMenuButton` in `@modkit/ui` — see [docs/ui/management-menu-button.md](../docs/ui/management-menu-button.md).

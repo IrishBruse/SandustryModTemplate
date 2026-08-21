@@ -10,30 +10,30 @@ Each page has a live preview (Storybook-style iframe) plus props and a usage sni
 
 ## Components
 
-| Component               | Page                                                     |
-| ----------------------- | -------------------------------------------------------- |
-| `HotkeyBadge`           | [hotkey-badge.md](hotkey-badge.md)                       |
-| `UiBox`                 | [ui-box.md](ui-box.md)                                   |
-| `InfoBanner`            | [info-banner.md](info-banner.md)                         |
-| `PanelCard`             | [panel-card.md](panel-card.md)                           |
-| `MenuButton`                     | [menu-button.md](menu-button.md)                       |
-| `registerManagementMenuButton`   | [management-menu-button.md](management-menu-button.md) |
-| `ManagementMenuButton`           | [management-menu-button.md](management-menu-button.md) |
-| `ResourceRow`           | [resource-row.md](resource-row.md)                       |
-| `SectionHeading`        | [section-heading.md](section-heading.md)                 |
-| `ObjectiveCard`         | [objective-card.md](objective-card.md)                   |
-| `SecondaryObjectiveRow` | [secondary-objective-row.md](secondary-objective-row.md) |
-| `ObjectiveHighlight`    | [objective-highlight.md](objective-highlight.md)         |
-| `ShortcutChip`          | [shortcut-chip.md](shortcut-chip.md)                     |
-| `ShortcutBar`           | [shortcut-bar.md](shortcut-bar.md)                       |
-| `ShortcutBarItem`       | [shortcut-bar-item.md](shortcut-bar-item.md)             |
-| `ShortcutBarDivider`    | [shortcut-bar-divider.md](shortcut-bar-divider.md)       |
-| `CompoundHotkeys`       | [compound-hotkeys.md](compound-hotkeys.md)               |
-| `HotbarSlot`            | [hotbar-slot.md](hotbar-slot.md)                         |
-| `HotbarIcon`            | [hotbar-icon.md](hotbar-icon.md)                         |
-| `OverlayRoot`           | [overlay-root.md](overlay-root.md)                       |
-| `FixedAnchor`           | [fixed-anchor.md](fixed-anchor.md)                       |
-| `Interactive`           | [interactive.md](interactive.md)                         |
+| Component                      | Page                                                     |
+| ------------------------------ | -------------------------------------------------------- |
+| `HotkeyBadge`                  | [hotkey-badge.md](hotkey-badge.md)                       |
+| `UiBox`                        | [ui-box.md](ui-box.md)                                   |
+| `InfoBanner`                   | [info-banner.md](info-banner.md)                         |
+| `PanelCard`                    | [panel-card.md](panel-card.md)                           |
+| `MenuButton`                   | [menu-button.md](menu-button.md)                         |
+| `registerManagementMenuButton` | [management-menu-button.md](management-menu-button.md)   |
+| `ManagementMenuButton`         | [management-menu-button.md](management-menu-button.md)   |
+| `ResourceRow`                  | [resource-row.md](resource-row.md)                       |
+| `SectionHeading`               | [section-heading.md](section-heading.md)                 |
+| `ObjectiveCard`                | [objective-card.md](objective-card.md)                   |
+| `SecondaryObjectiveRow`        | [secondary-objective-row.md](secondary-objective-row.md) |
+| `ObjectiveHighlight`           | [objective-highlight.md](objective-highlight.md)         |
+| `ShortcutChip`                 | [shortcut-chip.md](shortcut-chip.md)                     |
+| `ShortcutBar`                  | [shortcut-bar.md](shortcut-bar.md)                       |
+| `ShortcutBarItem`              | [shortcut-bar-item.md](shortcut-bar-item.md)             |
+| `ShortcutBarDivider`           | [shortcut-bar-divider.md](shortcut-bar-divider.md)       |
+| `CompoundHotkeys`              | [compound-hotkeys.md](compound-hotkeys.md)               |
+| `HotbarSlot`                   | [hotbar-slot.md](hotbar-slot.md)                         |
+| `HotbarIcon`                   | [hotbar-icon.md](hotbar-icon.md)                         |
+| `OverlayRoot`                  | [overlay-root.md](overlay-root.md)                       |
+| `FixedAnchor`                  | [fixed-anchor.md](fixed-anchor.md)                       |
+| `Interactive`                  | [interactive.md](interactive.md)                         |
 
 ## Shared styles
 

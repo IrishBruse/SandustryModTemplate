@@ -8,8 +8,12 @@ type MenuButtonProps = {
   hotkey: string;
   highlightLetter?: string;
   width?: number | string;
-  /** Column collapsed and this row not hovered (vanilla `a`). */
   collapsed?: boolean;
+  /**
+   * Management column sync owns width / label / hotkey inline styles.
+   * React must not write them or it will fight vanilla (stuck width: 0).
+   */
+  liveSync?: boolean;
   className?: string;
   style?: CSSProperties;
   rowProps?: Record<string, string>;
@@ -18,18 +22,20 @@ type MenuButtonProps = {
   onMouseLeave?: () => void;
 };
 
-/** Vanilla framer: `transition: { duration: 0.2, ease: "easeInOut" }`. */
-const TWEEN = "0.2s ease-in-out";
-
+/** Vanilla rest: `opacity 1; width auto; margin-left 12px` vs `opacity 0; width 0px`. */
 function detailStyle(collapsed: boolean, withMargin: boolean): CSSProperties {
+  if (collapsed) {
+    return {
+      opacity: 0,
+      width: 0,
+      minWidth: 0,
+      ...(withMargin ? { marginLeft: 0 } : {}),
+    };
+  }
   return {
-    opacity: collapsed ? 0 : 1,
-    width: collapsed ? 0 : "auto",
-    maxWidth: collapsed ? 0 : 160,
-    minWidth: collapsed ? 0 : undefined,
-    overflow: "hidden",
-    ...(withMargin ? { marginLeft: collapsed ? 0 : 12 } : {}),
-    transition: `opacity ${TWEEN}, width ${TWEEN}, max-width ${TWEEN}, margin-left ${TWEEN}`,
+    opacity: 1,
+    width: "auto",
+    ...(withMargin ? { marginLeft: 12 } : {}),
   };
 }
 
@@ -40,6 +46,7 @@ export function MenuButton({
   highlightLetter,
   width = 208,
   collapsed = false,
+  liveSync = false,
   className = "",
   style,
   rowProps,
@@ -49,17 +56,13 @@ export function MenuButton({
 }: MenuButtonProps) {
   const letter = highlightLetter ?? label.charAt(0);
   const rest = label.slice(letter.length);
-  const widthStyle = typeof width === "number" ? `${width}px` : width;
+  const widthStyle = liveSync ? undefined : typeof width === "number" ? `${width}px` : width;
 
   return (
     <div
       {...rowProps}
       className={`mb-2 relative group cursor-pointer pointer-events-auto ${className}`}
-      style={{
-        width: widthStyle,
-        transition: `width ${TWEEN}`,
-        ...style,
-      }}
+      style={{ width: widthStyle, ...style }}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -74,14 +77,17 @@ export function MenuButton({
           <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center transition-colors group-hover:text-[#ffe700]">
             {icon}
           </div>
-          <div className="tracking-wider" style={detailStyle(collapsed, true)}>
+          <div
+            className="tracking-wider"
+            style={liveSync ? undefined : detailStyle(collapsed, true)}
+          >
             <span className="inline-block whitespace-nowrap">
               <span className="transition-colors group-hover:text-[#ffe700]">{letter}</span>
               {rest}
             </span>
           </div>
         </div>
-        <div style={detailStyle(collapsed, false)}>
+        <div style={liveSync ? undefined : detailStyle(collapsed, false)}>
           <span className="inline-block whitespace-nowrap">
             <HotkeyBadge className="!mx-0">{hotkey}</HotkeyBadge>
           </span>

@@ -90,7 +90,9 @@ function teardownHostIfEmpty(): void {
  * Add a vanilla-style row under Upgrades (Toolbox / Building / …).
  * Hotkey is badge text only. Returns a dispose function for `onDispose`.
  */
-export function registerManagementMenuButton(options: RegisterManagementMenuButtonOptions): () => void {
+export function registerManagementMenuButton(
+  options: RegisterManagementMenuButtonOptions,
+): () => void {
   const next: RegisteredRow = { ...options };
   const index = rows.findIndex((row) => row.id === next.id);
   if (index >= 0) rows[index] = next;
