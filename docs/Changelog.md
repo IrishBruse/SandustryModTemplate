@@ -6,6 +6,8 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ## Unreleased
 
+## 2026-08-21
+
 ### Added
 
 - **Multi-mod.** Each `src/<name>/` folder with a `mod.ts` is a separate game mod. The build writes each mod to its own OS mods folder. `dist/<folder>/` is a per-mod link. `--mod <folder>` builds one mod.
@@ -23,11 +25,26 @@ The template has no release tags yet. Dated sections match the day the change la
 - `createLogger` and debug `console.*` lines that also append to `logs/<mod-id>.log` while `npm run dev` runs.
 - **Ctrl+R** in the watch terminal forces a hot reload.
 - VS Code breakpoints bind through sandkit `new Function` eval (inline maps, `sandkit-workshop://` `sourceURL`, loader line offset).
+- Docs [Changelog](Changelog.md), nested [UI kit](ui/README.md) sidebar, and a Discord announcement draft.
+- Cursor [chrome-devtools MCP](https://github.com/ChromeDevTools/chrome-devtools-mcp) config aimed at CDP `:9222`.
 
 ### Changed
 
 - Framework debug patches (`skip-startup-splash`) merge into the first src folder only, so two mods do not both patch `js/bundle.js`.
 - Management-column rows follow vanilla collapse, hover width, and the engine store.
+- Docs home Features list links each title; external Types links open in a new tab with a ↗ mark.
+- Sample mod folders use a consistent `*-example` name.
+
+### Fixed
+
+- F5 / IDE launch sets `SANDUSTRY_IDE_DEBUG` so the renderer does not HTTP-probe `:9222` (that freeze dropped the debugger).
+- Hot reload wraps source like sandkit’s loader so indexed source maps stay aligned.
+- Watch build removes leftover OS mod folders this template used to own after a rename.
+- Splash-skip retries are capped; only the first debug mod injects the shared F3 / management Debug row.
+
+### Removed
+
+- Obsolete `scripts/api` type-generation path (types stay in the `types/` submodule).
 
 ## 2026-08-20
 
