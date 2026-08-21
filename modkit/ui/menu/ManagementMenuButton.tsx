@@ -8,30 +8,41 @@ import { MenuButton } from "./MenuButton";
 const api = sandkit.api;
 
 const SPACER_ATTR = "data-modkit-management-spacer";
+const ROW_ATTR = "data-modkit-management-row";
 const SPACER_HEIGHT_PX = 42;
-/** Vanilla `animate.width` when `managementCollapsed` is true. */
 const COLLAPSED_WIDTH_PX = 52;
+const DEFAULT_EXPANDED_WIDTH_PX = 208;
+const MGMT_LOG_URL = "http://127.0.0.1:19147/mgmt-log";
 
-/** Registration order so stacked rows stay under Upgrades without overlap. */
+/** Row id is `${modId}:…`; used as `logs/<mod-id>.log`. */
+let logModId = "mod";
+
+function setLogModId(rowId: string): void {
+  const cut = rowId.lastIndexOf(":");
+  logModId = cut > 0 ? rowId.slice(0, cut) : rowId;
+}
+
+function mgmtLog(event: string, data: Record<string, unknown> = {}): void {
+  const payload = { t: Math.round(performance.now()), event, ...data };
+  const line = `[modkit-mgmt] ${JSON.stringify(payload)}`;
+  console.log(line);
+  void fetch(MGMT_LOG_URL, {
+    method: "POST",
+    mode: "cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ modId: logModId, line }),
+  }).catch(() => {
+    /* watch SSE not running */
+  });
+}
+
 const rowOrder: string[] = [];
 const spacers = new Map<string, HTMLDivElement>();
 const anchorListeners = new Map<string, (anchor: ManagementAnchor | null) => void>();
-let upgradesResizeObserver: ResizeObserver | null = null;
-let observedUpgrades: HTMLElement | null = null;
-
-function ensureUpgradesResizeObserver(upgrades: HTMLElement): void {
-  if (!upgradesResizeObserver) {
-    upgradesResizeObserver = new ResizeObserver(() => placeAll());
-  }
-  if (observedUpgrades === upgrades) return;
-  if (observedUpgrades) upgradesResizeObserver.unobserve(observedUpgrades);
-  upgradesResizeObserver.observe(upgrades);
-  observedUpgrades = upgrades;
-}
 
 export type ManagementAnchor = {
   spacer: HTMLDivElement;
-  collapsed: boolean;
+  expandedWidth: number;
 };
 
 function playMenuHover() {
@@ -42,7 +53,79 @@ function playMenuClick() {
   safe(() => api.sound.play("click"));
 }
 
-/** Find the Upgrades management row so rows can sit under it in the same column. */
+function sampleCollapse(tag: string): void {
+  let n = 0;
+  const tick = () => {
+    const upgrades = findUpgradesButton();
+    const dest = document.querySelector<HTMLElement>(`[${ROW_ATTR}]`);
+    const label = dest?.querySelector<HTMLElement>(".tracking-wider");
+    mgmtLog("sample", {
+      tag,
+      n,
+      store: getManagementCollapsed(),
+      upgradesW: upgrades?.offsetWidth ?? null,
+      upgradesStyle: upgrades?.getAttribute("style"),
+      destW: dest?.offsetWidth ?? null,
+      destStyle: dest?.getAttribute("style"),
+      destTransition: dest ? getComputedStyle(dest).transition : null,
+      labelOp: label ? getComputedStyle(label).opacity : null,
+      labelW: label ? getComputedStyle(label).width : null,
+    });
+    n += 1;
+    if (n < 10) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+type EngineState = {
+  store?: { options?: { managementCollapsed?: boolean } };
+};
+
+function getStoreOptions(): { managementCollapsed?: boolean } | null {
+  const state = sandkit.engine.state as EngineState | undefined;
+  return state?.store?.options ?? null;
+}
+
+/** True when the vanilla ◀/▶ column is folded. */
+export function getManagementCollapsed(): boolean {
+  return getStoreOptions()?.managementCollapsed === true;
+}
+
+const collapsedListeners = new Set<(collapsed: boolean) => void>();
+const hookedOptions = new WeakSet<object>();
+
+function installCollapsedHook(options: { managementCollapsed?: boolean }): void {
+  if (hookedOptions.has(options)) return;
+  hookedOptions.add(options);
+  let value = options.managementCollapsed === true;
+  mgmtLog("hook-install", { initial: value });
+  Object.defineProperty(options, "managementCollapsed", {
+    configurable: true,
+    enumerable: true,
+    get() {
+      return value;
+    },
+    set(next: boolean) {
+      value = next === true;
+      mgmtLog("store-set", { collapsed: value });
+      sampleCollapse("store-set");
+      for (const fn of collapsedListeners) fn(value);
+    },
+  });
+}
+
+/**
+ * Fires in the same turn as vanilla `store.options.managementCollapsed = …`
+ * (the ◀/▶ click), before their React commit.
+ */
+function subscribeManagementCollapsed(onChange: (collapsed: boolean) => void): () => void {
+  const options = getStoreOptions();
+  if (options) installCollapsedHook(options);
+  collapsedListeners.add(onChange);
+  onChange(getManagementCollapsed());
+  return () => collapsedListeners.delete(onChange);
+}
+
 function findUpgradesButton(): HTMLElement | null {
   const rows = document.querySelectorAll<HTMLElement>(
     ".mb-2.relative.group.cursor-pointer.pointer-events-auto",
@@ -55,30 +138,12 @@ function findUpgradesButton(): HTMLElement | null {
   return null;
 }
 
-/**
- * Vanilla toggles `store.options.managementCollapsed` on the ◀/▶ control.
- * Read that chevron so collapse flips immediately (not after width/opacity finish).
- */
-function isManagementCollapsed(upgrades: HTMLElement): boolean {
-  const parent = upgrades.parentElement;
-  if (parent) {
-    for (const child of parent.children) {
-      const text = child.textContent?.trim();
-      if (text === "▶") return true;
-      if (text === "◀") return false;
-    }
-  }
-  // offsetWidth ignores parent UI scale (getBoundingClientRect does not).
-  return upgrades.offsetWidth <= COLLAPSED_WIDTH_PX + 1;
-}
-
 function placeAll() {
+  const options = getStoreOptions();
+  if (options) installCollapsedHook(options);
+
   const upgrades = findUpgradesButton();
   if (!upgrades) {
-    if (observedUpgrades && upgradesResizeObserver) {
-      upgradesResizeObserver.unobserve(observedUpgrades);
-      observedUpgrades = null;
-    }
     for (const id of rowOrder) {
       const spacer = spacers.get(id);
       if (spacer?.parentElement) spacer.remove();
@@ -87,22 +152,14 @@ function placeAll() {
     return;
   }
 
-  ensureUpgradesResizeObserver(upgrades);
-
-  const collapsed = isManagementCollapsed(upgrades);
-  // Follow the live layout width (framer animates 208→52). offsetWidth ignores UI scale.
-  const width =
-    upgrades.offsetWidth > 0 ? upgrades.offsetWidth : collapsed ? COLLAPSED_WIDTH_PX : 208;
+  const expandedWidth = Math.max(DEFAULT_EXPANDED_WIDTH_PX, upgrades.offsetWidth);
   let previous: HTMLElement = upgrades;
 
   for (const id of rowOrder) {
     const spacer = spacers.get(id);
     const notify = anchorListeners.get(id);
     if (!spacer || !notify) continue;
-
-    spacer.style.width = `${width}px`;
     spacer.style.height = `${SPACER_HEIGHT_PX}px`;
-
     if (
       spacer.previousElementSibling !== previous ||
       spacer.parentElement !== previous.parentElement
@@ -110,8 +167,7 @@ function placeAll() {
       previous.after(spacer);
     }
     previous = spacer;
-
-    notify({ spacer, collapsed });
+    notify({ spacer, expandedWidth });
   }
 }
 
@@ -143,10 +199,6 @@ function registerRow(id: string, setAnchor: (anchor: ManagementAnchor | null) =>
   };
 }
 
-/**
- * Keep flow spacers after Upgrades (so later rows shift down) and expose the
- * spacer node so the row paints inside the management column stacking context.
- */
 function useManagementAnchor(id: string, active: boolean): ManagementAnchor | null {
   const [anchor, setAnchor] = useState<ManagementAnchor | null>(null);
   const setAnchorRef = useRef(setAnchor);
@@ -160,7 +212,12 @@ function useManagementAnchor(id: string, active: boolean): ManagementAnchor | nu
 
     const unregister = registerRow(id, (next) => {
       setAnchorRef.current((prev) => {
-        if (prev && next && prev.spacer === next.spacer && prev.collapsed === next.collapsed) {
+        if (
+          prev &&
+          next &&
+          prev.spacer === next.spacer &&
+          prev.expandedWidth === next.expandedWidth
+        ) {
           return prev;
         }
         return next;
@@ -168,14 +225,12 @@ function useManagementAnchor(id: string, active: boolean): ManagementAnchor | nu
     });
 
     const observer = new MutationObserver(placeAll);
-    observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+    observer.observe(document.body, { childList: true, subtree: true });
     window.addEventListener("resize", placeAll);
-    const timer = window.setInterval(placeAll, 500);
 
     return () => {
       observer.disconnect();
       window.removeEventListener("resize", placeAll);
-      window.clearInterval(timer);
       unregister();
     };
   }, [id, active]);
@@ -189,23 +244,19 @@ function returnRowHome(home: HTMLElement | null, row: HTMLElement | null) {
 }
 
 export type ManagementMenuButtonProps = {
-  /** Stable id for spacer stacking (unique per mod row). */
   id: string;
   icon: ReactNode;
   label: string;
   hotkey: string;
   highlightLetter?: string;
-  /** When false, the row and spacer are removed. Default true. */
   active?: boolean;
   onClick?: () => void;
 };
 
 /**
- * Vanilla-style management column row under Upgrades (Toolbox / Building / …).
- * Plays the same hover `blip` / click `click` cues when those sounds exist.
- *
- * The row DOM is moved into a flow spacer under Upgrades so it shares that
- * column's stacking context (fixed + high z-index painted above Debug panels).
+ * Vanilla-style management column row under Upgrades.
+ * Collapse follows `engine.state.store.options.managementCollapsed` (same write as ◀/▶).
+ * Width uses CSS `0.2s ease-in-out` like vanilla framer-motion.
  */
 export function ManagementMenuButton({
   id,
@@ -216,42 +267,73 @@ export function ManagementMenuButton({
   active = true,
   onClick,
 }: ManagementMenuButtonProps) {
+  setLogModId(id);
   const anchor = useManagementAnchor(id, active);
+  const [columnCollapsed, setColumnCollapsed] = useState(getManagementCollapsed);
+  const [hovered, setHovered] = useState(false);
   const homeRef = useRef<HTMLDivElement>(null);
-  const rowRef = useRef<HTMLDivElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
   const mounted = Boolean(active && anchor);
 
-  // Before React commits an unmount, put the row back under its React parent.
+  useEffect(() => {
+    mgmtLog("subscribe", { store: getManagementCollapsed() });
+    return subscribeManagementCollapsed((collapsed) => {
+      mgmtLog("listener", { collapsed });
+      setColumnCollapsed(collapsed);
+    });
+  }, []);
+
+  const visuallyCollapsed = columnCollapsed && !hovered;
+  const expandedWidth = anchor?.expandedWidth ?? DEFAULT_EXPANDED_WIDTH_PX;
+  const width = visuallyCollapsed ? COLLAPSED_WIDTH_PX : expandedWidth;
+
   if (!mounted) {
-    returnRowHome(homeRef.current, rowRef.current);
+    returnRowHome(homeRef.current, wrapRef.current);
   }
 
   useLayoutEffect(() => {
     if (!mounted || !anchor) return;
-    const row = rowRef.current;
-    if (!row) return;
-    if (row.parentElement !== anchor.spacer) anchor.spacer.appendChild(row);
-
+    const wrap = wrapRef.current;
+    if (!wrap) return;
+    if (wrap.parentElement !== anchor.spacer) anchor.spacer.appendChild(wrap);
     return () => {
-      returnRowHome(homeRef.current, row);
+      returnRowHome(homeRef.current, wrap);
     };
   }, [mounted, anchor]);
+
+  useLayoutEffect(() => {
+    if (!mounted || !anchor) return;
+    anchor.spacer.style.transition = "width 0.2s ease-in-out";
+    anchor.spacer.style.width = `${width}px`;
+    mgmtLog("layout", {
+      width,
+      columnCollapsed,
+      hovered,
+      visuallyCollapsed,
+      expandedWidth,
+    });
+  }, [mounted, anchor, width, columnCollapsed, hovered, visuallyCollapsed, expandedWidth]);
 
   if (!mounted || !anchor) return null;
 
   return (
     <div ref={homeRef} hidden aria-hidden>
-      <div ref={rowRef} className="pointer-events-none w-full h-full">
+      <div ref={wrapRef} className="pointer-events-none" style={{ width: "100%", height: "100%" }}>
         <Interactive>
           <MenuButton
             icon={icon}
             label={label}
             hotkey={hotkey}
             highlightLetter={highlightLetter}
-            width="100%"
-            collapsed={anchor.collapsed}
+            width={width}
+            collapsed={visuallyCollapsed}
             className="!mb-0"
-            onMouseEnter={playMenuHover}
+            rowProps={{ [ROW_ATTR]: id }}
+            onMouseEnter={() => {
+              setHovered(true);
+              playMenuHover();
+            }}
+            onMouseLeave={() => setHovered(false)}
             onClick={() => {
               playMenuClick();
               onClick?.();

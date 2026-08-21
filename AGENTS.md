@@ -24,6 +24,7 @@ scripts/build/          esbuild, patches.json
 scripts/sandustry/      Launch / stop the game, mod output path
 scripts/api/            Generate types from runtime dump + official reference
 dist/                   Symlink to ~/.config/sandustry/mods/<modinfo.name> (dev output)
+logs/                   Symlink to ~/.config/sandustry/logs (game + mod debug logs)
 ```
 
 ### `src/`
@@ -119,3 +120,24 @@ npm run typecheck
 npm run generate-types   # after a new runtime dump
 npm run sandustry        # build debug + launch
 ```
+
+## Game logs
+
+The renderer does not write `console.log` into `logs/main.log` (that file is the Electron main process). To debug in-game UI from this workspace:
+
+1. Run `npm run dev` (watch SSE on `127.0.0.1:19147`).
+2. From the mod, `POST` JSON `{ "modId": "<modinfo.id>", "line": "…" }` to `http://127.0.0.1:19147/mgmt-log`.
+3. Read `logs/<mod-id>.log` (same as `~/.config/sandustry/logs/<mod-id>.log`). Unsafe characters in `modId` become `_`.
+
+Example (also `console.log` so DevTools still shows it):
+
+```ts
+void fetch("http://127.0.0.1:19147/mgmt-log", {
+  method: "POST",
+  mode: "cors",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ modId: MOD_ID, line: `[my-tag] ${JSON.stringify(payload)}` }),
+}).catch(() => {});
+```
+
+Restart `npm run dev` after changing `scripts/build/hot-reload-server.js`. Route changes are not hot-reloaded into the game.

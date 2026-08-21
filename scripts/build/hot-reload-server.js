@@ -2,8 +2,11 @@
  * Hot-reload notify for `npm run dev` (--watch only).
  * Game clients subscribe with EventSource; rebuilds push a small JSON event.
  */
+import { appendFileSync, mkdirSync } from "node:fs";
 import http from "node:http";
 import net from "node:net";
+import { homedir } from "node:os";
+import { join } from "node:path";
 
 export const HOT_RELOAD_PORT = 19147;
 export const HOT_RELOAD_PATH = "/hot-reload";
@@ -89,10 +92,36 @@ export function startHotReloadServer() {
     if (req.method === "OPTIONS") {
       res.writeHead(204, {
         "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type",
       });
       res.end();
+      return;
+    }
+
+    if (req.method === "POST" && req.url?.startsWith("/mgmt-log")) {
+      const chunks = [];
+      req.on("data", (c) => chunks.push(c));
+      req.on("end", () => {
+        const raw = Buffer.concat(chunks).toString("utf8");
+        let modId = "mod";
+        let line = raw;
+        try {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === "object") {
+            if (typeof parsed.modId === "string" && parsed.modId.trim()) modId = parsed.modId.trim();
+            if (typeof parsed.line === "string") line = parsed.line;
+          }
+        } catch {
+          /* plain text body */
+        }
+        const safeId = modId.replace(/[^a-zA-Z0-9._-]+/g, "_") || "mod";
+        const dir = join(homedir(), ".config/sandustry/logs");
+        mkdirSync(dir, { recursive: true });
+        appendFileSync(join(dir, `${safeId}.log`), line.endsWith("\n") ? line : `${line}\n`);
+        res.writeHead(204, { "Access-Control-Allow-Origin": "*" });
+        res.end();
+      });
       return;
     }
 
