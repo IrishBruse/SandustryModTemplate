@@ -40,12 +40,12 @@ In game, **Alt+E** opens the example overlay. More: [docs site](https://ethancon
 
 ## Commands
 
-| Command             | Effect                                                       |
-| ------------------- | ------------------------------------------------------------ |
-| `npm run dev`       | Watch and write to `~/.config/sandustry/mods/<modinfo.name>` |
-| `npm run build`     | Release bundle (no debug helpers)                            |
-| `npm run typecheck` | TypeScript check                                             |
-| `npm run sandustry` | Debug build and launch                                       |
+| Command             | Effect                                                                 |
+| ------------------- | ---------------------------------------------------------------------- |
+| `npm run dev`       | Watch and write to the OS mods folder (`~/.config/...` or `%APPDATA%`) |
+| `npm run build`     | Release bundle (no debug helpers)                                      |
+| `npm run typecheck` | TypeScript check                                                       |
+| `npm run sandustry` | Debug build and launch                                                 |
 
 ## Troubleshooting
 

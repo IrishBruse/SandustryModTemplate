@@ -5,7 +5,7 @@
  */
 import { createServer } from "node:http";
 import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
-import { dirname, join, relative } from "node:path";
+import { dirname, isAbsolute, join, relative, resolve as resolvePath } from "node:path";
 import { fileURLToPath } from "node:url";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
@@ -14,7 +14,7 @@ import { writePreviewUtilities } from "./compile-preview-css.mjs";
 
 const execFileAsync = promisify(execFile);
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../../docs/ui/canvas");
+const ROOT = resolvePath(join(dirname(fileURLToPath(import.meta.url)), "../../docs/ui/canvas"));
 const PORT = 4173;
 const SESSION = "sandustry-ui-previews";
 const MIME = {
@@ -52,12 +52,19 @@ async function runAgent(args) {
   });
 }
 
+/** True when `filePath` is ROOT or a file under it (handles mixed `\` / `/`). */
+function isUnderRoot(filePath) {
+  const rel = relative(ROOT, filePath);
+  return rel === "" || (!rel.startsWith("..") && !isAbsolute(rel));
+}
+
 function startServer() {
   return new Promise((resolve) => {
     const server = createServer((req, res) => {
       const urlPath = decodeURIComponent((req.url ?? "/").split("?")[0]);
-      const filePath = join(ROOT, urlPath);
-      if (!filePath.startsWith(ROOT) || !existsSync(filePath) || statSync(filePath).isDirectory()) {
+      const safeRel = urlPath.replace(/^[/\\]+/, "");
+      const filePath = resolvePath(ROOT, safeRel);
+      if (!isUnderRoot(filePath) || !existsSync(filePath) || statSync(filePath).isDirectory()) {
         res.writeHead(404);
         res.end("Not found");
         return;

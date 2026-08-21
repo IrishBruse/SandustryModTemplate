@@ -11,8 +11,12 @@ scripts/build/          esbuild, patches.json
 scripts/ui/             Preview CSS + screenshot tools for docs/ui/canvas
 scripts/sandustry/      Launch / stop the game, mod output path
 scripts/api/            Generate types from runtime dump + official reference
-dist/                   Symlink to ~/.config/sandustry/mods/<modinfo.name> (dev output)
+dist/                   Link to OS mods folder (symlink / Windows junction)
+logs/                   Link to OS sandustry logs (symlink / Windows junction)
 ```
+
+Mods folder: Linux `~/.config/sandustry/mods/<modinfo.name>`; Windows `%APPDATA%/sandustry/mods/<modinfo.name>`.
+Logs: Linux `~/.config/sandustry/logs`; Windows `%APPDATA%/sandustry/logs`.
 
 ## `src/`
 
@@ -66,10 +70,11 @@ Path aliases: `@modkit/*` → `./modkit/*`; `types/api` / `types/sandkit` / `typ
 | `scripts/ui/generate-previews.mjs`      | `npm run ui:previews` — screenshot canvases into PNGs             |
 | `scripts/build/build-patches.js`        | Load `mod.ts` patch exports and write `patches.json`              |
 | `scripts/build/dev.js`                  | Watch + write to the game mods folder                             |
-| `scripts/sandustry/mod-path.js`         | `MOD_DIR` = `~/.config/sandustry/mods/<modinfo.name>`             |
-| `scripts/sandustry/launch-sandustry.js` | Build (debug) and launch the game                                 |
-| `scripts/api/generate-api-types.js`     | `npm run generate-types`                                          |
+| `scripts/sandustry/paths.js`            | OS user-data + Steam binary paths                             |
+| `scripts/sandustry/mod-path.js`         | `MOD_DIR` from `sandustryModsDir()` + `modinfo.name`          |
+| `scripts/sandustry/launch-sandustry.js` | Build (debug) and launch the game                             |
+| `scripts/api/generate-api-types.js`     | `npm run generate-types`                                      |
 
 ## Output
 
-`dist/` is a symlink to the game mods folder during development. Release builds write the same files there.
+`dist/` links to the game mods folder during development (symlink on Linux, directory junction on Windows). Release builds write the same files there.

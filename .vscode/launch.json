@@ -5,7 +5,7 @@
       "name": "Sandustry Main",
       "type": "node",
       "request": "launch",
-      "cwd": "${env:HOME}/games/SteamLibrary/steamapps/common/Sandustry",
+      "cwd": "${workspaceFolder}",
       "runtimeExecutable": "node",
       "runtimeArgs": ["${workspaceFolder}/scripts/sandustry/sandustry-vscode-launch.js"],
       "outputCapture": "std",
@@ -22,13 +22,14 @@
       "resolveSourceMapLocations": [
         "${workspaceFolder}/**",
         "${workspaceFolder}/dist/**",
-        "${env:HOME}/.config/sandustry/mods/**",
+        "${userHome}/.config/sandustry/mods/**",
+        "${env:APPDATA}/sandustry/mods/**",
         "!**/node_modules/**"
       ],
       "sourceMapPathOverrides": {
-        "/~/*": "${env:HOME}/*",
+        "/~/*": "${userHome}/*",
         "webpack:///./*": "${workspaceFolder}/*",
-        "webpack:///./~/*": "${env:HOME}/*"
+        "webpack:///./~/*": "${userHome}/*"
       },
       "timeout": 120000
     },
@@ -50,13 +51,14 @@
       "resolveSourceMapLocations": [
         "${workspaceFolder}/**",
         "${workspaceFolder}/dist/**",
-        "${env:HOME}/.config/sandustry/mods/**",
+        "${userHome}/.config/sandustry/mods/**",
+        "${env:APPDATA}/sandustry/mods/**",
         "!**/node_modules/**"
       ],
       "sourceMapPathOverrides": {
-        "/~/*": "${env:HOME}/*",
+        "/~/*": "${userHome}/*",
         "webpack:///./*": "${workspaceFolder}/*",
-        "webpack:///./~/*": "${env:HOME}/*"
+        "webpack:///./~/*": "${userHome}/*"
       },
       "timeout": 120000
     }

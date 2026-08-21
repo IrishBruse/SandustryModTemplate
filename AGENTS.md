@@ -23,9 +23,12 @@ types/                  Sandkit API types (submodule: sandustry-modding-types)
 scripts/build/          esbuild, patches.json
 scripts/sandustry/      Launch / stop the game, mod output path
 scripts/api/            Generate types from runtime dump + official reference
-dist/                   Symlink to ~/.config/sandustry/mods/<modinfo.name> (dev output)
-logs/                   Symlink to ~/.config/sandustry/logs (game + mod debug logs)
+dist/                   Link to OS mods folder (symlink / Windows junction)
+logs/                   Link to OS sandustry logs (symlink / Windows junction)
 ```
+
+Mods: Linux `~/.config/sandustry/mods/<modinfo.name>`; Windows `%APPDATA%/sandustry/mods/<modinfo.name>`.
+Logs: Linux `~/.config/sandustry/logs`; Windows `%APPDATA%/sandustry/logs`.
 
 ### `src/`
 
@@ -77,17 +80,18 @@ Path aliases: `@modkit/*` → `./modkit/*`; `types/api` / `types/sandkit` / `typ
 | `scripts/build/esbuild.config.mjs`      | Bundle `src/main.ts` → `main.js`, write `modinfo.json` + `patches.json` |
 | `scripts/build/build-patches.js`        | Load `mod.ts` patch exports and write `patches.json`                    |
 | `scripts/build/dev.js`                  | Watch + write to the game mods folder                                   |
-| `scripts/sandustry/mod-path.js`         | `MOD_DIR` = `~/.config/sandustry/mods/<modinfo.name>`                   |
-| `scripts/sandustry/launch-sandustry.js` | Build (debug) and launch the game                                       |
-| `scripts/api/generate-api-types.js`     | `npm run generate-types`                                                |
+| `scripts/sandustry/paths.js`            | OS user-data + Steam binary paths                               |
+| `scripts/sandustry/mod-path.js`         | `MOD_DIR` from `sandustryModsDir()` + `modinfo.name`            |
+| `scripts/sandustry/launch-sandustry.js` | Build (debug) and launch the game                               |
+| `scripts/api/generate-api-types.js`     | `npm run generate-types`                                        |
 
 ## Builds
 
-| Command                                    | Debug helpers                  | `debugPatches` | Output                                    |
-| ------------------------------------------ | ------------------------------ | -------------- | ----------------------------------------- |
-| `npm run build`                            | Stub (`modkit/debug/empty.ts`) | Omitted        | `dist/` (symlink)                         |
-| `npm run dev`                              | Included                       | Included       | `~/.config/sandustry/mods/<modinfo.name>` |
-| `npm run sandustry` / `--game` / `--debug` | Included                       | Included       | Game mods folder                          |
+| Command                                    | Debug helpers                  | `debugPatches` | Output                                                         |
+| ------------------------------------------ | ------------------------------ | -------------- | -------------------------------------------------------------- |
+| `npm run build`                            | Stub (`modkit/debug/empty.ts`) | Omitted        | `dist/` (symlink / Windows junction)                           |
+| `npm run dev`                              | Included                       | Included       | OS mods folder (`~/.config/...` or `%APPDATA%/sandustry/mods`) |
+| `npm run sandustry` / `--game` / `--debug` | Included                       | Included       | Game mods folder                                               |
 
 `--no-debug` forces a release-style bundle. Debug builds emit inline source maps; `--sourcemap` / `--no-sourcemap` override.
 
@@ -126,7 +130,7 @@ npm run sandustry        # build debug + launch
 
 The renderer does not write `console.log` into `logs/main.log` (that file is the Electron main process).
 
-In **debug** builds, esbuild injects [`modkit/console.ts`](modkit/console.ts) so bare `console.log` / `info` / `warn` / `error` / `debug` also append to `logs/<modinfo.id>.log` (symlink: `logs/` → `~/.config/sandustry/logs`) when `npm run dev` is running.
+In **debug** builds, esbuild injects [`modkit/console.ts`](modkit/console.ts) so bare `console.log` / `info` / `warn` / `error` / `debug` also append to `logs/<modinfo.id>.log` (link: `logs/` → OS sandustry logs) when `npm run dev` is running.
 
 ```ts
 console.log("[my-tag]", { width, collapsed });

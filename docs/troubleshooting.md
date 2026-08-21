@@ -4,12 +4,37 @@
 
 ![Steam Properties Betas tab with the mods branch selected](assets/images/mods-branch.png)
 
-**Game binary not found** — Point the launcher at your executable:
+**Game binary not found** — Point the launcher at your executable.
+
+Linux:
 
 ```bash
-export SANDUSTRY=/path/to/sandustry
+export SANDUSTRY=/path/to/steamapps/common/Sandustry/sandustry
 ```
 
-Default path: `~/games/SteamLibrary/steamapps/common/Sandustry/sandustry`.
+Default probe includes `~/games/SteamLibrary/steamapps/common/Sandustry/sandustry` and Steam library folders from `libraryfolders.vdf`.
+
+Windows (PowerShell):
+
+```powershell
+$env:SANDUSTRY="C:\Program Files (x86)\Steam\steamapps\common\Sandustry\Sandustry.exe"
+```
+
+Windows (cmd):
+
+```bat
+set SANDUSTRY=C:\Program Files (x86)\Steam\steamapps\common\Sandustry\Sandustry.exe
+```
+
+Default probe includes `%ProgramFiles(x86)%\Steam` and `%ProgramFiles%\Steam`, plus libraries from `libraryfolders.vdf`.
+
+**Mods / logs folders**
+
+| OS      | Mods                                                         | Logs                          |
+| ------- | ------------------------------------------------------------ | ----------------------------- |
+| Linux   | `~/.config/sandustry/mods/<modinfo.name>`                    | `~/.config/sandustry/logs`    |
+| Windows | `%APPDATA%\sandustry\mods\<modinfo.name>` (`AppData\Roaming`) | `%APPDATA%\sandustry\logs` |
+
+`dist/` and `logs/` in the repo are a symlink on Linux and a directory junction on Windows (no Developer Mode required).
 
 **Types missing** — Run `git submodule update --init --recursive`. Types live in `types/` ([sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types)).

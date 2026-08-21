@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 /**
- * Watch src/ and build the mod into ~/.config/sandustry/mods/<modinfo.name>.
+ * Watch src/ and build the mod into the game mods folder
+ * (Linux: ~/.config/sandustry/mods/<modinfo.name>;
+ *  Windows: %APPDATA%/sandustry/mods/<modinfo.name>).
  * Usage: npm run dev
  */
 import { spawn } from "node:child_process";

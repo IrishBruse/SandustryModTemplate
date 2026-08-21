@@ -101,7 +101,7 @@ Turning Debug off closes the EventSource. Turning it on connects again when the 
 
 ## File logging (`console`)
 
-Debug builds use esbuild [`inject`](https://esbuild.github.io/api/#inject) with [`modkit/console.ts`](../../modkit/console.ts). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code still print in DevTools and also `POST` to `http://127.0.0.1:19147/log` while `npm run dev` is up. Lines append to `logs/<modinfo.id>.log` (workspace `logs/` → `~/.config/sandustry/logs`).
+Debug builds use esbuild [`inject`](https://esbuild.github.io/api/#inject) with [`modkit/console.ts`](../../modkit/console.ts). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code still print in DevTools and also `POST` to `http://127.0.0.1:19147/log` while `npm run dev` is up. Lines append to `logs/<modinfo.id>.log` (workspace `logs/` → OS sandustry logs: `~/.config/sandustry/logs` or `%APPDATA%/sandustry/logs`).
 
 ```ts
 console.log("[my-feature]", payload);

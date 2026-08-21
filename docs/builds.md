@@ -4,11 +4,11 @@ The game runs `main.js` as a script body (`new Function`). `sandkit` is already 
 
 ## Debug vs release
 
-| Command                                    | Debug helpers                  | `debugPatches` | Output                                    |
-| ------------------------------------------ | ------------------------------ | -------------- | ----------------------------------------- |
-| `npm run build`                            | Stub (`modkit/debug/empty.ts`) | Omitted        | `dist/` (symlink)                         |
-| `npm run dev`                              | Included                       | Included       | `~/.config/sandustry/mods/<modinfo.name>` |
-| `npm run sandustry` / `--game` / `--debug` | Included                       | Included       | Game mods folder                          |
+| Command                                    | Debug helpers                  | `debugPatches` | Output                                                         |
+| ------------------------------------------ | ------------------------------ | -------------- | -------------------------------------------------------------- |
+| `npm run build`                            | Stub (`modkit/debug/empty.ts`) | Omitted        | `dist/` (symlink / Windows junction)                           |
+| `npm run dev`                              | Included                       | Included       | OS mods folder (`~/.config/...` or `%APPDATA%/sandustry/mods`) |
+| `npm run sandustry` / `--game` / `--debug` | Included                       | Included       | Game mods folder                                               |
 
 `--no-debug` forces a release-style bundle even when watch or game flags are set.
 
@@ -64,4 +64,4 @@ npm run ui:previews      # compile preview CSS, then screenshot preview.html
 
 **F5** (VS Code `Sandustry` compound) stops any running game and launches with debug ports. It does not rebuild the mod — keep `npm run dev` running for the bundle, hot reload, and file logs.
 
-Renderer attach loads source maps from `~/.config/sandustry/mods/` (and `dist/`). Debug builds rewrite those maps to absolute paths and add `sourceURL` so breakpoints in `src/` bind through `new Function` eval.
+Renderer attach loads source maps from the OS mods folder (`~/.config/sandustry/mods/` or `%APPDATA%/sandustry/mods/`) and `dist/`. Debug builds rewrite those maps to absolute paths and add `sourceURL` so breakpoints in `src/` bind through `new Function` eval.

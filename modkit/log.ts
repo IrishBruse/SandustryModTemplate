@@ -2,7 +2,8 @@
  * File logging for the renderer while `npm run dev` is running.
  *
  * The watch server accepts POST `/log` and appends to
- * `~/.config/sandustry/logs/<modId>.log` (repo `logs/` symlink).
+ * `~/.config/sandustry/logs/<modId>.log` on Linux or
+ * `%APPDATA%/sandustry/logs/<modId>.log` on Windows (repo `logs/` link).
  * Electron `logs/main.log` only gets the main process — not `console.log`
  * from the game UI — so use this for in-game UI debugging.
  *

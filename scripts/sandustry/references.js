@@ -1,11 +1,13 @@
 /**
  * Populate references/ from Sandustry app.asar, Steam Workshop subscriptions,
- * and a symlink to ~/.config/sandustry/logs.
+ * and a link to the Sandustry logs folder.
  * Does not wipe workshop copies — only creates or updates individual paths.
  * Usage: npm run references
  *
  * Layout:
- *   logs/                symlink to ~/.config/sandustry/logs (workspace root)
+ *   logs/                symlink (Linux) / junction (Windows) to sandustry logs
+ *                        Linux: ~/.config/sandustry/logs
+ *                        Windows: %APPDATA%/sandustry/logs
  *   references/source/   game JS/JSON/HTML/CSS from app.asar
  *   references/<mod-id>/ workshop copies
  */
@@ -19,12 +21,11 @@ import {
   readFileSync,
   readlinkSync,
   rmSync,
-  symlinkSync,
   writeFileSync,
 } from "node:fs";
-import { homedir } from "node:os";
-import { basename, dirname, extname, join } from "node:path";
+import { basename, dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { linkDirectory, samePath, sandustryLogsDir } from "./paths.js";
 import { SANDUSTRY_DIR } from "./sandustry-common.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
@@ -34,7 +35,7 @@ const ASAR = join(SANDUSTRY_DIR, "resources/app.asar");
 const WORKSHOP = join(STEAM_APPS, "workshop/content", SANDUSTRY_APP_ID);
 const REFERENCES = join(ROOT, "references");
 const SOURCE_DEST = join(REFERENCES, "source");
-const LOGS_SRC = join(homedir(), ".config/sandustry/logs");
+const LOGS_SRC = sandustryLogsDir();
 const LOGS_DEST = join(ROOT, "logs");
 /** Previous location of the logs symlink, before it moved to the workspace root. */
 const LEGACY_LOGS_DEST = join(REFERENCES, "logs");
@@ -107,17 +108,20 @@ function syncLogs() {
 
   try {
     const stat = lstatSync(LOGS_DEST);
-    if (stat.isSymbolicLink() && readlinkSync(LOGS_DEST) === LOGS_SRC) {
-      console.log(`Symlink logs -> ${LOGS_SRC} (already linked)`);
-      return;
+    if (stat.isSymbolicLink()) {
+      const current = resolve(dirname(LOGS_DEST), readlinkSync(LOGS_DEST));
+      if (samePath(current, LOGS_SRC)) {
+        console.log(`Link logs -> ${LOGS_SRC} (already linked)`);
+        return;
+      }
     }
     rmSync(LOGS_DEST, { recursive: true, force: true });
   } catch (err) {
     if (err.code !== "ENOENT") throw err;
   }
 
-  symlinkSync(LOGS_SRC, LOGS_DEST);
-  console.log(`Symlinked logs -> ${LOGS_SRC}`);
+  linkDirectory(LOGS_SRC, LOGS_DEST);
+  console.log(`Linked logs -> ${LOGS_SRC}`);
 }
 
 function syncWorkshopMods() {

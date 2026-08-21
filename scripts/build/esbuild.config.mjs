@@ -161,7 +161,8 @@ function releaseDebugStubPlugin() {
     setup(build) {
       if (modDebug) return;
       build.onResolve({ filter: /^\.\/debug$/ }, (args) => {
-        if (!args.importer.endsWith(`${join("src", "main.ts")}`)) return;
+        // Match both `src/main.ts` and `src\main.ts` (Windows).
+        if (!/[\\/]src[\\/]main\.ts$/.test(args.importer)) return;
         return { path: join(ROOT, "modkit/debug/empty.ts") };
       });
     },

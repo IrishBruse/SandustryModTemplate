@@ -1,26 +1,45 @@
 /**
  * Shared Sandustry launch helpers (normal + debug).
+ * Linux uses /proc + xrandr/wmctrl; Windows uses tasklist/taskkill and --start-maximized.
  */
 import { execSync, spawn, spawnSync } from "node:child_process";
 import { existsSync, readdirSync, readlinkSync } from "node:fs";
-import { homedir } from "node:os";
-import { dirname, join } from "node:path";
+import { join } from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
 import { ensureModDir } from "./mod-path.js";
+import {
+  resolveSandustryBinary,
+  sandustryBinaryName,
+  sandustryInstallDir,
+} from "./paths.js";
 
-export const SANDUSTRY =
-  process.env.SANDUSTRY ??
-  join(homedir(), "games/SteamLibrary/steamapps/common/Sandustry/sandustry");
-export const SANDUSTRY_DIR = dirname(SANDUSTRY);
+const IS_WIN = process.platform === "win32";
+
+export const SANDUSTRY = resolveSandustryBinary();
+export const SANDUSTRY_DIR = sandustryInstallDir(SANDUSTRY);
+const SANDUSTRY_EXE = sandustryBinaryName(SANDUSTRY);
 
 export const DEFAULT_MAIN_DEBUG_PORT = "9230";
 export const DEFAULT_RENDERER_DEBUG_PORT = "9222";
 
+/** Sync wait that works on cmd/PowerShell (no Unix `sleep`). */
+function sleepSync(ms) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+}
+
 export function sandustryRequireBinary() {
-  if (!existsSync(SANDUSTRY)) {
-    console.error(`Sandustry binary not found: ${SANDUSTRY}`);
-    process.exit(1);
+  if (existsSync(SANDUSTRY)) return;
+
+  console.error(`Sandustry binary not found: ${SANDUSTRY}`);
+  if (IS_WIN) {
+    console.error('Set SANDUSTRY to your Sandustry.exe, for example:');
+    console.error('  cmd:        set SANDUSTRY=C:\\Program Files (x86)\\Steam\\steamapps\\common\\Sandustry\\Sandustry.exe');
+    console.error('  PowerShell: $env:SANDUSTRY="C:\\Program Files (x86)\\Steam\\steamapps\\common\\Sandustry\\Sandustry.exe"');
+  } else {
+    console.error("Set SANDUSTRY to your sandustry binary, for example:");
+    console.error("  export SANDUSTRY=/path/to/steamapps/common/Sandustry/sandustry");
   }
+  process.exit(1);
 }
 
 /** @param {string} root @param {{ sourcemap?: boolean; modDebug?: boolean }} [options] */
@@ -38,11 +57,11 @@ export function sandustryBuildMod(root, { sourcemap = false, modDebug = true } =
 }
 
 /**
- * PIDs whose `/proc/<pid>/exe` is the Sandustry binary.
- * Avoids `pgrep -f` matching itself (and a 5s false wait when the game is down).
+ * PIDs whose `/proc/<pid>/exe` is the Sandustry binary (Linux).
+ * Avoids `pgrep -f` matching itself (and a false wait when the game is down).
  * @returns {number[]}
  */
-function sandustryPids() {
+function sandustryPidsLinux() {
   /** @type {number[]} */
   const pids = [];
   let entries;
@@ -65,8 +84,22 @@ function sandustryPids() {
   return pids;
 }
 
+function sandustryIsRunningWindows() {
+  try {
+    const out = execSync(`tasklist /FI "IMAGENAME eq ${SANDUSTRY_EXE}" /NH`, {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+      windowsHide: true,
+    });
+    return out.toLowerCase().includes(SANDUSTRY_EXE.toLowerCase());
+  } catch {
+    return false;
+  }
+}
+
 function sandustryIsRunning() {
-  return sandustryPids().length > 0;
+  if (IS_WIN) return sandustryIsRunningWindows();
+  return sandustryPidsLinux().length > 0;
 }
 
 /** @param {number[]} pids @param {NodeJS.Signals} signal */
@@ -80,8 +113,42 @@ function signalPids(pids, signal) {
   }
 }
 
+function sandustryStopWindows() {
+  if (!sandustryIsRunningWindows()) return;
+
+  console.log("Stopping Sandustry...");
+  try {
+    execSync(`taskkill /IM "${SANDUSTRY_EXE}" /T`, {
+      stdio: "ignore",
+      windowsHide: true,
+    });
+  } catch {
+    // may already be exiting
+  }
+
+  const deadline = Date.now() + 2000;
+  while (Date.now() < deadline) {
+    if (!sandustryIsRunningWindows()) return;
+    sleepSync(50);
+  }
+
+  try {
+    execSync(`taskkill /F /IM "${SANDUSTRY_EXE}" /T`, {
+      stdio: "ignore",
+      windowsHide: true,
+    });
+  } catch {
+    // already gone
+  }
+}
+
 export function sandustryStopRunning() {
-  const first = sandustryPids();
+  if (IS_WIN) {
+    sandustryStopWindows();
+    return;
+  }
+
+  const first = sandustryPidsLinux();
   if (first.length === 0) return;
 
   console.log("Stopping Sandustry...");
@@ -90,16 +157,16 @@ export function sandustryStopRunning() {
   const deadline = Date.now() + 2000;
   while (Date.now() < deadline) {
     if (!sandustryIsRunning()) return;
-    execSync("sleep 0.05");
+    sleepSync(50);
   }
 
-  const leftover = sandustryPids();
+  const leftover = sandustryPidsLinux();
   if (leftover.length === 0) return;
   signalPids(leftover, "SIGKILL");
 }
 
 /** @returns {{ name: string; x: number; y: number; w: number; h: number }} */
-export function sandustryLeftMonitor() {
+function sandustryLeftMonitorLinux() {
   const output = execSync("xrandr --query", { encoding: "utf8" });
   /** @type {{ name: string; x: number; y: number; w: number; h: number }[]} */
   const monitors = [];
@@ -127,8 +194,54 @@ export function sandustryLeftMonitor() {
   return mon;
 }
 
+/** @returns {{ name: string; x: number; y: number; w: number; h: number }} */
+function sandustryLeftMonitorWindows() {
+  try {
+    const ps = [
+      "Add-Type -AssemblyName System.Windows.Forms;",
+      "[System.Windows.Forms.Screen]::AllScreens | ForEach-Object {",
+      "  \"$($_.Bounds.X) $($_.Bounds.Y) $($_.Bounds.Width) $($_.Bounds.Height)\"",
+      "}",
+    ].join(" ");
+    const result = spawnSync("powershell", ["-NoProfile", "-Command", ps], {
+      encoding: "utf8",
+      windowsHide: true,
+    });
+    const output = result.stdout ?? "";
+    /** @type {{ name: string; x: number; y: number; w: number; h: number }[]} */
+    const monitors = [];
+    for (const line of output.split(/\r?\n/)) {
+      const parts = line.trim().split(/\s+/);
+      if (parts.length < 4) continue;
+      const [x, y, w, h] = parts.map(Number);
+      if ([x, y, w, h].some((n) => Number.isNaN(n))) continue;
+      monitors.push({ name: `display-${monitors.length}`, x, y, w, h });
+    }
+    monitors.sort((a, b) => a.x - b.x || a.y - b.y);
+    if (monitors.length > 0) {
+      const mon = monitors[0];
+      console.log(`Left monitor: ${mon.w}x${mon.h} at ${mon.x},${mon.y}`);
+      return mon;
+    }
+  } catch {
+    // fall through
+  }
+
+  console.log("Could not detect monitors; using 0,0 (Electron --start-maximized still applies).");
+  return { name: "primary", x: 0, y: 0, w: 0, h: 0 };
+}
+
+/** @returns {{ name: string; x: number; y: number; w: number; h: number }} */
+export function sandustryLeftMonitor() {
+  if (IS_WIN) return sandustryLeftMonitorWindows();
+  return sandustryLeftMonitorLinux();
+}
+
 /** @param {number} monX @param {number} monY */
 export function sandustryMaximizeOnLeftMonitor(monX, monY) {
+  // Windows: --start-maximized in launch args is enough; wmctrl is Linux-only.
+  if (IS_WIN) return;
+
   const displays = [process.env.GNOME_SETUP_DISPLAY || ":2", ":1", process.env.DISPLAY || ":0"];
 
   void (async () => {
@@ -163,6 +276,7 @@ export function spawnSandustry(
   args,
   { cwd = SANDUSTRY_DIR, detached = false, stdio = "inherit" } = {},
 ) {
+  // No shell: keeps Program Files spaces safe on Windows.
   const child = spawn(SANDUSTRY, args, {
     cwd,
     detached,
@@ -176,6 +290,7 @@ export function spawnSandustry(
 
 /** @param {string[]} args */
 export function sandustryLaunchArgs(mon, extra = []) {
+  // --no-sandbox is required on many Linux installs; Electron ignores it on Windows.
   return ["--no-sandbox", `--window-position=${mon.x},${mon.y}`, "--start-maximized", ...extra];
 }
 

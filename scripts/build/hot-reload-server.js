@@ -5,8 +5,8 @@
 import { appendFileSync, mkdirSync } from "node:fs";
 import http from "node:http";
 import net from "node:net";
-import { homedir } from "node:os";
 import { join } from "node:path";
+import { sandustryLogsDir } from "../sandustry/paths.js";
 
 export const HOT_RELOAD_PORT = 19147;
 export const HOT_RELOAD_PATH = "/hot-reload";
@@ -142,7 +142,7 @@ export function startHotReloadServer() {
           /* plain text body */
         }
         const safeId = modId.replace(/[^a-zA-Z0-9._-]+/g, "_") || "mod";
-        const dir = join(homedir(), ".config/sandustry/logs");
+        const dir = sandustryLogsDir();
         mkdirSync(dir, { recursive: true });
         appendFileSync(join(dir, `${safeId}.log`), line.endsWith("\n") ? line : `${line}\n`);
         res.writeHead(204, { "Access-Control-Allow-Origin": "*" });

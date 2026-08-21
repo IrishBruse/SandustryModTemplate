@@ -1,13 +1,16 @@
 /**
- * Sandustry mod output path and repo dist symlink.
+ * Sandustry mod output path and repo dist link (symlink / Windows junction).
  * Folder name comes from `modinfo.name` in root `mod.ts`.
  * The game resolves symlinks with realpath and rejects mod folders outside the mods root.
+ *
+ * Mods dir: Linux ~/.config/sandustry/mods ; Windows %APPDATA%/sandustry/mods
  */
-import { existsSync, lstatSync, mkdirSync, readlinkSync, rmSync, symlinkSync } from "node:fs";
-import { homedir, tmpdir } from "node:os";
-import { dirname, join } from "node:path";
+import { existsSync, lstatSync, mkdirSync, readlinkSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import * as esbuild from "esbuild";
+import { linkDirectory, samePath, sandustryModsDir } from "./paths.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const MODKIT_DIR = join(ROOT, "modkit");
@@ -51,7 +54,7 @@ async function loadModFolderName() {
 }
 
 export const MOD_FOLDER_NAME = await loadModFolderName();
-export const MOD_DIR = join(homedir(), ".config/sandustry/mods", MOD_FOLDER_NAME);
+export const MOD_DIR = join(sandustryModsDir(), MOD_FOLDER_NAME);
 export const REPO_DIST_LINK = "dist";
 
 export function ensureModDir() {
@@ -62,7 +65,7 @@ export function ensureModDir() {
   mkdirSync(MOD_DIR, { recursive: true });
 }
 
-/** Symlink repo/dist -> MOD_DIR so built files are visible in the project tree. */
+/** Link repo/dist -> MOD_DIR so built files are visible in the project tree. */
 export function linkRepoDistToModOutput(repoRoot) {
   const linkPath = join(repoRoot, REPO_DIST_LINK);
 
@@ -70,11 +73,11 @@ export function linkRepoDistToModOutput(repoRoot) {
     rmSync(linkPath, { recursive: true, force: true });
     console.log(`Removed local ${REPO_DIST_LINK}/ directory (dev writes to ${MOD_DIR}).`);
   } else if (existsSync(linkPath) && lstatSync(linkPath).isSymbolicLink()) {
-    const current = readlinkSync(linkPath);
-    if (current === MOD_DIR) return;
+    const current = resolve(dirname(linkPath), readlinkSync(linkPath));
+    if (samePath(current, MOD_DIR)) return;
     rmSync(linkPath);
   }
 
-  symlinkSync(MOD_DIR, linkPath);
+  linkDirectory(MOD_DIR, linkPath);
   console.log(`Linked ${REPO_DIST_LINK}/ -> ${MOD_DIR}`);
 }
