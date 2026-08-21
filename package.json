@@ -5,7 +5,8 @@
   "scripts": {
     "build": "node scripts/build/esbuild.config.mjs",
     "dev": "node scripts/build/dev.js",
-    "lint": "tsc --noEmit && oxlint && oxfmt --check",
+    "typecheck": "node scripts/build/typecheck.js",
+    "lint": "npm run typecheck && oxlint && oxfmt --check",
     "lint:fix": "oxlint --fix && oxfmt",
     "docs": "docsify serve docs",
     "generate-types": "node scripts/api/generate-api-types.js",

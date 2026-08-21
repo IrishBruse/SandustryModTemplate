@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "lib": ["ES2020", "DOM"],
+    "types": ["react"],
+    "paths": {
+      "*": ["./*"],
+      "@modkit/*": ["./modkit/*"],
+      "types/api": ["./modkit/types/api"],
+      "types/sandkit": ["./modkit/types/sandkit"],
+      "types/engine": ["./modkit/types/engine"],
+      "types/*": ["./types/*"]
+    }
+  }
+}

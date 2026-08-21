@@ -1,6 +1,6 @@
 # Debug modkit
 
-Shared dev-only helpers for Sandustry mods. Call `installDebug(api, modId)` from the mod debug entry (`src/debug` in this repo). Release builds stub that import, so none of this folder is bundled in production.
+Shared dev-only helpers for Sandustry mods. Call `installDebug(api, modId)` from the mod debug entry (`src/<name>/debug` in this repo). Release builds stub that import, so none of this folder is bundled in production.
 
 ## When it is included
 
@@ -13,7 +13,7 @@ The in-game **Debug** setting (`api.settings.get("debug")`) turns some helpers o
 
 `__MOD_DEBUG__` is `true` in dev builds and `false` in release.
 
-Mod-only extra debug code lives in [`src/debug/`](../../src/debug/). That folder re-exports `onDispose` and `isHotReloadEval` so release stubs work. Import those from `./debug`, not from `modkit/debug`.
+Mod-only extra debug code lives in [`src/example/debug/`](../../src/example/debug/). That folder re-exports `onDispose` and `isHotReloadEval` so release stubs work. Import those from `./debug`, not from `modkit/debug`.
 
 ## Features
 
@@ -34,7 +34,7 @@ When the **Debug** setting is on, the mod injects a **Debug** management row und
 
 The same **Debug** setting turns engine `debug.active` on or off (live config + boot localStorage). The engine's plain Debug / Stats buttons under the management column are hidden while Debug is on.
 
-Schema: `modkitDebugConfigSchema` / `debugOnlyConfigKeys` in `@modkit/debug/config-schema`. The build merges that schema into debug `modinfo.json` (not into root `mod.ts`). The only schema key is **Debug**.
+Schema: `modkitDebugConfigSchema` / `debugOnlyConfigKeys` in `@modkit/debug/config-schema`. The build merges that schema into debug `modinfo.json` (not into `mod.ts`). The only schema key is **Debug**.
 
 Hot-reload eval skips DevTools shortcut, splash polling, and auto-boot so those do not stack on every save.
 
@@ -107,11 +107,11 @@ Debug builds use esbuild [`inject`](https://esbuild.github.io/api/#inject) with 
 console.log("[my-feature]", payload);
 ```
 
-Release builds skip the inject. The shim uses `globalThis.console` so it does not recurse. `__MOD_ID__` is defined from `mod.ts` at build time.
+Release builds skip the inject. The shim uses `globalThis.console` so it does not recurse. `__MOD_ID__` is defined from that mod's `mod.ts` at build time.
 
 ## Debug patches
 
-The build merges [`modkitDebugPatches`](../../modkit/patches.ts) into debug `patches.json`. Optional extra debug-only patches can still be exported from root `mod.ts` as `debugPatches`. See [patches.md](../patches.md).
+The build merges [`modkitDebugPatches`](../../modkit/patches.ts) into the first src folder's debug `patches.json` only. Optional extra debug-only patches can still be exported from that mod's `mod.ts` as `debugPatches`. See [patches.md](../patches.md).
 
 ## Files
 
@@ -130,15 +130,15 @@ The build merges [`modkitDebugPatches`](../../modkit/patches.ts) into debug `pat
 ## Wiring
 
 ```ts
-// src/debug/index.ts — debug builds
+// src/example/debug/index.ts — debug builds
 import { installDebug as installModkitDebug } from "@modkit/debug";
 export { isHotReloadEval, onDispose } from "@modkit/debug";
 export function installDebug(api: SandkitApi, modId: string): void {
   installModkitDebug(api, modId);
 }
 
-// src/main.ts
+// src/example/main.ts
 import { installDebug, isHotReloadEval, onDispose } from "./debug";
 ```
 
-Release builds resolve `./debug` (from `src/main.ts`) to `modkit/debug/empty.ts` (`installDebug` no-op, `onDispose` no-op, `isHotReloadEval` false).
+Release builds resolve `./debug` (from that mod's `main.ts`) to `modkit/debug/empty.ts` (`installDebug` no-op, `onDispose` no-op, `isHotReloadEval` false).

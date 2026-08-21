@@ -2,7 +2,7 @@
 
 Add a vanilla-style row under Upgrades (same look as Toolbox / Building / Research / Upgrades). The row mounts in the management column and follows expand / collapse.
 
-Prefer `registerManagementMenuButton` from `src/main.ts`. Use the React `ManagementMenuButton` only when the icon must be a React node or `active` must update every render.
+Prefer `registerManagementMenuButton` from `src/<name>/main.ts`. Use the React `ManagementMenuButton` only when the icon must be a React node or `active` must update every render.
 
 Hover plays `blip`; click plays `click` when those sounds exist. `hotkey` is badge text only — it does not bind a key.
 

@@ -1,83 +1,102 @@
 /**
- * Sandustry mod output path and repo dist link (symlink / Windows junction).
- * Folder name comes from `modinfo.name` in root `mod.ts`.
+ * Sandustry mod output paths and repo dist links (symlink / Windows junction).
+ * Game folder name comes from `modinfo.name` in `src/<name>/mod.ts`.
  * The game resolves symlinks with realpath and rejects mod folders outside the mods root.
  *
  * Mods dir: Linux ~/.config/sandustry/mods ; Windows %APPDATA%/sandustry/mods
  */
-import { existsSync, lstatSync, mkdirSync, readlinkSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
+import {
+  existsSync,
+  lstatSync,
+  mkdirSync,
+  readdirSync,
+  readlinkSync,
+  rmSync,
+  unlinkSync,
+} from "node:fs";
 import { dirname, join, resolve } from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
-import * as esbuild from "esbuild";
 import { linkDirectory, samePath, sandustryModsDir } from "./paths.js";
 
-const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
-const MODKIT_DIR = join(ROOT, "modkit");
-const MODINFO_CACHE = join(tmpdir(), "sandustry-mod-template-mod-path.mjs");
-
-/** Resolve `@modkit/...` to `modkit/...`. */
-function modkitAliasPlugin() {
-  return {
-    name: "modkit-alias",
-    setup(build) {
-      build.onResolve({ filter: /^@modkit(?:\/|$)/ }, (args) => {
-        const rest = args.path === "@modkit" ? "" : args.path.slice("@modkit/".length);
-        return build.resolve(rest === "" ? "." : `./${rest}`, {
-          kind: args.kind,
-          importer: args.importer,
-          resolveDir: MODKIT_DIR,
-        });
-      });
-    },
-  };
-}
-
-/** @returns {Promise<string>} */
-async function loadModFolderName() {
-  await esbuild.build({
-    entryPoints: [join(ROOT, "mod.ts")],
-    outfile: MODINFO_CACHE,
-    bundle: true,
-    platform: "node",
-    format: "esm",
-    plugins: [modkitAliasPlugin()],
-    logLevel: "silent",
-  });
-
-  const mod = await import(`${pathToFileURL(MODINFO_CACHE).href}?t=${Date.now()}`);
-  const name = mod.modinfo?.name;
-  if (typeof name !== "string" || !name.trim()) {
-    throw new Error("mod.ts modinfo.name must be a non-empty string (mods folder name)");
-  }
-  return name.trim();
-}
-
-export const MOD_FOLDER_NAME = await loadModFolderName();
-export const MOD_DIR = join(sandustryModsDir(), MOD_FOLDER_NAME);
 export const REPO_DIST_LINK = "dist";
 
-export function ensureModDir() {
-  mkdirSync(dirname(MOD_DIR), { recursive: true });
-  if (existsSync(MOD_DIR) && lstatSync(MOD_DIR).isSymbolicLink()) {
-    rmSync(MOD_DIR);
+/** Remove a symlink (including a dangling one) or a real file/directory. */
+function removePath(path) {
+  let stat;
+  try {
+    stat = lstatSync(path);
+  } catch {
+    return;
   }
-  mkdirSync(MOD_DIR, { recursive: true });
+  if (stat.isSymbolicLink()) {
+    unlinkSync(path);
+    return;
+  }
+  rmSync(path, { recursive: true, force: true });
 }
 
-/** Link repo/dist -> MOD_DIR so built files are visible in the project tree. */
-export function linkRepoDistToModOutput(repoRoot) {
-  const linkPath = join(repoRoot, REPO_DIST_LINK);
+/** @param {string} gameName `modinfo.name` */
+export function gameModDir(gameName) {
+  return join(sandustryModsDir(), gameName);
+}
 
-  if (existsSync(linkPath) && !lstatSync(linkPath).isSymbolicLink()) {
-    rmSync(linkPath, { recursive: true, force: true });
-    console.log(`Removed local ${REPO_DIST_LINK}/ directory (dev writes to ${MOD_DIR}).`);
-  } else if (existsSync(linkPath) && lstatSync(linkPath).isSymbolicLink()) {
-    const current = resolve(dirname(linkPath), readlinkSync(linkPath));
-    if (samePath(current, MOD_DIR)) return;
-    rmSync(linkPath);
+/** @param {string} gameName */
+export function ensureGameModDir(gameName) {
+  const dir = gameModDir(gameName);
+  mkdirSync(dirname(dir), { recursive: true });
+  if (existsSync(dir) && lstatSync(dir).isSymbolicLink()) {
+    removePath(dir);
+  }
+  mkdirSync(dir, { recursive: true });
+  return dir;
+}
+
+/**
+ * `dist/` is a directory of per-mod links named after the src folder.
+ * @param {string} repoRoot
+ * @param {{ folder: string; gameName: string }[]} mods
+ * @param {string[]} [keepFolders] Src folders that should keep a dist link (all discovered mods).
+ */
+export function linkRepoDistToModOutputs(repoRoot, mods, keepFolders) {
+  const distPath = join(repoRoot, REPO_DIST_LINK);
+
+  if (existsSync(distPath) && lstatSync(distPath).isSymbolicLink()) {
+    removePath(distPath);
+    console.log(`Removed ${REPO_DIST_LINK}/ link (now a directory of per-mod links).`);
+  } else if (existsSync(distPath) && !lstatSync(distPath).isDirectory()) {
+    removePath(distPath);
   }
 
-  linkDirectory(MOD_DIR, linkPath);
-  console.log(`Linked ${REPO_DIST_LINK}/ -> ${MOD_DIR}`);
+  mkdirSync(distPath, { recursive: true });
+
+  const wanted = new Set(keepFolders ?? mods.map((mod) => mod.folder));
+  for (const name of readdirSync(distPath)) {
+    if (wanted.has(name)) continue;
+    const child = join(distPath, name);
+    if (lstatSync(child).isSymbolicLink()) {
+      removePath(child);
+      console.log(`Removed stale ${REPO_DIST_LINK}/${name}`);
+    }
+  }
+
+  for (const mod of mods) {
+    const linkPath = join(distPath, mod.folder);
+    const target = gameModDir(mod.gameName);
+    let linkStat;
+    try {
+      linkStat = lstatSync(linkPath);
+    } catch {
+      linkStat = null;
+    }
+
+    if (linkStat?.isSymbolicLink()) {
+      const current = resolve(distPath, readlinkSync(linkPath));
+      if (samePath(current, target)) continue;
+      removePath(linkPath);
+    } else if (linkStat) {
+      removePath(linkPath);
+    }
+
+    linkDirectory(target, linkPath);
+    console.log(`Linked ${REPO_DIST_LINK}/${mod.folder} -> ${target}`);
+  }
 }

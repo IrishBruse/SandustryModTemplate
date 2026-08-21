@@ -18,7 +18,7 @@ import {
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 
 sandustryRequireBinary();
-sandustryBuildMod(ROOT);
+sandustryBuildMod(ROOT, { extraArgs: process.argv.slice(2) });
 sandustryStopRunning();
 
 const mon = sandustryLeftMonitor();

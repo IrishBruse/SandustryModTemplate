@@ -4,12 +4,13 @@ TypeScript template for [Sandustry](https://store.steampowered.com/app/2764460/S
 
 ## Features
 
-- **Multi-file TypeScript** — Split the mod across `src/`; [esbuild](https://esbuild.github.io/) bundles it to one `main.js`. Types from [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types). [Builds](https://ethanconneely.com/SandustryModTemplate/#/builds) · [layout](https://ethanconneely.com/SandustryModTemplate/#/layout)
+- **Multi-mod** — One repo, many mods. Each `src/<name>/` folder with a `mod.ts` builds to its own game folder. Mods cannot import from each other. [Folder layout](https://ethanconneely.com/SandustryModTemplate/#/layout)
+- **Multi-file TypeScript** — Split each mod across `src/<name>/`; [esbuild](https://esbuild.github.io/) bundles it to one `main.js`. Types from [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types). [Builds](https://ethanconneely.com/SandustryModTemplate/#/builds) · [layout](https://ethanconneely.com/SandustryModTemplate/#/layout)
 - **React HUD** — JSX via `sandkit.react` (no extra React package). [React](https://ethanconneely.com/SandustryModTemplate/#/modkit/react) · [UI kit](https://ethanconneely.com/SandustryModTemplate/#/ui/) · [gallery](https://ethanconneely.com/SandustryModTemplate/#/ui/gallery)
 - **Modkit utils** — `safe`, settings, scene checks, retro console. [Utils](https://ethanconneely.com/SandustryModTemplate/#/modkit/utils)
 - **Hot reload** — `npm run dev` reloads the mod without a game restart. [Builds](https://ethanconneely.com/SandustryModTemplate/#/builds) · [debug](https://ethanconneely.com/SandustryModTemplate/#/modkit/debug)
 - **Debug helpers** — F12 DevTools, splash skip, main-menu boot, F3 engine Debug window, console globals. [Debug](https://ethanconneely.com/SandustryModTemplate/#/modkit/debug)
-- **Typed `mod.ts`** — one file for the modinfo and [patches](https://ethanconneely.com/SandustryModTemplate/#/patches). [Folder layout](https://ethanconneely.com/SandustryModTemplate/#/layout)
+- **Typed `mod.ts`** — one file per mod for the modinfo and [patches](https://ethanconneely.com/SandustryModTemplate/#/patches). [Folder layout](https://ethanconneely.com/SandustryModTemplate/#/layout)
 
 ## Quick start
 
@@ -30,7 +31,7 @@ npm install
 
 ### Configure the mod
 
-Set `id`, `name`, `author`, and `description` in [`mod.ts`](mod.ts). The mods folder uses `name`.
+Set `id`, `name`, `author`, and `description` in [`src/example/mod.ts`](src/example/mod.ts). The mods folder uses `name`. Add another folder under `src/` with its own `mod.ts` to ship a second mod. Mods cannot import from each other.
 
 ### Run
 

@@ -30,11 +30,11 @@ Default probe includes `%ProgramFiles(x86)%\Steam` and `%ProgramFiles%\Steam`, p
 
 **Mods / logs folders**
 
-| OS      | Mods                                                         | Logs                          |
-| ------- | ------------------------------------------------------------ | ----------------------------- |
-| Linux   | `~/.config/sandustry/mods/<modinfo.name>`                    | `~/.config/sandustry/logs`    |
+| OS      | Mods                                                          | Logs                       |
+| ------- | ------------------------------------------------------------- | -------------------------- |
+| Linux   | `~/.config/sandustry/mods/<modinfo.name>`                     | `~/.config/sandustry/logs` |
 | Windows | `%APPDATA%\sandustry\mods\<modinfo.name>` (`AppData\Roaming`) | `%APPDATA%\sandustry\logs` |
 
-`dist/` and `logs/` in the repo are a symlink on Linux and a directory junction on Windows (no Developer Mode required).
+`dist/<src-folder>/` links to that mod's game folder (symlink on Linux, directory junction on Windows). `logs/` links to the OS sandustry logs folder.
 
 **Types missing** — Run `git submodule update --init --recursive`. Types live in `types/` ([sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types)).

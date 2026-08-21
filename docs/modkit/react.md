@@ -92,6 +92,6 @@ import { installDebug } from "@modkit/debug";
 
 ## UI overlays
 
-Put mod UI under `src/ui/`. Import components from `@modkit/ui` or local files. Register overlays with `api.ui.inject` from `src/main.ts`.
+Put mod UI under `src/<name>/ui/`. Import components from `@modkit/ui` or local files. Register overlays with `api.ui.inject` from `src/<name>/main.ts`.
 
 See [../ui/README.md](../ui/README.md) for shared UI components.

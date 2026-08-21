@@ -25,7 +25,7 @@ const mainPort = process.env.SANDUSTRY_MAIN_DEBUG_PORT ?? DEFAULT_MAIN_DEBUG_POR
 const rendererPort = process.env.SANDUSTRY_RENDERER_DEBUG_PORT ?? DEFAULT_RENDERER_DEBUG_PORT;
 
 sandustryRequireBinary();
-sandustryBuildMod(ROOT, { sourcemap: true });
+sandustryBuildMod(ROOT, { sourcemap: true, extraArgs: process.argv.slice(2) });
 sandustryStopRunning();
 
 const mon = sandustryLeftMonitor();

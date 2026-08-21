@@ -1,8 +1,10 @@
 # Agent notes
 
-This repo is a **Sandustry** mod template. `src/` is the mod. `modkit/` is the shared kit. The game runs `main.js` as a script body (`new Function`); `sandkit` is already in scope. Do not emit `import` / `export` in the bundle (esbuild IIFE).
+This repo is a **Sandustry** mod template. Each folder under `src/` that has a `mod.ts` is one game mod. `modkit/` is the shared kit. The game runs `main.js` as a script body (`new Function`); `sandkit` is already in scope. Do not emit `import` / `export` in the bundle (esbuild IIFE).
 
 Prefer Sandkit API. Use patches only when the public API cannot do the job. Keep behaviour next to its caller. For a left management-column row (under Upgrades), use `registerManagementMenuButton` from `@modkit/ui` — not a one-off DOM spacer. Docs: [`docs/ui/management-menu-button.md`](docs/ui/management-menu-button.md).
+
+Mods must not import files from another `src/<name>/` folder. Shared code lives in `modkit/`.
 
 Detail docs:
 
@@ -16,14 +18,13 @@ Detail docs:
 ## Layout
 
 ```
-mod.ts                  Typed manifest + patches → modinfo.json / patches.json at build
-src/                    This mod (entry, UI, mod debug)
+src/<name>/             One game mod per folder (`mod.ts` + `main.ts`)
 modkit/                 Shared kit (utils, react, debug, patches, modinfo)
 types/                  Sandkit API types (submodule: sandustry-modding-types)
-scripts/build/          esbuild, patches.json
+scripts/build/          esbuild, patches.json, mod discovery
 scripts/sandustry/      Launch / stop the game, mod output path
 scripts/api/            Generate types from runtime dump + official reference
-dist/                   Link to OS mods folder (symlink / Windows junction)
+dist/<name>/            Link to OS mods folder for that src folder (symlink / Windows junction)
 logs/                   Link to OS sandustry logs (symlink / Windows junction)
 ```
 
@@ -32,13 +33,18 @@ Logs: Linux `~/.config/sandustry/logs`; Windows `%APPDATA%/sandustry/logs`.
 
 ### `src/`
 
-| Path                    | Role                                                                                |
-| ----------------------- | ----------------------------------------------------------------------------------- |
-| `src/main.ts`           | Mod entry. Import debug from `./debug` (not `modkit/debug`) so release can stub it. |
-| `src/globals.ts`        | `MOD_ID` (from `mod.ts`) and `installGlobals`                                       |
-| `src/ui/`               | React overlays (import `react`, resolved to `modkit/react.ts`)                      |
-| `src/debug/`            | Mod debug entry: calls `modkit/debug`, re-exports `onDispose` / `isHotReloadEval`   |
-| `src/patches/README.md` | Points at [`docs/patches.md`](docs/patches.md)                                      |
+Each `src/<name>/` folder with a `mod.ts` is a separate game mod. The example lives in `src/example/`. Mods cannot import from each other.
+
+| Path                           | Role                                                                                |
+| ------------------------------ | ----------------------------------------------------------------------------------- |
+| `src/<name>/mod.ts`            | Manifest + patches → `modinfo.json` / `patches.json` at build                       |
+| `src/<name>/main.ts`           | Mod entry. Import debug from `./debug` (not `modkit/debug`) so release can stub it. |
+| `src/<name>/globals.ts`        | `MOD_ID` (from `./mod`) and `installGlobals`                                        |
+| `src/<name>/ui/`               | React overlays (import `react`, resolved to `modkit/react.ts`)                      |
+| `src/<name>/debug/`            | Mod debug entry: calls `modkit/debug`, re-exports `onDispose` / `isHotReloadEval`   |
+| `src/<name>/patches/README.md` | Points at [`docs/patches.md`](docs/patches.md)                                      |
+| `src/<name>/mod/`              | Optional static files copied into the output folder                                 |
+| `src/<name>/tsconfig.json`     | Isolated TypeScript project (does not see sibling mods)                             |
 
 ### `modkit/`
 
@@ -55,7 +61,7 @@ Logs: Linux `~/.config/sandustry/logs`; Windows `%APPDATA%/sandustry/logs`.
 | `modkit/debug/empty.ts` | Release stub for `./debug` (`installDebug` / `onDispose` / `isHotReloadEval` no-ops) |
 | `modkit/types/`         | Composed `types/api`, `types/sandkit`, `types/engine` import shims                   |
 
-Do not import `onDispose` or `isHotReloadEval` from `modkit/debug` in `src/main.ts`. Import them from `./debug`.
+Do not import `onDispose` or `isHotReloadEval` from `modkit/debug` in `src/<name>/main.ts`. Import them from `./debug`.
 
 ### `types/`
 
@@ -75,33 +81,36 @@ Path aliases: `@modkit/*` → `./modkit/*`; `types/api` / `types/sandkit` / `typ
 
 ### `scripts/`
 
-| Path                                    | Role                                                                    |
-| --------------------------------------- | ----------------------------------------------------------------------- |
-| `scripts/build/esbuild.config.mjs`      | Bundle `src/main.ts` → `main.js`, write `modinfo.json` + `patches.json` |
-| `scripts/build/build-patches.js`        | Load `mod.ts` patch exports and write `patches.json`                    |
-| `scripts/build/dev.js`                  | Watch + write to the game mods folder                                   |
-| `scripts/sandustry/paths.js`            | OS user-data + Steam binary paths                               |
-| `scripts/sandustry/mod-path.js`         | `MOD_DIR` from `sandustryModsDir()` + `modinfo.name`            |
-| `scripts/sandustry/launch-sandustry.js` | Build (debug) and launch the game                               |
-| `scripts/api/generate-api-types.js`     | `npm run generate-types`                                        |
+| Path                                    | Role                                                                                |
+| --------------------------------------- | ----------------------------------------------------------------------------------- |
+| `scripts/build/esbuild.config.mjs`      | Bundle each `src/<name>/main.ts` → `main.js`, write `modinfo.json` + `patches.json` |
+| `scripts/build/mods.js`                 | Discover `src/*/mod.ts`, `--mod` filter, isolation plugin                           |
+| `scripts/build/typecheck.js`            | Root kit + per-mod `tsc --noEmit`                                                   |
+| `scripts/build/build-patches.js`        | Load that mod's `mod.ts` patch exports and write `patches.json`                     |
+| `scripts/build/dev.js`                  | Watch + write to the game mods folder                                               |
+| `scripts/sandustry/paths.js`            | OS user-data + Steam binary paths                                                   |
+| `scripts/sandustry/mod-path.js`         | Game mod dir from `modinfo.name`; `dist/<folder>` links                             |
+| `scripts/sandustry/launch-sandustry.js` | Build (debug) and launch the game                                                   |
+| `scripts/api/generate-api-types.js`     | `npm run generate-types`                                                            |
 
 ## Builds
 
 | Command                                    | Debug helpers                  | `debugPatches` | Output                                                         |
 | ------------------------------------------ | ------------------------------ | -------------- | -------------------------------------------------------------- |
-| `npm run build`                            | Stub (`modkit/debug/empty.ts`) | Omitted        | `dist/` (symlink / Windows junction)                           |
+| `npm run build`                            | Stub (`modkit/debug/empty.ts`) | Omitted        | OS mods folder; `dist/<folder>/` links                         |
 | `npm run dev`                              | Included                       | Included       | OS mods folder (`~/.config/...` or `%APPDATA%/sandustry/mods`) |
 | `npm run sandustry` / `--game` / `--debug` | Included                       | Included       | Game mods folder                                               |
 
-`--no-debug` forces a release-style bundle. Debug builds emit inline source maps; `--sourcemap` / `--no-sourcemap` override.
+`--no-debug` forces a release-style bundle. Debug builds emit inline source maps; `--sourcemap` / `--no-sourcemap` override. `--mod <folder>` builds one src folder.
 
 In-game **Debug** (`api.settings.get("debug")`) is merged into debug `modinfo.json` by the build and omitted from release. Missing setting defaults to on.
 
 ## Patches
 
-Define patches in root `mod.ts` with `definePatches`. Production list is `patches`. Optional mod-only debug list is `debugPatches`. The build also merges `modkitDebugPatches` in debug builds.
+Define patches in that mod's `mod.ts` with `definePatches`. Production list is `patches`. Optional mod-only debug list is `debugPatches`. Debug builds merge `modkitDebugPatches` into the **first** src folder (by name) only, so two mods do not both patch `js/bundle.js`.
 
 ```ts
+// src/<name>/mod.ts
 export const patches = definePatches([
   {
     id: "bundle-log-prefix",

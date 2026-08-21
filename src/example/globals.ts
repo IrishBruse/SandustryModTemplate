@@ -1,6 +1,6 @@
 import type { SandkitApi } from "types/api";
 import { sandkit, type SandkitGlobal } from "@modkit/sandkit";
-import { modinfo } from "../mod";
+import { modinfo } from "./mod";
 
 export interface ModGlobal {
   modId: string;

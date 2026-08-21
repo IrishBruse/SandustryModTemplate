@@ -1,23 +1,20 @@
 #!/usr/bin/env node
 /**
- * Watch src/ and build the mod into the game mods folder
+ * Watch src/<name>/ and build each mod into the game mods folder
  * (Linux: ~/.config/sandustry/mods/<modinfo.name>;
  *  Windows: %APPDATA%/sandustry/mods/<modinfo.name>).
- * Usage: npm run dev
+ * Usage: npm run dev [-- --mod example]
  */
 import { spawn } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { ensureModDir, linkRepoDistToModOutput, MOD_DIR } from "../sandustry/mod-path.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
+const extra = process.argv.slice(2);
 
-ensureModDir();
-linkRepoDistToModOutput(ROOT);
+console.log("Watching src/ mods");
 
-console.log(`Watching src/ -> ${MOD_DIR}/main.js`);
-
-const child = spawn("node", [join(ROOT, "scripts/build/esbuild.config.mjs"), "--watch"], {
+const child = spawn("node", [join(ROOT, "scripts/build/esbuild.config.mjs"), "--watch", ...extra], {
   stdio: "inherit",
   cwd: ROOT,
 });

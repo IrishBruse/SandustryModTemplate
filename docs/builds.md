@@ -6,11 +6,11 @@ The game runs `main.js` as a script body (`new Function`). `sandkit` is already 
 
 | Command                                    | Debug helpers                  | `debugPatches` | Output                                                         |
 | ------------------------------------------ | ------------------------------ | -------------- | -------------------------------------------------------------- |
-| `npm run build`                            | Stub (`modkit/debug/empty.ts`) | Omitted        | `dist/` (symlink / Windows junction)                           |
+| `npm run build`                            | Stub (`modkit/debug/empty.ts`) | Omitted        | OS mods folder; `dist/<folder>/` links                         |
 | `npm run dev`                              | Included                       | Included       | OS mods folder (`~/.config/...` or `%APPDATA%/sandustry/mods`) |
 | `npm run sandustry` / `--game` / `--debug` | Included                       | Included       | Game mods folder                                               |
 
-`--no-debug` forces a release-style bundle even when watch or game flags are set.
+`--no-debug` forces a release-style bundle even when watch or game flags are set. `--mod <folder>` builds one `src/<name>/` folder. The build discovers every `src/*/mod.ts`.
 
 Debug builds emit **inline** source maps on `main.js` (needed for `new Function` eval). Use `--sourcemap` to force maps on a release build, or `--no-sourcemap` to omit them from a debug build.
 
@@ -26,7 +26,7 @@ The game ships Tailwind **v3.4.19** inside `bundle.js`. That stylesheet is purge
 
 Sandkit loads `main.js` only. There is no CSS file in the mod manifest. The build still has to insert a `<style>` tag. The compiled sheet is **only the utilities this bundle uses**: esbuild lists the source files it packed, then Tailwind scans those files. Unused `modkit/ui` components do not add CSS.
 
-The insert lives in [src/main.ts](../src/main.ts) (`style#<mod-id>-tailwind`). Hot reload removes that tag before it inserts a new one.
+The insert lives in [src/example/main.ts](../src/example/main.ts) (`style#<mod-id>-tailwind`). Hot reload removes that tag before it inserts a new one.
 
 Do not enable Tailwind preflight. The game already resets `*, ::before, ::after`. A second preflight can change the HUD.
 
@@ -53,15 +53,17 @@ In game:
 ## Commands
 
 ```bash
-npm run dev              # watch, debug on (required before F5)
-npm run build            # release
+npm run dev              # watch all src/ mods, debug on (required before F5)
+npm run dev -- --mod example
+npm run build            # release all mods
+npm run build -- --mod example
 npm run typecheck
 npm run generate-types   # after a new runtime dump
-npm run sandustry        # build debug + launch
+npm run sandustry        # debug build and launch
 npm run ui:css           # compile docs/ui/canvas preview Tailwind
 npm run ui:previews      # compile preview CSS, then screenshot preview.html
 ```
 
 **F5** (VS Code `Sandustry` compound) stops any running game and launches with debug ports. It does not rebuild the mod — keep `npm run dev` running for the bundle, hot reload, and file logs.
 
-Renderer attach loads source maps from the OS mods folder (`~/.config/sandustry/mods/` or `%APPDATA%/sandustry/mods/`) and `dist/`. Debug builds rewrite those maps to absolute paths and add `sourceURL` so breakpoints in `src/` bind through `new Function` eval.
+Renderer attach loads source maps from the OS mods folder (`~/.config/sandustry/mods/` or `%APPDATA%/sandustry/mods/`) and `dist/<folder>/`. Debug builds rewrite those maps to absolute paths and add `sourceURL` so breakpoints in `src/<name>/` bind through `new Function` eval.

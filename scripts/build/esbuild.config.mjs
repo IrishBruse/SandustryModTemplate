@@ -8,7 +8,7 @@ import {
   compileTailwindUtilities,
   TAILWIND_CSS_FILTER,
 } from "./compile-tailwind.js";
-import { MOD_DIR } from "../sandustry/mod-path.js";
+import { loadMods, modIsolationPlugin, prepareModOutputs } from "./mods.js";
 import {
   hotReloadUrl,
   isHotReloadServerUp,
@@ -25,9 +25,6 @@ const debugFlag = args.includes("--debug");
 const noDebugFlag = args.includes("--no-debug");
 const sourcemapFlag = args.includes("--sourcemap");
 const noSourcemapFlag = args.includes("--no-sourcemap");
-
-const MOD_OUT_DIR = game || watch ? MOD_DIR : join(ROOT, "dist");
-const OUT_MAIN = join(MOD_OUT_DIR, "main.js");
 
 /** @returns {boolean} */
 function resolveModDebug() {
@@ -55,72 +52,77 @@ const sourcemap = resolveSourcemap();
 // `npm run dev` is already serving notify (F5 does not build).
 const embedHotReloadUrl = watch || (modDebug && (await isHotReloadServerUp()));
 
-console.log(`mod output: ${MOD_OUT_DIR}`);
-console.log(`main bundle: ${OUT_MAIN}`);
+const mods = await loadMods(args);
+prepareModOutputs(ROOT, mods);
+
+console.log(`mods: ${mods.map((mod) => mod.folder).join(", ")}`);
 console.log(`mod debug: ${modDebug ? "on" : "off"}`);
 console.log(`sourcemap: ${sourcemap ?? "off"}`);
 console.log(`hot reload URL: ${embedHotReloadUrl ? hotReloadUrl() : "(none)"}`);
 
-/** Copy static mod files and generate patches.json into the output folder. */
-async function syncModFiles() {
-  mkdirSync(MOD_OUT_DIR, { recursive: true });
-  await writeModinfo(MOD_OUT_DIR, modDebug);
-  const modDir = join(ROOT, "mod");
-  if (existsSync(modDir)) {
-    for (const name of readdirSync(modDir)) {
+/** @type {any | null} */
+let debugSchemaCache = null;
+
+async function loadDebugSchema() {
+  if (debugSchemaCache) return debugSchemaCache;
+  const kit = await bundleAndImport(
+    join(MODKIT_DIR, "debug/config-schema.ts"),
+    "modkit-debug-schema.mjs",
+  );
+  debugSchemaCache = structuredClone(kit.modkitDebugConfigSchema ?? {});
+  return debugSchemaCache;
+}
+
+/**
+ * Write modinfo.json — debug builds merge framework debug settings into configSchema.
+ * @param {import("./mods.js").LoadedMod} mod
+ * @param {boolean} includeDebugSetting
+ */
+async function writeModinfo(mod, includeDebugSetting) {
+  const manifest = structuredClone(mod.manifest);
+  if (includeDebugSetting) {
+    const debugSchema = await loadDebugSchema();
+    if (debugSchema && typeof debugSchema === "object") {
+      manifest.configSchema = {
+        ...manifest.configSchema,
+        ...debugSchema,
+      };
+    }
+  }
+  writeFileSync(join(mod.outDir, "modinfo.json"), `${JSON.stringify(manifest, null, 2)}\n`);
+}
+
+/**
+ * Copy static files and write modinfo.json + patches.json.
+ * @param {import("./mods.js").LoadedMod} mod
+ * @param {boolean} includeModkitDebug
+ */
+async function syncModFiles(mod, includeModkitDebug) {
+  mkdirSync(mod.outDir, { recursive: true });
+  await writeModinfo(mod, modDebug);
+  const staticDir = join(mod.dir, "mod");
+  if (existsSync(staticDir)) {
+    for (const name of readdirSync(staticDir)) {
       if (name === "patches.json") continue;
-      cpSync(join(modDir, name), join(MOD_OUT_DIR, name), {
+      cpSync(join(staticDir, name), join(mod.outDir, name), {
         recursive: true,
         force: true,
       });
     }
   }
-  await buildPatches(MOD_OUT_DIR, modDebug);
+  await buildPatches(mod.outDir, {
+    modDebug,
+    modTs: mod.modTs,
+    cachePrefix: mod.folder,
+    includeModkitDebug,
+    label: `src/${mod.folder}/mod.ts`,
+  });
 }
 
-/** @type {{ manifest: any; debugSchema: any } | null} */
-let modManifestCache = null;
-
-/** Load mod.ts + framework debug schema via esbuild so the build stays plain Node ESM. */
-async function loadModManifestAndDebugSchema() {
-  if (modManifestCache) return modManifestCache;
-  const [mod, kit] = await Promise.all([
-    bundleAndImport(join(ROOT, "mod.ts"), "modinfo.mjs"),
-    bundleAndImport(join(MODKIT_DIR, "debug/config-schema.ts"), "modkit-debug-schema.mjs"),
-  ]);
-  modManifestCache = {
-    manifest: structuredClone(mod.modinfo),
-    debugSchema: structuredClone(kit.modkitDebugConfigSchema ?? {}),
-  };
-  return modManifestCache;
-}
-
-/** Write modinfo.json — debug builds merge framework debug settings into configSchema. */
-async function writeModinfo(outDir, includeDebugSetting) {
-  const { manifest, debugSchema } = await loadModManifestAndDebugSchema();
-  if (includeDebugSetting && debugSchema && typeof debugSchema === "object") {
-    manifest.configSchema = {
-      ...manifest.configSchema,
-      ...debugSchema,
-    };
-  }
-  writeFileSync(join(outDir, "modinfo.json"), `${JSON.stringify(manifest, null, 2)}\n`);
-}
-
-function logBuildResult(result) {
+function logBuildResult(mod, result) {
   if (result.errors.length > 0) return;
-  console.log(`built to ${MOD_OUT_DIR}`);
+  console.log(`built ${mod.folder} to ${mod.outDir}`);
 }
-
-const { manifest: modManifest } = await loadModManifestAndDebugSchema();
-
-const define = {
-  __MOD_DEBUG__: modDebug ? "true" : "false",
-  __MOD_ID__: JSON.stringify(typeof modManifest.id === "string" ? modManifest.id : "mod"),
-  // SSE server starts only with `--watch`. Embed the URL for watch builds and
-  // for one-shot debug builds while that server is already up (`--game` / sandustry).
-  __HOT_RELOAD_URL__: embedHotReloadUrl ? JSON.stringify(hotReloadUrl()) : '""',
-};
 
 /** Resolve `@modkit/...` to `modkit/...`. */
 function modkitAliasPlugin() {
@@ -154,22 +156,22 @@ function browserPatchesStubPlugin() {
   };
 }
 
-/** Stub `./debug` to empty when release builds omit debug helpers. */
-function releaseDebugStubPlugin() {
+/**
+ * Stub `./debug` to empty when release builds omit debug helpers.
+ * @param {import("./mods.js").LoadedMod} mod
+ */
+function releaseDebugStubPlugin(mod) {
   return {
     name: "release-debug-stub",
     setup(build) {
       if (modDebug) return;
       build.onResolve({ filter: /^\.\/debug$/ }, (args) => {
-        // Match both `src/main.ts` and `src\main.ts` (Windows).
-        if (!/[\\/]src[\\/]main\.ts$/.test(args.importer)) return;
+        if (normalize(args.importer) !== normalize(mod.main)) return;
         return { path: join(ROOT, "modkit/debug/empty.ts") };
       });
     },
   };
 }
-
-const basePlugins = [browserPatchesStubPlugin(), modkitAliasPlugin(), releaseDebugStubPlugin()];
 
 /** Empty CSS so the first graph pass can list bundled sources without a CSS cycle. */
 function stubCssPlugin() {
@@ -239,81 +241,130 @@ function rewriteMainJsDebugMaps(filePath) {
   );
 }
 
-function maybeRewriteDebugMaps() {
-  if (!sourcemap || !existsSync(OUT_MAIN)) return;
-  rewriteMainJsDebugMaps(OUT_MAIN);
+/**
+ * @param {import("./mods.js").LoadedMod} mod
+ */
+function maybeRewriteDebugMaps(mod) {
+  const outMain = join(mod.outDir, "main.js");
+  if (!sourcemap || !existsSync(outMain)) return;
+  rewriteMainJsDebugMaps(outMain);
 }
 
-/** @type {import('esbuild').BuildOptions} */
-const options = {
-  entryPoints: [join(ROOT, "src/main.ts")],
-  outfile: OUT_MAIN,
-  bundle: true,
-  format: "iife",
-  platform: "browser",
-  target: "es2020",
-  sourcemap,
-  define,
-  // Debug builds: replace bare `console` with modkit/console.ts (file mirror).
-  inject: modDebug ? [join(MODKIT_DIR, "console.ts")] : [],
-  alias: {
-    react: join(ROOT, "modkit/react.ts"),
-    "react/jsx-runtime": join(ROOT, "modkit/jsx-runtime.ts"),
-    "react/jsx-dev-runtime": join(ROOT, "modkit/jsx-dev-runtime.ts"),
-  },
-  plugins: basePlugins,
-  jsx: "automatic",
-  jsxImportSource: "react",
-  banner: {
-    js: [
-      "// Generated — edit src/ and run npm run dev.",
-      "// Runs as a plain script via new Function(...). No import/export.",
-      "// sandkit is already in scope.",
-    ].join("\n"),
-  },
-  logLevel: "info",
-};
+/**
+ * @param {import("./mods.js").LoadedMod} mod
+ */
+function bundleOptions(mod) {
+  const outMain = join(mod.outDir, "main.js");
+  return {
+    entryPoints: [mod.main],
+    outfile: outMain,
+    bundle: true,
+    format: "iife",
+    platform: "browser",
+    target: "es2020",
+    sourcemap,
+    define: {
+      __MOD_DEBUG__: modDebug ? "true" : "false",
+      __MOD_ID__: JSON.stringify(typeof mod.manifest.id === "string" ? mod.manifest.id : "mod"),
+      __HOT_RELOAD_URL__: embedHotReloadUrl ? JSON.stringify(hotReloadUrl()) : '""',
+    },
+    inject: modDebug ? [join(MODKIT_DIR, "console.ts")] : [],
+    alias: {
+      react: join(ROOT, "modkit/react.ts"),
+      "react/jsx-runtime": join(ROOT, "modkit/jsx-runtime.ts"),
+      "react/jsx-dev-runtime": join(ROOT, "modkit/jsx-dev-runtime.ts"),
+    },
+    jsx: "automatic",
+    jsxImportSource: "react",
+    banner: {
+      js: [
+        `// Generated — edit src/${mod.folder}/ and run npm run dev.`,
+        "// Runs as a plain script via new Function(...). No import/export.",
+        "// sandkit is already in scope.",
+      ].join("\n"),
+    },
+    logLevel: "info",
+  };
+}
 
-/** Scan only files this bundle includes, then compile `@tailwind utilities`. */
-async function compileFromBundleGraph() {
+/**
+ * @param {import("./mods.js").LoadedMod} mod
+ */
+function basePlugins(mod) {
+  return [
+    modIsolationPlugin(ROOT),
+    browserPatchesStubPlugin(),
+    modkitAliasPlugin(),
+    releaseDebugStubPlugin(mod),
+  ];
+}
+
+/**
+ * @param {import("./mods.js").LoadedMod} mod
+ */
+async function compileFromBundleGraph(mod) {
+  const cssEntry = join(mod.dir, "ui/tailwind.css");
+  if (!existsSync(cssEntry)) return "";
   const result = await esbuild.build({
-    ...options,
+    ...bundleOptions(mod),
     write: false,
     logLevel: "silent",
     metafile: true,
-    plugins: [...basePlugins, stubCssPlugin()],
+    plugins: [...basePlugins(mod), stubCssPlugin()],
   });
-  return compileTailwindUtilities(bundledContentFiles(result.metafile, ROOT));
+  return compileTailwindUtilities(bundledContentFiles(result.metafile, ROOT), cssEntry);
 }
 
-await syncModFiles();
+/**
+ * @param {import("./mods.js").LoadedMod} mod
+ * @param {boolean} includeModkitDebug
+ */
+async function buildOne(mod, includeModkitDebug) {
+  await syncModFiles(mod, includeModkitDebug);
+  let tailwindCss = await compileFromBundleGraph(mod);
+  const result = await esbuild.build({
+    ...bundleOptions(mod),
+    plugins: [...basePlugins(mod), cssTextPlugin(() => tailwindCss)],
+  });
+  maybeRewriteDebugMaps(mod);
+  logBuildResult(mod, result);
+}
 
-let tailwindCss = await compileFromBundleGraph();
-
-if (watch) {
-  startHotReloadServer();
+/**
+ * @param {import("./mods.js").LoadedMod} mod
+ * @param {boolean} includeModkitDebug
+ */
+async function watchOne(mod, includeModkitDebug) {
+  await syncModFiles(mod, includeModkitDebug);
+  let tailwindCss = await compileFromBundleGraph(mod);
+  const cssEntry = join(mod.dir, "ui/tailwind.css");
 
   const mainCtx = await esbuild.context({
-    ...options,
+    ...bundleOptions(mod),
     metafile: true,
     plugins: [
-      ...basePlugins,
+      ...basePlugins(mod),
       cssTextPlugin(() => tailwindCss),
       {
         name: "sync-mod",
         setup(build) {
           build.onEnd(async (result) => {
             if (result.errors.length > 0) return;
-            const next = await compileTailwindUtilities(bundledContentFiles(result.metafile, ROOT));
-            if (next !== tailwindCss) {
-              tailwindCss = next;
-              await mainCtx.rebuild();
-              return;
+            if (existsSync(cssEntry)) {
+              const next = await compileTailwindUtilities(
+                bundledContentFiles(result.metafile, ROOT),
+                cssEntry,
+              );
+              if (next !== tailwindCss) {
+                tailwindCss = next;
+                await mainCtx.rebuild();
+                return;
+              }
             }
-            maybeRewriteDebugMaps();
-            await syncModFiles();
+            maybeRewriteDebugMaps(mod);
+            await syncModFiles(mod, includeModkitDebug);
             notifyHotReload({ changed: ["main.js"] });
-            logBuildResult(result);
+            logBuildResult(mod, result);
           });
         },
       },
@@ -321,12 +372,18 @@ if (watch) {
   });
 
   await mainCtx.watch();
-  console.log(`watching ${join(ROOT, "src")} -> ${OUT_MAIN}`);
+  console.log(`watching src/${mod.folder} -> ${join(mod.outDir, "main.js")}`);
+}
+
+const kitDebugFolder = mods[0]?.folder;
+
+if (watch) {
+  startHotReloadServer();
+  for (const mod of mods) {
+    await watchOne(mod, modDebug && mod.folder === kitDebugFolder);
+  }
 } else {
-  const result = await esbuild.build({
-    ...options,
-    plugins: [...basePlugins, cssTextPlugin(() => tailwindCss)],
-  });
-  maybeRewriteDebugMaps();
-  logBuildResult(result);
+  for (const mod of mods) {
+    await buildOne(mod, modDebug && mod.folder === kitDebugFolder);
+  }
 }

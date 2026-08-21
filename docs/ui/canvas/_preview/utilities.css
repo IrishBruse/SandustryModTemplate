@@ -5,6 +5,12 @@
 .pointer-events-auto {
     pointer-events: auto
 }
+.visible {
+    visibility: visible
+}
+.collapse {
+    visibility: collapse
+}
 .fixed {
     position: fixed
 }
@@ -32,6 +38,10 @@
 .z-\[10005\] {
     z-index: 10005
 }
+.\!mx-0 {
+    margin-left: 0px !important;
+    margin-right: 0px !important
+}
 .-mx-1 {
     margin-left: -0.25rem;
     margin-right: -0.25rem
@@ -39,6 +49,9 @@
 .mx-0\.5 {
     margin-left: 0.125rem;
     margin-right: 0.125rem
+}
+.\!mb-0 {
+    margin-bottom: 0px !important
 }
 .mb-1 {
     margin-bottom: 0.25rem
@@ -52,8 +65,14 @@
 .ml-2 {
     margin-left: 0.5rem
 }
+.block {
+    display: block
+}
 .inline-block {
     display: inline-block
+}
+.inline {
+    display: inline
 }
 .flex {
     display: flex
@@ -126,6 +145,9 @@
 }
 .cursor-pointer {
     cursor: pointer
+}
+.resize {
+    resize: both
 }
 .flex-col {
     flex-direction: column
@@ -426,6 +448,11 @@
     --tw-drop-shadow: drop-shadow(0 0 8px rgba(255,231,0,0.5));
     filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
 }
+.transition {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms
+}
 .transition-all {
     transition-property: all;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
@@ -441,6 +468,9 @@
 }
 .duration-500 {
     transition-duration: 500ms
+}
+.ease-in-out {
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1)
 }
 .before\:absolute::before {
     content: var(--tw-content);

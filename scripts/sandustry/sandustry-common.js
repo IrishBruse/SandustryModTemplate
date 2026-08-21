@@ -6,12 +6,7 @@ import { execSync, spawn, spawnSync } from "node:child_process";
 import { existsSync, readdirSync, readlinkSync } from "node:fs";
 import { join } from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
-import { ensureModDir } from "./mod-path.js";
-import {
-  resolveSandustryBinary,
-  sandustryBinaryName,
-  sandustryInstallDir,
-} from "./paths.js";
+import { resolveSandustryBinary, sandustryBinaryName, sandustryInstallDir } from "./paths.js";
 
 const IS_WIN = process.platform === "win32";
 
@@ -32,9 +27,13 @@ export function sandustryRequireBinary() {
 
   console.error(`Sandustry binary not found: ${SANDUSTRY}`);
   if (IS_WIN) {
-    console.error('Set SANDUSTRY to your Sandustry.exe, for example:');
-    console.error('  cmd:        set SANDUSTRY=C:\\Program Files (x86)\\Steam\\steamapps\\common\\Sandustry\\Sandustry.exe');
-    console.error('  PowerShell: $env:SANDUSTRY="C:\\Program Files (x86)\\Steam\\steamapps\\common\\Sandustry\\Sandustry.exe"');
+    console.error("Set SANDUSTRY to your Sandustry.exe, for example:");
+    console.error(
+      "  cmd:        set SANDUSTRY=C:\\Program Files (x86)\\Steam\\steamapps\\common\\Sandustry\\Sandustry.exe",
+    );
+    console.error(
+      '  PowerShell: $env:SANDUSTRY="C:\\Program Files (x86)\\Steam\\steamapps\\common\\Sandustry\\Sandustry.exe"',
+    );
   } else {
     console.error("Set SANDUSTRY to your sandustry binary, for example:");
     console.error("  export SANDUSTRY=/path/to/steamapps/common/Sandustry/sandustry");
@@ -42,12 +41,15 @@ export function sandustryRequireBinary() {
   process.exit(1);
 }
 
-/** @param {string} root @param {{ sourcemap?: boolean; modDebug?: boolean }} [options] */
-export function sandustryBuildMod(root, { sourcemap = false, modDebug = true } = {}) {
-  ensureModDir();
+/** @param {string} root @param {{ sourcemap?: boolean; modDebug?: boolean; extraArgs?: string[] }} [options] */
+export function sandustryBuildMod(
+  root,
+  { sourcemap = false, modDebug = true, extraArgs = [] } = {},
+) {
   const args = [join(root, "scripts/build/esbuild.config.mjs"), "--game"];
   if (sourcemap) args.push("--sourcemap");
   if (!modDebug) args.push("--no-debug");
+  args.push(...extraArgs);
 
   const result = spawnSync("node", args, {
     stdio: "inherit",
@@ -200,7 +202,7 @@ function sandustryLeftMonitorWindows() {
     const ps = [
       "Add-Type -AssemblyName System.Windows.Forms;",
       "[System.Windows.Forms.Screen]::AllScreens | ForEach-Object {",
-      "  \"$($_.Bounds.X) $($_.Bounds.Y) $($_.Bounds.Width) $($_.Bounds.Height)\"",
+      '  "$($_.Bounds.X) $($_.Bounds.Y) $($_.Bounds.Width) $($_.Bounds.Height)"',
       "}",
     ].join(" ");
     const result = spawnSync("powershell", ["-NoProfile", "-Command", ps], {
