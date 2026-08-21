@@ -23,7 +23,6 @@ modkit/                 Shared kit (utils, react, debug, patches, modinfo)
 types/                  Sandkit API types (submodule: sandustry-modding-types)
 scripts/build/          esbuild, patches.json, mod discovery
 scripts/sandustry/      Launch / stop the game, mod output path
-scripts/api/            Generate types from runtime dump + official reference
 dist/<name>/            Link to OS mods folder for that src folder (symlink / Windows junction)
 logs/                   Link to OS sandustry logs (symlink / Windows junction)
 ```
@@ -91,7 +90,6 @@ Path aliases: `@modkit/*` → `./modkit/*`; `types/api` / `types/sandkit` / `typ
 | `scripts/sandustry/paths.js`            | OS user-data + Steam binary paths                                                   |
 | `scripts/sandustry/mod-path.js`         | Game mod dir from `modinfo.name`; `dist/<folder>` links                             |
 | `scripts/sandustry/launch-sandustry.js` | Build (debug) and launch the game                                                   |
-| `scripts/api/generate-api-types.js`     | `npm run generate-types`                                                            |
 
 ## Builds
 
@@ -131,7 +129,6 @@ Full format: [`docs/patches.md`](docs/patches.md).
 npm run dev              # watch, debug on
 npm run build            # release
 npm run typecheck
-npm run generate-types   # after a new runtime dump
 npm run sandustry        # build debug + launch
 ```
 

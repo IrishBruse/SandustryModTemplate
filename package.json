@@ -9,7 +9,6 @@
     "lint": "npm run typecheck && oxlint && oxfmt --check",
     "lint:fix": "oxlint --fix && oxfmt",
     "docs": "docsify serve docs",
-    "generate-types": "node scripts/api/generate-api-types.js",
     "references": "node scripts/sandustry/references.js",
     "ui:css": "node scripts/ui/compile-preview-css.mjs",
     "ui:previews": "node scripts/ui/generate-previews.mjs",

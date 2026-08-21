@@ -58,7 +58,6 @@ npm run dev -- --mod overlay-hotkey-example
 npm run build            # release all mods
 npm run build -- --mod overlay-hotkey-example
 npm run typecheck
-npm run generate-types   # after a new runtime dump
 npm run sandustry        # debug build and launch
 npm run ui:css           # compile docs/ui/canvas preview Tailwind
 npm run ui:previews      # compile preview CSS, then screenshot preview.html
