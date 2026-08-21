@@ -1,11 +1,9 @@
-import type { SandkitApi } from "types/api";
-import { sandkit, type SandkitGlobal } from "@modkit/sandkit";
 import { modinfo } from "./mod";
 
 export interface ModGlobal {
   modId: string;
   api: SandkitApi;
-  sandkit: SandkitGlobal;
+  sandkit: Sandkit;
 }
 
 export const MOD_ID = modinfo.id;

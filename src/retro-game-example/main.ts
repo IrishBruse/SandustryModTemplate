@@ -1,5 +1,4 @@
 import { installDebug, isHotReloadEval } from "./debug";
-import { sandkit } from "@modkit/sandkit";
 import { isEnabled, registerRetroGame, safe } from "@modkit/utils";
 import { installGlobals, MOD_ID } from "./globals";
 

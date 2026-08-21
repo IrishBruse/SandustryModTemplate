@@ -1,5 +1,4 @@
 import type { RetroConsoleGame } from "types/engine";
-import { sandkit } from "../sandkit";
 
 export type {
   RetroConsoleApi,

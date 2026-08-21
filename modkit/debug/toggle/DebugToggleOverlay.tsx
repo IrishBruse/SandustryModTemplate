@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { ManagementMenuButton } from "../../ui";
-import { sandkit } from "../../sandkit";
 import { debugEnabled } from "../../utils/settings";
 import { inGame } from "../../utils/scene";
 import { safe } from "../../utils/safe";

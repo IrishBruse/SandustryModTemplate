@@ -1,4 +1,3 @@
-import type { SandkitApi } from "types/api";
 import { debugEnabled } from "../../utils/settings";
 import { safe } from "../../utils/safe";
 

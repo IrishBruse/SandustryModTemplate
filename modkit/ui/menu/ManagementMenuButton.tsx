@@ -1,6 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import { sandkit } from "../../sandkit";
 import { safe } from "../../utils/safe";
 import { Interactive } from "../layout/OverlayPanel";
 import { MenuButton } from "./MenuButton";
@@ -197,7 +196,9 @@ function setRowWidth(
   spacer.style.transition = "none";
   spacer.style.setProperty("width", px);
   spacer.style.minWidth = "0";
-  spacer.style.overflow = "hidden";
+  // Vanilla row overflow is visible — clip here and hover `left-2` / key
+  // badge shadow get cut, so the label and hotkey look unfaded.
+  spacer.style.overflow = "";
   spacer.style.alignSelf = "flex-start";
   wrap.style.transition = "none";
   wrap.style.width = px;
@@ -257,9 +258,8 @@ function widthProgress(src: HTMLElement, natural: number): number {
 
 /**
  * Mirror a vanilla label/hotkey node.
- * Collapse: opacity 1 while width shrinks, then 0 at `0px`.
- * Expand: opacity 0 while width grows, then 1 + `width: auto` at rest.
- * Copy opacity from the pack node — do not derive it from width progress.
+ * Vanilla Framer: `animate:{opacity, width, marginLeft}` over 0.2s — opacity
+ * fades with width (not a snap). Copy opacity from the pack node.
  * Never set min-width:0 on these nodes (vanilla keeps min-width:auto so flex
  * cannot crush the animated width).
  */
@@ -326,34 +326,26 @@ function applyDetailsFromPack(
 }
 
 /**
- * Hover / local tween details. Same reveal rules we see on vanilla column rows:
- * open → opacity stays 0 until width settles, then 1 + `auto`;
- * close → opacity stays 1 while width shrinks, then 0.
- * (Framer targets: opacity/width/marginLeft with duration 0.2.)
+ * Hover / local tween details. Vanilla Framer:
+ * `animate:{opacity: collapsed?0:1, width: collapsed?0:"auto", marginLeft}`
+ * `transition:{duration:.2}` — opacity fades with width, it does not snap.
  */
-function applyDetails(
-  dest: HTMLElement,
-  p: number,
-  measured: MeasuredDetails,
-  towardOpen: boolean,
-): void {
+function applyDetails(dest: HTMLElement, p: number, measured: MeasuredDetails): void {
   const label = dest.querySelector<HTMLElement>(".tracking-wider");
   const hot = rowHotkey(dest);
   const apply = (el: HTMLElement | undefined, withMargin: boolean, natural: number) => {
     if (!el) return;
     el.style.overflow = "";
     el.style.minWidth = "";
-    if (towardOpen) {
-      el.style.opacity = p >= 0.999 ? "1" : "0";
-    } else {
-      el.style.opacity = p <= 0.001 ? "0" : "1";
-    }
+    el.style.opacity = String(p);
     if (p >= 0.999) {
+      el.style.opacity = "1";
       el.style.width = "auto";
       if (withMargin) el.style.marginLeft = "12px";
       return;
     }
     if (p <= 0.001) {
+      el.style.opacity = "0";
       el.style.width = "0px";
       if (withMargin) el.style.marginLeft = "0px";
       return;
@@ -469,7 +461,7 @@ function registerRow(id: string, setAnchor: (anchor: ManagementAnchor | null) =>
     spacer.style.height = `${SPACER_HEIGHT_PX}px`;
     spacer.style.pointerEvents = "none";
     spacer.style.minWidth = "0";
-    spacer.style.overflow = "hidden";
+    spacer.style.overflow = "";
     spacer.style.alignSelf = "flex-start";
     spacers.set(id, spacer);
   }
@@ -695,9 +687,8 @@ export function ManagementMenuButton({
       if (!dest || !tw) return;
       const t = Math.min(1, (now - tw.start) / WIDTH_MS);
       const w = tw.from + (tw.to - tw.from) * easeInOut(t);
-      const towardOpen = tw.to > tw.from;
       setRowWidth(dest, spacer, wrap, w, expandedRef.current);
-      applyDetails(dest, detailProgress(w, expandedRef.current), measured, towardOpen);
+      applyDetails(dest, detailProgress(w, expandedRef.current), measured);
       if (t >= 1) {
         tweenRef.current = null;
         if (!hoveredRef.current) applyFromPack();
@@ -721,7 +712,7 @@ export function ManagementMenuButton({
       if (Math.abs(from - to) < 0.5) {
         tweenRef.current = null;
         setRowWidth(dest, spacer, wrap, to, expandedRef.current);
-        applyDetails(dest, detailProgress(to, expandedRef.current), measured, to > COLLAPSED_WIDTH_PX + 1);
+        applyDetails(dest, detailProgress(to, expandedRef.current), measured);
         return;
       }
       tweenRef.current = { from, to, start: performance.now() };

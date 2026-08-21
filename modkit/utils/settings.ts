@@ -1,4 +1,3 @@
-import type { SandkitApi } from "types/api";
 import { safe } from "./safe";
 
 export function isEnabled(api: SandkitApi): boolean {

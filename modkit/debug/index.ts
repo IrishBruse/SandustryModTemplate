@@ -1,5 +1,3 @@
-import type { SandkitApi } from "types/api";
-import { sandkit } from "../sandkit";
 import { registerDevToolsShortcut, scheduleMainMenuBoot } from "./boot-menu";
 import { installHotReload, isHotReloadEval } from "./hot-reload";
 import { installDebugToggle } from "./toggle/install";

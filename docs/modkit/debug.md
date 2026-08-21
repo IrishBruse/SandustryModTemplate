@@ -41,8 +41,9 @@ Hot-reload eval skips DevTools shortcut, splash polling, and auto-boot so those 
 ## DevTools globals
 
 `installDebug` copies the live Sandkit objects onto `globalThis` for the browser
-console and dump scripts only. Those names are not ambient TypeScript globals —
-import `sandkit` from `@modkit/sandkit` in mod code.
+console and dump scripts. In TypeScript, `sandkit` is already an ambient free
+variable (see `types/src/global.d.ts`). Use that name in mod code — do not import
+a value binding. DevTools also gets `api`, `enums`, and `react` on `globalThis`.
 
 - `sandkit`
 - `api` (`sandkit.api`)
@@ -53,7 +54,7 @@ After the mod has loaded, you can paste a runtime API dump script into DevTools.
 
 ## DevTools
 
-- On first load, `openDevToolsOnStartup` calls `window.electron.openDevTools()` immediately and again at 250 ms, 750 ms, 1500 ms, and 3000 ms — **unless** F5 / `sandustry:vscode` set `SANDUSTRY_IDE_DEBUG` (CDP on `:9222`). Opening Electron DevTools on top of that attach drops the IDE debugger. The renderer does not fetch `:9222` — that HTTP call can freeze the game while the IDE is attached.
+- On first load, `openDevToolsOnStartup` calls `window.electron.openDevTools()` immediately and again at 250 ms, 750 ms, 1500 ms, and 3000 ms — **unless** F5 / `sandustry:vscode` wrote `ide-debug.json` into the local mod folders (the renderer has no `process.env`, so spawn env alone cannot signal this). Opening Electron DevTools on top of that attach drops the IDE debugger. The renderer does not fetch `:9222` — that HTTP call can freeze the game while the IDE is attached.
 - **F12** still opens Electron DevTools (force). That can disconnect an IDE CDP session; prefer the IDE debugger panel when you launched with F5.
 - The listener uses capture phase so the game does not swallow the key. Preload patches cannot target `preload.js`, so this runs in the renderer.
 

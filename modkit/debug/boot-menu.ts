@@ -1,4 +1,3 @@
-import type { SandkitApi } from "types/api";
 import { debugEnabled, inGame, safe } from "../utils";
 import { clickContinueButton, isContinueButtonReady } from "./menu";
 import { startSplashSkipPolling } from "./splash";
@@ -15,6 +14,8 @@ const BOOT_SESSION_KEY = "sandkit-debug-main-menu-booted";
 const REMOTE_DEBUG_PORT = 9222;
 /** Set by F5 / sandustry:vscode (`sandustryDebugEnv`). Avoids HTTP to the CDP port. */
 const IDE_DEBUG_ENV = "SANDUSTRY_IDE_DEBUG";
+/** Written into each local mod folder by F5 / sandustry:vscode launch scripts. */
+const IDE_DEBUG_MARKER = "ide-debug.json";
 
 let booted = readBootedFromSession();
 let triggerRegistered = false;
@@ -53,12 +54,32 @@ function readIdeDebugFlag(): boolean {
 }
 
 /**
+ * Renderer has no `process.env`. F5 writes `ide-debug.json` into the mod folder;
+ * sandkit serves it through `api.assets.getUrl`.
+ */
+async function readIdeDebugMarker(): Promise<boolean> {
+  try {
+    const url = sandkit.api.assets.getUrl(IDE_DEBUG_MARKER);
+    if (!url) return false;
+    const sep = url.includes("?") ? "&" : "?";
+    const response = await fetch(`${url}${sep}t=${Date.now()}`, { cache: "no-store" });
+    if (!response.ok) return false;
+    return (await response.text()).trim() === "1";
+  } catch {
+    return false;
+  }
+}
+
+/**
  * True when the IDE launched with CDP. Do not `fetch` `:9222` from this page —
  * that HTTP call deadlocks Chromium once VS Code is attached.
  */
 function isRemoteDebuggingActive(): Promise<boolean> {
   if (remoteDebuggingProbe) return remoteDebuggingProbe;
-  remoteDebuggingProbe = Promise.resolve(readIdeDebugFlag());
+  remoteDebuggingProbe = (async () => {
+    if (readIdeDebugFlag()) return true;
+    return readIdeDebugMarker();
+  })();
   return remoteDebuggingProbe;
 }
 

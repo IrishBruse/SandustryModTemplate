@@ -6,6 +6,11 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ## Unreleased
 
+### Changed
+
+- Sandkit type folders nest under `src/sandkit/` (`api`, `engine`, `enums`, …) to match the live object. Path aliases `types/api`, `types/sandkit`, `types/engine`, and `types/enums` point at `types/src/sandkit/…`.
+- `sandkit` is an ambient free variable from `types/src/global.d.ts` (plus ambient `Sandkit` / `SandkitApi` / …). Mod and modkit code use `sandkit` with no import. Removed `@modkit/sandkit`.
+
 ## 2026-08-21
 
 ### Added
@@ -38,7 +43,7 @@ The template has no release tags yet. Dated sections match the day the change la
 ### Fixed
 
 - F5 **Sandustry** compound attaches to Electron main (`:9230`) and the game renderer (`:9222`) instead of debugging the Node launcher script. Renderer attach filters to `index.html` so an open DevTools page does not steal the session.
-- F5 / IDE launch sets `SANDUSTRY_IDE_DEBUG` so the renderer does not HTTP-probe `:9222` (that freeze dropped the debugger).
+- F5 / IDE launch writes per-mod `ide-debug.json` so the renderer skips auto-open DevTools (spawn env is not visible in the sandboxed page). Also sets `SANDUSTRY_IDE_DEBUG` on the main process so the renderer does not HTTP-probe `:9222` (that freeze dropped the debugger).
 - Hot reload wraps source like sandkit’s loader so indexed source maps stay aligned.
 - Watch build removes leftover OS mod folders this template used to own after a rename.
 - Splash-skip retries are capped; only the first debug mod injects the shared F3 / management Debug row.
@@ -61,7 +66,7 @@ The template has no release tags yet. Dated sections match the day the change la
 ### Changed
 
 - Debug schema merges at build time. Release builds stub `./debug`.
-- Sandkit is imported from `@modkit/sandkit`, not from ambient globals.
+- Sandkit is an ambient free variable (`types/src/global.d.ts`), not an `@modkit/sandkit` import.
 
 ## 2026-08-19
 

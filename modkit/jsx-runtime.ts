@@ -1,5 +1,3 @@
-import { sandkit } from "./sandkit";
-
 /** JSX automatic runtime — backed by sandkit.react (via the `react/jsx-runtime` alias). */
 type ReactRuntime = typeof import("react") & {
   jsx?(type: unknown, props: unknown, key: unknown): import("react").ReactElement;

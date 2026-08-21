@@ -1,5 +1,4 @@
 import { installDebug, isHotReloadEval, onDispose } from "./debug";
-import { sandkit } from "@modkit/sandkit";
 import { isEnabled, safe } from "@modkit/utils";
 import { installGlobals, MOD_ID } from "./globals";
 import { Overlay } from "./ui/Overlay";

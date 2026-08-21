@@ -1,4 +1,3 @@
-import type { SandkitApi } from "types/api";
 import { onDispose } from "../hot-reload";
 import { DebugToggleOverlay } from "./DebugToggleOverlay";
 

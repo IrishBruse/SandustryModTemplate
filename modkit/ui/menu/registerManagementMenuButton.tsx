@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { sandkit } from "../../sandkit";
 import { ManagementMenuButton } from "./ManagementMenuButton";
 
 const api = sandkit.api;

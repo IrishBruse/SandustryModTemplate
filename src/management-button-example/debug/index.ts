@@ -1,4 +1,3 @@
-import type { SandkitApi } from "types/api";
 import { installDebug as installModkitDebug } from "@modkit/debug";
 
 export { isHotReloadEval, onDispose } from "@modkit/debug";

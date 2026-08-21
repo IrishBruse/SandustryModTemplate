@@ -3,10 +3,22 @@
  * Linux uses /proc + xrandr/wmctrl; Windows uses tasklist/taskkill and --start-maximized.
  */
 import { execSync, spawn, spawnSync } from "node:child_process";
-import { existsSync, readdirSync, readlinkSync } from "node:fs";
+import {
+  existsSync,
+  readdirSync,
+  readlinkSync,
+  statSync,
+  unlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { join } from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
-import { resolveSandustryBinary, sandustryBinaryName, sandustryInstallDir } from "./paths.js";
+import {
+  resolveSandustryBinary,
+  sandustryBinaryName,
+  sandustryInstallDir,
+  sandustryModsDir,
+} from "./paths.js";
 
 const IS_WIN = process.platform === "win32";
 
@@ -15,11 +27,50 @@ export const SANDUSTRY_DIR = sandustryInstallDir(SANDUSTRY);
 const SANDUSTRY_EXE = sandustryBinaryName(SANDUSTRY);
 
 export const IDE_DEBUG_ENV = "SANDUSTRY_IDE_DEBUG";
+/** Per-mod file the renderer reads via `api.assets.getUrl` (no `process.env` in the game page). */
+export const IDE_DEBUG_MARKER = "ide-debug.json";
 export const DEFAULT_MAIN_DEBUG_PORT = "9230";
 export const DEFAULT_RENDERER_DEBUG_PORT = "9222";
 
-/** Env for F5 / sandustry:vscode so the renderer can skip CDP HTTP and Electron DevTools. */
+/**
+ * Write or clear `ide-debug.json` in each local mod folder.
+ * The sandboxed renderer cannot see spawn env; it loads this marker as a mod asset.
+ * @param {boolean} enabled
+ */
+export function setIdeDebugMarker(enabled) {
+  const modsDir = sandustryModsDir();
+  if (!existsSync(modsDir)) return;
+
+  for (const name of readdirSync(modsDir)) {
+    const dir = join(modsDir, name);
+    try {
+      if (!statSync(dir).isDirectory()) continue;
+    } catch {
+      continue;
+    }
+    const file = join(dir, IDE_DEBUG_MARKER);
+    if (enabled) {
+      try {
+        writeFileSync(file, "1\n");
+      } catch {
+        /* ignore unwritable folders */
+      }
+    } else {
+      try {
+        unlinkSync(file);
+      } catch {
+        /* already gone */
+      }
+    }
+  }
+}
+
+/**
+ * Env for the Electron main process plus a renderer-visible marker file.
+ * Call from F5 / sandustry:vscode launches only.
+ */
 export function sandustryDebugEnv() {
+  setIdeDebugMarker(true);
   return { [IDE_DEBUG_ENV]: "1" };
 }
 
@@ -151,6 +202,8 @@ function sandustryStopWindows() {
 }
 
 export function sandustryStopRunning() {
+  setIdeDebugMarker(false);
+
   if (IS_WIN) {
     sandustryStopWindows();
     return;
@@ -245,14 +298,14 @@ export function sandustryLeftMonitor() {
   return sandustryLeftMonitorLinux();
 }
 
-/** @param {number} monX @param {number} monY */
+/** @param {number} monX @param {number} monY @returns {Promise<void>} */
 export function sandustryMaximizeOnLeftMonitor(monX, monY) {
   // Windows: --start-maximized in launch args is enough; wmctrl is Linux-only.
-  if (IS_WIN) return;
+  if (IS_WIN) return Promise.resolve();
 
   const displays = [process.env.GNOME_SETUP_DISPLAY || ":2", ":1", process.env.DISPLAY || ":0"];
 
-  void (async () => {
+  return (async () => {
     for (let attempt = 0; attempt < 60; attempt++) {
       for (const display of displays) {
         try {

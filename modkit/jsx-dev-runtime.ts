@@ -1,6 +1,5 @@
 /** JSX dev runtime — falls back to production jsx when jsxDEV is unavailable. */
 import { jsx } from "./jsx-runtime";
-import { sandkit } from "./sandkit";
 
 type ReactRuntime = typeof import("react") & {
   jsxDEV?(

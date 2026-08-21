@@ -14,9 +14,10 @@
     "paths": {
       "*": ["./*"],
       "@modkit/*": ["./modkit/*"],
-      "types/api": ["./modkit/types/api"],
-      "types/sandkit": ["./modkit/types/sandkit"],
-      "types/engine": ["./modkit/types/engine"],
+      "types/api": ["./types/src/sandkit/api/sandkit-api"],
+      "types/sandkit": ["./types/src/sandkit"],
+      "types/engine": ["./types/src/sandkit/engine"],
+      "types/enums": ["./types/src/sandkit/enums"],
       "types/*": ["./types/*"]
     }
   }

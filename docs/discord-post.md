@@ -2,7 +2,21 @@ TypeScript template for Sandustry mods (Steam **[mods]** branch).
 
 **Repo:** https://github.com/IrishBruse/SandustryModTemplate
 **Docs:** https://ethanconneely.com/SandustryModTemplate/
-**Changelog:** https://ethanconneely.com/SandustryModTemplate/Changelog
+**Full changelog:** https://ethanconneely.com/SandustryModTemplate/Changelog
+
+# What's new (2026-08-22)
+
+- Sandkit types nest under `types/src/sandkit/` (`api` / `engine` / `enums`) — no `modkit/types` shim
+- Use free `sandkit` (ambient types) — no `@modkit/sandkit` import
+
+# What's new (2026-08-21)
+
+- **Multi-mod:** each `src/<name>/` with a `mod.ts` is its own game mod
+- Sample mods: toast, overlay hotkey, retro game, management button
+- Windows + Linux mods / logs / launch paths
+- Hot reload: **Ctrl+R** in the watch terminal; leftover mod folders cleaned on rename
+- F5 debugger attaches to Electron main + game renderer
+- File log: `console.*` also goes to `logs/<mod-id>.log` while `npm run dev` runs
 
 # Features
 

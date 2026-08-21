@@ -36,7 +36,6 @@ Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized dem
 | Path                    | Role                                                                                 |
 | ----------------------- | ------------------------------------------------------------------------------------ |
 | `modkit/modinfo.ts`     | `defineModInfo` / `definePatches` plus manifest and patch types                      |
-| `modkit/sandkit.ts`     | Host-injected `sandkit` export (not DevTools globals)                                |
 | `modkit/patches.ts`     | Shared debug patches (`modkitDebugPatches`)                                          |
 | `modkit/react.ts`       | Runtime React from `sandkit.react` (`jsxImportSource`)                               |
 | `modkit/jsx-runtime.ts` | JSX automatic runtime                                                                |
@@ -49,19 +48,23 @@ Do not import `onDispose` or `isHotReloadEval` from `modkit/debug` in `src/<name
 
 ## `types/`
 
-Git submodule: [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types). Definitions live under `types/src/` (`main`, `shared`, `worker`, `common-types`).
+Git submodule: [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types). Definitions live under `types/src/` and nest live `sandkit.*` bags under `types/src/sandkit/` (`api`, `engine`, `enums`, …).
 
-| Path                        | Role                                            |
-| --------------------------- | ----------------------------------------------- |
-| `types/src/main/`           | Main-thread Sandkit API                         |
-| `types/src/shared/`         | Shared main/worker API                          |
-| `types/src/worker/`         | Worker-thread API                               |
-| `types/src/common-types/`   | Shared domain shapes                            |
-| `modkit/types/api.d.ts`     | Composed main-thread `SandkitApi` (`types/api`) |
-| `modkit/types/sandkit.d.ts` | `sandkit` global shape (`types/sandkit`)        |
-| `modkit/types/engine.d.ts`  | Retro Console engine shapes (`types/engine`)    |
+| Path                             | Role                                            |
+| -------------------------------- | ----------------------------------------------- |
+| `types/src/sandkit/api/`                 | Main-thread `sandkit.api`                       |
+| `types/src/worker/`                      | Worker-thread `sandkit.api`                     |
+| `types/src/sandkit/engine/`              | `sandkit.engine` (+ Retro Console)              |
+| `types/src/sandkit/enums/`               | `sandkit.enums`                                 |
+| `types/src/shared/`                      | Shared main/worker API pieces                   |
+| `types/src/common-types/`                | Shared domain shapes                            |
+| `types/src/sandkit/api/sandkit-api.d.ts` | Composed `SandkitApi` (`types/api`)             |
+| `types/src/sandkit/index.d.ts`           | `Sandkit` shape (`types/sandkit`)               |
+| `types/src/global.d.ts`                  | Ambient `sandkit` value + type names (no import) |
 
-Path aliases: `@modkit/*` → `./modkit/*`; `types/api` / `types/sandkit` / `types/engine` → `./modkit/types/…`; `types/*` → `./types/*`.
+Path aliases: `@modkit/*` → `./modkit/*`; `types/api` → `./types/src/sandkit/api/sandkit-api`; `types/sandkit` → `./types/src/sandkit`; `types/engine` → `./types/src/sandkit/engine`; `types/enums` → `./types/src/sandkit/enums`; `types/*` → `./types/*`.
+
+Use the free name `sandkit` in mod and modkit code. Do not import a `sandkit` value.
 
 ## Build scripts
 
