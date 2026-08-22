@@ -1,12 +1,7 @@
-import { installHotReload, isHotReloadEval } from "./debug";
 import { isEnabled, safe } from "@modkit/utils";
-import { installGlobals, MOD_ID } from "./globals";
+import { MOD_ID } from "./mod";
 
 const api = sandkit.api;
-const reloaded = isHotReloadEval(MOD_ID);
-installGlobals(api);
-installHotReload(api, MOD_ID);
-
 if (isEnabled(api)) {
   safe(() => {
     if (!reloaded) {

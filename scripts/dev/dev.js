@@ -4,7 +4,7 @@
  * (Linux: ~/.config/sandustry/mods/<modinfo.name>;
  *  Windows: %APPDATA%/sandustry/mods/<modinfo.name>).
  * On stop (Ctrl+C, terminal close, or child exit), remove those owned mods.
- * Usage: npm run dev [-- --mod hello-toast-example]
+ * Usage: npm run dev [-- --mod hello-world-example]
  */
 import { spawn } from "node:child_process";
 import { dirname, join } from "node:path";

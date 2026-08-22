@@ -1,6 +1,6 @@
 import { encode, type UnencodedFrame } from "modern-gif";
 import { applyCaptureLook, getSession, snapshotOnPaint, type CaptureLook } from "./captureFrame";
-import { MOD_ID } from "./globals";
+import { MOD_ID } from "./mod";
 import {
   getSelectionCellBounds,
   restoreMarqueeSelection,

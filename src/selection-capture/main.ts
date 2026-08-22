@@ -1,14 +1,10 @@
-import { installHotReload, isHotReloadEval, onDispose } from "./debug";
+import { onDispose } from "@modkit/debug";
 import { isEnabled, safe } from "@modkit/utils";
-import { installGlobals, MOD_ID } from "./globals";
+import { MOD_ID } from "./mod";
 import { Overlay } from "./ui/Overlay";
 import tailwindCss from "@modkit/ui/tailwind.css";
 
 const api = sandkit.api;
-const reloaded = isHotReloadEval(MOD_ID);
-installGlobals(api);
-installHotReload(api, MOD_ID);
-
 const OVERLAY_ID = "selection-capture";
 
 function installTailwind() {

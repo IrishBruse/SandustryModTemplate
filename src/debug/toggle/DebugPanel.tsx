@@ -25,7 +25,9 @@ function StatusList({ rows }: { rows: StatusRow[] }) {
       {rows.map((row) => (
         <li key={row.label} className="flex items-center justify-between gap-4">
           <span>{row.label}</span>
-          <span className={row.on ? "text-green-400" : "text-slate-400"}>{row.on ? "on" : "off"}</span>
+          <span className={row.on ? "text-green-400" : "text-slate-400"}>
+            {row.on ? "on" : "off"}
+          </span>
         </li>
       ))}
     </ul>
@@ -92,7 +94,9 @@ export function DebugPanel() {
               <SectionHeading size="md">Debug</SectionHeading>
               <HotkeyBadge>F3</HotkeyBadge>
             </div>
-            <p className="text-xs opacity-70 mb-3">Companion status. Vanilla Debug / Stats open the engine tools.</p>
+            <p className="text-xs opacity-70 mb-3">
+              Companion status. Vanilla Debug / Stats open the engine tools.
+            </p>
             <StatusList rows={rows} />
             <p className="text-sm flex items-center gap-1 opacity-80">
               Press <HotkeyBadge>F3</HotkeyBadge> to close.

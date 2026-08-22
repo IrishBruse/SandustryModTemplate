@@ -181,7 +181,7 @@ export function isHotReloadEval(modId: string): boolean {
 
 /**
  * Register cleanup that runs before a renderer hot reload.
- * Release builds stub this to a no-op (import from `./debug`, not this file).
+ * Release builds stub `@modkit/debug` to a no-op.
  */
 export function onDispose(fn: () => void): () => void {
   if (typeof fn !== "function") return () => {};

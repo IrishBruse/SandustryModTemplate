@@ -1,6 +1,11 @@
 /**
  * Mod manifest shapes — canonical example: `src/<name>/mod.ts`.
  * Use `defineModInfo` for type-safe manifest definitions.
+ * It returns `{ modinfo, MOD_ID }` so you can export both from `mod.ts`.
+ *
+ * ```ts
+ * export const { modinfo, MOD_ID } = defineModInfo({ ... });
+ * ```
  *
  * Read mod settings from `configSchema` via `api.settings.get(key)`.
  * Put feature switches in `configSchema` rather than hard-coded flags.
@@ -198,8 +203,13 @@ export type WrapPatch = PatchMatch & {
 export type Patch = InsertBeforePatch | ReplacePatch | WrapPatch;
 
 /** Type-safe mod manifest builder — use in `src/<name>/mod.ts`. */
-export function defineModInfo<const T extends ModManifest>(manifest: T): T {
-  return manifest;
+export function defineModInfo<const T extends ModManifest>(
+  manifest: T,
+): {
+  modinfo: T;
+  MOD_ID: T["id"];
+} {
+  return { modinfo: manifest, MOD_ID: manifest.id };
 }
 
 /** Type-safe patch list builder — use in `src/<name>/mod.ts`. Writes to `patches.json` at build. */

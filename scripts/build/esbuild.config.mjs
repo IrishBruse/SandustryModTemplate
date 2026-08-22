@@ -162,18 +162,17 @@ function browserPatchesStubPlugin() {
 }
 
 /**
- * Stub `./debug` to empty when release builds omit debug helpers.
- * @param {import("./mods.js").LoadedMod} mod
+ * Stub `@modkit/debug` to empty when release builds omit debug helpers.
+ * Must run before `modkitAliasPlugin` so the stub wins.
  */
-function releaseDebugStubPlugin(mod) {
+function releaseDebugStubPlugin() {
   return {
     name: "release-debug-stub",
     setup(build) {
       if (modDebug) return;
-      build.onResolve({ filter: /^\.\/debug$/ }, (args) => {
-        if (normalize(args.importer) !== normalize(mod.main)) return;
-        return { path: join(ROOT, "modkit/esbuild/debug.empty.ts") };
-      });
+      build.onResolve({ filter: /^@modkit\/debug$/ }, () => ({
+        path: join(MODKIT_DIR, "esbuild/debug.empty.ts"),
+      }));
     },
   };
 }
@@ -304,7 +303,10 @@ function bundleOptions(mod) {
       __MOD_ID__: JSON.stringify(typeof mod.manifest.id === "string" ? mod.manifest.id : "mod"),
       __DEV_WATCH_URL__: embedDevWatchUrl ? JSON.stringify(devWatchUrl()) : '""',
     },
-    inject: modDebug ? [join(MODKIT_DIR, "esbuild/console.ts")] : [],
+    inject: [
+      join(MODKIT_DIR, "esbuild/hot-reload.inject.ts"),
+      ...(modDebug ? [join(MODKIT_DIR, "esbuild/console.ts")] : []),
+    ],
     alias: {
       react: join(ROOT, "modkit/esbuild/react.ts"),
       "react/jsx-runtime": join(ROOT, "modkit/esbuild/jsx-runtime.ts"),
@@ -363,9 +365,33 @@ function basePlugins(mod) {
   return [
     modIsolationPlugin(ROOT),
     browserPatchesStubPlugin(),
+    releaseDebugStubPlugin(),
     modkitAliasPlugin(),
-    releaseDebugStubPlugin(mod),
+    ensureHotReloadInjectPlugin(mod),
   ];
+}
+
+/**
+ * Keep the hot-reload inject module in the main graph even when a mod never
+ * reads `reloaded`. Workers skip this (different entry).
+ * @param {import("./mods.js").LoadedMod} mod
+ */
+function ensureHotReloadInjectPlugin(mod) {
+  const mainPath = normalize(mod.main);
+  return {
+    name: "ensure-hot-reload-inject",
+    setup(build) {
+      build.onLoad({ filter: /\.[cm]?tsx?$/ }, (args) => {
+        if (normalize(args.path) !== mainPath) return;
+        const source = readFileSync(args.path, "utf8");
+        const loader = args.path.endsWith(".tsx") ? "tsx" : "ts";
+        return {
+          contents: `void reloaded;\n${source}`,
+          loader,
+        };
+      });
+    },
+  };
 }
 
 /**

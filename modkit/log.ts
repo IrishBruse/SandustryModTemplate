@@ -33,7 +33,7 @@ export type ModLogger = {
  *
  * ```ts
  * import { createLogger } from "@modkit/log";
- * import { MOD_ID } from "./globals";
+ * import { MOD_ID } from "./mod";
  *
  * const log = createLogger(MOD_ID);
  * log("booted");

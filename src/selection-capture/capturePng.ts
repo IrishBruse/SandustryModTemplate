@@ -1,5 +1,5 @@
 import { applyCaptureLook, rasterizeOnPaint, type CaptureLook } from "./captureFrame";
-import { MOD_ID } from "./globals";
+import { MOD_ID } from "./mod";
 import { getSelectionCellBounds } from "./selectionBounds";
 
 const LOG = `[${MOD_ID}]`;

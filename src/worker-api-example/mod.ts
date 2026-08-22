@@ -1,6 +1,6 @@
 import { defineModInfo } from "@modkit/modinfo";
 
-export const modinfo = defineModInfo({
+export const { modinfo, MOD_ID } = defineModInfo({
   manifestVersion: 1,
   id: "author.worker-api-example",
   name: "Worker API Example",

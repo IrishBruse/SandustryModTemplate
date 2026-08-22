@@ -1,5 +1,5 @@
 import type { CellBounds } from "./selectionBounds";
-import { MOD_ID } from "./globals";
+import { MOD_ID } from "./mod";
 
 const LOG = `[${MOD_ID}]`;
 

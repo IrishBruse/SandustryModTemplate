@@ -92,7 +92,7 @@ export function parseModFilter(argv) {
   if (flag >= 0) {
     const value = argv[flag + 1];
     if (!value || value.startsWith("-")) {
-      throw new Error("--mod requires a src folder name (for example --mod hello-toast-example)");
+      throw new Error("--mod requires a src folder name (for example --mod hello-world-example)");
     }
     return value;
   }
@@ -100,7 +100,7 @@ export function parseModFilter(argv) {
   if (eq) {
     const value = eq.slice("--mod=".length).trim();
     if (!value)
-      throw new Error("--mod requires a src folder name (for example --mod=hello-toast-example)");
+      throw new Error("--mod requires a src folder name (for example --mod=hello-world-example)");
     return value;
   }
   return null;

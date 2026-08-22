@@ -8,7 +8,7 @@
  * The game loads this script on every simulation worker. Probe once on
  * worker 0 — the API bag is the same on each index.
  */
-import { MOD_ID } from "./globals";
+import { MOD_ID } from "./mod";
 
 const api = sandkit.api as unknown as WorkerSandkitApi;
 

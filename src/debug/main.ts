@@ -1,17 +1,13 @@
-import { installHotReload, isHotReloadEval, onDispose } from "@modkit/debug";
+import { onDispose } from "@modkit/debug";
 import { isEnabled, safe } from "@modkit/utils";
 import { disableSessionAutosave } from "./autosave";
 import { registerDevToolsShortcut, scheduleMainMenuBoot } from "./boot-menu";
-import { installGlobals, MOD_ID } from "./globals";
+import { MOD_ID } from "./mod";
 import { settingOn } from "./settings";
 import { installDebugToggle } from "./toggle/install";
 import tailwindCss from "@modkit/ui/tailwind.css";
 
 const api = sandkit.api;
-const reloaded = isHotReloadEval(MOD_ID);
-installGlobals(api);
-installHotReload(api, MOD_ID);
-
 function registerSandkitGlobals(): void {
   const { enums, react } = sandkit;
   Object.assign(globalThis, { sandkit, api, enums, react });

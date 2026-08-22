@@ -1,10 +1,10 @@
 import { defineModInfo } from "@modkit/modinfo";
 
-export const modinfo = defineModInfo({
+export const { modinfo, MOD_ID } = defineModInfo({
   manifestVersion: 1,
   id: "irishbruse.selection-capture",
-  name: "Pixel-perfect Screenshot and GIF recorder",
-  version: "0.2.1",
+  name: "Screenshot and GIF recorder",
+  version: "0.3.0",
   apiVersion: 1,
   entry: "main.js",
   author: "IrishBruse",

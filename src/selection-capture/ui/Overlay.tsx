@@ -8,7 +8,7 @@ import {
   UiBox,
 } from "@modkit/ui";
 import { captureSelectionPng } from "../capturePng";
-import { MOD_ID } from "../globals";
+import { MOD_ID } from "../mod";
 import { modinfo } from "../mod";
 import { recordSelectionGif } from "../recordGif";
 

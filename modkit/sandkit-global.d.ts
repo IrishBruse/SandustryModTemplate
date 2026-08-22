@@ -25,6 +25,11 @@ declare global {
     react: typeof import("react");
   };
   const sandkit: Sandkit;
+  /**
+   * Set by esbuild inject (`modkit/esbuild/hot-reload.inject.ts`).
+   * True when this `main.js` eval is a hot-reload pass.
+   */
+  const reloaded: boolean;
 }
 
 export {};
