@@ -20,6 +20,7 @@ Node 24 installed.
 git clone --recursive https://github.com/IrishBruse/SandustryModTemplate.git <my-folder>
 cd <my-folder>
 npm install
+npm run setup
 npm run dev
 ```
 
@@ -31,7 +32,7 @@ Full steps, copy-a-mod, and sample list: [Quick start](https://ethanconneely.com
 
 | Command               | Effect                                                                                                                         |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `npm run setup`       | Extract game source to `sandustry/`, link `logs/`                                                                              |
+| `npm run setup`       | Check install, extract game source to `sandustry/`, link `logs/`                                                               |
 | `npm run dev`         | Watch and write to the OS mods folder (`~/.config/...` or `%APPDATA%`)                                                         |
 | `npm run build`       | Release bundle (no debug helpers)                                                                                              |
 | `npm run publish`     | Requires [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD). Release-build to `.tmp/publish/`, then Workshop upload |

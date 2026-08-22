@@ -1,6 +1,8 @@
 # Troubleshooting
 
-**Mods do not load** — Opt into the Steam beta: Library → Sandustry → Properties → Betas → select `mods`.
+**`npm run setup` fails** — Fix each `FAIL` line, then run `npm run setup` again. Common checks: Node 24, root `npm install`, `git submodule update --init --recursive`, Sandustry binary / `SANDUSTRY`, Steam **[mods]** beta, and `sandkit` in the game asar.
+
+**Mods do not load** — Opt into the Steam beta: Library → Sandustry → Properties → Betas → select `mods`. Run `npm run setup` to confirm the asar has `sandkit`.
 
 ![Steam Properties Betas tab with the mods branch selected](assets/images/mods-branch.png)
 

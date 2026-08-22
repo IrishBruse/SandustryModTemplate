@@ -14,9 +14,12 @@ Get a sample mod running in Sandustry, then make your own folder.
 git clone --recursive https://github.com/IrishBruse/SandustryModTemplate.git <my-folder>
 cd <my-folder>
 npm install
+npm run setup
 ```
 
 Root `npm install` sets up the template. It also runs `npm install` in each `src/<name>/` that has a `package.json`. Put mod-only packages there — not in the repo root.
+
+`npm run setup` checks the machine (Node version, root and mod npm installs, types submodule, Sandustry binary, game asar, Steam **[mods]** beta, and `sandkit` in the bundle). It then extracts game source to `sandustry/` and links `logs/`. Run it again after a Sandustry update if you need a fresh extract.
 
 ## 2. Run the watch, then the game
 
@@ -61,13 +64,13 @@ Rules:
 
 ## Useful commands
 
-| Command             | Effect                                                    |
-| ------------------- | --------------------------------------------------------- |
-| `npm run dev`       | Watch all mods; remove owned folders when the watch stops |
-| `npm run build`     | Release bundle (no debug helpers); leaves mods installed  |
-| `npm run sandustry` | Stop and launch the game (no build)                       |
-| `npm run typecheck` | TypeScript check                                          |
-| `npm run setup`     | Extract game source to `sandustry/`, link `logs/`         |
+| Command             | Effect                                                           |
+| ------------------- | ---------------------------------------------------------------- |
+| `npm run setup`     | Check install, extract game source to `sandustry/`, link `logs/` |
+| `npm run dev`       | Watch all mods; remove owned folders when the watch stops        |
+| `npm run build`     | Release bundle (no debug helpers); leaves mods installed         |
+| `npm run sandustry` | Stop and launch the game (no build)                              |
+| `npm run typecheck` | TypeScript check                                                 |
 
 Build one folder: `npm run dev -- --mod hello-toast-example`.
 

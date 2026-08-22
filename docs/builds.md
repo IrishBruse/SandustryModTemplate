@@ -53,6 +53,7 @@ In game:
 ## Commands
 
 ```bash
+npm run setup            # check install, extract sandustry/, link logs/ (one time)
 npm run dev              # watch all src/ mods, debug on (required before F5)
 npm run dev -- --mod overlay-hotkey-example
 npm run build            # release all mods (stay in the OS mods folder)

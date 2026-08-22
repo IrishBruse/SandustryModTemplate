@@ -93,7 +93,7 @@ Folders match `npm run` commands. Shared helpers live in `scripts/lib/`.
 | `scripts/dev/hot-reload-server.js`        | Hot-reload HTTP server (`/hot-reload`, `/log`)                                                                                        |
 | `scripts/typecheck/typecheck.js`          | `npm run typecheck` — root kit + per-mod `tsc --noEmit`                                                                               |
 | `scripts/mod-install/install-mod-deps.js` | `npm run mod:install` — `npm install` in each `src/<name>/` with `package.json`                                                       |
-| `scripts/setup/setup.js`                  | `npm run setup` — extract game source to `sandustry/`, link `logs/`                                                                   |
+| `scripts/setup/setup.js`                  | `npm run setup` — check install, extract game source to `sandustry/`, link `logs/`                                                    |
 | `scripts/publish/publish-workshop.js`     | `npm run publish` — release-build + SteamCMD Workshop upload                                                                          |
 | `scripts/sandustry/launch-sandustry.js`   | `npm run sandustry` — stop and launch the game (no build)                                                                             |
 | `scripts/ui/`                             | `npm run ui:css` / `ui:previews` — docs canvas Tailwind + screenshots                                                                 |
@@ -113,7 +113,7 @@ Session debug helpers (DevTools, splash skip, auto-boot, F3) live on the **debug
 
 ## Patches
 
-Define patches in that mod's `mod.ts` with `definePatches`. Production list is `patches`. Optional mod-only debug list is `debugPatches`. Splash skip lives on `src/debug` (installed on debug builds only).
+Define patches in that mod's `mod.ts` with `definePatches`. Production list is `patches`. Optional mod-only debug list is `debugPatches`. Splash skip is a settings-gated runtime helper on `src/debug` (installed on debug builds only).
 
 ```ts
 // src/<name>/mod.ts
@@ -134,7 +134,7 @@ Full format: [`docs/patches.md`](docs/patches.md).
 ## Commands
 
 ```bash
-npm run setup            # extract game source, link logs
+npm run setup            # check install, extract game source, link logs
 npm run dev              # watch, debug on
 npm run build            # release
 npm run publish          # release-build to .tmp/publish/, SteamCMD upload

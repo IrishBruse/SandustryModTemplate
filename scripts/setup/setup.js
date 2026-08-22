@@ -2,6 +2,9 @@
  * Local dev setup: check the machine, extract Sandustry game source, link logs.
  * Usage: npm run setup
  *
+ * Checks: Node major, root npm packages, types submodule, per-mod node_modules,
+ * Sandustry binary, app.asar, Steam [mods] beta, sandkit in the extracted bundle.
+ *
  * Layout:
  *   sandustry/   game JS/JSON/HTML/CSS from app.asar
  *   logs/        symlink (Linux) / junction (Windows) to sandustry logs
