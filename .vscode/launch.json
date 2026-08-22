@@ -2,22 +2,6 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Sandustry Main",
-      "type": "node",
-      "request": "attach",
-      "address": "127.0.0.1",
-      "port": 9230,
-      "localRoot": "${workspaceFolder}",
-      "remoteRoot": "${workspaceFolder}",
-      "restart": true,
-      "timeout": 120000,
-      "presentation": {
-        "hidden": true,
-        "group": "sandustry",
-        "order": 2
-      }
-    },
-    {
       "name": "Sandustry Renderer",
       "type": "chrome",
       "request": "attach",
@@ -52,7 +36,7 @@
   "compounds": [
     {
       "name": "Sandustry",
-      "configurations": ["Sandustry Renderer", "Sandustry Main"],
+      "configurations": ["Sandustry Renderer"],
       "preLaunchTask": "sandustry:launch-debug",
       "postDebugTask": "sandustry:stop",
       "stopAll": true,
@@ -62,8 +46,8 @@
       }
     },
     {
-      "name": "Sandustry: Attach Main + Renderer (build + launch)",
-      "configurations": ["Sandustry Renderer", "Sandustry Main"],
+      "name": "Sandustry: Attach Renderer (build + launch)",
+      "configurations": ["Sandustry Renderer"],
       "preLaunchTask": "sandustry:vscode-background",
       "postDebugTask": "sandustry:stop",
       "stopAll": true,

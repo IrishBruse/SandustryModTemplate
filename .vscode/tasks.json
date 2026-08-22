@@ -39,7 +39,7 @@
           "endsPattern": "Launched Sandustry with debug ports"
         }
       },
-      "detail": "Stops any game, then launches with --inspect and --remote-debugging-port for attach."
+      "detail": "Stops any game, then launches with --remote-debugging-port for renderer attach."
     },
     {
       "label": "sandustry:vscode-background",

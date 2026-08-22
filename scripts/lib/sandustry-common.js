@@ -31,18 +31,14 @@ export const SANDUSTRY = resolveSandustryBinary();
 export const SANDUSTRY_DIR = sandustryInstallDir(SANDUSTRY);
 const SANDUSTRY_EXE = sandustryBinaryName(SANDUSTRY);
 
-export const IDE_DEBUG_ENV = "SANDUSTRY_IDE_DEBUG";
-/** Per-mod file the renderer reads via `api.assets.getUrl` (no `process.env` in the game page). */
-export const IDE_DEBUG_MARKER = "ide-debug.json";
-export const DEFAULT_MAIN_DEBUG_PORT = "9230";
+/** Leftover name from older F5 launches; stop unlinks these and never writes them. */
+const IDE_DEBUG_MARKER = "ide-debug.json";
 export const DEFAULT_RENDERER_DEBUG_PORT = "9222";
 
 /**
- * Write or clear `ide-debug.json` in each local mod folder.
- * The sandboxed renderer cannot see spawn env; it loads this marker as a mod asset.
- * @param {boolean} enabled
+ * Unlink leftover `ide-debug.json` in each local mod folder (older F5 launches).
  */
-export function setIdeDebugMarker(enabled) {
+export function clearIdeDebugMarkers() {
   const modsDir = sandustryModsDir();
   if (!existsSync(modsDir)) return;
 
@@ -53,33 +49,15 @@ export function setIdeDebugMarker(enabled) {
     } catch {
       continue;
     }
-    const file = join(dir, IDE_DEBUG_MARKER);
-    if (enabled) {
-      try {
-        writeFileSync(file, "1\n");
-      } catch {
-        /* ignore unwritable folders */
-      }
-    } else {
-      try {
-        unlinkSync(file);
-      } catch {
-        /* already gone */
-      }
+    try {
+      unlinkSync(join(dir, IDE_DEBUG_MARKER));
+    } catch {
+      /* already gone */
     }
   }
 }
 
-/**
- * Env for the Electron main process plus a renderer-visible marker file.
- * Call from F5 / sandustry:vscode launches only.
- */
-export function sandustryDebugEnv() {
-  setIdeDebugMarker(true);
-  return { [IDE_DEBUG_ENV]: "1" };
-}
-
-/** @typedef {{ pid: number; mainPort: string; rendererPort: string; launchedAt: number }} DebugSession */
+/** @typedef {{ pid: number; rendererPort: string; launchedAt: number }} DebugSession */
 
 /** @returns {DebugSession | null} */
 export function readDebugSession() {
@@ -89,7 +67,6 @@ export function readDebugSession() {
     if (typeof parsed.pid !== "number" || !Number.isFinite(parsed.pid)) return null;
     return {
       pid: parsed.pid,
-      mainPort: String(parsed.mainPort ?? DEFAULT_MAIN_DEBUG_PORT),
       rendererPort: String(parsed.rendererPort ?? DEFAULT_RENDERER_DEBUG_PORT),
       launchedAt: Number(parsed.launchedAt) || 0,
     };
@@ -98,13 +75,12 @@ export function readDebugSession() {
   }
 }
 
-/** @param {{ pid: number; mainPort: string; rendererPort: string }} session */
-export function writeDebugSession({ pid, mainPort, rendererPort }) {
+/** @param {{ pid: number; rendererPort: string }} session */
+export function writeDebugSession({ pid, rendererPort }) {
   mkdirSync(dirname(DEBUG_SESSION_FILE), { recursive: true });
   /** @type {DebugSession} */
   const session = {
     pid,
-    mainPort: String(mainPort),
     rendererPort: String(rendererPort),
     launchedAt: Date.now(),
   };
@@ -136,14 +112,14 @@ function isDebugPortOpenSync(port) {
   }
 }
 
-/** @param {string} mainPort @param {string} rendererPort @param {number} [timeoutMs] */
-function waitForDebugPortsClosed(mainPort, rendererPort, timeoutMs = 5000) {
+/** @param {string} rendererPort @param {number} [timeoutMs] */
+function waitForDebugPortClosed(rendererPort, timeoutMs = 5000) {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
-    if (!isDebugPortOpenSync(mainPort) && !isDebugPortOpenSync(rendererPort)) return true;
+    if (!isDebugPortOpenSync(rendererPort)) return true;
     sleepSync(50);
   }
-  return !isDebugPortOpenSync(mainPort) && !isDebugPortOpenSync(rendererPort);
+  return !isDebugPortOpenSync(rendererPort);
 }
 
 /** @param {string} port */
@@ -181,29 +157,23 @@ function freeDebugPort(port) {
   }
 }
 
-/** @param {string} mainPort @param {string} rendererPort */
-export function sandustryFreeDebugPorts(mainPort, rendererPort) {
-  if (isDebugPortOpenSync(mainPort)) freeDebugPort(mainPort);
+/** @param {string} rendererPort */
+export function sandustryFreeDebugPort(rendererPort) {
   if (isDebugPortOpenSync(rendererPort)) freeDebugPort(rendererPort);
 }
 
 /**
- * Poll CDP ports until both respond or timeout.
- * @param {string} mainPort
+ * Poll renderer CDP until it responds or timeout.
  * @param {string} rendererPort
  * @param {{ timeoutMs?: number }} [options]
  */
-export async function sandustryWaitForDebugPorts(
-  mainPort,
-  rendererPort,
-  { timeoutMs = 60000 } = {},
-) {
+export async function sandustryWaitForDebugPort(rendererPort, { timeoutMs = 60000 } = {}) {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
-    if (isDebugPortOpenSync(mainPort) && isDebugPortOpenSync(rendererPort)) return true;
+    if (isDebugPortOpenSync(rendererPort)) return true;
     await sleep(100);
   }
-  return isDebugPortOpenSync(mainPort) && isDebugPortOpenSync(rendererPort);
+  return isDebugPortOpenSync(rendererPort);
 }
 
 export function sandustryRequireBinary() {
@@ -364,44 +334,82 @@ function sandustryStopWindows() {
   }
 }
 
+/** @param {number} pid @param {NodeJS.Signals} signal */
+function signalSessionPid(pid, signal) {
+  try {
+    process.kill(pid, signal);
+  } catch {
+    /* already gone */
+  }
+  if (IS_WIN) return;
+  try {
+    process.kill(-pid, signal);
+  } catch {
+    /* not a process group leader */
+  }
+}
+
 export function sandustryStopRunning() {
-  setIdeDebugMarker(false);
+  clearIdeDebugMarkers();
   const session = readDebugSession();
   clearDebugSession();
 
-  const mainPort = session?.mainPort ?? DEFAULT_MAIN_DEBUG_PORT;
   const rendererPort = session?.rendererPort ?? DEFAULT_RENDERER_DEBUG_PORT;
+  const sessionPid = session?.pid;
+
+  if (sessionPid) {
+    console.log(`Stopping Sandustry (session pid ${sessionPid})...`);
+    signalSessionPid(sessionPid, "SIGTERM");
+    if (IS_WIN) {
+      try {
+        execSync(`taskkill /PID ${sessionPid} /T`, { stdio: "ignore", windowsHide: true });
+      } catch {
+        /* may already be exiting */
+      }
+    }
+
+    const deadline = Date.now() + 3000;
+    while (Date.now() < deadline) {
+      try {
+        process.kill(sessionPid, 0);
+        sleepSync(50);
+      } catch {
+        break;
+      }
+    }
+
+    try {
+      process.kill(sessionPid, 0);
+      signalSessionPid(sessionPid, "SIGKILL");
+      if (IS_WIN) {
+        try {
+          execSync(`taskkill /F /PID ${sessionPid} /T`, { stdio: "ignore", windowsHide: true });
+        } catch {
+          /* already gone */
+        }
+      }
+    } catch {
+      /* session pid gone */
+    }
+  }
 
   if (IS_WIN) {
     sandustryStopWindows();
-    if (!waitForDebugPortsClosed(mainPort, rendererPort)) {
-      sandustryFreeDebugPorts(mainPort, rendererPort);
+  } else if (sandustryPidsLinux().length > 0) {
+    if (!sessionPid) console.log("Stopping Sandustry...");
+    signalSandustryTrees("SIGTERM");
+
+    const deadline = Date.now() + 3000;
+    while (Date.now() < deadline) {
+      if (!sandustryIsRunning()) break;
+      sleepSync(50);
     }
-    return;
+
+    if (sandustryPidsLinux().length > 0) signalSandustryTrees("SIGKILL");
   }
 
-  const first = sandustryPidsLinux();
-  if (first.length === 0) {
-    if (isDebugPortOpenSync(mainPort) || isDebugPortOpenSync(rendererPort)) {
-      sandustryFreeDebugPorts(mainPort, rendererPort);
-    }
-    return;
-  }
-
-  console.log("Stopping Sandustry...");
-  signalSandustryTrees("SIGTERM");
-
-  const deadline = Date.now() + 3000;
-  while (Date.now() < deadline) {
-    if (!sandustryIsRunning()) break;
-    sleepSync(50);
-  }
-
-  const leftover = sandustryPidsLinux();
-  if (leftover.length > 0) signalSandustryTrees("SIGKILL");
-
-  if (!waitForDebugPortsClosed(mainPort, rendererPort)) {
-    sandustryFreeDebugPorts(mainPort, rendererPort);
+  if (!waitForDebugPortClosed(rendererPort)) {
+    sandustryFreeDebugPort(rendererPort);
   }
 }
 
@@ -551,12 +559,11 @@ export function sandustryLaunchArgs(mon, extra = []) {
   return ["--no-sandbox", `--window-position=${mon.x},${mon.y}`, "--start-maximized", ...extra];
 }
 
-/** @param {string} mainPort @param {string} rendererPort @param {{ x: number; y: number }} mon */
-export function sandustryDebugArgs(mainPort, rendererPort, mon) {
+/** @param {string} rendererPort @param {{ x: number; y: number }} mon */
+export function sandustryDebugArgs(rendererPort, mon) {
   return sandustryLaunchArgs(mon, [
     // Chrome 111+ / Electron 33 rejects the VS Code CDP websocket without this.
     `--remote-allow-origins=*`,
-    `--inspect=${mainPort}`,
     `--remote-debugging-port=${rendererPort}`,
   ]);
 }
