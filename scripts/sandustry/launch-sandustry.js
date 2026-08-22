@@ -11,7 +11,7 @@ import {
   sandustryRequireBinary,
   sandustryStopRunning,
   spawnSandustry,
-} from "./sandustry-common.js";
+} from "../lib/sandustry-common.js";
 
 sandustryRequireBinary();
 sandustryStopRunning();

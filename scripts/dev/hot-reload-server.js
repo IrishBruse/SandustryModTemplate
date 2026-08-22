@@ -6,7 +6,7 @@
 import { appendFileSync, mkdirSync, writeFileSync } from "node:fs";
 import http from "node:http";
 import { join } from "node:path";
-import { sandustryLogsDir } from "../sandustry/paths.js";
+import { sandustryLogsDir } from "../lib/paths.js";
 
 export const DEV_WATCH_PORT = 19147;
 export const HOT_RELOAD_LAST_PATH = "/hot-reload/last";

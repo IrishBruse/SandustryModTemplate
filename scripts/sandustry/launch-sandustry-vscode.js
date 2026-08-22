@@ -19,7 +19,7 @@ import {
   SANDUSTRY,
   SANDUSTRY_DIR,
   spawnSandustry,
-} from "./sandustry-common.js";
+} from "../lib/sandustry-common.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const mainPort = process.env.SANDUSTRY_MAIN_DEBUG_PORT ?? DEFAULT_MAIN_DEBUG_PORT;

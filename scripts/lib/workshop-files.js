@@ -1,8 +1,17 @@
 /**
  * Files under `src/<name>/workshop/` (Steam listing assets).
  * The build copies `workshop.json` and previews to the installed mod root.
+ * Publish staging also copies screenshots, `README.md`, and `CHANGELOG.md`.
  */
-import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, statSync } from "node:fs";
+import {
+  cpSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  statSync,
+} from "node:fs";
 import { basename, extname, join } from "node:path";
 
 export const WORKSHOP_PREVIEW_NAMES = ["preview.gif", "preview.png"];
@@ -185,4 +194,32 @@ export function copyWorkshopInstallFiles(modDir, outDir) {
     if (!existsSync(from)) continue;
     cpSync(from, join(outDir, name), { force: true });
   }
+}
+
+const PUBLISH_DOC_NAMES = ["README.md", "CHANGELOG.md"];
+
+/**
+ * Drop leftover Workshop extras from a game-folder build (`npm run build` / `npm run dev`).
+ * @param {string} outDir
+ */
+export function removeWorkshopPublishFiles(outDir) {
+  for (const name of PUBLISH_DOC_NAMES) {
+    rmSync(join(outDir, name), { force: true });
+  }
+  rmSync(join(outDir, "screenshots"), { recursive: true, force: true });
+}
+
+/**
+ * Copy Steam upload extras into publish staging (not the normal game mod install).
+ * @param {string} modDir
+ * @param {string} outDir
+ * @returns {string[]} Screenshot source paths that were copied
+ */
+export function copyWorkshopPublishFiles(modDir, outDir) {
+  for (const name of PUBLISH_DOC_NAMES) {
+    const from = join(modDir, name);
+    if (!existsSync(from)) continue;
+    cpSync(from, join(outDir, name), { force: true });
+  }
+  return copyWorkshopScreenshots(modDir, outDir);
 }

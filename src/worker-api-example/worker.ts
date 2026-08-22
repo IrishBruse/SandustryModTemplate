@@ -51,7 +51,15 @@ if (index === 0) {
     probe("utils", api.utils),
   ];
 
+  const engine = (sandkit as { engine?: { api?: unknown; state?: unknown } }).engine;
+  const engineProbes: Probe[] = [
+    probe("engine", engine),
+    probe("engine.api", engine?.api),
+    probe("engine.state", engine?.state),
+  ];
+
   const missing = probes.filter((p) => p.kind === "undefined");
+  const engineMissing = engineProbes.filter((p) => p.kind === "undefined");
 
   console.log(`[${MOD_ID}] worker probe (index 0 of ${count})`, {
     present: probes.length - missing.length,
@@ -59,9 +67,22 @@ if (index === 0) {
     probes,
   });
 
+  console.log(`[${MOD_ID}] worker engine probe (index 0 of ${count})`, {
+    present: engineProbes.length - engineMissing.length,
+    missing: engineMissing.map((p) => p.path),
+    probes: engineProbes,
+    engineKeys: engine && typeof engine === "object" ? Object.keys(engine) : [],
+  });
+
   if (missing.length > 0) {
     console.warn(
-      `[${MOD_ID}] ${missing.length} typed path(s) missing at runtime — update types/src/worker or the probe list`,
+      `[${MOD_ID}] ${missing.length} typed path(s) missing at runtime — update modkit/types/src/worker or the probe list`,
+    );
+  }
+
+  if (engineMissing.length > 0) {
+    console.warn(
+      `[${MOD_ID}] worker sandkit.engine missing paths: ${engineMissing.map((p) => p.path).join(", ")}`,
     );
   }
 }

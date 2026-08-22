@@ -1,12 +1,12 @@
 /**
  * Ambient Sandkit names for this template.
- * The types submodule documents `sandkit.api` under `types/src/main` and
- * `types/src/worker` and no longer ships `global.d.ts`.
+ * The types submodule documents `sandkit.api` under `modkit/types/src/main` and
+ * `modkit/types/src/worker` and no longer ships `global.d.ts`.
  */
-import type { SandkitEngine } from "../types/src/engine";
+import type { SandkitEngine } from "./types/src/engine";
 
-type MainApi = typeof import("../types/src/main/index");
-type WorkerApi = typeof import("../types/src/worker/index");
+type MainApi = typeof import("./types/src/main/index");
+type WorkerApi = typeof import("./types/src/worker/index");
 
 declare global {
   type SandkitApi = MainApi;

@@ -5,7 +5,7 @@
 import { existsSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
-import { discoverModFolders } from "./mods.js";
+import { discoverModFolders } from "../lib/mods.js";
 
 const ROOT = join(import.meta.dirname, "..", "..");
 const SRC_DIR = join(ROOT, "src");

@@ -7,7 +7,7 @@
  * Electron `logs/main.log` only gets the main process — not `console.log`
  * from the game UI — so use this for in-game UI debugging.
  *
- * Port/path must match `scripts/build/hot-reload-server.js`.
+ * Port/path must match `scripts/dev/hot-reload-server.js`.
  */
 
 const LOG_URL = "http://127.0.0.1:19147/log";

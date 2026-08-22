@@ -6,7 +6,7 @@ import { existsSync, readdirSync, statSync } from "node:fs";
 import { dirname, isAbsolute, join, normalize, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { bundleAndImport } from "./build-patches.js";
-import { ensureGameModDir, gameModDir, linkRepoDistToModOutputs } from "../sandustry/mod-path.js";
+import { ensureGameModDir, gameModDir, linkRepoDistToModOutputs } from "./mod-path.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const SRC_DIR = join(ROOT, "src");

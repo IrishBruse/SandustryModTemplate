@@ -11,17 +11,17 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, basename, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadMods, parseModFilter, publishStagingDir } from "../build/mods.js";
-import { steamLibraryRoots } from "./paths.js";
+import { loadMods, parseModFilter, publishStagingDir } from "../lib/mods.js";
+import { steamLibraryRoots } from "../lib/paths.js";
 import { isPublishTty, tuiConfirm, tuiSelect } from "./publish-tui.js";
 import {
-  copyWorkshopScreenshots,
+  copyWorkshopPublishFiles,
   readChangelogChangeNote,
   readWorkshopManifest,
   workshopDescriptionText,
   workshopPreviewPath,
   workshopScreenshotPaths,
-} from "./workshop-files.js";
+} from "../lib/workshop-files.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const SANDUSTRY_APP_ID = "2764460";
@@ -208,12 +208,6 @@ function workshopChangeNote(mod, { warn = true } = {}) {
   return fromLog.text;
 }
 
-function changeNotePreview(note) {
-  const flat = note.replaceAll("\n", " ").replaceAll(/\s+/g, " ").trim();
-  if (flat.length <= 72) return flat;
-  return `${flat.slice(0, 71).trimEnd()}…`;
-}
-
 /**
  * @param {string} bin
  * @param {string[]} args
@@ -311,6 +305,75 @@ function workshopUploadSucceeded(out) {
   return workshopUploadFinished(out) && !/ERROR!/i.test(out);
 }
 
+/** SteamCMD cache is separate from the Steam client login. */
+function steamCmdNeedsCachedLogin(out) {
+  return (
+    /No cached credentials/i.test(out) ||
+    /Cached credentials not found/i.test(out) ||
+    /@NoPromptForPassword is set/i.test(out)
+  );
+}
+
+/**
+ * Interactive login so SteamCMD can cache credentials for later non-interactive uploads.
+ * @param {string} bin
+ * @param {string} account
+ * @returns {Promise<number | null>}
+ */
+function runSteamCmdInteractiveLogin(bin, account) {
+  return new Promise((resolve, reject) => {
+    console.log("");
+    console.log(`SteamCMD has no cached login for ${account}.`);
+    console.log("Enter your Steam password (and Steam Guard code if asked).");
+    console.log("");
+    const child = spawn(bin, ["+login", account, "+quit"], { stdio: "inherit" });
+    child.on("error", reject);
+    child.on("close", (code) => resolve(code));
+  });
+}
+
+/**
+ * @param {string} steamCmd
+ * @param {string} account
+ * @param {string} vdfFile
+ * @returns {Promise<{ code: number | null; out: string }>}
+ */
+async function runWorkshopUpload(steamCmd, account, vdfFile) {
+  return runSteamCmd(steamCmd, [
+    "+@ShutdownOnFailedCommand",
+    "1",
+    "+@NoPromptForPassword",
+    "1",
+    "+login",
+    account,
+    "+workshop_build_item",
+    vdfFile,
+    "+quit",
+  ]);
+}
+
+/**
+ * @param {string} folder
+ * @param {string} account
+ * @param {string} steamCmd
+ * @param {string} out
+ */
+function failWorkshopUpload(folder, account, steamCmd, out) {
+  if (steamCmdNeedsCachedLogin(out)) {
+    fail(
+      [
+        `SteamCMD has no cached credentials for ${account}.`,
+        `Log in once, then run npm run publish again:`,
+        `  ${steamCmd} +login ${account}`,
+        `Use the Workshop item owner account. Steam client login alone is not enough.`,
+      ].join("\n"),
+    );
+  }
+  fail(
+    `SteamCMD did not update ${folder}. Stay logged into Steam as the item owner. Close Steam if SteamCMD reports a lock.`,
+  );
+}
+
 async function publishMod(steamCmd, account, mod) {
   let publishedFileId;
   try {
@@ -323,7 +386,7 @@ async function publishMod(steamCmd, account, mod) {
   }
 
   const previewFile = previewPath(mod);
-  const screenshots = copyWorkshopScreenshots(mod.dir, mod.outDir);
+  const screenshots = copyWorkshopPublishFiles(mod.dir, mod.outDir);
   const tmpDir = join(ROOT, ".tmp");
   mkdirSync(tmpDir, { recursive: true });
   const vdfFile = join(tmpDir, `workshop-${mod.folder}.vdf`);
@@ -349,23 +412,20 @@ async function publishMod(steamCmd, account, mod) {
   console.log(`Content: ${mod.outDir}`);
   console.log(`Change notes:\n${changeNote}`);
 
-  const args = [
-    "+@ShutdownOnFailedCommand",
-    "1",
-    "+@NoPromptForPassword",
-    "1",
-    "+login",
-    account,
-    "+workshop_build_item",
-    vdfFile,
-    "+quit",
-  ];
-  const result = await runSteamCmd(steamCmd, args);
-  if (!workshopUploadSucceeded(result.out)) {
-    fail(
-      `SteamCMD did not update ${mod.folder}. Stay logged into Steam as the item owner. Close Steam if SteamCMD reports a lock.`,
-    );
+  let result = await runWorkshopUpload(steamCmd, account, vdfFile);
+  if (workshopUploadSucceeded(result.out)) return;
+
+  if (steamCmdNeedsCachedLogin(result.out) && isPublishTty()) {
+    const loginCode = await runSteamCmdInteractiveLogin(steamCmd, account);
+    if (loginCode !== 0) {
+      fail(`SteamCMD login failed for ${account} (exit ${loginCode ?? "?"}).`);
+    }
+    console.log("Retrying Workshop upload…");
+    result = await runWorkshopUpload(steamCmd, account, vdfFile);
+    if (workshopUploadSucceeded(result.out)) return;
   }
+
+  failWorkshopUpload(mod.folder, account, steamCmd, result.out);
 }
 
 function workshopState(mod) {
@@ -431,6 +491,7 @@ async function confirmUpload(mod, account, steamCmd, previewFile, publishedFileI
   }
   const shotLabel =
     screenshots.length === 0 ? "(none)" : screenshots.map((file) => basename(file)).join(", ");
+  const changeNote = workshopChangeNote(mod);
   try {
     return await tuiConfirm({
       title: "Upload to Steam Workshop?",
@@ -438,7 +499,6 @@ async function confirmUpload(mod, account, steamCmd, previewFile, publishedFileI
         ["Folder", `src/${mod.folder}/`],
         ["Title", String(mod.manifest.name).trim()],
         ["Version", String(mod.manifest.version ?? "")],
-        ["Change notes", changeNotePreview(workshopChangeNote(mod))],
         ["Item", publishedFileId],
         ["Preview", basename(previewFile)],
         ["Screenshots", shotLabel],
@@ -446,6 +506,10 @@ async function confirmUpload(mod, account, steamCmd, previewFile, publishedFileI
         ["SteamCMD", steamCmd],
         ["Staging", `.tmp/publish/${mod.folder}/`],
       ],
+      preview: {
+        label: "Change notes (Steam)",
+        body: changeNote,
+      },
     });
   } catch (error) {
     if (error && typeof error === "object" && "cancelled" in error && error.cancelled) {

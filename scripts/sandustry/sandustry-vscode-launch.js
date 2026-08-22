@@ -17,7 +17,7 @@ import {
   sandustryRequireBinary,
   SANDUSTRY_DIR,
   spawnSandustry,
-} from "./sandustry-common.js";
+} from "../lib/sandustry-common.js";
 
 const mainPort = process.env.SANDUSTRY_MAIN_DEBUG_PORT ?? DEFAULT_MAIN_DEBUG_PORT;
 const rendererPort = process.env.SANDUSTRY_RENDERER_DEBUG_PORT ?? DEFAULT_RENDERER_DEBUG_PORT;

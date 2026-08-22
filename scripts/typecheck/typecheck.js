@@ -7,7 +7,7 @@ import { existsSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { discoverModFolders } from "./mods.js";
+import { discoverModFolders } from "../lib/mods.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const TSC = join(ROOT, "node_modules/typescript/bin/tsc");

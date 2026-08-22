@@ -5,7 +5,7 @@
 import { writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { compileTailwindUtilities, PREVIEW_TAILWIND_CSS } from "../build/compile-tailwind.js";
+import { compileTailwindUtilities, PREVIEW_TAILWIND_CSS } from "../lib/compile-tailwind.js";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const CANVAS = join(ROOT, "docs/ui/canvas");

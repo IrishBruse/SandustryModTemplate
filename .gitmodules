@@ -1,3 +1,3 @@
 [submodule "types"]
-	path = types
+	path = modkit/types
 	url = https://github.com/flamableassassin/sandustry-modding-types.git

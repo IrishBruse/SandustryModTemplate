@@ -10,15 +10,15 @@ import {
 } from "node:fs";
 import { dirname, isAbsolute, join, normalize } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { buildPatches } from "./build-patches.js";
+import { buildPatches } from "../lib/build-patches.js";
 import {
   bundledContentFiles,
   compileTailwindUtilities,
   TAILWIND_CSS_FILTER,
-} from "./compile-tailwind.js";
-import { loadMods, modIsolationPlugin, prepareModOutputs, PUBLISH_OUT_ROOT } from "./mods.js";
-import { copyWorkshopInstallFiles } from "../sandustry/workshop-files.js";
-import { devWatchUrl, notifyHotReload, startHotReloadServer } from "./hot-reload-server.js";
+} from "../lib/compile-tailwind.js";
+import { loadMods, modIsolationPlugin, prepareModOutputs, PUBLISH_OUT_ROOT } from "../lib/mods.js";
+import { copyWorkshopInstallFiles, removeWorkshopPublishFiles } from "../lib/workshop-files.js";
+import { devWatchUrl, notifyHotReload, startHotReloadServer } from "../dev/hot-reload-server.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const MODKIT_DIR = join(ROOT, "modkit");
@@ -98,6 +98,9 @@ async function syncModFiles(mod) {
   mkdirSync(mod.outDir, { recursive: true });
   writeModinfo(mod);
   copyWorkshopInstallFiles(mod.dir, mod.outDir);
+  if (!publishOut) {
+    removeWorkshopPublishFiles(mod.outDir);
+  }
   const staticDir = join(mod.dir, "mod");
   if (existsSync(staticDir)) {
     for (const name of readdirSync(staticDir)) {
@@ -107,11 +110,6 @@ async function syncModFiles(mod) {
         force: true,
       });
     }
-  }
-  for (const name of ["README.md", "CHANGELOG.md"]) {
-    const from = join(mod.dir, name);
-    if (!existsSync(from)) continue;
-    cpSync(from, join(mod.outDir, name), { force: true });
   }
   await buildPatches(mod.outDir, {
     modDebug,
@@ -152,7 +150,7 @@ function browserPatchesStubPlugin() {
     name: "browser-patches-stub",
     setup(build) {
       build.onResolve({ filter: /^@modkit\/patches$/ }, () => ({
-        path: join(MODKIT_DIR, "patches.empty.ts"),
+        path: join(MODKIT_DIR, "esbuild/patches.empty.ts"),
       }));
     },
   };
@@ -169,7 +167,7 @@ function releaseDebugStubPlugin(mod) {
       if (modDebug) return;
       build.onResolve({ filter: /^\.\/debug$/ }, (args) => {
         if (normalize(args.importer) !== normalize(mod.main)) return;
-        return { path: join(ROOT, "modkit/debug/empty.ts") };
+        return { path: join(ROOT, "modkit/esbuild/debug.empty.ts") };
       });
     },
   };
@@ -301,11 +299,11 @@ function bundleOptions(mod) {
       __MOD_ID__: JSON.stringify(typeof mod.manifest.id === "string" ? mod.manifest.id : "mod"),
       __DEV_WATCH_URL__: embedDevWatchUrl ? JSON.stringify(devWatchUrl()) : '""',
     },
-    inject: modDebug ? [join(MODKIT_DIR, "console.ts")] : [],
+    inject: modDebug ? [join(MODKIT_DIR, "esbuild/console.ts")] : [],
     alias: {
-      react: join(ROOT, "modkit/react.ts"),
-      "react/jsx-runtime": join(ROOT, "modkit/jsx-runtime.ts"),
-      "react/jsx-dev-runtime": join(ROOT, "modkit/jsx-dev-runtime.ts"),
+      react: join(ROOT, "modkit/esbuild/react.ts"),
+      "react/jsx-runtime": join(ROOT, "modkit/esbuild/jsx-runtime.ts"),
+      "react/jsx-dev-runtime": join(ROOT, "modkit/esbuild/jsx-dev-runtime.ts"),
     },
     jsx: "automatic",
     jsxImportSource: "react",

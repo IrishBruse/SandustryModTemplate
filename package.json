@@ -4,18 +4,18 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build/esbuild.config.mjs",
-    "dev": "node scripts/build/dev.js",
-    "typecheck": "node scripts/build/typecheck.js",
-    "mod:install": "node scripts/build/install-mod-deps.js",
-    "postinstall": "node scripts/build/install-mod-deps.js",
+    "dev": "node scripts/dev/dev.js",
+    "typecheck": "node scripts/typecheck/typecheck.js",
+    "mod:install": "node scripts/mod-install/install-mod-deps.js",
+    "postinstall": "node scripts/mod-install/install-mod-deps.js",
     "lint": "npm run typecheck && oxlint && oxfmt --check",
     "lint:fix": "oxlint --fix && oxfmt",
     "docs": "docsify serve docs",
-    "setup": "node scripts/sandustry/setup.js",
+    "setup": "node scripts/setup/setup.js",
     "ui:css": "node scripts/ui/compile-preview-css.mjs",
     "ui:previews": "node scripts/ui/generate-previews.mjs",
     "sandustry": "node scripts/sandustry/launch-sandustry.js",
-    "publish": "node scripts/sandustry/publish-workshop.js"
+    "publish": "node scripts/publish/publish-workshop.js"
   },
   "devDependencies": {
     "@electron/asar": "^4.3.0",

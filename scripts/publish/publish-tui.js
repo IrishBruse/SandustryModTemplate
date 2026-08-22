@@ -127,13 +127,20 @@ export function tuiSelect(opts) {
  * @param {object} opts
  * @param {string} opts.title
  * @param {[string, string][]} opts.fields
+ * @param {{ label: string; body: string } | undefined} [opts.preview]
  * @returns {Promise<boolean>}
  */
 export async function tuiConfirm(opts) {
-  const labelWidth = Math.max(...opts.fields.map(([label]) => label.length));
+  const labelWidth = Math.max(0, ...opts.fields.map(([label]) => label.length));
   console.log(`\n${BOLD}${opts.title}${RESET}`);
   for (const [label, value] of opts.fields) {
     console.log(`  ${DIM}${label.padEnd(labelWidth)}${RESET}  ${value}`);
+  }
+  if (opts.preview) {
+    console.log(`\n  ${DIM}${opts.preview.label}${RESET}`);
+    for (const line of opts.preview.body.replaceAll("\r\n", "\n").split("\n")) {
+      console.log(`  ${line}`);
+    }
   }
   console.log("");
   return tuiSelect({
