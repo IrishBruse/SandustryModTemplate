@@ -8,15 +8,17 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Added
 
+- **Dedicated debug mod** (`src/debug/`, game folder **debug**): DevTools on load, F12, splash skip, main-menu auto-boot, F3 engine Debug, and the splash bundle patch. Debug builds (`npm run dev`, `--debug`) install it. Release (`npm run build`) omits it and removes a leftover `mods/debug`. Settings live on that mod only. See [modkit/debug.md](modkit/debug.md).
 - **`npm run publish`:** arrow-key mod list and Upload/Cancel confirm, then release-build + SteamCMD upload from `workshop/` (including `screenshots/`). **SteamCMD is required** ([SteamCMD docs](https://developer.valvesoftware.com/wiki/SteamCMD)). See [builds.md](builds.md#workshop-publish).
 
 ### Fixed
 
+- **`--mod` no longer deletes sibling OS mod folders.** Dist links that stay (other src folders still exist) keep their game dirs. Release still removes leftover `mods/debug`.
 - **`npm run publish` description:** keep real line breaks. Do not write `\n` into the Steam listing.
 
 ### Changed
 
-- **Hot reload:** one path — the client polls `GET http://127.0.0.1:19147/hot-reload/last` while Debug is on. No `hot-reload.json` stamp file. No SSE `EventSource`. Dev mod cleanup uses `dist/` symlinks instead of `.owned-game-names.json`.
+- **Types submodule layout:** `types/src/main`, `types/src/worker`, `types/src/engine`. Ambient `sandkit` / `SandkitApi` live in [`modkit/sandkit-global.d.ts`](../modkit/sandkit-global.d.ts). Path aliases `types/api` and `types/worker-api` point at those indexes.
 - **Workshop assets** live under `src/<name>/workshop/` (`workshop.json`, `preview.gif`, `preview.png`, `workshop.txt`, `screenshots/`). The build copies `workshop.json` and previews to the mod root. `npm run publish` copies `screenshots/` into the uploaded item. `publishedFileId` is no longer set in `mod.ts`.
 - **Pixel-perfect Screenshot and GIF recorder** `0.2.0` (`src/selection-capture/`): player-facing name (was Selection Capture) and Workshop copy. Folder and mod id stay `selection-capture`. Build copies **preview.gif** (preferred) and **preview.png** from `workshop/`.
 - **`npm run setup`** (was `npm run references`): extracts game source to top-level `sandustry/` and links `logs/`. Workshop mod copies under `references/` are removed.

@@ -6,6 +6,7 @@ TypeScript template for Sandustry mods (Steam **[mods]** branch).
 
 # What's new (2026-08-22)
 
+- **Dedicated debug mod** (`src/debug`, game folder **debug**): DevTools, splash skip, auto-boot, F3, and splash patch. Debug builds install it; release omits it. Settings live on that mod (not on every example). Each example keeps a one-file `debug.ts` for hot reload.
 - **`npm run publish`:** requires [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD); arrow-key list + confirm, then upload from `workshop/` (including `screenshots/`)
 - Mod npm deps live in `src/<name>/package.json` (root `npm install` installs them too)
 - Build copies `workshop/workshop.json` and `workshop/preview.gif` (preferred) / `workshop/preview.png` to the mod root when present
@@ -14,7 +15,7 @@ TypeScript template for Sandustry mods (Steam **[mods]** branch).
 - Hot reload works with **F5** (same HTTP poll to the dev watch server)
 - Hot reload clears `logs/<mod-id>.log` and the DevTools console for a clean session
 - Management menu rows: hover / click match vanilla (no nested spacer wrap)
-- Sandkit types nest under `types/src/sandkit/` (`api` / `engine` / `enums`) — no `modkit/types` shim
+- Sandkit types: `types/src/main`, `types/src/worker`, `types/src/engine`; ambient `sandkit` in `modkit/sandkit-global.d.ts`
 - Use free `sandkit` (ambient types) — no `@modkit/sandkit` import
 - Worker API example mod probes worker-thread `sandkit.api` (`worker.ts` → `worker.js`)
 - **Pixel-perfect Screenshot and GIF recorder** `0.2.0` (`src/selection-capture/`): **C** marquee, then **F7** panel for PNG / GIF (default 60 frames, 2×); **Greenscreen** on the panel; Workshop copy in `README.md` / `workshop/workshop.txt`
@@ -48,7 +49,7 @@ Run `npm run dev`. Save a file. The mod reloads in game with no restart.
 It also notifies of any changes that cant be hotreloaded with a notification at the top of the screen.
 
 **Debug helpers:**
-Debug builds add F12 DevTools, splash skip, main-menu boot, F3 engine Debug, and console globals. `npm run build` stubs these out for release.
+Debug builds install the **debug** companion (`src/debug`). It adds F12 DevTools, splash skip, main-menu boot, F3 engine Debug, and console globals. `npm run build` omits that mod.
 
 **Typed `mod.ts`:**
 One file per mod for the manifest and patches. Each `src/<mod-name>/` folder with a `mod.ts` is a separate game mod.

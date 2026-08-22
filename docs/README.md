@@ -9,7 +9,7 @@ TypeScript template for [Sandustry](https://store.steampowered.com/app/2764460/S
 - **[React HUD](modkit/react.md)** — JSX via `sandkit.react` (no extra React package), plus the [UI kit](ui/README.md) and [gallery](ui/gallery.md).
 - **[Modkit utils](modkit/utils.md)** — `safe`, settings, scene checks, and retro console helpers.
 - **[Hot reload](builds.md)** — `npm run dev` reloads the mod without a game restart.
-- **[Debug helpers](modkit/debug.md)** — F12 DevTools, splash skip, main-menu boot, F3 engine Debug window, and console globals.
+- **[Debug helpers](modkit/debug.md)** — companion mod `src/debug`: F12 DevTools, splash skip, main-menu boot, F3 engine Debug window, and console globals.
 - **[Typed `mod.ts`](layout.md)** — One file per mod for the modinfo and [patches](patches.md).
 
 ## Quick start
@@ -39,6 +39,7 @@ Copy [`src/hello-toast-example/`](../src/hello-toast-example/) to `src/<your-mod
 
 | Folder                                                | Shows                            |
 | ----------------------------------------------------- | -------------------------------- |
+| [`src/debug/`](../src/debug/)                         | Dev companion (debug builds only): DevTools, splash skip, F3 |
 | [`src/selection-capture/`](../src/selection-capture/) | **Pixel-perfect Screenshot and GIF recorder** — **C** marquee → **F7** PNG / GIF |
 
 ### Examples

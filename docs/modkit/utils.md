@@ -3,7 +3,7 @@
 Small helpers under `modkit/utils/`. Import from `@modkit/utils`.
 
 ```ts
-import { safe, isEnabled, debugEnabled, inGame, registerRetroGame } from "@modkit/utils";
+import { safe, isEnabled, inGame, registerRetroGame } from "@modkit/utils";
 ```
 
 ## `safe`
@@ -22,25 +22,17 @@ import { safe } from "@modkit/utils";
 const value = safe(() => api.settings.get("enabled"));
 ```
 
-## `isEnabled` and `debugEnabled`
+## `isEnabled`
 
-Both read a boolean from `api.settings.get(...)`. When the setting is missing or not a boolean, they default to `true`.
-
-| Function            | Setting key | Default when missing |
-| ------------------- | ----------- | -------------------- |
-| `isEnabled(api)`    | `"enabled"` | `true`               |
-| `debugEnabled(api)` | `"debug"`   | `true`               |
+Reads a boolean from `api.settings.get("enabled")`. When the setting is missing or not a boolean, it defaults to `true`.
 
 ```ts
-import { debugEnabled, isEnabled } from "@modkit/utils";
+import { isEnabled } from "@modkit/utils";
 
 if (!isEnabled(api)) return;
-if (debugEnabled(api)) {
-  // runtime debug behaviour
-}
 ```
 
-Release builds omit the **Debug** setting from `modinfo.json`. See [builds.md](../builds.md).
+Session debug switches live on the **debug** companion, not on every example. See [debug.md](debug.md).
 
 ## `inGame`
 
@@ -98,6 +90,6 @@ registerRetroGame(game);
 | ------------------ | ------------------------------------------- |
 | `index.ts`         | Re-exports all public API                   |
 | `safe.ts`          | `safe`                                      |
-| `settings.ts`      | `isEnabled`, `debugEnabled`                 |
+| `settings.ts`      | `isEnabled`                                 |
 | `scene.ts`         | `inGame`                                    |
 | `retro-console.ts` | `registerRetroGame` and retro console types |

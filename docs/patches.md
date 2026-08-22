@@ -14,13 +14,12 @@ Patch `code` runs outside the game bundle IIFE. Put shared runtime helpers on `g
 
 ## Layout
 
-| Export / source                                  | Role                                                       |
-| ------------------------------------------------ | ---------------------------------------------------------- |
-| `patches` in that mod's `mod.ts`                 | Production patches (always written)                        |
-| `debugPatches` in that mod's `mod.ts` (optional) | Extra debug-only patches (dev / `--debug` builds)          |
-| `modkitDebugPatches` in `modkit/patches.ts`      | Framework debug patches (splash skip); merged by the build |
+| Export / source                                  | Role                                              |
+| ------------------------------------------------ | ------------------------------------------------- |
+| `patches` in that mod's `mod.ts`                 | Production patches (always written)               |
+| `debugPatches` in that mod's `mod.ts` (optional) | Extra debug-only patches (dev / `--debug` builds) |
 
-Release builds (`npm run build`) omit framework and mod debug patches. Dev builds (`npm run dev`, `--game` / `--debug`) include them. Framework `modkitDebugPatches` merge into the **first** src folder (sorted by name) only. Two mods must not both apply `skip-startup-splash` to `js/bundle.js`.
+Release builds (`npm run build`) omit `debugPatches`. Dev builds (`npm run dev`, `--game` / `--debug`) include them. Splash skip lives on [`src/debug/mod.ts`](../src/debug/mod.ts) (companion installed on debug builds only).
 
 ## Fields
 
@@ -71,7 +70,7 @@ export const debugPatches = definePatches([
 ]);
 ```
 
-Framework debug patches (for example `skip-startup-splash`) live in [`modkit/patches.ts`](../modkit/patches.ts). The build merges them into the first src folder only; do not re-export them from `mod.ts`. The browser bundle stubs `@modkit/patches` so patch payloads stay out of `main.js`.
+Splash skip lives on [`src/debug/mod.ts`](../src/debug/mod.ts). The browser bundle stubs `@modkit/patches` so patch payloads stay out of `main.js`.
 
 ## Build output
 

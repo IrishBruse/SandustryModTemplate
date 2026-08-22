@@ -6,15 +6,15 @@ The game runs `main.js` as a script body (`new Function`). `sandkit` is already 
 
 | Command              | Debug helpers                  | `debugPatches` | Output                                                      |
 | -------------------- | ------------------------------ | -------------- | ----------------------------------------------------------- |
-| `npm run build`      | Stub (`modkit/debug/empty.ts`) | Omitted        | OS mods folder; `dist/<folder>/` links                      |
-| `npm run dev`        | Included                       | Included       | OS mods folder while watching; removed when the watch stops |
-| `--game` / `--debug` | Included                       | Included       | Game mods folder                                            |
+| `npm run build`      | Stub (`modkit/debug/empty.ts`); omit `src/debug` | Omitted        | OS mods folder; `dist/<folder>/` links                      |
+| `npm run dev`        | Included; install `src/debug`                    | Included       | OS mods folder while watching; removed when the watch stops |
+| `--game` / `--debug` | Included; install `src/debug`                    | Included       | Game mods folder                                            |
 
-`--no-debug` forces a release-style bundle even when watch or game flags are set. `--mod <folder>` builds one `src/<name>/` folder. The build discovers every `src/*/mod.ts`.
+`--no-debug` forces a release-style bundle even when watch or game flags are set. `--mod <folder>` builds one `src/<name>/` folder. Debug builds also install `src/debug` unless `--mod debug`. The build discovers every `src/*/mod.ts`.
 
 Debug builds emit **inline** source maps on `main.js` (needed for `new Function` eval). Use `--sourcemap` to force maps on a release build, or `--no-sourcemap` to omit them from a debug build.
 
-In-game **Debug** (`api.settings.get("debug")`) is merged into debug `modinfo.json` by the build and omitted from release. When the setting is missing, it defaults to on.
+Session debug helpers (DevTools, splash skip, auto-boot, F3) live on the **debug** companion. Settings are on that mod only. See [modkit/debug.md](modkit/debug.md).
 
 `__MOD_DEBUG__` is `true` in dev builds and `false` in release.
 
