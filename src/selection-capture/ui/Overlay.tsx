@@ -107,8 +107,7 @@ export function Overlay() {
 
   if (!open) return null;
 
-  const fieldClass =
-    "w-full bg-black text-white text-sm px-2 py-1 rounded border border-white/20";
+  const fieldClass = "w-full bg-black text-white text-sm px-2 py-1 rounded border border-white/20";
 
   return (
     <OverlayRoot>

@@ -147,7 +147,12 @@ export function startHotReloadServer() {
         let modId = "mod";
         try {
           const parsed = JSON.parse(raw);
-          if (parsed && typeof parsed === "object" && typeof parsed.modId === "string" && parsed.modId.trim()) {
+          if (
+            parsed &&
+            typeof parsed === "object" &&
+            typeof parsed.modId === "string" &&
+            parsed.modId.trim()
+          ) {
             modId = parsed.modId.trim();
           }
         } catch {
@@ -184,7 +189,10 @@ export function startHotReloadServer() {
       return;
     }
 
-    if (req.method === "GET" && (req.url === HOT_RELOAD_LAST_PATH || req.url?.startsWith(`${HOT_RELOAD_LAST_PATH}?`))) {
+    if (
+      req.method === "GET" &&
+      (req.url === HOT_RELOAD_LAST_PATH || req.url?.startsWith(`${HOT_RELOAD_LAST_PATH}?`))
+    ) {
       res.writeHead(200, {
         ...CORS,
         "Content-Type": "application/json",

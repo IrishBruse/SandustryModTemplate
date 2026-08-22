@@ -14,6 +14,14 @@ const SRC_DIR = join(ROOT, "src");
 /** Companion mod folder. Debug builds install it; release builds omit it. */
 export const DEBUG_MOD_FOLDER = "debug";
 
+/** Staging root for `npm run publish` — not the OS mods folder. */
+export const PUBLISH_OUT_ROOT = join(ROOT, ".tmp", "publish");
+
+/** @param {string} folder src folder name */
+export function publishStagingDir(folder) {
+  return join(PUBLISH_OUT_ROOT, folder);
+}
+
 /**
  * Src-folder name for a path under `src/<name>/...`, or null when outside.
  * @param {string | undefined} filePath
@@ -113,11 +121,13 @@ export function parseModFilter(argv) {
 
 /**
  * @param {string[]} [argv]
- * @param {{ includeDebugKit?: boolean }} [options]
+ * @param {{ includeDebugKit?: boolean; outRoot?: string }} [options]
  * @returns {Promise<LoadedMod[]>}
  */
 export async function loadMods(argv = process.argv.slice(2), options = {}) {
   const includeDebugKit = options.includeDebugKit === true;
+  const outRoot =
+    typeof options.outRoot === "string" && options.outRoot.trim() ? options.outRoot : null;
   const folders = discoverModFolders();
   if (folders.length === 0) {
     throw new Error("No mods found. Add src/<name>/mod.ts");
@@ -174,7 +184,7 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
       tsconfig,
       manifest,
       gameName,
-      outDir: gameModDir(gameName),
+      outDir: outRoot ? join(outRoot, folder) : gameModDir(gameName),
     });
   }
   return mods;

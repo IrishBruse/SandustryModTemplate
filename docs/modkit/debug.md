@@ -6,10 +6,10 @@ Each other mod keeps a one-file hot-reload client: [`src/<name>/debug.ts`](../..
 
 ## When it is installed
 
-| Build   | Command                                       | `src/debug` mod              | Per-mod `./debug`              | `debugPatches` |
-| ------- | --------------------------------------------- | ---------------------------- | ------------------------------ | -------------- |
-| Release | `npm run build`                               | Omitted (leftover removed)   | Stub (`modkit/debug/empty.ts`) | Omitted        |
-| Dev     | `npm run dev`, `--watch`, `--game`, `--debug` | Installed (`mods/debug`)     | Bundled (`installHotReload`)   | Included       |
+| Build   | Command                                       | `src/debug` mod            | Per-mod `./debug`              | `debugPatches` |
+| ------- | --------------------------------------------- | -------------------------- | ------------------------------ | -------------- |
+| Release | `npm run build`                               | Omitted (leftover removed) | Stub (`modkit/debug/empty.ts`) | Omitted        |
+| Dev     | `npm run dev`, `--watch`, `--game`, `--debug` | Installed (`mods/debug`)   | Bundled (`installHotReload`)   | Included       |
 
 `--mod hello-toast-example` on a debug build still installs **debug**. `--mod debug` builds only that folder. `npm run publish` never lists the companion.
 
@@ -21,29 +21,29 @@ Import `onDispose` / `isHotReloadEval` / `installHotReload` from `./debug`, not 
 
 Settings live on the debug mod only (`src/debug/mod.ts` `configSchema`):
 
-| Setting                 | Key             | Default | Effect                                                                                          |
-| ----------------------- | --------------- | ------- | ----------------------------------------------------------------------------------------------- |
-| **Mod enabled**         | `enabled`       | on      | Master switch for runtime helpers                                                               |
-| **Open DevTools on load** | `openDevTools`  | on      | Open Electron DevTools on load. Skipped when `ide-debug.json` is present (F5)                   |
-| **F12 opens DevTools**  | `f12DevTools`   | on      | Capture-phase F12. Can disconnect an IDE debugger session                                       |
-| **Skip splash**         | `skipSplash`    | on      | Runtime click poll while splash logos are visible                                               |
-| **Auto-boot Continue**  | `autoBoot`      | on      | Click Continue on the main menu after it has been visible                                       |
-| **Engine Debug (F3)**   | `engineDebug`   | on      | Management row + F3; force `debug.active`; hide vanilla Debug / Stats buttons                   |
+| Setting                   | Key            | Default | Effect                                                                        |
+| ------------------------- | -------------- | ------- | ----------------------------------------------------------------------------- |
+| **Mod enabled**           | `enabled`      | on      | Master switch for runtime helpers                                             |
+| **Open DevTools on load** | `openDevTools` | on      | Open Electron DevTools on load. Skipped when `ide-debug.json` is present (F5) |
+| **F12 opens DevTools**    | `f12DevTools`  | on      | Capture-phase F12. Can disconnect an IDE debugger session                     |
+| **Skip splash**           | `skipSplash`   | on      | Runtime click poll while splash logos are visible                             |
+| **Auto-boot Continue**    | `autoBoot`     | on      | Click Continue on the main menu after it has been visible                     |
+| **Engine Debug (F3)**     | `engineDebug`  | on      | Management row + F3; force `debug.active`; hide vanilla Debug / Stats buttons |
 
 The splash **bundle patch** applies while the debug mod is installed. The **Skip splash** setting only gates the runtime poll.
 
 ## Features
 
-| Feature               | Where                                              | Setting            | Notes                                                                              |
-| --------------------- | -------------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------- |
-| DevTools globals      | [`src/debug/main.ts`](../../src/debug/main.ts)     | Mod enabled        | `sandkit`, `api`, `enums`, `react` on `globalThis`                                 |
-| Open DevTools on load | [`boot-menu.ts`](../../src/debug/boot-menu.ts)     | Open DevTools      | Retries until the Electron bridge is ready; skipped when CDP `:9222` is up (F5)    |
-| F12 opens DevTools    | [`boot-menu.ts`](../../src/debug/boot-menu.ts)     | F12                | Capture-phase keydown; skipped on hot-reload eval                                  |
-| Splash skip (runtime) | [`splash.ts`](../../src/debug/splash.ts)           | Skip splash        | Clicks the splash while logos are visible                                          |
-| Splash skip (bundle)  | [`src/debug/mod.ts`](../../src/debug/mod.ts)       | Mod installed      | Rewrites `js/bundle.js`; not toggled at runtime                                    |
-| Main-menu auto-boot   | `boot-menu.ts` + [`menu.ts`](../../src/debug/menu.ts) | Auto-boot       | Clicks **Continue** after it has been visible                                      |
-| Renderer hot reload   | [`modkit/debug/hot-reload.ts`](../../modkit/debug/hot-reload.ts) | `npm run dev` | Polls `GET /hot-reload/last` on the dev watch server                               |
-| F3 debug toggle       | [`src/debug/toggle/`](../../src/debug/toggle/)     | Engine Debug       | Management row + F3 opens the engine Debug window                                  |
+| Feature               | Where                                                            | Setting       | Notes                                                                           |
+| --------------------- | ---------------------------------------------------------------- | ------------- | ------------------------------------------------------------------------------- |
+| DevTools globals      | [`src/debug/main.ts`](../../src/debug/main.ts)                   | Mod enabled   | `sandkit`, `api`, `enums`, `react` on `globalThis`                              |
+| Open DevTools on load | [`boot-menu.ts`](../../src/debug/boot-menu.ts)                   | Open DevTools | Retries until the Electron bridge is ready; skipped when CDP `:9222` is up (F5) |
+| F12 opens DevTools    | [`boot-menu.ts`](../../src/debug/boot-menu.ts)                   | F12           | Capture-phase keydown; skipped on hot-reload eval                               |
+| Splash skip (runtime) | [`splash.ts`](../../src/debug/splash.ts)                         | Skip splash   | Clicks the splash while logos are visible                                       |
+| Splash skip (bundle)  | [`src/debug/mod.ts`](../../src/debug/mod.ts)                     | Mod installed | Rewrites `js/bundle.js`; not toggled at runtime                                 |
+| Main-menu auto-boot   | `boot-menu.ts` + [`menu.ts`](../../src/debug/menu.ts)            | Auto-boot     | Clicks **Continue** after it has been visible                                   |
+| Renderer hot reload   | [`modkit/debug/hot-reload.ts`](../../modkit/debug/hot-reload.ts) | `npm run dev` | Polls `GET /hot-reload/last` on the dev watch server                            |
+| F3 debug toggle       | [`src/debug/toggle/`](../../src/debug/toggle/)                   | Engine Debug  | Management row + F3 opens the engine Debug window                               |
 
 Hot-reload eval skips DevTools shortcut, splash polling, and auto-boot so those do not stack on every save.
 
@@ -125,14 +125,14 @@ Optional extra debug-only patches can still be exported from a mod's `mod.ts` as
 
 ## Files
 
-| Path                                      | Role                                                                             |
-| ----------------------------------------- | -------------------------------------------------------------------------------- |
-| [`src/debug/`](../../src/debug/)          | Companion mod: DevTools, splash, auto-boot, F3, splash patch, settings           |
-| `modkit/debug/index.ts`                   | Re-exports `installHotReload`, `onDispose`, `isHotReloadEval`                    |
-| `modkit/debug/empty.ts`                   | Release stub: no-op `installHotReload`, `onDispose`, `isHotReloadEval`           |
-| `modkit/debug/hot-reload.ts`              | Poll `GET /hot-reload/last`, `onDispose`, `isHotReloadEval`                      |
-| `modkit/console.ts`                       | esbuild inject: mirror `console.*` to watch-server file log (debug builds)       |
-| `src/<name>/debug.ts`                     | Thin re-export so release can stub `./debug`                                     |
+| Path                             | Role                                                                       |
+| -------------------------------- | -------------------------------------------------------------------------- |
+| [`src/debug/`](../../src/debug/) | Companion mod: DevTools, splash, auto-boot, F3, splash patch, settings     |
+| `modkit/debug/index.ts`          | Re-exports `installHotReload`, `onDispose`, `isHotReloadEval`              |
+| `modkit/debug/empty.ts`          | Release stub: no-op `installHotReload`, `onDispose`, `isHotReloadEval`     |
+| `modkit/debug/hot-reload.ts`     | Poll `GET /hot-reload/last`, `onDispose`, `isHotReloadEval`                |
+| `modkit/console.ts`              | esbuild inject: mirror `console.*` to watch-server file log (debug builds) |
+| `src/<name>/debug.ts`            | Thin re-export so release can stub `./debug`                               |
 
 ## Wiring
 

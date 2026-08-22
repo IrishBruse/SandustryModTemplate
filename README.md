@@ -37,9 +37,9 @@ Copy [`src/hello-toast-example/`](src/hello-toast-example/) to `src/<your-mod>/`
 
 ### Mods
 
-| Folder                                             | Shows                            |
-| -------------------------------------------------- | -------------------------------- |
-| [`src/debug/`](src/debug/)                         | Dev companion (debug builds only): DevTools, splash skip, F3 |
+| Folder                                             | Shows                                                                            |
+| -------------------------------------------------- | -------------------------------------------------------------------------------- |
+| [`src/debug/`](src/debug/)                         | Dev companion (debug builds only): DevTools, splash skip, F3                     |
 | [`src/selection-capture/`](src/selection-capture/) | **Pixel-perfect Screenshot and GIF recorder** — **C** marquee → **F7** PNG / GIF |
 
 ### Examples
@@ -60,15 +60,15 @@ In game, **Alt+E** opens the overlay from `overlay-hotkey-example`. More: [docs 
 
 ## Commands
 
-| Command             | Effect                                                                 |
-| ------------------- | ---------------------------------------------------------------------- |
-| `npm run setup`       | Extract game source to `sandustry/`, link `logs/`                      |
-| `npm run dev`       | Watch and write to the OS mods folder (`~/.config/...` or `%APPDATA%`) |
-| `npm run build`     | Release bundle (no debug helpers)                                      |
-| `npm run publish`   | Requires [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD). Release-build, then Workshop upload from `workshop/` |
-| `npm run typecheck` | TypeScript check                                                       |
-| `npm run mod:install` | `npm install` in each `src/<name>/` with `package.json`              |
-| `npm run sandustry` | Stop and launch the game (no build)                                    |
+| Command               | Effect                                                                                                                         |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `npm run setup`       | Extract game source to `sandustry/`, link `logs/`                                                                              |
+| `npm run dev`         | Watch and write to the OS mods folder (`~/.config/...` or `%APPDATA%`)                                                         |
+| `npm run build`       | Release bundle (no debug helpers)                                                                                              |
+| `npm run publish`     | Requires [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD). Release-build to `.tmp/publish/`, then Workshop upload |
+| `npm run typecheck`   | TypeScript check                                                                                                               |
+| `npm run mod:install` | `npm install` in each `src/<name>/` with `package.json`                                                                        |
+| `npm run sandustry`   | Stop and launch the game (no build)                                                                                            |
 
 ## Troubleshooting
 

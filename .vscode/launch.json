@@ -62,7 +62,7 @@
       }
     },
     {
-      "name": "Sandustry: Attach Main + Renderer (npm run sandustry:vscode)",
+      "name": "Sandustry: Attach Main + Renderer (build + launch)",
       "configurations": ["Sandustry Renderer", "Sandustry Main"],
       "preLaunchTask": "sandustry:vscode-background",
       "postDebugTask": "sandustry:stop",

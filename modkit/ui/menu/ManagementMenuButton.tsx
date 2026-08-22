@@ -253,8 +253,7 @@ function applyFollow(
   const sw = src.style.width;
   dst.style.overflow = "";
   dst.style.minWidth = "";
-  dst.style.opacity =
-    src.style.opacity !== "" ? src.style.opacity : getComputedStyle(src).opacity;
+  dst.style.opacity = src.style.opacity !== "" ? src.style.opacity : getComputedStyle(src).opacity;
 
   if (sw === "0px" || sw === "0") {
     dst.style.width = "0px";
@@ -419,10 +418,7 @@ function placeAll() {
       continue;
     }
     // Direct sibling under the vanilla column — nested spacer/wrap blocked hover.
-    if (
-      row.previousElementSibling !== previous ||
-      row.parentElement !== previous.parentElement
-    ) {
+    if (row.previousElementSibling !== previous || row.parentElement !== previous.parentElement) {
       previous.after(row);
     }
     previous = row;
@@ -547,9 +543,7 @@ export function ManagementMenuButton({
       const hot = dest.matches(":hover");
       if (hoveredRef.current && !hot) {
         hoveredRef.current = false;
-        tweenToRef.current(
-          collapsedRef.current ? COLLAPSED_WIDTH_PX : expandedRef.current,
-        );
+        tweenToRef.current(collapsedRef.current ? COLLAPSED_WIDTH_PX : expandedRef.current);
       }
     };
 
@@ -564,8 +558,7 @@ export function ManagementMenuButton({
           labelInner?.scrollWidth || labelEl?.scrollWidth || labelInner?.offsetWidth || 0;
       }
       if (measured.destHot <= 0) {
-        measured.destHot =
-          hotInner?.scrollWidth || hot?.scrollWidth || hotInner?.offsetWidth || 0;
+        measured.destHot = hotInner?.scrollWidth || hot?.scrollWidth || hotInner?.offsetWidth || 0;
       }
       if (measured.destLabel > 0 && measured.destHot > 0) return;
       const pack = findPackRow();
@@ -739,16 +732,12 @@ export function ManagementMenuButton({
         onMouseLeave={() => {
           hoveredRef.current = false;
           // Vanilla: leave restores collapsed ? 52 : expandedWidth.
-          tweenToRef.current(
-            collapsedRef.current ? COLLAPSED_WIDTH_PX : expandedRef.current,
-          );
+          tweenToRef.current(collapsedRef.current ? COLLAPSED_WIDTH_PX : expandedRef.current);
         }}
         onPointerLeave={() => {
           if (!hoveredRef.current) return;
           hoveredRef.current = false;
-          tweenToRef.current(
-            collapsedRef.current ? COLLAPSED_WIDTH_PX : expandedRef.current,
-          );
+          tweenToRef.current(collapsedRef.current ? COLLAPSED_WIDTH_PX : expandedRef.current);
         }}
         onClick={() => {
           playMenuClick();

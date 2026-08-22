@@ -8,11 +8,9 @@ Registers a **Noise Test** game on the Retro Console.
 2. Open the Retro Console in game.
 3. Select **Noise Test**.
 
-| Input | Effect |
-| ----- | ------ |
-| Left / right | Threshold down / up |
-| Up | Toggle animate |
-| Down | Change seed |
+- **Left / right** — threshold down / up
+- **Up** — toggle animate
+- **Down** — change seed
 
 Display size is 160×100.
 

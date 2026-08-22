@@ -5,13 +5,16 @@
 import { execSync, spawn, spawnSync } from "node:child_process";
 import {
   existsSync,
+  mkdirSync,
   readdirSync,
+  readFileSync,
   readlinkSync,
   statSync,
   unlinkSync,
   writeFileSync,
 } from "node:fs";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { setTimeout as sleep } from "node:timers/promises";
 import {
   resolveSandustryBinary,
@@ -21,6 +24,8 @@ import {
 } from "./paths.js";
 
 const IS_WIN = process.platform === "win32";
+const REPO_ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
+const DEBUG_SESSION_FILE = join(REPO_ROOT, ".tmp", "sandustry-debug-session.json");
 
 export const SANDUSTRY = resolveSandustryBinary();
 export const SANDUSTRY_DIR = sandustryInstallDir(SANDUSTRY);
@@ -74,9 +79,131 @@ export function sandustryDebugEnv() {
   return { [IDE_DEBUG_ENV]: "1" };
 }
 
+/** @typedef {{ pid: number; mainPort: string; rendererPort: string; launchedAt: number }} DebugSession */
+
+/** @returns {DebugSession | null} */
+export function readDebugSession() {
+  try {
+    const raw = readFileSync(DEBUG_SESSION_FILE, "utf8");
+    const parsed = JSON.parse(raw);
+    if (typeof parsed.pid !== "number" || !Number.isFinite(parsed.pid)) return null;
+    return {
+      pid: parsed.pid,
+      mainPort: String(parsed.mainPort ?? DEFAULT_MAIN_DEBUG_PORT),
+      rendererPort: String(parsed.rendererPort ?? DEFAULT_RENDERER_DEBUG_PORT),
+      launchedAt: Number(parsed.launchedAt) || 0,
+    };
+  } catch {
+    return null;
+  }
+}
+
+/** @param {{ pid: number; mainPort: string; rendererPort: string }} session */
+export function writeDebugSession({ pid, mainPort, rendererPort }) {
+  mkdirSync(dirname(DEBUG_SESSION_FILE), { recursive: true });
+  /** @type {DebugSession} */
+  const session = {
+    pid,
+    mainPort: String(mainPort),
+    rendererPort: String(rendererPort),
+    launchedAt: Date.now(),
+  };
+  writeFileSync(DEBUG_SESSION_FILE, `${JSON.stringify(session, null, 2)}\n`);
+}
+
+export function clearDebugSession() {
+  try {
+    unlinkSync(DEBUG_SESSION_FILE);
+  } catch {
+    /* already gone */
+  }
+}
+
 /** Sync wait that works on cmd/PowerShell (no Unix `sleep`). */
 function sleepSync(ms) {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+}
+
+/** @param {string} port */
+function isDebugPortOpenSync(port) {
+  try {
+    execSync(`curl -sf --max-time 0.5 http://127.0.0.1:${port}/json/version`, {
+      stdio: "ignore",
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** @param {string} mainPort @param {string} rendererPort @param {number} [timeoutMs] */
+function waitForDebugPortsClosed(mainPort, rendererPort, timeoutMs = 5000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (!isDebugPortOpenSync(mainPort) && !isDebugPortOpenSync(rendererPort)) return true;
+    sleepSync(50);
+  }
+  return !isDebugPortOpenSync(mainPort) && !isDebugPortOpenSync(rendererPort);
+}
+
+/** @param {string} port */
+function freeDebugPort(port) {
+  if (IS_WIN) {
+    try {
+      const out = execSync(`netstat -ano | findstr :${port}`, {
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "ignore"],
+        windowsHide: true,
+      });
+      const pids = new Set();
+      for (const line of out.split(/\r?\n/)) {
+        const parts = line.trim().split(/\s+/);
+        const pid = Number(parts.at(-1));
+        if (Number.isFinite(pid) && pid > 0) pids.add(pid);
+      }
+      for (const pid of pids) {
+        try {
+          execSync(`taskkill /F /PID ${pid} /T`, { stdio: "ignore", windowsHide: true });
+        } catch {
+          /* already gone */
+        }
+      }
+    } catch {
+      /* no listener */
+    }
+    return;
+  }
+
+  try {
+    execSync(`fuser -k ${port}/tcp`, { stdio: "ignore" });
+  } catch {
+    /* no listener or fuser missing */
+  }
+}
+
+/** @param {string} mainPort @param {string} rendererPort */
+export function sandustryFreeDebugPorts(mainPort, rendererPort) {
+  if (isDebugPortOpenSync(mainPort)) freeDebugPort(mainPort);
+  if (isDebugPortOpenSync(rendererPort)) freeDebugPort(rendererPort);
+}
+
+/**
+ * Poll CDP ports until both respond or timeout.
+ * @param {string} mainPort
+ * @param {string} rendererPort
+ * @param {{ timeoutMs?: number }} [options]
+ */
+export async function sandustryWaitForDebugPorts(
+  mainPort,
+  rendererPort,
+  { timeoutMs = 60000 } = {},
+) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (isDebugPortOpenSync(mainPort) && isDebugPortOpenSync(rendererPort)) return true;
+    await sleep(100);
+  }
+  return isDebugPortOpenSync(mainPort) && isDebugPortOpenSync(rendererPort);
 }
 
 export function sandustryRequireBinary() {
@@ -120,7 +247,7 @@ export function sandustryBuildMod(
  * Avoids `pgrep -f` matching itself (and a false wait when the game is down).
  * @returns {number[]}
  */
-function sandustryPidsLinux() {
+export function sandustryPidsLinux() {
   /** @type {number[]} */
   const pids = [];
   let entries;
@@ -172,6 +299,42 @@ function signalPids(pids, signal) {
   }
 }
 
+/** Root Sandustry PIDs (parent is not another Sandustry process). Linux only. */
+function sandustryRootPidsLinux() {
+  const all = sandustryPidsLinux();
+  const set = new Set(all);
+  /** @type {number[]} */
+  const roots = [];
+  for (const pid of all) {
+    try {
+      const stat = readFileSync(`/proc/${pid}/stat`, "utf8");
+      const ppid = Number(stat.split(" ")[3]);
+      if (!set.has(ppid)) roots.push(pid);
+    } catch {
+      roots.push(pid);
+    }
+  }
+  return roots;
+}
+
+/** @param {NodeJS.Signals} signal */
+function signalSandustryTrees(signal) {
+  if (IS_WIN) return;
+  const roots = sandustryRootPidsLinux();
+  for (const pid of roots) {
+    try {
+      process.kill(-pid, signal);
+    } catch {
+      try {
+        process.kill(pid, signal);
+      } catch {
+        /* already gone */
+      }
+    }
+  }
+  signalPids(sandustryPidsLinux(), signal);
+}
+
 function sandustryStopWindows() {
   if (!sandustryIsRunningWindows()) return;
 
@@ -203,27 +366,43 @@ function sandustryStopWindows() {
 
 export function sandustryStopRunning() {
   setIdeDebugMarker(false);
+  const session = readDebugSession();
+  clearDebugSession();
+
+  const mainPort = session?.mainPort ?? DEFAULT_MAIN_DEBUG_PORT;
+  const rendererPort = session?.rendererPort ?? DEFAULT_RENDERER_DEBUG_PORT;
 
   if (IS_WIN) {
     sandustryStopWindows();
+    if (!waitForDebugPortsClosed(mainPort, rendererPort)) {
+      sandustryFreeDebugPorts(mainPort, rendererPort);
+    }
     return;
   }
 
   const first = sandustryPidsLinux();
-  if (first.length === 0) return;
+  if (first.length === 0) {
+    if (isDebugPortOpenSync(mainPort) || isDebugPortOpenSync(rendererPort)) {
+      sandustryFreeDebugPorts(mainPort, rendererPort);
+    }
+    return;
+  }
 
   console.log("Stopping Sandustry...");
-  signalPids(first, "SIGTERM");
+  signalSandustryTrees("SIGTERM");
 
-  const deadline = Date.now() + 2000;
+  const deadline = Date.now() + 3000;
   while (Date.now() < deadline) {
-    if (!sandustryIsRunning()) return;
+    if (!sandustryIsRunning()) break;
     sleepSync(50);
   }
 
   const leftover = sandustryPidsLinux();
-  if (leftover.length === 0) return;
-  signalPids(leftover, "SIGKILL");
+  if (leftover.length > 0) signalSandustryTrees("SIGKILL");
+
+  if (!waitForDebugPortsClosed(mainPort, rendererPort)) {
+    sandustryFreeDebugPorts(mainPort, rendererPort);
+  }
 }
 
 /** @returns {{ name: string; x: number; y: number; w: number; h: number }} */
@@ -336,10 +515,9 @@ export function sandustryMaximizeOnLeftMonitor(monX, monY) {
           execSync(`DISPLAY=${display} wmctrl -i -r ${wid} -e "0,${monX},${monY},-1,-1"`, {
             stdio: "ignore",
           });
-          execSync(
-            `DISPLAY=${display} wmctrl -i -r ${wid} -b add,maximized_vert,maximized_horz`,
-            { stdio: "ignore" },
-          );
+          execSync(`DISPLAY=${display} wmctrl -i -r ${wid} -b add,maximized_vert,maximized_horz`, {
+            stdio: "ignore",
+          });
           return;
         } catch {
           // try next display

@@ -20,6 +20,13 @@ Avoid:
 - Marketing tone in guide pages.
 - Duplicating large code samples that already live next to the feature.
 
+## Sample mod READMEs (`src/*-example/README.md`)
+
+Short player-facing copy. The build copies each file into the installed mod folder.
+
+- Use lists for steps and controls. Do not use markdown tables.
+- Match the tone and structure of the other `*-example` READMEs.
+
 ## Changelog and Discord
 
 When a change is **user-visible** (new feature, behaviour change, fix, removal, or docs that announce a product change):

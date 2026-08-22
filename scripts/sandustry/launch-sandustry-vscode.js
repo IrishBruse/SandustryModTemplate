@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Build the mod with source maps, stop any running game, launch Sandustry with debug ports.
- * Usage: npm run sandustry:vscode (VS Code launch.json only)
+ * Usage: VS Code launch.json only (sandustry:vscode-background task).
  */
 import { spawnSync } from "node:child_process";
 import { dirname } from "node:path";

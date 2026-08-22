@@ -7,7 +7,7 @@ TypeScript template for Sandustry mods (Steam **[mods]** branch).
 # What's new (2026-08-22)
 
 - **Dedicated debug mod** (`src/debug`, game folder **debug**): DevTools, splash skip, auto-boot, F3, and splash patch. Debug builds install it; release omits it. Settings live on that mod (not on every example). Each example keeps a one-file `debug.ts` for hot reload.
-- **`npm run publish`:** requires [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD); arrow-key list + confirm, then upload from `workshop/` (including `screenshots/`)
+- **`npm run publish`:** SteamCMD exits after upload (no leftover `Steam>` prompt). Release-builds into `.tmp/publish/<folder>/` so `npm run dev` cannot overwrite it. Change notes come from that mod's `CHANGELOG.md`. Requires [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD).
 - Mod npm deps live in `src/<name>/package.json` (root `npm install` installs them too)
 - Build copies `workshop/workshop.json` and `workshop/preview.gif` (preferred) / `workshop/preview.png` to the mod root when present
 - **`npm run sandustry`** only launches (no build) — keep `npm run dev` for the bundle

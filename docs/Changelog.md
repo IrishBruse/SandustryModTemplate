@@ -9,10 +9,11 @@ The template has no release tags yet. Dated sections match the day the change la
 ### Added
 
 - **Dedicated debug mod** (`src/debug/`, game folder **debug**): DevTools on load, F12, splash skip, main-menu auto-boot, F3 engine Debug, and the splash bundle patch. Debug builds (`npm run dev`, `--debug`) install it. Release (`npm run build`) omits it and removes a leftover `mods/debug`. Settings live on that mod only. See [modkit/debug.md](modkit/debug.md).
-- **`npm run publish`:** arrow-key mod list and Upload/Cancel confirm, then release-build + SteamCMD upload from `workshop/` (including `screenshots/`). **SteamCMD is required** ([SteamCMD docs](https://developer.valvesoftware.com/wiki/SteamCMD)). See [builds.md](builds.md#workshop-publish).
+- **`npm run publish`:** release-builds the target into `.tmp/publish/<folder>/` so `npm run dev` cannot overwrite the upload. Then SteamCMD uploads from that folder. **SteamCMD is required** ([SteamCMD docs](https://developer.valvesoftware.com/wiki/SteamCMD)). Steam change notes come from that mod's `CHANGELOG.md` for `modinfo.version` (or `## Unreleased` if that heading is missing). See [builds.md](builds.md#workshop-publish).
 
 ### Fixed
 
+- **SteamCMD hang after Workshop upload:** `npm run publish` no longer inherits the terminal. After a successful upload it sends `quit` and stops SteamCMD if it stays on the `Steam>` prompt.
 - **`--mod` no longer deletes sibling OS mod folders.** Dist links that stay (other src folders still exist) keep their game dirs. Release still removes leftover `mods/debug`.
 - **`npm run publish` description:** keep real line breaks. Do not write `\n` into the Steam listing.
 
@@ -62,13 +63,13 @@ The template has no release tags yet. Dated sections match the day the change la
 - **Isolation.** Mods cannot import from another `src/` folder. Typecheck uses a per-mod `tsconfig.json`. The bundle fails sibling imports.
 - **Sample mods** (copy one to start a new mod):
 
-| Folder                           | Shows                                |
-| -------------------------------- | ------------------------------------ |
-| `src/hello-toast-example/`       | Toast on load                        |
-| `src/overlay-hotkey-example/`    | React overlay + Tailwind; **Alt+E**  |
-| `src/retro-game-example/`        | Retro Console Noise Test             |
-| `src/management-button-example/` | Management-column row under Upgrades |
-| `src/worker-api-example/`        | Worker-thread `sandkit.api` probe    |
+| Folder                           | Shows                                                                            |
+| -------------------------------- | -------------------------------------------------------------------------------- |
+| `src/hello-toast-example/`       | Toast on load                                                                    |
+| `src/overlay-hotkey-example/`    | React overlay + Tailwind; **Alt+E**                                              |
+| `src/retro-game-example/`        | Retro Console Noise Test                                                         |
+| `src/management-button-example/` | Management-column row under Upgrades                                             |
+| `src/worker-api-example/`        | Worker-thread `sandkit.api` probe                                                |
 | `src/selection-capture/`         | **Pixel-perfect Screenshot and GIF recorder** — **C** marquee → **F7** PNG / GIF |
 
 - Windows and Linux mods, logs, and launch paths (`~/.config/sandustry` or `%APPDATA%\sandustry`).

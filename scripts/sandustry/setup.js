@@ -9,14 +9,7 @@
  *                Windows: %APPDATA%/sandustry/logs
  */
 import { extractFile, listPackage } from "@electron/asar";
-import {
-  existsSync,
-  lstatSync,
-  mkdirSync,
-  readlinkSync,
-  rmSync,
-  writeFileSync,
-} from "node:fs";
+import { existsSync, lstatSync, mkdirSync, readlinkSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { linkDirectory, samePath, sandustryLogsDir } from "./paths.js";

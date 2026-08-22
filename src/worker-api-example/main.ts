@@ -15,4 +15,6 @@ if (isEnabled(api)) {
   });
 }
 
-console.log(`[${MOD_ID}] main ${reloaded ? "reloaded" : "loaded"} — workerEntry probes types/worker-api`);
+console.log(
+  `[${MOD_ID}] main ${reloaded ? "reloaded" : "loaded"} — workerEntry probes types/worker-api`,
+);

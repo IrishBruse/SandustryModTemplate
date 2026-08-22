@@ -5,7 +5,15 @@
  *
  * Mods dir: Linux ~/.config/sandustry/mods ; Windows %APPDATA%/sandustry/mods
  */
-import { existsSync, lstatSync, mkdirSync, readdirSync, readlinkSync, rmSync, unlinkSync } from "node:fs";
+import {
+  existsSync,
+  lstatSync,
+  mkdirSync,
+  readdirSync,
+  readlinkSync,
+  rmSync,
+  unlinkSync,
+} from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { linkDirectory, samePath, sandustryModsDir } from "./paths.js";
 

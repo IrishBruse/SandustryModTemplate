@@ -11,11 +11,12 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, basename, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadMods, parseModFilter } from "../build/mods.js";
+import { loadMods, parseModFilter, publishStagingDir } from "../build/mods.js";
 import { steamLibraryRoots } from "./paths.js";
 import { isPublishTty, tuiConfirm, tuiSelect } from "./publish-tui.js";
 import {
   copyWorkshopScreenshots,
+  readChangelogChangeNote,
   readWorkshopManifest,
   workshopDescriptionText,
   workshopPreviewPath,
@@ -41,10 +42,7 @@ function fail(message) {
  * @returns {string}
  */
 function vdfEscape(value) {
-  return String(value)
-    .replaceAll("\r\n", "\n")
-    .replaceAll("\\", "\\\\")
-    .replaceAll('"', '\\"');
+  return String(value).replaceAll("\r\n", "\n").replaceAll("\\", "\\\\").replaceAll('"', '\\"');
 }
 
 /**
@@ -193,29 +191,124 @@ function workshopDescription(mod) {
 }
 
 /**
+ * Steam changenote: CHANGELOG.md for this version, or the version string.
+ * @param {import("../build/mods.js").LoadedMod} mod
+ * @param {{ warn?: boolean }} [options]
+ * @returns {string}
+ */
+function workshopChangeNote(mod, { warn = true } = {}) {
+  const version = String(mod.manifest.version ?? "").trim();
+  const fromLog = readChangelogChangeNote(mod.dir, version);
+  if (!fromLog) return version || "Update";
+  if (warn && fromLog.source === "unreleased") {
+    console.warn(
+      `CHANGELOG.md has no ## ${version} section. Using ## Unreleased for Steam change notes. Rename that heading to ## ${version} for this release.`,
+    );
+  }
+  return fromLog.text;
+}
+
+function changeNotePreview(note) {
+  const flat = note.replaceAll("\n", " ").replaceAll(/\s+/g, " ").trim();
+  if (flat.length <= 72) return flat;
+  return `${flat.slice(0, 71).trimEnd()}…`;
+}
+
+/**
  * @param {string} bin
  * @param {string[]} args
  * @returns {Promise<{ code: number | null; out: string }>}
  */
 function runSteamCmd(bin, args) {
   return new Promise((resolve, reject) => {
-    const child = spawn(bin, args, { stdio: ["inherit", "pipe", "pipe"] });
+    // Do not inherit the TTY. SteamCMD otherwise stays on the Steam> prompt
+    // after +workshop_build_item and never runs +quit.
+    const child = spawn(bin, args, { stdio: ["pipe", "pipe", "pipe"] });
+    try {
+      child.stdin.end();
+    } catch {
+      /* ignore */
+    }
     let out = "";
+    let settled = false;
+    /** @type {ReturnType<typeof setTimeout> | null} */
+    let stopTimer = null;
+
+    const finish = (code) => {
+      if (settled) return;
+      settled = true;
+      if (stopTimer) clearTimeout(stopTimer);
+      try {
+        child.stdin.end();
+      } catch {
+        /* already closed */
+      }
+      resolve({ code, out });
+    };
+
+    const stopSteamCmd = (reason) => {
+      if (settled || child.exitCode != null) return;
+      console.warn(`${reason} Stopping SteamCMD.`);
+      try {
+        child.kill("SIGTERM");
+      } catch {
+        /* already gone */
+      }
+      setTimeout(() => {
+        if (settled || child.exitCode != null) return;
+        try {
+          child.kill("SIGKILL");
+        } catch {
+          /* already gone */
+        }
+      }, 2000);
+    };
+
+    const requestQuit = () => {
+      if (settled || stopTimer) return;
+      try {
+        child.stdin.write("quit\n");
+        child.stdin.end();
+      } catch {
+        /* stdin closed */
+      }
+      stopTimer = setTimeout(() => {
+        stopSteamCmd("SteamCMD did not exit after the upload.");
+      }, 8000);
+    };
+
+    child.stdin.on("error", () => {
+      /* EPIPE when SteamCMD already left */
+    });
+
     child.stdout.on("data", (chunk) => {
+      const text = String(chunk);
       process.stdout.write(chunk);
-      out += chunk;
+      out += text;
+      if (workshopUploadFinished(out) || /ERROR!/i.test(out) || /Steam>/.test(out)) {
+        requestQuit();
+      }
     });
     child.stderr.on("data", (chunk) => {
+      const text = String(chunk);
       process.stderr.write(chunk);
-      out += chunk;
+      out += text;
+      if (workshopUploadFinished(out) || /ERROR!/i.test(out) || /Steam>/.test(out)) {
+        requestQuit();
+      }
     });
     child.on("error", reject);
-    child.on("close", (code) => resolve({ code, out }));
+    child.on("close", (code) => finish(code));
   });
 }
 
+/** True when workshop_build_item finished (not the earlier login "Success."). */
+function workshopUploadFinished(out) {
+  return /workshop/i.test(out) && /success\./i.test(out);
+}
+
 function workshopUploadSucceeded(out) {
-  return /success/i.test(out) && !/ERROR!/i.test(out);
+  return workshopUploadFinished(out) && !/ERROR!/i.test(out);
 }
 
 async function publishMod(steamCmd, account, mod) {
@@ -234,6 +327,7 @@ async function publishMod(steamCmd, account, mod) {
   const tmpDir = join(ROOT, ".tmp");
   mkdirSync(tmpDir, { recursive: true });
   const vdfFile = join(tmpDir, `workshop-${mod.folder}.vdf`);
+  const changeNote = workshopChangeNote(mod, { warn: yesFlag });
   writeFileSync(
     vdfFile,
     workshopItemVdf({
@@ -243,21 +337,22 @@ async function publishMod(steamCmd, account, mod) {
       previewFile,
       title: String(mod.manifest.name).trim(),
       description: workshopDescription(mod),
-      changeNote: String(mod.manifest.version ?? ""),
+      changeNote,
     }),
   );
 
   console.log(`Workshop upload: src/${mod.folder}/ -> ${publishedFileId}`);
   console.log(`Preview: ${previewFile}`);
   if (screenshots.length > 0) {
-    console.log(
-      `Screenshots: ${screenshots.map((file) => basename(file)).join(", ")}`,
-    );
+    console.log(`Screenshots: ${screenshots.map((file) => basename(file)).join(", ")}`);
   }
   console.log(`Content: ${mod.outDir}`);
+  console.log(`Change notes:\n${changeNote}`);
 
   const args = [
     "+@ShutdownOnFailedCommand",
+    "1",
+    "+@NoPromptForPassword",
     "1",
     "+login",
     account,
@@ -335,9 +430,7 @@ async function confirmUpload(mod, account, steamCmd, previewFile, publishedFileI
     fail("Pass --yes to skip confirmation when stdin is not a TTY.");
   }
   const shotLabel =
-    screenshots.length === 0
-      ? "(none)"
-      : screenshots.map((file) => basename(file)).join(", ");
+    screenshots.length === 0 ? "(none)" : screenshots.map((file) => basename(file)).join(", ");
   try {
     return await tuiConfirm({
       title: "Upload to Steam Workshop?",
@@ -345,11 +438,13 @@ async function confirmUpload(mod, account, steamCmd, previewFile, publishedFileI
         ["Folder", `src/${mod.folder}/`],
         ["Title", String(mod.manifest.name).trim()],
         ["Version", String(mod.manifest.version ?? "")],
+        ["Change notes", changeNotePreview(workshopChangeNote(mod))],
         ["Item", publishedFileId],
         ["Preview", basename(previewFile)],
         ["Screenshots", shotLabel],
         ["Steam", account],
         ["SteamCMD", steamCmd],
+        ["Staging", `.tmp/publish/${mod.folder}/`],
       ],
     });
   } catch (error) {
@@ -402,13 +497,18 @@ if (!confirmed) {
   process.exit(0);
 }
 
-console.log("Release build…");
+console.log("Release build to .tmp/publish/…");
 const build = spawnSync(
   process.execPath,
-  [join(ROOT, "scripts/build/esbuild.config.mjs"), "--mod", selected.folder],
+  [join(ROOT, "scripts/build/esbuild.config.mjs"), "--mod", selected.folder, "--publish-out"],
   { stdio: "inherit", cwd: ROOT },
 );
 if (build.status !== 0) process.exit(build.status ?? 1);
+
+selected.outDir = publishStagingDir(selected.folder);
+if (!existsSync(join(selected.outDir, "main.js"))) {
+  fail(`Publish staging missing main.js: ${selected.outDir}`);
+}
 
 await publishMod(steamCmd, account, selected);
 console.log("Workshop upload finished.");

@@ -15,7 +15,6 @@
     "ui:css": "node scripts/ui/compile-preview-css.mjs",
     "ui:previews": "node scripts/ui/generate-previews.mjs",
     "sandustry": "node scripts/sandustry/launch-sandustry.js",
-    "sandustry:vscode": "node scripts/sandustry/launch-sandustry-vscode.js",
     "publish": "node scripts/sandustry/publish-workshop.js"
   },
   "devDependencies": {

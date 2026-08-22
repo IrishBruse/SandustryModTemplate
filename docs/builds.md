@@ -4,8 +4,8 @@ The game runs `main.js` as a script body (`new Function`). `sandkit` is already 
 
 ## Debug vs release
 
-| Command              | Debug helpers                  | `debugPatches` | Output                                                      |
-| -------------------- | ------------------------------ | -------------- | ----------------------------------------------------------- |
+| Command              | Debug helpers                                    | `debugPatches` | Output                                                      |
+| -------------------- | ------------------------------------------------ | -------------- | ----------------------------------------------------------- |
 | `npm run build`      | Stub (`modkit/debug/empty.ts`); omit `src/debug` | Omitted        | OS mods folder; `dist/<folder>/` links                      |
 | `npm run dev`        | Included; install `src/debug`                    | Included       | OS mods folder while watching; removed when the watch stops |
 | `--game` / `--debug` | Included; install `src/debug`                    | Included       | Game mods folder                                            |
@@ -57,7 +57,7 @@ npm run dev              # watch all src/ mods, debug on (required before F5)
 npm run dev -- --mod overlay-hotkey-example
 npm run build            # release all mods (stay in the OS mods folder)
 npm run build -- --mod overlay-hotkey-example
-npm run publish          # release-build, then SteamCMD Workshop upload
+npm run publish          # release-build to .tmp/publish/, then SteamCMD Workshop upload
 npm run publish -- --mod selection-capture
 npm run typecheck
 npm run mod:install      # npm install in each src/<name>/ with package.json
@@ -84,4 +84,6 @@ npm run publish -- --mod selection-capture
 npm run publish -- --mod selection-capture --yes
 ```
 
-The command then release-builds that folder and uploads `workshop.json`, **preview.gif** (or **preview.png**), `workshop.txt`, and images in `workshop/screenshots/` (copied into the item as `screenshots/`).
+The command then release-builds that folder into `.tmp/publish/<folder>/` (not the OS mods folder, so `npm run dev` cannot overwrite it) and uploads `workshop.json`, **preview.gif** (or **preview.png**), `workshop.txt`, and images in `workshop/screenshots/` (copied into the item as `screenshots/`).
+
+Steam **change notes** come from that mod's `CHANGELOG.md` (Keep a Changelog). `npm run publish` uses the `##` section that matches `modinfo.version` (for example `## 0.2.0` or `## [0.2.0] - 2026-08-22`). If that heading is missing, it uses `## Unreleased` and warns you to rename the heading to the version. If there is no changelog, it sends the version string. The confirm step shows a short preview.

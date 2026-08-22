@@ -11,19 +11,15 @@ Share a machine, a line, or a whole scene without a blurry screenshot. **Screens
 3. Press **F7**.
 4. Choose **Screenshot** or **Record GIF**.
 
-| Control        | Action                                                      |
-| -------------- | ----------------------------------------------------------- |
-| **F7**         | Open or close the panel.                                    |
-| **Screenshot** | Copy a **2×** PNG. Paste with **Ctrl+V**.                   |
-| **Record GIF** | Record an animated GIF of sim ticks. The `.gif` downloads.  |
+- **F7** — open or close the panel
+- **Screenshot** — copy a **2×** PNG; paste with **Ctrl+V**
+- **Record GIF** — record an animated GIF of sim ticks; the `.gif` downloads
 
 ## Panel
 
-| Field         | Range  | Default |
-| ------------- | ------ | ------- |
-| Frames        | 2–120  | 60      |
-| Ticks / frame | 1–30   | 1       |
-| Greenscreen   | on/off | off     |
+- **Frames** — 2–120 (default 60)
+- **Ticks / frame** — 1–30 (default 1)
+- **Greenscreen** — on/off (default off)
 
 **Greenscreen** hides the parallax sky and fills empty pixels with `#00FF00` for chroma key.
 

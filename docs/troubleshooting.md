@@ -43,6 +43,8 @@ Default probe includes `%ProgramFiles(x86)%\Steam` and `%ProgramFiles%\Steam`, p
 
 **Hot reload does nothing under F5** — Keep `npm run dev` running. F5 does not build. The client polls `GET http://127.0.0.1:19147/hot-reload/last`. Restart the game once after you pull a template change so the new client loads. A toast shows when the mod reloads.
 
+**`npm run publish` hangs after a successful upload** — SteamCMD used to keep the `Steam>` prompt because it inherited the terminal. Publish now closes stdin and stops SteamCMD if it does not exit. See [Workshop publish](builds.md#workshop-publish).
+
 **`npm run publish` fails with steamcmd not found** — SteamCMD is required. Install it from the [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD) page. See [Workshop publish](builds.md#workshop-publish).
 
 **Types missing** — Run `git submodule update --init --recursive`. Types live in `types/` ([sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types)).

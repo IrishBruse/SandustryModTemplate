@@ -1,5 +1,13 @@
 import * as esbuild from "esbuild";
-import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import {
+  cpSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { dirname, isAbsolute, join, normalize } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { buildPatches } from "./build-patches.js";
@@ -8,7 +16,7 @@ import {
   compileTailwindUtilities,
   TAILWIND_CSS_FILTER,
 } from "./compile-tailwind.js";
-import { loadMods, modIsolationPlugin, prepareModOutputs } from "./mods.js";
+import { loadMods, modIsolationPlugin, prepareModOutputs, PUBLISH_OUT_ROOT } from "./mods.js";
 import { copyWorkshopInstallFiles } from "../sandustry/workshop-files.js";
 import { devWatchUrl, notifyHotReload, startHotReloadServer } from "./hot-reload-server.js";
 
@@ -21,10 +29,17 @@ const debugFlag = args.includes("--debug");
 const noDebugFlag = args.includes("--no-debug");
 const sourcemapFlag = args.includes("--sourcemap");
 const noSourcemapFlag = args.includes("--no-sourcemap");
+const publishOut = args.includes("--publish-out");
+
+if (publishOut && (watch || debugFlag || game)) {
+  throw new Error(
+    "--publish-out is a release staging build. Do not pass --watch, --debug, or --game.",
+  );
+}
 
 /** @returns {boolean} */
 function resolveModDebug() {
-  if (noDebugFlag) return false;
+  if (publishOut || noDebugFlag) return false;
   if (debugFlag) return true;
   return watch || game;
 }
@@ -47,11 +62,22 @@ const sourcemap = resolveSourcemap();
 // Watch embeds the dev watch base URL for hot-reload GET polling.
 const embedDevWatchUrl = watch;
 
-const mods = await loadMods(args, { includeDebugKit: modDebug });
-prepareModOutputs(ROOT, mods, { includeDebugKit: modDebug });
+const mods = await loadMods(args, {
+  includeDebugKit: modDebug,
+  outRoot: publishOut ? PUBLISH_OUT_ROOT : undefined,
+});
+if (publishOut) {
+  for (const mod of mods) {
+    rmSync(mod.outDir, { recursive: true, force: true });
+    mkdirSync(mod.outDir, { recursive: true });
+  }
+} else {
+  prepareModOutputs(ROOT, mods, { includeDebugKit: modDebug });
+}
 
 console.log(`mods: ${mods.map((mod) => mod.folder).join(", ")}`);
 console.log(`mod debug: ${modDebug ? "on" : "off"}`);
+console.log(`output: ${publishOut ? ".tmp/publish/<folder>" : "OS mods folder"}`);
 console.log(`sourcemap: ${sourcemap ?? "off"}`);
 console.log(`dev watch URL: ${embedDevWatchUrl ? devWatchUrl() : "(none)"}`);
 
@@ -252,7 +278,8 @@ function rewriteMainJsDebugMaps(filePath, modId) {
 function maybeRewriteDebugMaps(mod) {
   const outMain = join(mod.outDir, "main.js");
   if (!sourcemap || !existsSync(outMain)) return;
-  const modId = typeof mod.manifest.id === "string" && mod.manifest.id.length > 0 ? mod.manifest.id : "mod";
+  const modId =
+    typeof mod.manifest.id === "string" && mod.manifest.id.length > 0 ? mod.manifest.id : "mod";
   rewriteMainJsDebugMaps(outMain, modId);
 }
 
