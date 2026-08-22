@@ -43,6 +43,7 @@ Copy [`src/hello-toast-example/`](src/hello-toast-example/) to `src/<your-mod>/`
 | [`src/management-button-example/`](src/management-button-example/)       | Management-column row under Upgrades               |
 | [`src/worker-api-example/`](src/worker-api-example/)                     | Worker-thread `sandkit.api` probe                  |
 | [`src/selection-screenshot-example/`](src/selection-screenshot-example/) | **C** selection → **F8** PNG crop to cell edges    |
+| [`src/gif-recorder-example/`](src/gif-recorder-example/)                 | **C** selection → **F7** GIF of stepped sim ticks  |
 
 ### Run
 

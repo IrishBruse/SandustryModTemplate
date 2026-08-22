@@ -18,7 +18,7 @@ Logs: Linux `~/.config/sandustry/logs`; Windows `%APPDATA%/sandustry/logs`.
 
 ## `src/`
 
-Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized demos: [`hello-toast-example`](../src/hello-toast-example/), [`overlay-hotkey-example`](../src/overlay-hotkey-example/), [`retro-game-example`](../src/retro-game-example/), [`management-button-example`](../src/management-button-example/), [`worker-api-example`](../src/worker-api-example/), [`selection-screenshot-example`](../src/selection-screenshot-example/). A mod may import `@modkit/*`, `types/*`, and files in its own folder. It must not import another `src/<name>/` tree. Shared code stays in `modkit/`.
+Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized demos: [`hello-toast-example`](../src/hello-toast-example/), [`overlay-hotkey-example`](../src/overlay-hotkey-example/), [`retro-game-example`](../src/retro-game-example/), [`management-button-example`](../src/management-button-example/), [`worker-api-example`](../src/worker-api-example/), [`selection-screenshot-example`](../src/selection-screenshot-example/), [`gif-recorder-example`](../src/gif-recorder-example/). A mod may import `@modkit/*`, `types/*`, and files in its own folder. It must not import another `src/<name>/` tree. Shared code stays in `modkit/`.
 
 | Path                           | Role                                                                                |
 | ------------------------------ | ----------------------------------------------------------------------------------- |

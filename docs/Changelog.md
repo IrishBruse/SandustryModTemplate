@@ -6,8 +6,13 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ## Unreleased
 
+### Changed
+
+- **GIF recorder:** Frames defaults to **60**.
+
 ### Fixed
 
+- **GIF recorder:** a sync read on `frame:render` ran before Pixi painted, so every frame was the sky fill. The recorder now copies on the first microtask after that event (same as the F8 screenshot) and builds one palette from every frame.
 - **Management menu hover:** mod rows under Upgrades sit as direct siblings of the vanilla column (same as Toolbox / Building). Nested spacer / `pointer-events-none` wraps blocked hover shine, yellow letter, and clicks.
 - **F5 hot reload:** VS Code renderer attach can stall HTTP `EventSource`. The watch build writes `hot-reload.json`; the client polls that stamp through the mod asset URL so save still reloads the mod.
 
@@ -15,6 +20,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 - **Hot reload clears logs:** each renderer reload truncates `logs/<mod-id>.log` and clears the DevTools console so the file only holds the current session. `clearLog(modId)` from `@modkit/log` and `POST /log/clear` on the watch server.
 - **Selection screenshot example** (`src/selection-screenshot-example/`): after a **C** marquee selection, **F8** downloads a PNG cropped to the selection’s cell edges.
+- **GIF recorder example** (`src/gif-recorder-example/`): after a **C** marquee selection, **F7** opens a panel to record an animated GIF (frames, ticks per frame, nearest-neighbor scale). The sim pauses, steps ticks, then downloads the `.gif`. Clipboard copy of GIF is attempted when the host allows it.
 - **Worker API example** (`src/worker-api-example/`): optional `worker.ts` → `worker.js`, probes worker-thread `sandkit.api` against `types/worker-api` (`WorkerSandkitApi`). Build bundles `worker.ts` when present.
 
 ### Changed
@@ -29,14 +35,15 @@ The template has no release tags yet. Dated sections match the day the change la
 - **Isolation.** Mods cannot import from another `src/` folder. Typecheck uses a per-mod `tsconfig.json`. The bundle fails sibling imports.
 - **Sample mods** (copy one to start a new mod):
 
-| Folder                              | Shows                                              |
-| ----------------------------------- | -------------------------------------------------- |
-| `src/hello-toast-example/`          | Toast on load                                      |
-| `src/overlay-hotkey-example/`       | React overlay + Tailwind; **Alt+E**                |
-| `src/retro-game-example/`           | Retro Console Noise Test                           |
-| `src/management-button-example/`    | Management-column row under Upgrades               |
-| `src/worker-api-example/`           | Worker-thread `sandkit.api` probe                  |
-| `src/selection-screenshot-example/` | **C** selection → **F8** PNG crop to cell edges    |
+| Folder                              | Shows                                             |
+| ----------------------------------- | ------------------------------------------------- |
+| `src/hello-toast-example/`          | Toast on load                                     |
+| `src/overlay-hotkey-example/`       | React overlay + Tailwind; **Alt+E**               |
+| `src/retro-game-example/`           | Retro Console Noise Test                          |
+| `src/management-button-example/`    | Management-column row under Upgrades              |
+| `src/worker-api-example/`           | Worker-thread `sandkit.api` probe                 |
+| `src/selection-screenshot-example/` | **C** selection → **F8** PNG crop to cell edges   |
+| `src/gif-recorder-example/`         | **C** selection → **F7** GIF of stepped sim ticks |
 
 - Windows and Linux mods, logs, and launch paths (`~/.config/sandustry` or `%APPDATA%\sandustry`).
 - `createLogger` and debug `console.*` lines that also append to `logs/<mod-id>.log` while `npm run dev` runs.

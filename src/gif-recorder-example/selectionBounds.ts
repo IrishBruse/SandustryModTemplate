@@ -17,10 +17,15 @@ type SelectedStructure = {
 /** Shape of `session.action.customData` while a marquee selection is active. */
 type MarqueeCustomData = {
   marqueeSelected?: boolean;
+  mode?: number;
   start?: CellPoint;
   end?: CellPoint;
   selectedStructures?: SelectedStructure[];
+  mouseOffset?: CellPoint;
 };
+
+/** Copier overlay: dashed AABB draws only when `mode === Selected` and `start` exists. */
+const MARQUEE_MODE_SELECTED = 1;
 
 function isFinitePoint(point: CellPoint | undefined): point is CellPoint {
   return point !== undefined && Number.isFinite(point.x) && Number.isFinite(point.y);
@@ -34,6 +39,87 @@ function getMarqueeCustomData(): MarqueeCustomData | null {
   const data = session?.action?.customData;
   if (!data || typeof data !== "object") return null;
   return data;
+}
+
+type ConstructionSession = {
+  construction?: { marqueeActive?: boolean; marqueeToggle?: boolean };
+};
+
+/** Clone of marquee state so recording can put the selection back. */
+export type MarqueeSnapshot = {
+  customData: MarqueeCustomData;
+  marqueeActive?: boolean;
+  marqueeToggle?: boolean;
+};
+
+function copyPoint(point: CellPoint | undefined): CellPoint | undefined {
+  if (!isFinitePoint(point)) return undefined;
+  return { x: point.x, y: point.y };
+}
+
+function cloneMarqueeData(data: MarqueeCustomData): MarqueeCustomData {
+  return {
+    ...data,
+    marqueeSelected: true,
+    mode: data.mode ?? MARQUEE_MODE_SELECTED,
+    start: copyPoint(data.start),
+    end: copyPoint(data.end),
+    mouseOffset: copyPoint(data.mouseOffset),
+    selectedStructures: data.selectedStructures?.map((structure) => ({
+      ...structure,
+      originalPos: copyPoint(structure.originalPos) ?? structure.originalPos,
+    })),
+  };
+}
+
+function applyMarqueeSnapshot(
+  api: SandkitApi,
+  snapshot: MarqueeSnapshot,
+  bounds: CellBounds,
+): void {
+  const data = cloneMarqueeData(snapshot.customData);
+  data.marqueeSelected = true;
+  data.mode = MARQUEE_MODE_SELECTED;
+  if (!isFinitePoint(data.start)) {
+    data.start = { x: bounds.minX, y: bounds.minY };
+    data.end = { x: bounds.maxX + 1, y: bounds.maxY + 1 };
+  }
+  api.action.setCustomData(data);
+
+  const session = sandkit.state.session as ConstructionSession | null | undefined;
+  if (session?.construction) {
+    if (snapshot.marqueeActive !== undefined) {
+      session.construction.marqueeActive = snapshot.marqueeActive;
+    }
+    if (snapshot.marqueeToggle !== undefined) {
+      session.construction.marqueeToggle = snapshot.marqueeToggle;
+    }
+  }
+  api.ui.update(sandkit.enums.ComponentId.ShortcutHelper);
+}
+
+/** Capture marquee customData and construction flags before recording steps ticks. */
+export function snapshotMarqueeSelection(): MarqueeSnapshot | null {
+  const data = getMarqueeCustomData();
+  if (!data?.marqueeSelected) return null;
+  const session = sandkit.state.session as ConstructionSession | null | undefined;
+  return {
+    customData: cloneMarqueeData(data),
+    marqueeActive: session?.construction?.marqueeActive,
+    marqueeToggle: session?.construction?.marqueeToggle,
+  };
+}
+
+/** Write the snapshot back after recording (ticks often clear `customData`). */
+export function restoreMarqueeSelection(
+  api: SandkitApi,
+  snapshot: MarqueeSnapshot,
+  bounds: CellBounds,
+): void {
+  applyMarqueeSnapshot(api, snapshot, bounds);
+  requestAnimationFrame(() => {
+    applyMarqueeSnapshot(api, snapshot, bounds);
+  });
 }
 
 function boundsFromPoints(points: CellPoint[]): CellBounds | null {

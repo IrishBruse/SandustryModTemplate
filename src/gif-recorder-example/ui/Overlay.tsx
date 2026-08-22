@@ -11,6 +11,7 @@ import { MOD_ID } from "../globals";
 import { recordSelectionGif } from "../recordGif";
 
 const TOGGLE_CODE = "F7";
+const DEFAULT_FRAMES = 60;
 
 /** Survives hot reload so the management row always toggles the latest overlay. */
 type GifUi = { toggle: () => void };
@@ -25,7 +26,7 @@ function parsePositiveInt(raw: string, fallback: number): number {
 
 export function Overlay() {
   const [open, setOpen] = useState(false);
-  const [frames, setFrames] = useState(30);
+  const [frames, setFrames] = useState(DEFAULT_FRAMES);
   const [ticksPerFrame, setTicksPerFrame] = useState(1);
   const [scale, setScale] = useState(2);
   const [busy, setBusy] = useState(false);
@@ -62,6 +63,9 @@ export function Overlay() {
       });
       switch (result) {
         case "ok":
+          api.ui.toast("GIF saved and copied", {});
+          break;
+        case "downloaded":
           api.ui.toast("GIF saved — check your downloads", {});
           break;
         case "no-selection":
@@ -94,8 +98,8 @@ export function Overlay() {
           <UiBox className="bg-black bg-opacity-85 p-4 shadow-lg card-2 w-72 text-white">
             <SectionHeading size="md">GIF Recorder</SectionHeading>
             <p className="text-sm opacity-80 mb-3">
-              Select with <HotkeyBadge>C</HotkeyBadge>, then Record. Press{" "}
-              <HotkeyBadge>F7</HotkeyBadge> to close.
+              Select with <HotkeyBadge>C</HotkeyBadge>, then Record. <br />
+              Press <HotkeyBadge>F7</HotkeyBadge> to close.
             </p>
             <label className="block text-sm mb-2">
               Frames
@@ -106,7 +110,7 @@ export function Overlay() {
                 max={120}
                 value={frames}
                 disabled={busy}
-                onChange={(event) => setFrames(parsePositiveInt(event.target.value, 30))}
+                onChange={(event) => setFrames(parsePositiveInt(event.target.value, DEFAULT_FRAMES))}
               />
             </label>
             <label className="block text-sm mb-2">

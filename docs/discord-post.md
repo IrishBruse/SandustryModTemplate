@@ -13,6 +13,7 @@ TypeScript template for Sandustry mods (Steam **[mods]** branch).
 - Use free `sandkit` (ambient types) — no `@modkit/sandkit` import
 - Worker API example mod probes worker-thread `sandkit.api` (`worker.ts` → `worker.js`)
 - Selection screenshot example: **C** marquee, then **F8** downloads a PNG cropped to the selection edges
+- GIF recorder example: **C** marquee, then **F7** records an animated GIF (default **60** frames)
 
 # What's new (2026-08-21)
 

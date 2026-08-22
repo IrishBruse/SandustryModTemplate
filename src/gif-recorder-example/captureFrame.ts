@@ -81,26 +81,37 @@ function clipRectToCanvas(rect: ScreenRect, canvasW: number, canvasH: number): S
 }
 
 /**
- * Wait until the current frame is on the canvas.
- * Prefer `frame:render` + a microtask (dynamic2D upload).
- * If the sim is paused and that event does not fire, capture after a short wait.
+ * Copy pixels on the first microtask after `frame:render`.
+ * That event fires just before `texture.update` + Pixi render — a sync read is
+ * still the sky clear. Waiting an extra `await` hop is too late (WebGL buffer gone).
  */
-export function waitForPaint(api: SandkitApi): Promise<void> {
-  return new Promise((resolve) => {
+export function rasterizeOnPaint(
+  api: SandkitApi,
+  bounds: CellBounds,
+  scale: number,
+): Promise<HTMLCanvasElement | null> {
+  return new Promise((resolve, reject) => {
     let settled = false;
-    let timeoutId: ReturnType<typeof setTimeout> | undefined;
-    const finish = () => {
+    let timeoutId = 0;
+    const unsubscribe = api.events.on("frame:render", () => {
+      unsubscribe();
+      queueMicrotask(() => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timeoutId);
+        try {
+          resolve(rasterizeSelection(api, bounds, scale));
+        } catch (error) {
+          reject(error);
+        }
+      });
+    });
+    timeoutId = window.setTimeout(() => {
       if (settled) return;
       settled = true;
-      if (timeoutId !== undefined) clearTimeout(timeoutId);
       unsubscribe();
-      resolve();
-    };
-
-    const unsubscribe = api.events.on("frame:render", () => {
-      queueMicrotask(finish);
-    });
-    timeoutId = setTimeout(finish, 50);
+      reject(new Error("paint wait timed out"));
+    }, 2000);
   });
 }
 

@@ -1,7 +1,12 @@
 import { GIFEncoder, applyPalette, quantize } from "gifenc";
-import { getSession, rasterizeSelection, waitForPaint } from "./captureFrame";
+import { getSession, rasterizeOnPaint } from "./captureFrame";
 import { MOD_ID } from "./globals";
-import { getSelectionCellBounds } from "./selectionBounds";
+import {
+  getSelectionCellBounds,
+  restoreMarqueeSelection,
+  snapshotMarqueeSelection,
+  type CellBounds,
+} from "./selectionBounds";
 
 const LOG = `[${MOD_ID}]`;
 
@@ -23,7 +28,7 @@ export type RecordGifOptions = {
   scale: number;
 };
 
-export type RecordGifResult = "ok" | "no-selection" | "out-of-view" | "failed";
+export type RecordGifResult = "ok" | "downloaded" | "no-selection" | "out-of-view" | "failed";
 
 type EnvironmentShape = {
   multithreading?: {
@@ -70,7 +75,7 @@ function waitTicks(api: SandkitApi, count: number): Promise<void> {
       left -= 1;
       if (left <= 0) {
         clearTimeout(timeoutId);
-        setSimulationPaused(true);
+        // Stay unpaused so this tick can paint before we capture.
         resolve();
         return;
       }
@@ -80,6 +85,23 @@ function waitTicks(api: SandkitApi, count: number): Promise<void> {
     api.schedule.nextTick(step);
     setSimulationPaused(false);
   });
+}
+
+async function capturePaintedFrame(
+  api: SandkitApi,
+  bounds: CellBounds,
+  scale: number,
+): Promise<HTMLCanvasElement | null> {
+  const wasPaused = getSession()?.paused === true;
+  if (wasPaused) setSimulationPaused(false);
+  try {
+    return await rasterizeOnPaint(api, bounds, scale);
+  } catch (error) {
+    console.warn(`${LOG} first paint wait failed:`, error);
+    return null;
+  } finally {
+    if (wasPaused) setSimulationPaused(true);
+  }
 }
 
 function canvasToRgba(canvas: HTMLCanvasElement): {
@@ -93,44 +115,137 @@ function canvasToRgba(canvas: HTMLCanvasElement): {
   return { data: image.data, width: image.width, height: image.height };
 }
 
+function sampleFramesForPalette(frames: HTMLCanvasElement[]): Uint8ClampedArray | null {
+  const chunks: Uint8ClampedArray[] = [];
+  for (const frame of frames) {
+    const rgba = canvasToRgba(frame);
+    if (!rgba) continue;
+    const pixels = rgba.width * rgba.height;
+    const step = Math.max(1, Math.floor(pixels / 4000));
+    const out = new Uint8ClampedArray(Math.ceil(pixels / step) * 4);
+    let o = 0;
+    for (let p = 0; p < pixels; p += step) {
+      const i = p * 4;
+      out[o] = rgba.data[i];
+      out[o + 1] = rgba.data[i + 1];
+      out[o + 2] = rgba.data[i + 2];
+      out[o + 3] = rgba.data[i + 3];
+      o += 4;
+    }
+    chunks.push(out.subarray(0, o));
+  }
+  if (chunks.length === 0) return null;
+  const combined = new Uint8ClampedArray(chunks.reduce((n, chunk) => n + chunk.length, 0));
+  let offset = 0;
+  for (const chunk of chunks) {
+    combined.set(chunk, offset);
+    offset += chunk.length;
+  }
+  return combined;
+}
+
 function encodeGif(frames: HTMLCanvasElement[], delayMs: number): Uint8Array | null {
   if (frames.length === 0) return null;
+  const sample = sampleFramesForPalette(frames);
+  if (!sample) return null;
+  const palette = quantize(sample, 256);
   const gif = GIFEncoder();
   for (let i = 0; i < frames.length; i++) {
     const rgba = canvasToRgba(frames[i]);
     if (!rgba) return null;
-    const palette = quantize(rgba.data, 256);
     const index = applyPalette(rgba.data, palette);
     gif.writeFrame(index, rgba.width, rgba.height, {
-      palette,
+      palette: i === 0 ? palette : undefined,
       delay: delayMs,
       repeat: i === 0 ? 0 : undefined,
+      dispose: 1,
     });
   }
   gif.finish();
   return gif.bytes();
 }
 
-function downloadBytes(bytes: Uint8Array, filename: string): void {
+function bytesToGifBlob(bytes: Uint8Array): Blob {
   const copy = new Uint8Array(bytes.byteLength);
   copy.set(bytes);
-  const blob = new Blob([copy], { type: "image/gif" });
+  return new Blob([copy], { type: "image/gif" });
+}
+
+function canvasToPngBlob(canvas: HTMLCanvasElement): Promise<Blob | null> {
+  return new Promise((resolve) => {
+    canvas.toBlob((blob) => resolve(blob), "image/png");
+  });
+}
+
+function bytesToBase64(bytes: Uint8Array): string {
+  let binary = "";
+  const chunkSize = 8192;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+  }
+  return btoa(binary);
+}
+
+/**
+ * Chromium / Electron rejects `image/gif` on `clipboard.write`.
+ * PNG is accepted (same as the screenshot example). HTML carries the GIF for apps that read it.
+ */
+async function copyGifToClipboard(bytes: Uint8Array, preview: HTMLCanvasElement): Promise<boolean> {
+  if (!navigator.clipboard?.write || typeof ClipboardItem === "undefined") {
+    console.error(`${LOG} clipboard image write unavailable`);
+    return false;
+  }
+
+  const gifBlob = bytesToGifBlob(bytes);
+  try {
+    await navigator.clipboard.write([new ClipboardItem({ "image/gif": Promise.resolve(gifBlob) })]);
+    console.log(`${LOG} copied GIF to clipboard`, { bytes: gifBlob.size });
+    return true;
+  } catch (error) {
+    console.warn(`${LOG} image/gif not accepted:`, error);
+  }
+
+  const pngBlob = await canvasToPngBlob(preview);
+  if (!pngBlob) return false;
+
+  try {
+    const html = `<img src="data:image/gif;base64,${bytesToBase64(bytes)}" alt="" />`;
+    await navigator.clipboard.write([
+      new ClipboardItem({
+        "image/png": Promise.resolve(pngBlob),
+        "text/html": Promise.resolve(new Blob([html], { type: "text/html" })),
+      }),
+    ]);
+    console.log(`${LOG} copied PNG+HTML clipboard`, { png: pngBlob.size, gif: gifBlob.size });
+    return true;
+  } catch (error) {
+    console.warn(`${LOG} PNG+HTML clipboard failed:`, error);
+  }
+
+  try {
+    await navigator.clipboard.write([new ClipboardItem({ "image/png": Promise.resolve(pngBlob) })]);
+    console.log(`${LOG} copied PNG to clipboard`, { bytes: pngBlob.size });
+    return true;
+  } catch (error) {
+    console.error(`${LOG} clipboard.write failed:`, error);
+    return false;
+  }
+}
+
+function downloadGif(bytes: Uint8Array): void {
+  const blob = bytesToGifBlob(bytes);
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = filename;
+  const now = new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  link.download = `sandustry-${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}.gif`;
   link.click();
   URL.revokeObjectURL(url);
 }
 
-function gifFilename(): string {
-  const now = new Date();
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `sandustry-${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}.gif`;
-}
-
 /**
- * Pause, capture N frames with `ticksPerFrame` sim ticks between them, encode a GIF, download it.
+ * Pause, capture N frames with `ticksPerFrame` sim ticks between them, encode a GIF, copy it.
  */
 export async function recordSelectionGif(
   api: SandkitApi,
@@ -147,6 +262,7 @@ export async function recordSelectionGif(
     return "no-selection";
   }
 
+  const marquee = snapshotMarqueeSelection();
   const wasPaused = getSession()?.paused === true;
   console.log(`${LOG} record start`, {
     bounds,
@@ -157,20 +273,23 @@ export async function recordSelectionGif(
 
   const frames: HTMLCanvasElement[] = [];
   try {
-    setSimulationPaused(true);
-    await waitForPaint(api);
-
-    const first = rasterizeSelection(api, bounds, scale);
+    const first = await capturePaintedFrame(api, bounds, scale);
     if (!first) return "out-of-view";
     frames.push(first);
+    setSimulationPaused(true);
 
     for (let i = 1; i < framesWanted; i++) {
       await waitTicks(api, ticksPerFrame);
-      await waitForPaint(api);
-      const frame = rasterizeSelection(api, bounds, scale);
+      let frame: HTMLCanvasElement | null = null;
+      try {
+        frame = await rasterizeOnPaint(api, bounds, scale);
+      } catch (error) {
+        console.warn(`${LOG} paint wait failed on frame ${i + 1}:`, error);
+      }
+      setSimulationPaused(true);
       if (!frame) {
-        console.warn(`${LOG} frame ${i + 1} blank — stopping`);
-        break;
+        console.warn(`${LOG} frame ${i + 1} missing — skipped`);
+        continue;
       }
       frames.push(frame);
       if (i === 1 || i % 10 === 0) {
@@ -187,18 +306,19 @@ export async function recordSelectionGif(
     const bytes = encodeGif(frames, delayMs);
     if (!bytes) return "failed";
 
-    const filename = gifFilename();
-    downloadBytes(bytes, filename);
+    downloadGif(bytes);
+    const copied = await copyGifToClipboard(bytes, frames[0]);
     console.log(`${LOG} GIF ready`, {
       frames: frames.length,
       bytes: bytes.byteLength,
-      filename,
+      copied,
     });
-    return "ok";
+    return copied ? "ok" : "downloaded";
   } catch (error) {
     console.error(`${LOG} record threw:`, error);
     return "failed";
   } finally {
+    if (marquee) restoreMarqueeSelection(api, marquee, bounds);
     setSimulationPaused(wasPaused);
   }
 }
