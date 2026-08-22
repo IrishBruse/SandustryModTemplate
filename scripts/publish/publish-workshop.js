@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
  * Release-build mods, then upload to Steam Workshop with SteamCMD.
- * Requires SteamCMD: https://developer.valvesoftware.com/wiki/SteamCMD
+ * Uses SteamCMD on PATH, or downloads the official Valve installer into .tmp/steamcmd/.
  * Usage: npm run publish
  *        npm run publish -- --mod selection-capture
  *        npm run publish -- --mod selection-capture --yes
  */
 import { execFileSync, spawn, spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, basename, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -24,6 +24,7 @@ import {
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const SANDUSTRY_APP_ID = "2764460";
 const STEAMCMD_DOCS = "https://developer.valvesoftware.com/wiki/SteamCMD";
+const STEAMCMD_LOCAL_DIR = join(ROOT, ".tmp", "steamcmd");
 const IS_WIN = process.platform === "win32";
 
 const argv = process.argv.slice(2);
@@ -105,7 +106,7 @@ function findSteamCmd() {
   const roots = [
     ...steamLibraryRoots(),
     join(homedir(), "steamcmd"),
-    join(ROOT, ".tmp", "steamcmd"),
+    STEAMCMD_LOCAL_DIR,
     "/usr/games",
   ];
   for (const root of roots) {
@@ -115,6 +116,100 @@ function findSteamCmd() {
     }
   }
   return null;
+}
+
+/**
+ * Official Valve archive. The npm `steamcmd` package (2017) is not used: it
+ * pulls `request` / `unzip`, and its API is game download, not Workshop upload.
+ * @returns {{ url: string, archiveName: string }}
+ */
+function officialSteamCmdArchive() {
+  if (IS_WIN) {
+    return {
+      url: "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip",
+      archiveName: "steamcmd.zip",
+    };
+  }
+  if (process.platform === "darwin") {
+    return {
+      url: "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_osx.tar.gz",
+      archiveName: "steamcmd_osx.tar.gz",
+    };
+  }
+  if (process.platform === "linux") {
+    return {
+      url: "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz",
+      archiveName: "steamcmd_linux.tar.gz",
+    };
+  }
+  fail(`No official SteamCMD archive for ${process.platform}. See ${STEAMCMD_DOCS}`);
+  throw new Error("unreachable");
+}
+
+/**
+ * @param {string} dir
+ * @param {string} archive
+ */
+function extractSteamCmdArchive(dir, archive) {
+  const args = archive.endsWith(".zip")
+    ? ["-xf", archive, "-C", dir]
+    : ["-xzf", archive, "-C", dir];
+  const unpacked = spawnSync("tar", args, { stdio: "inherit" });
+  if (unpacked.status !== 0) {
+    fail(`Failed to unpack SteamCMD archive with tar (exit ${unpacked.status ?? "?"}).`);
+  }
+}
+
+/**
+ * SteamCMD exit 7 means it self-updated. That is success for a first run.
+ * @param {string} bin
+ */
+function bootstrapSteamCmd(bin) {
+  console.log("Updating SteamCMD (first run)…");
+  let result;
+  try {
+    result = spawnSync(bin, ["+quit"], {
+      cwd: dirname(bin),
+      stdio: "inherit",
+      timeout: 180_000,
+    });
+  } catch (error) {
+    fail(error instanceof Error ? error.message : String(error));
+  }
+  if (result.status !== 0 && result.status !== 7) {
+    fail(`SteamCMD bootstrap failed (exit ${result.status ?? "?"}). See ${STEAMCMD_DOCS}`);
+  }
+}
+
+/**
+ * @returns {Promise<string>}
+ */
+async function ensureSteamCmd() {
+  const existing = findSteamCmd();
+  if (existing) {
+    if (!IS_WIN && existing.startsWith(STEAMCMD_LOCAL_DIR) && existing.endsWith(".sh")) {
+      chmodSync(existing, 0o755);
+    }
+    return existing;
+  }
+
+  console.log(`SteamCMD not on PATH. Downloading into ${STEAMCMD_LOCAL_DIR}/ …`);
+  mkdirSync(STEAMCMD_LOCAL_DIR, { recursive: true });
+  const { url, archiveName } = officialSteamCmdArchive();
+  const archive = join(STEAMCMD_LOCAL_DIR, archiveName);
+  const res = await fetch(url);
+  if (!res.ok) fail(`SteamCMD download failed: ${res.status} ${res.statusText} (${url})`);
+  writeFileSync(archive, Buffer.from(await res.arrayBuffer()));
+  extractSteamCmdArchive(STEAMCMD_LOCAL_DIR, archive);
+  unlinkSync(archive);
+
+  const bin = findSteamCmd();
+  if (!bin) {
+    fail(`SteamCMD download finished, but the binary is missing. See ${STEAMCMD_DOCS}`);
+  }
+  if (!IS_WIN && bin.endsWith(".sh")) chmodSync(bin, 0o755);
+  bootstrapSteamCmd(bin);
+  return bin;
 }
 
 /**
@@ -516,12 +611,7 @@ if (blocked) {
   fail("npm run publish is a release upload. Do not pass --watch, --debug, or --game.");
 }
 
-const steamCmd = findSteamCmd();
-if (!steamCmd) {
-  fail(
-    `steamcmd not found. npm run publish requires SteamCMD. Install it from ${STEAMCMD_DOCS} (PATH or .tmp/steamcmd/).`,
-  );
-}
+const steamCmd = await ensureSteamCmd();
 
 const account = steamAccountName();
 const allMods = await loadMods([], { includeDebugKit: false });
