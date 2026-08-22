@@ -111,6 +111,11 @@ async function syncModFiles(mod, includeModkitDebug) {
       });
     }
   }
+  for (const name of ["README.md", "CHANGELOG.md"]) {
+    const from = join(mod.dir, name);
+    if (!existsSync(from)) continue;
+    cpSync(from, join(mod.outDir, name), { force: true });
+  }
   await buildPatches(mod.outDir, {
     modDebug,
     modTs: mod.modTs,
