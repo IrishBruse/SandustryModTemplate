@@ -1,4 +1,4 @@
-import { installDebug, isHotReloadEval, onDispose } from "./debug";
+import { installHotReload, isHotReloadEval, onDispose } from "./debug";
 import { isEnabled, safe } from "@modkit/utils";
 import { installGlobals, MOD_ID } from "./globals";
 import { Overlay } from "./ui/Overlay";
@@ -7,7 +7,7 @@ import tailwindCss from "./ui/tailwind.css";
 const api = sandkit.api;
 const reloaded = isHotReloadEval(MOD_ID);
 installGlobals(api);
-installDebug(api, MOD_ID);
+installHotReload(api, MOD_ID);
 
 const OVERLAY_ID = "overlay-hotkey-example";
 

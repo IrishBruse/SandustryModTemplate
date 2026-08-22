@@ -1,11 +1,11 @@
-import { installDebug, isHotReloadEval } from "./debug";
+import { installHotReload, isHotReloadEval } from "./debug";
 import { isEnabled, registerRetroGame, safe } from "@modkit/utils";
 import { installGlobals, MOD_ID } from "./globals";
 
 const api = sandkit.api;
 const reloaded = isHotReloadEval(MOD_ID);
 installGlobals(api);
-installDebug(api, MOD_ID);
+installHotReload(api, MOD_ID);
 
 const WIDTH = 160;
 const HEIGHT = 100;
