@@ -1,4 +1,4 @@
-import { defineModInfo, definePatches } from "@modkit/modinfo";
+import { defineModInfo } from "@modkit/modinfo";
 
 export const modinfo = defineModInfo({
   manifestVersion: 1,
@@ -60,6 +60,3 @@ export const modinfo = defineModInfo({
     },
   },
 });
-
-/** No game-file patches. Splash skip is settings-gated runtime only (`skipSplash`). */
-export const patches = definePatches([]);

@@ -1,4 +1,4 @@
-import { defineModInfo, definePatches } from "@modkit/modinfo";
+import { defineModInfo } from "@modkit/modinfo";
 
 export const modinfo = defineModInfo({
   manifestVersion: 1,
@@ -20,6 +20,3 @@ export const modinfo = defineModInfo({
     },
   },
 });
-
-/** Production patches — always written to `patches.json`. */
-export const patches = definePatches([]);

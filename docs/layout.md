@@ -49,7 +49,7 @@ Every mod needs these files:
 
 | File            | Role                                                                     |
 | --------------- | ------------------------------------------------------------------------ |
-| `mod.ts`        | Manifest and patches. The build writes `modinfo.json` and `patches.json` |
+| `mod.ts`        | Manifest and optional patches. The build writes `modinfo.json` and `patches.json` |
 | `main.ts`       | Mod entry. Import hot reload from `./debug`, not from `modkit/debug`     |
 | `debug.ts`      | Thin re-export of hot-reload helpers (release builds replace this)       |
 | `globals.ts`    | `MOD_ID` and `installGlobals`                                            |

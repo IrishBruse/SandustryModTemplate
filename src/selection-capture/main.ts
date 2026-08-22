@@ -2,7 +2,7 @@ import { installHotReload, isHotReloadEval, onDispose } from "./debug";
 import { isEnabled, safe } from "@modkit/utils";
 import { installGlobals, MOD_ID } from "./globals";
 import { Overlay } from "./ui/Overlay";
-import tailwindCss from "./ui/tailwind.css";
+import tailwindCss from "@modkit/ui/tailwind.css";
 
 const api = sandkit.api;
 const reloaded = isHotReloadEval(MOD_ID);

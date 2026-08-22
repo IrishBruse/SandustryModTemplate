@@ -57,6 +57,6 @@ import { ACCENT, hotkeyBadgeStyle } from "@modkit/ui";
 
 The game Tailwind stylesheet is purged. Classes the HUD does not use (for example `w-[28rem]`, `underline`) do nothing until this mod inserts utilities.
 
-The build compiles only class names from files esbuild packed into `main.js`. Sandkit does not load a CSS file, so [src/overlay-hotkey-example/main.ts](../../src/overlay-hotkey-example/main.ts) still inserts that compiled sheet.
+Import `@modkit/ui/tailwind.css` and insert the string into a `<style>` tag. The build compiles only class names from files esbuild packed into `main.js`. See [src/overlay-hotkey-example/main.ts](../../src/overlay-hotkey-example/main.ts).
 
 Live canvases live under [docs/ui/canvas](canvas/). `npm run ui:css` compiles Tailwind into [canvas/_preview/utilities.css](canvas/_preview/utilities.css). HUD-only classes (`ui-box`, `hotkey-badge`, `card-2`) stay in [chrome.css](canvas/_preview/chrome.css). See [builds.md](../builds.md).

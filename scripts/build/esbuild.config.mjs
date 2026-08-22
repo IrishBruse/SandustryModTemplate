@@ -14,6 +14,7 @@ import { buildPatches } from "../lib/build-patches.js";
 import {
   bundledContentFiles,
   compileTailwindUtilities,
+  findTailwindCssEntry,
   TAILWIND_CSS_FILTER,
 } from "../lib/compile-tailwind.js";
 import { loadMods, modIsolationPlugin, prepareModOutputs, PUBLISH_OUT_ROOT } from "../lib/mods.js";
@@ -367,8 +368,6 @@ function basePlugins(mod) {
  * @param {import("./mods.js").LoadedMod} mod
  */
 async function compileFromBundleGraph(mod) {
-  const cssEntry = join(mod.dir, "ui/tailwind.css");
-  if (!existsSync(cssEntry)) return "";
   const result = await esbuild.build({
     ...bundleOptions(mod),
     write: false,
@@ -376,6 +375,8 @@ async function compileFromBundleGraph(mod) {
     metafile: true,
     plugins: [...basePlugins(mod), stubCssPlugin()],
   });
+  const cssEntry = findTailwindCssEntry(result.metafile, ROOT);
+  if (!cssEntry) return "";
   return compileTailwindUtilities(bundledContentFiles(result.metafile, ROOT), cssEntry);
 }
 
@@ -407,7 +408,6 @@ async function buildOne(mod) {
 async function watchOne(mod) {
   await syncModFiles(mod);
   let tailwindCss = await compileFromBundleGraph(mod);
-  const cssEntry = join(mod.dir, "ui/tailwind.css");
 
   const mainCtx = await esbuild.context({
     ...bundleOptions(mod),
@@ -420,7 +420,8 @@ async function watchOne(mod) {
         setup(build) {
           build.onEnd(async (result) => {
             if (result.errors.length > 0) return;
-            if (existsSync(cssEntry)) {
+            const cssEntry = findTailwindCssEntry(result.metafile, ROOT);
+            if (cssEntry) {
               const next = await compileTailwindUtilities(
                 bundledContentFiles(result.metafile, ROOT),
                 cssEntry,
@@ -430,6 +431,10 @@ async function watchOne(mod) {
                 await mainCtx.rebuild();
                 return;
               }
+            } else if (tailwindCss) {
+              tailwindCss = "";
+              await mainCtx.rebuild();
+              return;
             }
             maybeRewriteDebugMaps(mod);
             await syncModFiles(mod);

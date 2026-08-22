@@ -6,6 +6,11 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ## Unreleased
 
+### Changed
+
+- Shared Tailwind entry is [`modkit/ui/tailwind.css`](../modkit/ui/tailwind.css). Overlay mods import `@modkit/ui/tailwind.css` instead of a per-mod `ui/tailwind.css` / `ui/css.d.ts`.
+- Mods no longer ship empty `patches` exports or `patches/` folders. Add `patches` in `mod.ts` when you need them. See [patches.md](patches.md).
+
 ### Added
 
 - **Debug companion:** **Disable autosave** setting (default on). Sets `session.settings.autosaveInterval` to `0` on load and each hot-reload eval so the game does not auto-save during development. Manual saves still work. See [modkit/debug.md](modkit/debug.md).

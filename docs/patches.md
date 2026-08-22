@@ -1,6 +1,6 @@
 # Patch definitions
 
-Define patches in that mod's [`mod.ts`](../src/hello-toast-example/mod.ts) with `definePatches`. The build writes `patches.json` into that mod's output folder. The game loader applies those patches to Sandustry JavaScript files (for example `js/bundle.js`).
+Define patches in that mod's `mod.ts` with `definePatches`. The build writes `patches.json` into that mod's output folder. The game loader applies those patches to Sandustry JavaScript files (for example `js/bundle.js`).
 
 Patch shapes live in [`modkit/modinfo.ts`](../modkit/modinfo.ts).
 
@@ -50,7 +50,7 @@ Always set `expectedMatches`. The mod loader fails if the match count differs â€
 ## Adding a patch
 
 ```ts
-// src/hello-toast-example/mod.ts
+// src/<name>/mod.ts
 import { definePatches } from "@modkit/modinfo";
 
 export const patches = definePatches([

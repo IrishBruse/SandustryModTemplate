@@ -24,7 +24,7 @@ See [modkit/debug.md](modkit/debug.md) for what debug helpers do at runtime.
 
 The game ships Tailwind **v3.4.19** inside `bundle.js`. That stylesheet is purged: only classes the HUD uses are present. A class such as `w-[28rem]` has no rule until the mod adds it.
 
-Sandkit loads `main.js` only. There is no CSS file in the mod manifest. The build still has to insert a `<style>` tag. The compiled sheet is **only the utilities this bundle uses**: esbuild lists the source files it packed, then Tailwind scans those files. Unused `modkit/ui` components do not add CSS.
+Sandkit loads `main.js` only. There is no CSS file in the mod manifest. The build still has to insert a `<style>` tag. Import shared `@modkit/ui/tailwind.css` from the mod entry. The compiled sheet is **only the utilities this bundle uses**: esbuild lists the source files it packed, then Tailwind scans those files. Unused `modkit/ui` components do not add CSS. Mods that never import the file skip the compile.
 
 The insert lives in [src/overlay-hotkey-example/main.ts](../src/overlay-hotkey-example/main.ts) (`style#<mod-id>-tailwind`). Hot reload removes that tag before it inserts a new one.
 

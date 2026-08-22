@@ -6,11 +6,28 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
 
-/** Any mod's `src/<name>/ui/tailwind.css`. */
-export const TAILWIND_CSS_FILTER = /[\\/]src[\\/][^/\\]+[\\/]ui[\\/]tailwind\.css$/;
+/** Shared utilities entry — import `@modkit/ui/tailwind.css` from the mod. */
+export const MODKIT_TAILWIND_CSS = join(ROOT, "modkit/ui/tailwind.css");
+
+export const TAILWIND_CSS_FILTER = /[\\/]modkit[\\/]ui[\\/]tailwind\.css$/;
 
 /** Docs canvas source — not a mod file, so mods stay isolated. */
 export const PREVIEW_TAILWIND_CSS = join(ROOT, "docs/ui/canvas/_preview/tailwind.css");
+
+/**
+ * Absolute path of the modkit Tailwind entry when the bundle imports it.
+ *
+ * @param {import('esbuild').Metafile} metafile
+ * @param {string} root
+ * @returns {string | null}
+ */
+export function findTailwindCssEntry(metafile, root) {
+  for (const key of Object.keys(metafile.inputs)) {
+    const abs = isAbsolute(key) ? key : join(root, key);
+    if (TAILWIND_CSS_FILTER.test(abs)) return abs;
+  }
+  return null;
+}
 
 /**
  * Compile `@tailwind utilities` for the given content files or globs.
