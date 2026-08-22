@@ -14,7 +14,7 @@ function configRoot(api: SandkitApi): DebugConfigRoot | null {
 }
 
 /**
- * Keep engine `debug.active` in sync with the **Engine Debug (F3)** setting.
+ * Keep engine `debug.active` in sync with the **Debug panel (F3)** setting.
  * Boot localStorage is updated so the next launch matches.
  */
 export function syncEngineDebug(api: SandkitApi): void {

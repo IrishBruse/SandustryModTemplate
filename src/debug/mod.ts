@@ -9,7 +9,7 @@ export const modinfo = defineModInfo({
   entry: "main.js",
   author: "Your Name",
   description:
-    "Dev companion: DevTools, splash skip, main-menu auto-boot, disable autosave, and F3 engine Debug. Installed on debug builds only.",
+    "Dev companion: DevTools, splash skip, main-menu auto-boot, disable autosave, and F3 Debug panel. Installed on debug builds only.",
   dependencies: [],
   loadOrder: -100,
   configSchema: {
@@ -47,9 +47,9 @@ export const modinfo = defineModInfo({
     engineDebug: {
       type: "boolean",
       default: true,
-      labelKey: "Engine Debug (F3)",
+      labelKey: "Debug panel (F3)",
       descriptionKey:
-        "Management Debug row and F3 open the engine Debug window. Turns engine debug.active on and hides the vanilla Debug / Stats buttons.",
+        "Turns engine debug.active on so vanilla Debug / Stats appear. F3 toggles the companion Debug panel (top left).",
     },
     disableAutosave: {
       type: "boolean",

@@ -1,13 +1,11 @@
 import { onDispose } from "@modkit/debug";
-import { DebugToggleOverlay } from "./DebugToggleOverlay";
+import { DebugPanel } from "./DebugPanel";
 
-/** Inject the F3 / management Debug toggle UI. */
+/** Inject the F3 companion Debug panel (top left). */
 export function installDebugToggle(api: SandkitApi, modId: string): void {
-  const dispose = api.ui.inject(`${modId}:debug-toggle`, () => (
-    <DebugToggleOverlay modId={modId} />
-  ));
+  const dispose = api.ui.inject(`${modId}:debug-panel`, () => <DebugPanel />);
   if (!dispose) {
-    console.warn(`[${modId}] Debug toggle UI registration failed`);
+    console.warn(`[${modId}] Debug panel UI registration failed`);
     return;
   }
   onDispose(dispose);
