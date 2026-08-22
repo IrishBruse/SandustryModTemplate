@@ -1,5 +1,5 @@
 import { clearLog } from "../log";
-import { debugEnabled, safe } from "../utils";
+import { safe } from "../utils";
 
 /**
  * Renderer hot reload for official Sandkit mods.
@@ -43,7 +43,6 @@ type Host = {
   notifyN: number | null;
   /** Null until `ide-debug.json` has been probed. */
   ideDebug: boolean | null;
-  settingsOff: (() => void) | null;
 };
 
 type GlobalHotReload = {
@@ -103,7 +102,6 @@ function ensureHost(modId: string, api?: SandkitApi): Host {
     pollTimer: null,
     notifyN: null,
     ideDebug: null,
-    settingsOff: null,
   };
   hostMap()[modId] = created;
   return created;
@@ -366,14 +364,14 @@ async function detectIdeDebug(host: Host): Promise<void> {
 }
 
 function syncWatching(host: Host): void {
-  if (debugEnabled(host.api) && devWatchUrl()) startPolling(host);
+  if (devWatchUrl()) startPolling(host);
   else stopPolling(host);
 }
 
 /**
- * Poll the dev watch server when Debug is on.
- * Call once from `installDebug`. A later eval replaces the listener so new
- * watch logic takes effect without a game restart.
+ * Poll the dev watch server when `__DEV_WATCH_URL__` is set.
+ * Call once from each mod's `./debug` entry. A later eval replaces the
+ * listener so new watch logic takes effect without a game restart.
  */
 export function installHotReload(api: SandkitApi, modId: string): void {
   setActive(modId);
@@ -382,14 +380,7 @@ export function installHotReload(api: SandkitApi, modId: string): void {
   host.modId = modId;
   const firstInstall = !host.installed;
 
-  if (!host.installed) {
-    host.installed = true;
-    host.settingsOff = safe(() =>
-      api.settings.onChange(() => {
-        syncWatching(host);
-      }),
-    );
-  }
+  if (!host.installed) host.installed = true;
 
   syncWatching(host);
   void detectIdeDebug(host).then(() => {
