@@ -29,6 +29,8 @@ cd <my-folder-name-here>
 npm install
 ```
 
+Root `npm install` sets up the template (esbuild, TypeScript, lint). It also runs `npm install` in each `src/<name>/` folder that has a `package.json`. Put mod-only npm packages there — not in the repo root. Run `npm run mod:install` to refresh mod folders after you add or change a mod `package.json`.
+
 ### Configure a mod
 
 Copy [`src/hello-toast-example/`](../src/hello-toast-example/) to `src/<your-mod>/` (or edit one of the demos). Set `id`, `name`, `author`, and `description` in that folder’s `mod.ts`. The mods folder uses `name`. Each `src/<name>/` with a `mod.ts` is a separate mod. Mods cannot import from each other.

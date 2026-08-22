@@ -2,5 +2,5 @@ node_modules/
 dist
 dist/
 logs
-references/
+/sandustry/
 *.tsbuildinfo

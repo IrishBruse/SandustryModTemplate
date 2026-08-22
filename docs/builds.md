@@ -34,7 +34,7 @@ Docs canvases use the same compiler. `npm run ui:css` writes [docs/ui/canvas/_pr
 
 ### Verify
 
-Static check against an extracted `references/source/dist/js/bundle.js`:
+Static check against an extracted `sandustry/dist/js/bundle.js` (`npm run setup`):
 
 | Selector           | In the game CSS |
 | ------------------ | --------------- |
@@ -58,6 +58,7 @@ npm run dev -- --mod overlay-hotkey-example
 npm run build            # release all mods (stay in the OS mods folder)
 npm run build -- --mod overlay-hotkey-example
 npm run typecheck
+npm run mod:install      # npm install in each src/<name>/ with package.json
 npm run sandustry        # stop + launch (no build; keep npm run dev for the bundle)
 npm run ui:css           # compile docs/ui/canvas preview Tailwind
 npm run ui:previews      # compile preview CSS, then screenshot preview.html

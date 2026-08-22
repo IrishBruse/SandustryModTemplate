@@ -8,6 +8,8 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Changed
 
+- **`npm run setup`** (was `npm run references`): extracts game source to top-level `sandustry/` and links `logs/`. Workshop mod copies under `references/` are removed.
+- **Mod npm deps:** optional `src/<name>/package.json` holds packages for that mod only. Root `npm install` and `npm run mod:install` run `npm install` in those folders. **Selection Capture** `modern-gif` moved from the repo root into `src/selection-capture/package.json`.
 - **`npm run sandustry`** only stops and launches the game. It does not build. Keep `npm run dev` (or `npm run build`) for the bundle. See [builds.md](builds.md).
 - **Selection Capture** GIF encode uses **modern-gif** instead of **gifenc** (typed API, same 2× pixel look).
 - **`npm run dev` cleanup:** when the watch stops (Ctrl+C, terminal close, or process exit), it removes OS mod folders this template owns and the matching `dist/<folder>` links. Use `npm run build` to leave mods installed. See [builds.md](builds.md).
@@ -15,6 +17,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Removed
 
+- **`references/`** Workshop mod copies and **`npm run references`**. Use **`npm run setup`** for extracted game source in `sandustry/` only.
 - **Selection Capture** panel **Scale** control. PNG and GIF are always **2×** nearest-neighbor.
 - **Selection Capture** **F8** screenshot hotkey. Copy a PNG with the panel **Screenshot** button.
 - **Selection Capture Freeze background** (cinematic `timeSpeed` stub froze the game). **Greenscreen** stays.
@@ -28,7 +31,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Added
 
-- **Workshop files:** if `src/<name>/preview.png` or `src/<name>/workshop.json` exist, the build copies them into the installed mod folder (Steam Workshop preview + published item id).
+- **Workshop `workshop.json`:** set `publishedFileId` in `src/<name>/mod.ts`; the build writes `workshop.json` into the installed mod folder (omitted from `modinfo.json`). **`preview.png`** is still copied when present.
 - **Hot reload clears logs:** each renderer reload truncates `logs/<mod-id>.log` and clears the DevTools console so the file only holds the current session. `clearLog(modId)` from `@modkit/log` and `POST /log/clear` on the watch server.
 - **Selection Capture** (`src/selection-capture/`): after a **C** marquee, **F7** opens the panel to copy a PNG or record a GIF of stepped sim ticks. The folder has `README.md` and `CHANGELOG.md`; the build copies them into the installed mod.
 - **Selection Capture** panel: **Greenscreen** (`#00FF00` behind the world).

@@ -6,7 +6,9 @@ TypeScript template for Sandustry mods (Steam **[mods]** branch).
 
 # What's new (2026-08-22)
 
-- Build copies `src/<name>/preview.png` and `workshop.json` into the installed mod folder when present (Workshop)
+- **`npm run setup`** extracts game source to `sandustry/` and links `logs/` (replaces `npm run references`; no Workshop copies)
+- Mod npm deps live in `src/<name>/package.json` (root `npm install` installs them too)
+- Build writes `workshop.json` from `publishedFileId` in `mod.ts`; `preview.png` still copies when present (Workshop)
 - **`npm run sandustry`** only launches (no build) — keep `npm run dev` for the bundle
 - Stopping `npm run dev` removes owned OS mod folders (use `npm run build` to keep them)
 - Hot reload works with **F5** (file poll; CDP attach can stall EventSource)

@@ -81,6 +81,7 @@ async function loadDebugSchema() {
  */
 async function writeModinfo(mod, includeDebugSetting) {
   const manifest = structuredClone(mod.manifest);
+  delete manifest.publishedFileId;
   if (includeDebugSetting) {
     const debugSchema = await loadDebugSchema();
     if (debugSchema && typeof debugSchema === "object") {
@@ -93,6 +94,16 @@ async function writeModinfo(mod, includeDebugSetting) {
   writeFileSync(join(mod.outDir, "modinfo.json"), `${JSON.stringify(manifest, null, 2)}\n`);
 }
 
+/** Write workshop.json when `publishedFileId` is set in `src/<name>/mod.ts`. */
+function writeWorkshopJson(mod) {
+  const id = mod.manifest?.publishedFileId;
+  if (typeof id !== "string" || id.length === 0) return;
+  writeFileSync(
+    join(mod.outDir, "workshop.json"),
+    `${JSON.stringify({ schemaVersion: 1, publishedFileId: id }, null, 2)}\n`,
+  );
+}
+
 /**
  * Copy static files and write modinfo.json + patches.json.
  * @param {import("./mods.js").LoadedMod} mod
@@ -101,6 +112,7 @@ async function writeModinfo(mod, includeDebugSetting) {
 async function syncModFiles(mod, includeModkitDebug) {
   mkdirSync(mod.outDir, { recursive: true });
   await writeModinfo(mod, modDebug);
+  writeWorkshopJson(mod);
   const staticDir = join(mod.dir, "mod");
   if (existsSync(staticDir)) {
     for (const name of readdirSync(staticDir)) {
@@ -111,7 +123,7 @@ async function syncModFiles(mod, includeModkitDebug) {
       });
     }
   }
-  for (const name of ["README.md", "CHANGELOG.md", "preview.png", "workshop.json"]) {
+  for (const name of ["README.md", "CHANGELOG.md", "preview.png"]) {
     const from = join(mod.dir, name);
     if (!existsSync(from)) continue;
     cpSync(from, join(mod.outDir, name), { force: true });

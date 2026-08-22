@@ -6,10 +6,12 @@
     "build": "node scripts/build/esbuild.config.mjs",
     "dev": "node scripts/build/dev.js",
     "typecheck": "node scripts/build/typecheck.js",
+    "mod:install": "node scripts/build/install-mod-deps.js",
+    "postinstall": "node scripts/build/install-mod-deps.js",
     "lint": "npm run typecheck && oxlint && oxfmt --check",
     "lint:fix": "oxlint --fix && oxfmt",
     "docs": "docsify serve docs",
-    "references": "node scripts/sandustry/references.js",
+    "setup": "node scripts/sandustry/setup.js",
     "ui:css": "node scripts/ui/compile-preview-css.mjs",
     "ui:previews": "node scripts/ui/generate-previews.mjs",
     "sandustry": "node scripts/sandustry/launch-sandustry.js",
@@ -25,8 +27,5 @@
     "postcss": "^8.5.26",
     "tailwindcss": "^3.4.19",
     "typescript": "^7.0.2"
-  },
-  "dependencies": {
-    "modern-gif": "^2.1.0"
   }
 }

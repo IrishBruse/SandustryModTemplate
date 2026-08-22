@@ -4,11 +4,12 @@ export const modinfo = defineModInfo({
   manifestVersion: 1,
   id: "irishbruse.selection-capture",
   name: "Selection Capture",
-  version: "0.1.0",
+  version: "0.1.1",
   apiVersion: 1,
   entry: "main.js",
   author: "IrishBruse",
-  description: "C-cursor marquee: F7 opens the panel to copy a PNG or record a GIF.",
+  description:
+    "F7 opens the panel to copy a PNG or record a GIF of the currently selected structure into a crisp pixel perfect image or Gif.",
   dependencies: [],
   loadOrder: 0,
   configSchema: {
@@ -19,6 +20,7 @@ export const modinfo = defineModInfo({
       descriptionKey: "Turn the mod off without unsubscribing.",
     },
   },
+  publishedFileId: "3787806696",
 });
 
 /** Production patches — always written to `patches.json`. */
