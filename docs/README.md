@@ -26,7 +26,8 @@ Full steps: **[Quick start](quick-start.md)**.
 | `npm run setup`     | Check install, extract game source to `sandustry/`, link `logs/` |
 | `npm run dev`       | Watch OS mods folder; remove owned mods when the watch stops     |
 | `npm run build`     | Release bundle (no debug helpers)                                |
-| `npm run publish`   | Release-build to `.tmp/publish/`, then SteamCMD upload           |
+| `npm run build:release` | Release staging to `build/<folder>/` (Workshop assets)       |
+| `npm run publish`   | Runs `build:release`, then SteamCMD upload                       |
 | `npm run typecheck` | TypeScript check                                                 |
 | `npm run sandustry` | Stop and launch the game (no build)                              |
 

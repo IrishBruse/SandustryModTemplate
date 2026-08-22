@@ -25,6 +25,7 @@ modkit/types/           Sandkit API types (submodule: sandustry-modding-types)
 sandustry/              Extracted game source from app.asar (`npm run setup`; gitignored)
 scripts/                npm command folders + `lib/` (see Scripts below)
 dist/<name>/            Link to OS mods folder for that src folder (symlink / Windows junction)
+build/<name>/           Release staging for Workshop publish (`npm run build:release`; gitignored)
 logs/                   Link to OS sandustry logs (symlink / Windows junction)
 ```
 
@@ -38,12 +39,12 @@ Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized dem
 | Path                       | Role                                                                                                                                                                                                                                                        |
 | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `src/<name>/mod.ts`        | Manifest (+ optional `patches` / `debugPatches`) → `modinfo.json` / `patches.json` at build. `export const modinfo = defineModInfo(...)`. Use `modinfo.id` for the mod id.                                                                                                       |
-| `src/<name>/main.ts`       | Mod entry. Hot reload boots via esbuild inject (`reloaded` is ambient). Import `onDispose` from `@modkit/debug` when needed.                                                                                                                                |
+| `src/<name>/main.ts`       | Mod entry. Build gates on **`enabled`** and boots hot reload (`reloaded` ambient). Import `onDispose` from `@modkit/debug` when needed.                                                                                                                  |
 | `src/<name>/worker.ts`     | Optional worker entry → `worker.js` when present (`workerEntry` in modinfo)                                                                                                                                                                                 |
 | `src/<name>/ui/`           | React overlays (import `react`, resolved to `modkit/esbuild/react.ts`)                                                                                                                                                                                      |
-| `src/<name>/README.md`     | Optional. Publish staging copies it into `.tmp/publish/`. Example mods: lists only — no tables ([`docs/AGENTS.md`](docs/AGENTS.md)).                                                                                                                        |
-| `src/<name>/CHANGELOG.md`  | Optional. Publish staging copies it; publish uses the version `##` section for Steam change notes.                                                                                                                                                          |
-| `src/<name>/workshop/`     | Optional. `workshop.json`, `preview.gif` (preferred), `preview.png`, `workshop.txt`, `screenshots/`. Build copies `workshop.json` and previews to the mod root. `npm run publish` also copies `screenshots/`, `README.md`, and `CHANGELOG.md` into staging. |
+| `src/<name>/README.md`     | Optional. Repo docs only (not copied into builds). Example mods: lists only — no tables ([`docs/AGENTS.md`](docs/AGENTS.md)).                                                                                                                          |
+| `src/<name>/CHANGELOG.md`  | Optional. Repo docs; publish reads the version `##` section for Steam change notes (file stays in the repo).                                                                                                                                               |
+| `src/<name>/workshop/`     | Optional. `workshop.json`, `preview.gif` (preferred), `preview.png`, `workshop.txt`, `screenshots/`. Build copies `workshop.json` and previews to the mod root. Screenshots stay under `workshop/` only.                                                  |
 | `src/<name>/mod/`          | Optional static files copied into the output folder                                                                                                                                                                                                         |
 | `src/<name>/tsconfig.json` | Isolated TypeScript project (does not see sibling mods)                                                                                                                                                                                                     |
 | `src/<name>/package.json`  | Optional npm deps for that mod only (`node_modules` in the mod folder)                                                                                                                                                                                      |
@@ -85,7 +86,7 @@ Folders match `npm run` commands. Shared helpers live in `scripts/lib/`.
 
 | Path                                      | Role                                                                                                                                  |
 | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `scripts/build/esbuild.config.mjs`        | `npm run build` — bundle each `src/<name>/main.ts` → `main.js` (and `worker.ts` → `worker.js`), write `modinfo.json` + `patches.json` |
+| `scripts/build/esbuild.config.mjs`        | `npm run build` / `build:release` — bundle each `src/<name>/main.ts` → `main.js` (and `worker.ts` → `worker.js`), write `modinfo.json` + `patches.json` |
 | `scripts/dev/dev.js`                      | `npm run dev` — watch + write to the game mods folder                                                                                 |
 | `scripts/dev/hot-reload-server.js`        | Hot-reload HTTP server (`/hot-reload`, `/log`)                                                                                        |
 | `scripts/typecheck/typecheck.js`          | `npm run typecheck` — root kit + per-mod `tsc --noEmit`                                                                               |
@@ -101,6 +102,7 @@ Folders match `npm run` commands. Shared helpers live in `scripts/lib/`.
 | Command              | Debug helpers                                            | `debugPatches` | Output                                                      |
 | -------------------- | -------------------------------------------------------- | -------------- | ----------------------------------------------------------- |
 | `npm run build`      | Stub (`modkit/esbuild/debug.empty.ts`); omit `src/debug` | Omitted        | OS mods folder; `dist/<folder>/` links                      |
+| `npm run build:release` | Stub; omit `src/debug`                                | Omitted        | `build/<folder>/` (Workshop staging; not the OS mods folder) |
 | `npm run dev`        | Included; install `src/debug`                            | Included       | OS mods folder while watching; removed when the watch stops |
 | `--game` / `--debug` | Included; install `src/debug`                            | Included       | Game mods folder                                            |
 
@@ -133,8 +135,9 @@ Full format: [`docs/patches.md`](docs/patches.md).
 ```bash
 npm run setup            # check install, extract game source, link logs
 npm run dev              # watch, debug on
-npm run build            # release
-npm run publish          # release-build to .tmp/publish/, SteamCMD upload
+npm run build            # release to OS mods folder
+npm run build:release    # release staging to build/<folder>/
+npm run publish          # build:release + SteamCMD upload
 npm run typecheck
 npm run sandustry        # stop + launch (no build)
 ```

@@ -15,6 +15,7 @@ New to the template? Start with [Quick start](quick-start.md).
 | `src/<name>/`  | Your mod (`mod.ts` + `main.ts`)       |
 | `modkit/`      | Shared kit. Import as `@modkit/*`     |
 | `dist/<name>/` | Link to that mod's folder in the game |
+| `build/<name>/` | Release staging (`npm run build:release`) |
 | `logs/`        | Link to Sandustry log files           |
 
 The game folder uses the `name` field in `mod.ts`, not the `src/` folder name.
@@ -61,7 +62,7 @@ Add these when you need them:
 | `ui/`                        | React overlays                                                                           |
 | `mod/`                       | Static files copied into the output folder                                               |
 | `package.json`               | npm packages for this mod only                                                           |
-| `README.md` / `CHANGELOG.md` | `npm run publish` copies them into `.tmp/publish/` (not `npm run build` / `npm run dev`) |
+| `README.md` / `CHANGELOG.md` | Repo docs only. Publish reads `CHANGELOG.md` for Steam change notes; builds do not copy these files |
 | `workshop/`                  | Workshop assets (`workshop.json`, previews, `workshop.txt`, `screenshots/`)              |
 
 ## What you import

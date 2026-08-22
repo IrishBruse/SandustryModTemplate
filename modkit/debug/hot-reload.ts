@@ -37,6 +37,7 @@ type Host = {
   disposers: Array<() => void>;
   sources: Record<string, string>;
   pollTimer: ReturnType<typeof setInterval> | null;
+  pollBusy: boolean;
   /** Last `n` from GET /hot-reload/last. Null until the first successful read. */
   notifyN: number | null;
 };
@@ -50,6 +51,8 @@ type NotifyPayload = {
   v?: number;
   n?: number;
   changed?: string[];
+  /** Manifest ids of mods that just rebuilt. Empty/omitted means "unknown" (byte compare). */
+  modIds?: string[];
   /** Re-run main.js even when the file bytes match the last load (Ctrl+R in `npm run dev`). */
   force?: boolean;
 };
@@ -96,6 +99,7 @@ function ensureHost(modId: string, api?: SandkitApi): Host {
     disposers: [],
     sources: {},
     pollTimer: null,
+    pollBusy: false,
     notifyN: null,
   };
   hostMap()[modId] = created;
@@ -312,15 +316,47 @@ async function refreshTrackedFiles(host: Host): Promise<void> {
   }
 }
 
+function notifyTargetsMod(payload: NotifyPayload, modId: string): boolean {
+  if (payload.force === true) return true;
+  if (!payload.modIds?.length) return true;
+  return payload.modIds.includes(modId);
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    globalThis.setTimeout(resolve, ms);
+  });
+}
+
+/** Re-read until bytes change. The game asset URL can still serve the old file. */
+async function readMainAfterRebuild(host: Host): Promise<string | null> {
+  const previous = host.sources[host.entry];
+  let last: string | null = null;
+  for (let i = 0; i < 10; i++) {
+    last = await readAsset(host.api, host.entry);
+    if (last == null) return null;
+    if (previous === undefined || last !== previous) return last;
+    await sleep(50);
+  }
+  return last;
+}
+
 async function handleNotify(host: Host, payload: NotifyPayload): Promise<void> {
   if (host.reloading) return;
+  if (!notifyTargetsMod(payload, host.modId)) return;
 
-  const mainSource = await readAsset(host.api, host.entry);
+  const reloadMain =
+    payload.force === true ||
+    ((payload.modIds?.includes(host.modId) ?? false) &&
+      (!payload.changed?.length || payload.changed.includes(MAIN_ENTRY)));
+  const mainSource = reloadMain
+    ? await readMainAfterRebuild(host)
+    : await readAsset(host.api, host.entry);
   if (mainSource == null) {
     forgetRemovedMod(host);
     return;
   }
-  if (payload.force === true || mainSource !== host.sources[host.entry]) {
+  if (payload.force === true || reloadMain || mainSource !== host.sources[host.entry]) {
     await reloadRenderer(host, mainSource);
   }
 
@@ -356,21 +392,26 @@ function forgetRemovedMod(host: Host): void {
 }
 
 async function pollNotify(host: Host): Promise<void> {
-  if (host.reloading) return;
+  if (host.reloading || host.pollBusy) return;
   if (!getHost(host.modId)) return;
-  const payload = await fetchNotify();
-  if (payload == null) return;
+  host.pollBusy = true;
+  try {
+    const payload = await fetchNotify();
+    if (payload == null) return;
 
-  if (host.notifyN == null) {
+    if (host.notifyN == null) {
+      host.notifyN = payload.n;
+      await refreshTrackedFiles(host);
+      if (!getHost(host.modId)) return;
+      console.log(`[${host.modId}] hot reload watching ${devWatchUrl()}${NOTIFY_PATH}`);
+      return;
+    }
+    if (payload.n === host.notifyN) return;
     host.notifyN = payload.n;
-    void refreshTrackedFiles(host);
-    if (!getHost(host.modId)) return;
-    console.log(`[${host.modId}] hot reload watching ${devWatchUrl()}${NOTIFY_PATH}`);
-    return;
+    await handleNotify(host, payload);
+  } finally {
+    host.pollBusy = false;
   }
-  if (payload.n === host.notifyN) return;
-  host.notifyN = payload.n;
-  await handleNotify(host, payload);
 }
 
 function startPolling(host: Host): void {

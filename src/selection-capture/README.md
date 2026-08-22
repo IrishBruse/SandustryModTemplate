@@ -42,7 +42,7 @@ The dashed **C** marquee is restored after a GIF recording.
 
 This mod is published on the Steam Workshop: [Pixel-perfect Screenshot and GIF recorder](https://steamcommunity.com/sharedfiles/filedetails/?id=3787806696).
 
-`npm run publish` **requires [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD)**. It uploads from `.tmp/publish/` with [`workshop.json`](workshop/workshop.json), **preview.gif** (or **preview.png**), [`screenshots/`](workshop/screenshots/), `README.md`, and `CHANGELOG.md`. [`workshop.txt`](workshop/workshop.txt) supplies the Steam description. Normal builds only copy `workshop.json` and the preview into the installed mod root.
+`npm run publish` **requires [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD)**. It uploads from `build/` with [`workshop.json`](workshop/workshop.json) and **preview.gif** (or **preview.png**). [`workshop.txt`](workshop/workshop.txt) supplies the Steam description. `README.md`, `CHANGELOG.md`, and [`screenshots/`](workshop/screenshots/) stay in the repo. Change notes for Steam come from `CHANGELOG.md` at upload time.
 
 ## Changelog
 

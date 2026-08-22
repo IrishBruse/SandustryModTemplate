@@ -65,6 +65,72 @@ function PillToggle({ label, checked, disabled, className = "", onChange }: Pill
   );
 }
 
+type NumberStepperProps = {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  disabled?: boolean;
+  onChange: (value: number) => void;
+};
+
+/** Beveled value box with a light up/down strip — matches vanilla spinner chrome. */
+function NumberStepper({ label, value, min, max, disabled, onChange }: NumberStepperProps) {
+  const clamp = (n: number) => Math.min(max, Math.max(min, Math.round(n)));
+  const setClamped = (n: number) => onChange(clamp(n));
+
+  return (
+    <label className={`block text-sm mb-2 ${disabled ? "opacity-50" : ""}`}>
+      {label}
+      <div
+        className="mt-1 flex h-9 w-full overflow-hidden border border-[#3d4450] bg-black"
+        style={{
+          clipPath:
+            "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))",
+        }}
+      >
+        <input
+          className="min-w-0 flex-1 bg-transparent px-3 text-lg text-white outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none disabled:cursor-not-allowed"
+          type="number"
+          min={min}
+          max={max}
+          value={value}
+          disabled={disabled}
+          onChange={(event) => setClamped(parsePositiveInt(event.target.value, value))}
+        />
+        <div className="flex w-6 shrink-0 flex-col bg-[#d1d5db]">
+          <button
+            className="flex flex-1 items-center justify-center hover:bg-white disabled:opacity-40"
+            type="button"
+            tabIndex={-1}
+            disabled={disabled || value >= max}
+            aria-label={`Increase ${label}`}
+            onClick={() => setClamped(value + 1)}
+          >
+            <span
+              className="inline-block h-0 w-0 border-l-[4px] border-r-[4px] border-b-[5px] border-l-transparent border-r-transparent border-b-[#4b5563]"
+              aria-hidden
+            />
+          </button>
+          <button
+            className="flex flex-1 items-center justify-center hover:bg-white disabled:opacity-40"
+            type="button"
+            tabIndex={-1}
+            disabled={disabled || value <= min}
+            aria-label={`Decrease ${label}`}
+            onClick={() => setClamped(value - 1)}
+          >
+            <span
+              className="inline-block h-0 w-0 border-l-[4px] border-r-[4px] border-t-[5px] border-l-transparent border-r-transparent border-t-[#4b5563]"
+              aria-hidden
+            />
+          </button>
+        </div>
+      </div>
+    </label>
+  );
+}
+
 export function Overlay() {
   const [open, setOpen] = useState(false);
   const [frames, setFrames] = useState(DEFAULT_FRAMES);
@@ -176,7 +242,6 @@ export function Overlay() {
   const toggleKey = sandkit.api.input.getDisplayKey(BINDINGS.togglePanel, "F7");
   const screenshotKey = sandkit.api.input.getDisplayKey(BINDINGS.screenshot);
   const recordGifKey = sandkit.api.input.getDisplayKey(BINDINGS.recordGif);
-  const fieldClass = "w-full bg-black text-white text-sm px-2 py-1 rounded border border-white/20";
   const actionButtonClass =
     "w-full text-sm tracking-wider bg-white bg-opacity-15 hover:bg-opacity-25 disabled:opacity-50 py-2 px-2 rounded flex items-center justify-center gap-2";
 
@@ -184,38 +249,28 @@ export function Overlay() {
     <OverlayRoot>
       <FixedAnchor anchor="top-right">
         <Interactive>
-          <UiBox className="bg-black p-4 shadow-lg card-2 w-72 text-white">
+          <UiBox className="bg-black p-4 shadow-lg card-2 w-fit min-w-72 text-white">
             <SectionHeading size="md">{modinfo.name}</SectionHeading>
             <p className="text-sm opacity-80 mb-3">
               Select with <HotkeyBadge>C</HotkeyBadge>.<br />
               Press <HotkeyBadge>{toggleKey}</HotkeyBadge> to close.
             </p>
-            <label className="block text-sm mb-2">
-              Frames
-              <input
-                className={`${fieldClass} mt-1`}
-                type="number"
-                min={2}
-                max={120}
-                value={frames}
-                disabled={busy}
-                onChange={(event) =>
-                  setFrames(parsePositiveInt(event.target.value, DEFAULT_FRAMES))
-                }
-              />
-            </label>
-            <label className="block text-sm mb-2">
-              Ticks / frame
-              <input
-                className={`${fieldClass} mt-1`}
-                type="number"
-                min={1}
-                max={30}
-                value={ticksPerFrame}
-                disabled={busy}
-                onChange={(event) => setTicksPerFrame(parsePositiveInt(event.target.value, 1))}
-              />
-            </label>
+            <NumberStepper
+              label="Frames"
+              value={frames}
+              min={2}
+              max={120}
+              disabled={busy}
+              onChange={setFrames}
+            />
+            <NumberStepper
+              label="Ticks / frame"
+              value={ticksPerFrame}
+              min={1}
+              max={30}
+              disabled={busy}
+              onChange={setTicksPerFrame}
+            />
             <PillToggle
               className="mb-2"
               label="Greenscreen"

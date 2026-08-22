@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build/esbuild.config.mjs",
+    "build:release": "node scripts/build/esbuild.config.mjs --publish-out",
     "dev": "node scripts/dev/dev.js",
     "typecheck": "node scripts/typecheck/typecheck.js",
     "postinstall": "node scripts/mod-install/install-mod-deps.js",

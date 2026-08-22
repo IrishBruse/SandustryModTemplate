@@ -22,17 +22,17 @@ let server = null;
 
 let notifyN = 0;
 
-/** @type {{ v: number; n: number; changed?: string[]; force?: boolean }} */
+/** @type {{ v: number; n: number; changed?: string[]; modIds?: string[]; force?: boolean }} */
 let lastNotify = { v: 1, n: 0 };
 
 /** @type {ReturnType<typeof setTimeout> | null} */
 let debounceTimer = null;
 
-/** @type {{ changed?: string[]; force?: boolean } | null} */
+/** @type {{ changed?: string[]; modIds?: string[]; force?: boolean } | null} */
 let pending = null;
 
 /**
- * @param {{ changed?: string[]; force?: boolean }} payload
+ * @param {{ changed?: string[]; modIds?: string[]; force?: boolean }} payload
  */
 function applyNotify(payload) {
   notifyN += 1;
@@ -40,12 +40,13 @@ function applyNotify(payload) {
     v: 1,
     n: notifyN,
     ...(payload.changed?.length ? { changed: payload.changed } : {}),
+    ...(payload.modIds?.length ? { modIds: payload.modIds } : {}),
     ...(payload.force === true ? { force: true } : {}),
   };
 }
 
 /**
- * @param {{ changed?: string[]; force?: boolean }} payload
+ * @param {{ changed?: string[]; modIds?: string[]; force?: boolean }} payload
  */
 export function notifyHotReload(payload) {
   if (!server) return;
@@ -61,19 +62,22 @@ export function notifyHotReload(payload) {
 }
 
 /**
- * @param {{ changed?: string[]; force?: boolean } | null} a
- * @param {{ changed?: string[]; force?: boolean }} b
+ * @param {{ changed?: string[]; modIds?: string[]; force?: boolean } | null} a
+ * @param {{ changed?: string[]; modIds?: string[]; force?: boolean }} b
  */
 function mergePayload(a, b) {
   if (!a) {
     return {
       changed: b.changed ? [...b.changed] : undefined,
+      modIds: b.modIds ? [...b.modIds] : undefined,
       force: b.force === true ? true : undefined,
     };
   }
   const changed = new Set([...(a.changed ?? []), ...(b.changed ?? [])]);
+  const modIds = new Set([...(a.modIds ?? []), ...(b.modIds ?? [])]);
   return {
     changed: changed.size > 0 ? [...changed] : undefined,
+    modIds: modIds.size > 0 ? [...modIds] : undefined,
     force: a.force === true || b.force === true ? true : undefined,
   };
 }

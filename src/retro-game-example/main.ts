@@ -1,6 +1,5 @@
-import { isEnabled, registerRetroGame, safe } from "@modkit/utils";
+import { registerRetroGame, safe } from "@modkit/utils";
 
-const api = sandkit.api;
 const WIDTH = 160;
 const HEIGHT = 100;
 
@@ -48,10 +47,8 @@ function registerNoiseTest() {
   console.log(`Noise test registered at ${WIDTH}x${HEIGHT}`);
 }
 
-if (isEnabled(api)) {
-  safe(() => {
-    registerNoiseTest();
-  });
-}
+safe(() => {
+  registerNoiseTest();
+});
 
 console.log(`${reloaded ? "reloaded" : "loaded"} — open Retro Console for Noise Test`);

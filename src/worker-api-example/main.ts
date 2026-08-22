@@ -1,12 +1,10 @@
-import { isEnabled, safe } from "@modkit/utils";
+import { safe } from "@modkit/utils";
 
 const api = sandkit.api;
-if (isEnabled(api)) {
-  safe(() => {
-    if (!reloaded) {
-      api.ui.toast("Worker API Example loaded — check worker console for probe", {});
-    }
-  });
-}
+safe(() => {
+  if (!reloaded) {
+    api.ui.toast("Worker API Example loaded — check worker console for probe", {});
+  }
+});
 
 console.log(`main ${reloaded ? "reloaded" : "loaded"} — workerEntry probes WorkerSandkitApi`);

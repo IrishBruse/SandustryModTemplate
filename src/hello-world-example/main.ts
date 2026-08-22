@@ -1,10 +1,9 @@
-import { isEnabled, safe } from "@modkit/utils";
+import { safe } from "@modkit/utils";
 
 const api = sandkit.api;
-if (isEnabled(api)) {
-  safe(() => {
-    if (!reloaded) api.ui.toast("Hello World Example loaded", {});
-  });
-}
+
+safe(() => {
+  if (!reloaded) api.ui.toast("Hello World Example loaded", {});
+});
 
 console.log(`${reloaded ? "reloaded" : "loaded"} — use api in DevTools`);

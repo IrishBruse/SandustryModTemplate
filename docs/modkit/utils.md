@@ -26,10 +26,16 @@ const value = safe(() => api.settings.get("enabled"));
 
 Reads a boolean from `api.settings.get("enabled")`. When the setting is missing or not a boolean, it defaults to `true`.
 
+The main bundle wraps the entry body so it does not run when the setting is false. Do not put an `enabled` guard in `main.ts`. Import `isEnabled` only for finer checks (for example gating a sub-feature).
+
+Workers do not get the prepend. Call `isEnabled` yourself in `worker.ts` when you need it.
+
 ```ts
 import { isEnabled } from "@modkit/utils";
 
-if (!isEnabled(api)) return;
+if (isEnabled(api) && otherFlag) {
+  // ...
+}
 ```
 
 Session debug switches live on the **debug** companion, not on every example. See [debug.md](debug.md).

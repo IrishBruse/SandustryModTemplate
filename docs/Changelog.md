@@ -8,16 +8,19 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Added
 
-- **Pixel-perfect Screenshot and GIF recorder:** panel **Show mouse** toggle draws the in-game cursor into PNG/GIF captures; **Greenscreen** / **Show mouse** use pill toggles; **Record GIF** / **Screenshot** show bound keys when set.
+- **`npm run build:release`:** release-builds mods into `build/<folder>/` (gitignored), separate from `dist/` and the OS mods folder. Staging is the release bundle plus `workshop.json` / previews only (no `README.md`, `CHANGELOG.md`, or `screenshots/`). `npm run publish` runs this, then uploads with SteamCMD. See [builds.md](builds.md#workshop-publish).
+- **Pixel-perfect Screenshot and GIF recorder:** panel **Show mouse** toggle draws the in-game cursor into PNG/GIF captures; **Greenscreen** / **Show mouse** use pill toggles; **Frames** / **Ticks / frame** use beveled steppers; **Record GIF** / **Screenshot** show bound keys when set.
 
 ### Changed
 
+- Main bundles skip the entry body when the mod **`enabled`** setting is false. Do not put an `enabled` guard in `main.ts`. See [modkit/utils.md](modkit/utils.md).
 - Ambient `sandkit` / `SandkitApi` / `WorkerSandkitApi` are composed in [`modkit/sandkit-global.d.ts`](../modkit/sandkit-global.d.ts) from the types submodule namespaces (types package stays on master; no shipped global).
 - `defineModInfo` returns the manifest only. Export `modinfo` and use `modinfo.id` (no separate `MOD_ID`). See [layout.md](layout.md).
 - Debug `console.*` inject prefixes DevTools output with `[modinfo.id]`. Do not add that tag in call sites. See [modkit/debug.md](modkit/debug.md).
 
 ### Fixed
 
+- Watch hot reload notifies after a Tailwind CSS rebuild, names the rebuilt mod, and reloads even when the game still serves a stale `main.js`. **Ctrl+R** is no longer required after a save. See [modkit/debug.md](modkit/debug.md).
 - Hot reload stops when a mod folder is gone (rename / watch cleanup) so DevTools does not keep logging `ERR_FILE_NOT_FOUND` for that mod's `main.js`. See [modkit/debug.md](modkit/debug.md).
 
 ### Changed

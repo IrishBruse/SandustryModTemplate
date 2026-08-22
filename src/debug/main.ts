@@ -1,5 +1,5 @@
 import { onDispose } from "@modkit/debug";
-import { isEnabled, safe } from "@modkit/utils";
+import { safe } from "@modkit/utils";
 import { disableSessionAutosave } from "./autosave";
 import { registerDevToolsShortcut, scheduleMainMenuBoot } from "./boot-menu";
 import { modinfo } from "./mod";
@@ -23,18 +23,16 @@ function installTailwind(): void {
   onDispose(() => style.remove());
 }
 
-if (isEnabled(api) && !reloaded) {
+if (!reloaded) {
   registerSandkitGlobals();
   if (settingOn(api, "f12DevTools")) registerDevToolsShortcut();
   scheduleMainMenuBoot(api, modinfo.id);
 }
 
-if (isEnabled(api)) {
-  safe(() => {
-    if (settingOn(api, "disableAutosave")) disableSessionAutosave();
-    installTailwind();
-    installDebugToggle(api, modinfo.id);
-  });
-}
+safe(() => {
+  if (settingOn(api, "disableAutosave")) disableSessionAutosave();
+  installTailwind();
+  installDebugToggle(api, modinfo.id);
+});
 
 console.log(`${reloaded ? "reloaded" : "loaded"} — debug companion`);

@@ -81,7 +81,7 @@ console.log(
   kv("mods", mods.map((mod) => styleText("bold", mod.folder)).join(styleText("dim", ", "))),
 );
 console.log(kv("mod debug", modDebug ? styleText("green", "on") : styleText("dim", "off")));
-console.log(kv("output", publishOut ? ".tmp/publish/<folder>" : "OS mods folder"));
+console.log(kv("output", publishOut ? "build/<folder>" : "OS mods folder"));
 console.log(kv("sourcemap", sourcemap ?? styleText("dim", "off")));
 
 /**
@@ -101,9 +101,7 @@ async function syncModFiles(mod) {
   mkdirSync(mod.outDir, { recursive: true });
   writeModinfo(mod);
   copyWorkshopInstallFiles(mod.dir, mod.outDir);
-  if (!publishOut) {
-    removeWorkshopPublishFiles(mod.outDir);
-  }
+  removeWorkshopPublishFiles(mod.outDir);
   const staticDir = join(mod.dir, "mod");
   if (existsSync(staticDir)) {
     for (const name of readdirSync(staticDir)) {
@@ -182,7 +180,11 @@ function stubCssPlugin() {
   return {
     name: "tailwind-stub",
     setup(build) {
-      build.onLoad({ filter: TAILWIND_CSS_FILTER }, () => ({ contents: "", loader: "text" }));
+      build.onLoad({ filter: TAILWIND_CSS_FILTER }, (args) => ({
+        contents: "",
+        loader: "text",
+        watchFiles: [args.path],
+      }));
     },
   };
 }
@@ -192,9 +194,10 @@ function cssTextPlugin(getCss) {
   return {
     name: "tailwind-utilities",
     setup(build) {
-      build.onLoad({ filter: TAILWIND_CSS_FILTER }, () => ({
+      build.onLoad({ filter: TAILWIND_CSS_FILTER }, (args) => ({
         contents: getCss(),
         loader: "text",
+        watchFiles: [args.path],
       }));
     },
   };
@@ -275,14 +278,22 @@ function rewriteMainJsDebugMaps(filePath, modId) {
 }
 
 /**
- * @param {import("./mods.js").LoadedMod} mod
+ * @param {import("../lib/mods.js").LoadedMod} mod
  */
 function maybeRewriteDebugMaps(mod) {
   const outMain = join(mod.outDir, "main.js");
   if (!sourcemap || !existsSync(outMain)) return;
-  const modId =
-    typeof mod.manifest.id === "string" && mod.manifest.id.length > 0 ? mod.manifest.id : "mod";
-  rewriteMainJsDebugMaps(outMain, modId);
+  rewriteMainJsDebugMaps(outMain, manifestModId(mod));
+}
+
+/**
+ * @param {import("../lib/mods.js").LoadedMod} mod
+ * @returns {string}
+ */
+function manifestModId(mod) {
+  return typeof mod.manifest.id === "string" && mod.manifest.id.length > 0
+    ? mod.manifest.id
+    : "mod";
 }
 
 /**
@@ -300,7 +311,7 @@ function bundleOptions(mod) {
     sourcemap,
     define: {
       __MOD_DEBUG__: modDebug ? "true" : "false",
-      __MOD_ID__: JSON.stringify(typeof mod.manifest.id === "string" ? mod.manifest.id : "mod"),
+      __MOD_ID__: JSON.stringify(manifestModId(mod)),
       __DEV_WATCH_URL__: embedDevWatchUrl ? JSON.stringify(devWatchUrl()) : '""',
     },
     inject: [
@@ -345,7 +356,7 @@ function workerBundleOptions(mod) {
     sourcemap,
     define: {
       __MOD_DEBUG__: modDebug ? "true" : "false",
-      __MOD_ID__: JSON.stringify(typeof mod.manifest.id === "string" ? mod.manifest.id : "mod"),
+      __MOD_ID__: JSON.stringify(manifestModId(mod)),
       __DEV_WATCH_URL__: '""',
     },
     inject: modDebug ? [join(MODKIT_DIR, "esbuild/console.ts")] : [],
@@ -369,30 +380,62 @@ function basePlugins(mod) {
     browserPatchesStubPlugin(),
     releaseDebugStubPlugin(),
     modkitAliasPlugin(),
-    ensureHotReloadInjectPlugin(mod),
+    mainEntryBootstrapPlugin(mod),
   ];
 }
 
 /**
- * Keep the hot-reload inject module in the main graph even when a mod never
- * reads `reloaded`. Workers skip this (different entry).
+ * Main entry only (workers skip this):
+ * - Skip the entry body when `api.settings.get("enabled")` is false (`isEnabled`)
+ * - Keep the hot-reload inject in the graph via `void reloaded` even when a
+ *   mod never reads that binding
+ *
+ * Uses an `if` wrap (not top-level `return`) because entries with `import` are
+ * ESM and reject top-level return.
  * @param {import("./mods.js").LoadedMod} mod
  */
-function ensureHotReloadInjectPlugin(mod) {
+function mainEntryBootstrapPlugin(mod) {
   const mainPath = normalize(mod.main);
   return {
-    name: "ensure-hot-reload-inject",
+    name: "main-entry-bootstrap",
     setup(build) {
       build.onLoad({ filter: /\.[cm]?tsx?$/ }, (args) => {
         if (normalize(args.path) !== mainPath) return;
         const source = readFileSync(args.path, "utf8");
         const loader = args.path.endsWith(".tsx") ? "tsx" : "ts";
+        const { imports, body } = splitLeadingImports(source);
         return {
-          contents: `void reloaded;\n${source}`,
+          contents: [
+            imports,
+            `import { isEnabled } from "@modkit/utils";`,
+            `void reloaded;`,
+            `if (isEnabled(sandkit.api)) {`,
+            body,
+            `}`,
+          ]
+            .filter((part) => part.length > 0)
+            .join("\n"),
           loader,
+          watchFiles: [args.path],
         };
       });
     },
+  };
+}
+
+/**
+ * Pull leading `import` statements so the enabled gate can wrap the rest of
+ * the entry (imports must stay top-level in ESM).
+ * @param {string} source
+ */
+function splitLeadingImports(source) {
+  const match = source.match(
+    /^((?:\s*import\s+(?:type\s+)?(?:[\s\S]*?from\s*)?["'][^"']+["']\s*;\s*)+)/,
+  );
+  if (!match) return { imports: "", body: source };
+  return {
+    imports: match[1].trim(),
+    body: source.slice(match[1].length).trimStart(),
   };
 }
 
@@ -440,6 +483,9 @@ async function buildOne(mod) {
 async function watchOne(mod) {
   await syncModFiles(mod);
   let tailwindCss = await compileFromBundleGraph(mod);
+  const modId = manifestModId(mod);
+  /** Nested `rebuild()` for Tailwind may skip `onEnd`; finish once per cycle. */
+  let rebuildFinished = false;
 
   const mainCtx = await esbuild.context({
     ...bundleOptions(mod),
@@ -452,6 +498,15 @@ async function watchOne(mod) {
         setup(build) {
           build.onEnd(async (result) => {
             if (result.errors.length > 0) return;
+
+            const finish = async () => {
+              maybeRewriteDebugMaps(mod);
+              await syncModFiles(mod);
+              notifyHotReload({ changed: ["main.js"], modIds: [modId] });
+              logBuildResult(mod, result);
+              rebuildFinished = true;
+            };
+
             const cssEntry = findTailwindCssEntry(result.metafile, ROOT);
             if (cssEntry) {
               const next = await compileTailwindUtilities(
@@ -460,18 +515,19 @@ async function watchOne(mod) {
               );
               if (next !== tailwindCss) {
                 tailwindCss = next;
+                rebuildFinished = false;
                 await mainCtx.rebuild();
+                if (!rebuildFinished) await finish();
                 return;
               }
             } else if (tailwindCss) {
               tailwindCss = "";
+              rebuildFinished = false;
               await mainCtx.rebuild();
+              if (!rebuildFinished) await finish();
               return;
             }
-            maybeRewriteDebugMaps(mod);
-            await syncModFiles(mod);
-            notifyHotReload({ changed: ["main.js"] });
-            logBuildResult(mod, result);
+            await finish();
           });
         },
       },
@@ -496,7 +552,7 @@ async function watchOne(mod) {
               if (result.errors.length > 0) return;
               await syncModFiles(mod);
               // Worker scripts do not hot-reload — toast asks for a game restart.
-              notifyHotReload({ changed: [workerOut] });
+              notifyHotReload({ changed: [workerOut], modIds: [modId] });
               logBuildResult(mod, result);
             });
           },

@@ -4,6 +4,8 @@ Session debug helpers live in the **debug** companion mod ([`src/debug/`](../../
 
 The main bundle injects [`modkit/esbuild/hot-reload.inject.ts`](../../modkit/esbuild/hot-reload.inject.ts): it calls `installHotReload` and exposes free **`reloaded`**. Import `onDispose` from [`@modkit/debug`](../../modkit/debug/) when you need cleanup. Release builds stub `@modkit/debug` to [`modkit/esbuild/debug.empty.ts`](../../modkit/esbuild/debug.empty.ts).
 
+The same main-entry rewrite also skips the entry body when **`enabled`** is false (`isEnabled`). Do not add that guard in `main.ts`. See [utils.md](utils.md).
+
 ## When it is installed
 
 | Build   | Command                                       | `src/debug` mod            | `@modkit/debug`                           | `debugPatches` |
@@ -82,7 +84,7 @@ When **Auto-boot Continue** is on, the helper waits until a **Continue** control
 
 ## Hot reload
 
-Hot reload runs only with **`npm run dev`**. That watch build starts a dev server on `http://127.0.0.1:19147`. Each mod (via inject) polls **`GET /hot-reload/last`** every ~400 ms. When the notify counter changes, it re-reads `main.js`, clears `logs/<modinfo.id>.log` and the DevTools console, runs `onDispose` callbacks, and evaluates the new source with `new Function("sandkit", source)`. In the watch terminal, **Ctrl+R** forces the same path even when `main.js` has not changed.
+Hot reload runs only with **`npm run dev`**. That watch build starts a dev server on `http://127.0.0.1:19147`. Each mod (via inject) polls **`GET /hot-reload/last`** every ~400 ms. When the notify counter changes, the rebuilt mod re-reads `main.js` (retries if the game still has the old file), clears `logs/<modinfo.id>.log` and the DevTools console, runs `onDispose` callbacks, and evaluates the new source with `new Function("sandkit", source)`. In the watch terminal, **Ctrl+R** forces the same path even when `main.js` has not changed.
 
 One-shot builds (`npm run build`, `--game`) leave the dev watch URL empty. **F5** and `npm run sandustry` do not build — run `npm run dev` first so the watch owns `main.js`.
 

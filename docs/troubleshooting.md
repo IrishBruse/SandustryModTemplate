@@ -45,6 +45,8 @@ Default probe includes `%ProgramFiles(x86)%\Steam` and `%ProgramFiles%\Steam`, p
 
 **F5 attach fails or the game will not stop** — Press F5 again (preLaunch runs stop first), or run the **sandustry:stop** task / `node scripts/sandustry/sandustry-stop.js`. That kills the recorded session PID and frees `:9222` if it still listens.
 
+**Hot reload does nothing until Ctrl+R** — Restart `npm run dev` so this client and watch server load. Overlay / Tailwind saves must log `built` in the watch terminal. If the game was running on an old bundle, restart the game once. The client polls `GET http://127.0.0.1:19147/hot-reload/last`.
+
 **Hot reload does nothing under F5** — Keep `npm run dev` running. F5 does not build. The client polls `GET http://127.0.0.1:19147/hot-reload/last`. Restart the game once after you pull a template change so the new client loads. A toast shows when the mod reloads.
 
 **`npm run publish` hangs after a successful upload** — SteamCMD used to keep the `Steam>` prompt because it inherited the terminal. Publish now closes stdin and stops SteamCMD if it does not exit. See [Workshop publish](builds.md#workshop-publish).

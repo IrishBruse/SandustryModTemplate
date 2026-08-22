@@ -7,6 +7,7 @@ The game runs `main.js` as a script body (`new Function`). `sandkit` is already 
 | Command              | Debug helpers                                            | `debugPatches` | Output                                                      |
 | -------------------- | -------------------------------------------------------- | -------------- | ----------------------------------------------------------- |
 | `npm run build`      | Stub (`modkit/esbuild/debug.empty.ts`); omit `src/debug` | Omitted        | OS mods folder; `dist/<folder>/` links                      |
+| `npm run build:release` | Stub; omit `src/debug`                                | Omitted        | `build/<folder>/` (Workshop staging; not the OS mods folder) |
 | `npm run dev`        | Included; install `src/debug`                            | Included       | OS mods folder while watching; removed when the watch stops |
 | `--game` / `--debug` | Included; install `src/debug`                            | Included       | Game mods folder                                            |
 
@@ -58,7 +59,9 @@ npm run dev              # watch all src/ mods, debug on (required before F5)
 npm run dev -- --mod overlay-hotkey-example
 npm run build            # release all mods (stay in the OS mods folder)
 npm run build -- --mod overlay-hotkey-example
-npm run publish          # release-build to .tmp/publish/, then SteamCMD Workshop upload
+npm run build:release    # release staging to build/<folder>/ (Workshop assets)
+npm run build:release -- --mod selection-capture
+npm run publish          # build:release + SteamCMD Workshop upload
 npm run publish -- --mod selection-capture
 npm run typecheck
 npm run sandustry        # stop + launch (no build; keep npm run dev for the bundle)
@@ -86,6 +89,6 @@ npm run publish -- --mod selection-capture
 npm run publish -- --mod selection-capture --yes
 ```
 
-The command then release-builds that folder into `.tmp/publish/<folder>/` (not the OS mods folder, so `npm run dev` cannot overwrite it). Publish then adds `screenshots/`, `README.md`, and `CHANGELOG.md` when present. SteamCMD uploads from that folder. `workshop.txt` supplies the Steam description (it stays under `src/<name>/workshop/`). `npm run build` and `npm run dev` only copy `workshop.json` and preview images. They also remove leftover `README.md`, `CHANGELOG.md`, and `screenshots/` from the game folder.
+The command runs `npm run build:release` for that folder into `build/<folder>/` (not the OS mods folder, so `npm run dev` cannot overwrite it). Staging gets the release bundle plus `workshop.json` and preview images only. `README.md`, `CHANGELOG.md`, and `workshop/screenshots/` stay in the repo. SteamCMD uploads from that folder. `workshop.txt` supplies the Steam description (it stays under `src/<name>/workshop/`). `npm run build` and `npm run dev` also copy only `workshop.json` and preview images, and remove leftover `README.md`, `CHANGELOG.md`, and `screenshots/` from the game folder.
 
 Steam **change notes** come from that mod's `CHANGELOG.md` (Keep a Changelog). `npm run publish` uses the `##` section that matches `modinfo.version` (for example `## 0.2.0` or `## [0.2.0] - 2026-08-22`). If that heading is missing, it uses `## Unreleased` and warns you to rename the heading to the version. If there is no changelog, it sends the version string. The confirm step prints the full Steam change-notes text before Upload / Cancel.

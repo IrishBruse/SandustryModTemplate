@@ -14,8 +14,8 @@ const SRC_DIR = join(ROOT, "src");
 /** Companion mod folder. Debug builds install it; release builds omit it. */
 export const DEBUG_MOD_FOLDER = "debug";
 
-/** Staging root for `npm run publish` — not the OS mods folder. */
-export const PUBLISH_OUT_ROOT = join(ROOT, ".tmp", "publish");
+/** Staging root for `npm run build:release` / `npm run publish` — not `dist/` or the OS mods folder. */
+export const PUBLISH_OUT_ROOT = join(ROOT, "build");
 
 /** @param {string} folder src folder name */
 export function publishStagingDir(folder) {

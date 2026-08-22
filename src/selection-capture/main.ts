@@ -1,5 +1,5 @@
 import { onDispose } from "@modkit/debug";
-import { isEnabled, safe } from "@modkit/utils";
+import { safe } from "@modkit/utils";
 import { modinfo } from "./mod";
 import { Overlay } from "./ui/Overlay";
 import tailwindCss from "@modkit/ui/tailwind.css";
@@ -26,13 +26,9 @@ function registerUi() {
   onDispose(dispose);
 }
 
-if (isEnabled(api)) {
-  safe(() => {
-    installTailwind();
-    registerUi();
-  });
-} else {
-  console.warn("mod disabled in settings — UI not registered");
-}
+safe(() => {
+  installTailwind();
+  registerUi();
+});
 
 console.log(`${reloaded ? "reloaded" : "loaded"} — C then F7 (PNG or GIF)`);

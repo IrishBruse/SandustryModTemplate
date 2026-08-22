@@ -15,12 +15,10 @@ import { loadMods, parseModFilter, publishStagingDir } from "../lib/mods.js";
 import { steamLibraryRoots } from "../lib/paths.js";
 import { isPublishTty, tuiConfirm, tuiSelect } from "./publish-tui.js";
 import {
-  copyWorkshopPublishFiles,
   readChangelogChangeNote,
   readWorkshopManifest,
   workshopDescriptionText,
   workshopPreviewPath,
-  workshopScreenshotPaths,
 } from "../lib/workshop-files.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
@@ -386,7 +384,6 @@ async function publishMod(steamCmd, account, mod) {
   }
 
   const previewFile = previewPath(mod);
-  const screenshots = copyWorkshopPublishFiles(mod.dir, mod.outDir);
   const tmpDir = join(ROOT, ".tmp");
   mkdirSync(tmpDir, { recursive: true });
   const vdfFile = join(tmpDir, `workshop-${mod.folder}.vdf`);
@@ -406,9 +403,6 @@ async function publishMod(steamCmd, account, mod) {
 
   console.log(`Workshop upload: src/${mod.folder}/ -> ${publishedFileId}`);
   console.log(`Preview: ${previewFile}`);
-  if (screenshots.length > 0) {
-    console.log(`Screenshots: ${screenshots.map((file) => basename(file)).join(", ")}`);
-  }
   console.log(`Content: ${mod.outDir}`);
   console.log(`Change notes:\n${changeNote}`);
 
@@ -484,13 +478,11 @@ async function pickMod(allMods) {
   }
 }
 
-async function confirmUpload(mod, account, steamCmd, previewFile, publishedFileId, screenshots) {
+async function confirmUpload(mod, account, steamCmd, previewFile, publishedFileId) {
   if (yesFlag) return true;
   if (!isPublishTty()) {
     fail("Pass --yes to skip confirmation when stdin is not a TTY.");
   }
-  const shotLabel =
-    screenshots.length === 0 ? "(none)" : screenshots.map((file) => basename(file)).join(", ");
   const changeNote = workshopChangeNote(mod);
   try {
     return await tuiConfirm({
@@ -501,10 +493,9 @@ async function confirmUpload(mod, account, steamCmd, previewFile, publishedFileI
         ["Version", String(mod.manifest.version ?? "")],
         ["Item", publishedFileId],
         ["Preview", basename(previewFile)],
-        ["Screenshots", shotLabel],
         ["Steam", account],
         ["SteamCMD", steamCmd],
-        ["Staging", `.tmp/publish/${mod.folder}/`],
+        ["Staging", `build/${mod.folder}/`],
       ],
       preview: {
         label: "Change notes (Steam)",
@@ -547,26 +538,18 @@ if (!publishedFileId) {
 }
 
 const previewFile = previewPath(selected);
-const screenshots = workshopScreenshotPaths(selected.dir);
-const confirmed = await confirmUpload(
-  selected,
-  account,
-  steamCmd,
-  previewFile,
-  publishedFileId,
-  screenshots,
-);
+const confirmed = await confirmUpload(selected, account, steamCmd, previewFile, publishedFileId);
 if (!confirmed) {
   console.log("Cancelled.");
   process.exit(0);
 }
 
-console.log("Release build to .tmp/publish/…");
-const build = spawnSync(
-  process.execPath,
-  [join(ROOT, "scripts/build/esbuild.config.mjs"), "--mod", selected.folder, "--publish-out"],
-  { stdio: "inherit", cwd: ROOT },
-);
+console.log("Release build to build/…");
+const build = spawnSync("npm", ["run", "build:release", "--", "--mod", selected.folder], {
+  stdio: "inherit",
+  cwd: ROOT,
+  shell: true,
+});
 if (build.status !== 0) process.exit(build.status ?? 1);
 
 selected.outDir = publishStagingDir(selected.folder);
