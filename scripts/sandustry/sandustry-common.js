@@ -298,6 +298,27 @@ export function sandustryLeftMonitor() {
   return sandustryLeftMonitorLinux();
 }
 
+/**
+ * Game WM_CLASS from `wmctrl -lx` (`instance.class`).
+ * Do not match window titles — editors (e.g. Aseprite) often include "sandustry" in the title.
+ */
+const SANDUSTRY_WM_CLASS = "sandustry.sandustry";
+
+/** @param {string} display @returns {string | null} hex window id */
+function findSandustryWindowId(display) {
+  const list = execSync(`DISPLAY=${display} wmctrl -lx`, {
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "ignore"],
+  });
+  for (const line of list.split("\n")) {
+    // 0x01800004  0 sandustry.sandustry   host Title
+    const match = line.match(/^(0x[0-9a-f]+)\s+\S+\s+(\S+)/i);
+    if (!match) continue;
+    if (match[2].toLowerCase() === SANDUSTRY_WM_CLASS) return match[1];
+  }
+  return null;
+}
+
 /** @param {number} monX @param {number} monY @returns {Promise<void>} */
 export function sandustryMaximizeOnLeftMonitor(monX, monY) {
   // Windows: --start-maximized in launch args is enough; wmctrl is Linux-only.
@@ -309,17 +330,14 @@ export function sandustryMaximizeOnLeftMonitor(monX, monY) {
     for (let attempt = 0; attempt < 60; attempt++) {
       for (const display of displays) {
         try {
-          const list = execSync(`DISPLAY=${display} wmctrl -l`, {
-            encoding: "utf8",
-            stdio: ["ignore", "pipe", "ignore"],
-          });
-          if (!/sandustry/i.test(list)) continue;
+          const wid = findSandustryWindowId(display);
+          if (!wid) continue;
 
-          execSync(`DISPLAY=${display} wmctrl -r "Sandustry" -e "0,${monX},${monY},-1,-1"`, {
+          execSync(`DISPLAY=${display} wmctrl -i -r ${wid} -e "0,${monX},${monY},-1,-1"`, {
             stdio: "ignore",
           });
           execSync(
-            `DISPLAY=${display} wmctrl -r "Sandustry" -b add,maximized_vert,maximized_horz`,
+            `DISPLAY=${display} wmctrl -i -r ${wid} -b add,maximized_vert,maximized_horz`,
             { stdio: "ignore" },
           );
           return;
