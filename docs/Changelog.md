@@ -20,6 +20,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Fixed
 
+- VS Code **Sandustry** F5 is a Node launch of the game process (renderer attach starts when CDP is ready). Debugger **Restart** kills Electron and starts a new process, then the renderer reconnects. A Chrome page reload does not reload workers or patches. See [builds.md](builds.md).
 - Watch hot reload notifies after a Tailwind CSS rebuild, names the rebuilt mod, and reloads even when the game still serves a stale `main.js`. **Ctrl+R** is no longer required after a save. See [modkit/debug.md](modkit/debug.md).
 - Hot reload stops when a mod folder is gone (rename / watch cleanup) so DevTools does not keep logging `ERR_FILE_NOT_FOUND` for that mod's `main.js`. See [modkit/debug.md](modkit/debug.md).
 

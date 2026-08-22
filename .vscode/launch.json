@@ -2,6 +2,27 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Sandustry",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/sandustry/sandustry-vscode-launch.js",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "autoAttachChildProcesses": false,
+      "skipFiles": ["<node_internals>/**"],
+      "killBehavior": "forceful",
+      "serverReadyAction": {
+        "pattern": "Launched Sandustry with debug ports",
+        "action": "startDebugging",
+        "name": "Sandustry Renderer",
+        "killOnServerStop": true
+      },
+      "presentation": {
+        "order": 1,
+        "group": "sandustry"
+      }
+    },
+    {
       "name": "Sandustry Renderer",
       "type": "chrome",
       "request": "attach",
@@ -12,6 +33,7 @@
       "sourceMaps": true,
       "enableContentValidation": false,
       "pauseForSourceMap": true,
+      "restart": true,
       "resolveSourceMapLocations": [
         "sandkit-workshop://**",
         "${workspaceFolder}/**",
@@ -29,22 +51,11 @@
       "presentation": {
         "hidden": true,
         "group": "sandustry",
-        "order": 1
+        "order": 2
       }
     }
   ],
   "compounds": [
-    {
-      "name": "Sandustry",
-      "configurations": ["Sandustry Renderer"],
-      "preLaunchTask": "sandustry:launch-debug",
-      "postDebugTask": "sandustry:stop",
-      "stopAll": true,
-      "presentation": {
-        "order": 1,
-        "group": "sandustry"
-      }
-    },
     {
       "name": "Sandustry: Attach Renderer (build + launch)",
       "configurations": ["Sandustry Renderer"],
@@ -52,7 +63,7 @@
       "postDebugTask": "sandustry:stop",
       "stopAll": true,
       "presentation": {
-        "order": 2,
+        "order": 3,
         "group": "sandustry"
       }
     }
