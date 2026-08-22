@@ -14,10 +14,10 @@
     "paths": {
       "*": ["./*"],
       "@modkit/*": ["./modkit/*"],
-      "types/api": ["./types/src/main/sandkit-api"],
-      "types/worker-api": ["./types/src/worker/sandkit-api"],
-      "types/sandkit": ["./types/src/sandkit"],
-      "types/engine": ["./types/src/engine"],
+      "types/api": ["./types/src/main/index"],
+      "types/worker-api": ["./types/src/worker/index"],
+      "types/sandkit": ["./types/src/main/index"],
+      "types/engine": ["./types/src/engine/index"],
       "types/*": ["./types/*"]
     }
   }

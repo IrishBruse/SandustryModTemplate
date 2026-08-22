@@ -8,7 +8,6 @@
  * The game loads this script on every simulation worker. Probe once on
  * worker 0 — the API bag is the same on each index.
  */
-import type { WorkerSandkitApi } from "types/worker-api";
 import { MOD_ID } from "./globals";
 
 const api = sandkit.api as unknown as WorkerSandkitApi;
@@ -43,7 +42,7 @@ if (index === 0) {
     probe("main.emitEvent", api.main?.emitEvent),
     probe("elements.getTypeFromId", api.elements?.getTypeFromId),
     probe("elements.getInfoAtCell", api.elements?.getInfoAtCell),
-    probe("elements.createAtCell", api.elements?.createAtCell),
+    probe("elements.createAtCell", (api.elements as { createAtCell?: unknown }).createAtCell),
     probe("world.isCellEmptyAtCell", api.world?.isCellEmptyAtCell),
     probe("hooks.intercept", api.hooks?.intercept),
     probe("hooks.modify", api.hooks?.modify),
