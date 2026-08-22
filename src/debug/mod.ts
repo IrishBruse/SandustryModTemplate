@@ -24,7 +24,7 @@ export const modinfo = defineModInfo({
       default: false,
       labelKey: "Open DevTools on load",
       descriptionKey:
-        "Open Electron DevTools when the mod loads. Skipped when the IDE debugger is attached (F5).",
+        "Open Electron DevTools when the mod loads. Keep off while using F5 so the IDE debugger stays attached.",
     },
     f12DevTools: {
       type: "boolean",
