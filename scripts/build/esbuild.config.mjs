@@ -6,6 +6,7 @@ import {
   readFileSync,
   readdirSync,
   rmSync,
+  statSync,
   writeFileSync,
 } from "node:fs";
 import { dirname, isAbsolute, join, normalize } from "node:path";
@@ -385,6 +386,39 @@ function basePlugins(mod) {
 }
 
 /**
+ * esbuild `watchDirs` is not recursive. List every folder so `mod.ts`, new
+ * files, and kit edits still trigger a rebuild.
+ * @param {string} root
+ * @param {string[]} [skipNames]
+ * @returns {string[]}
+ */
+function collectWatchDirs(root, skipNames = []) {
+  const skip = new Set(["node_modules", ".git", ...skipNames]);
+  /** @type {string[]} */
+  const dirs = [];
+  const walk = (dir) => {
+    dirs.push(dir);
+    let names;
+    try {
+      names = readdirSync(dir);
+    } catch {
+      return;
+    }
+    for (const name of names) {
+      if (skip.has(name)) continue;
+      const next = join(dir, name);
+      try {
+        if (statSync(next).isDirectory()) walk(next);
+      } catch {
+        /* removed while walking */
+      }
+    }
+  };
+  if (existsSync(root)) walk(root);
+  return dirs;
+}
+
+/**
  * Main entry only (workers skip this):
  * - Skip the entry body when `api.settings.get("enabled")` is false (`isEnabled`)
  * - Keep the hot-reload inject in the graph via `void reloaded` even when a
@@ -416,7 +450,11 @@ function mainEntryBootstrapPlugin(mod) {
             .filter((part) => part.length > 0)
             .join("\n"),
           loader,
-          watchFiles: [args.path],
+          watchFiles: [args.path, mod.modTs],
+          watchDirs: [
+            ...collectWatchDirs(mod.dir),
+            ...collectWatchDirs(MODKIT_DIR, ["types"]),
+          ],
         };
       });
     },
@@ -484,8 +522,8 @@ async function watchOne(mod) {
   await syncModFiles(mod);
   let tailwindCss = await compileFromBundleGraph(mod);
   const modId = manifestModId(mod);
-  /** Nested `rebuild()` for Tailwind may skip `onEnd`; finish once per cycle. */
-  let rebuildFinished = false;
+  /** @type {ReturnType<typeof setTimeout> | null} */
+  let cssRebuildTimer = null;
 
   const mainCtx = await esbuild.context({
     ...bundleOptions(mod),
@@ -499,12 +537,12 @@ async function watchOne(mod) {
           build.onEnd(async (result) => {
             if (result.errors.length > 0) return;
 
-            const finish = async () => {
-              maybeRewriteDebugMaps(mod);
-              await syncModFiles(mod);
-              notifyHotReload({ changed: ["main.js"], modIds: [modId] });
-              logBuildResult(mod, result);
-              rebuildFinished = true;
+            const queueCssRebuild = () => {
+              if (cssRebuildTimer != null) clearTimeout(cssRebuildTimer);
+              cssRebuildTimer = setTimeout(() => {
+                cssRebuildTimer = null;
+                void mainCtx.rebuild();
+              }, 0);
             };
 
             const cssEntry = findTailwindCssEntry(result.metafile, ROOT);
@@ -515,26 +553,26 @@ async function watchOne(mod) {
               );
               if (next !== tailwindCss) {
                 tailwindCss = next;
-                rebuildFinished = false;
-                await mainCtx.rebuild();
-                if (!rebuildFinished) await finish();
+                queueCssRebuild();
                 return;
               }
             } else if (tailwindCss) {
               tailwindCss = "";
-              rebuildFinished = false;
-              await mainCtx.rebuild();
-              if (!rebuildFinished) await finish();
+              queueCssRebuild();
               return;
             }
-            await finish();
+
+            maybeRewriteDebugMaps(mod);
+            await syncModFiles(mod);
+            notifyHotReload({ changed: ["main.js"], modIds: [modId] });
+            logBuildResult(mod, result);
           });
         },
       },
     ],
   });
 
-  await mainCtx.watch();
+  await mainCtx.watch({ delay: 10 });
 
   if (mod.worker) {
     const workerOut =
@@ -559,7 +597,7 @@ async function watchOne(mod) {
         },
       ],
     });
-    await workerCtx.watch();
+    await workerCtx.watch({ delay: 10 });
   }
 }
 
