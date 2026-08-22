@@ -21,30 +21,32 @@ Import `onDispose` / `isHotReloadEval` / `installHotReload` from `./debug`, not 
 
 Settings live on the debug mod only (`src/debug/mod.ts` `configSchema`):
 
-| Setting                   | Key            | Default | Effect                                                                        |
-| ------------------------- | -------------- | ------- | ----------------------------------------------------------------------------- |
-| **Mod enabled**           | `enabled`      | on      | Master switch for runtime helpers                                             |
-| **Open DevTools on load** | `openDevTools` | off     | Open Electron DevTools on load. Skipped when `ide-debug.json` is present (F5) |
-| **F12 opens DevTools**    | `f12DevTools`  | on      | Capture-phase F12. Can disconnect an IDE debugger session                     |
-| **Skip splash**           | `skipSplash`   | off     | Runtime click poll while splash logos are visible                             |
-| **Auto-boot Continue**    | `autoBoot`     | off     | Click Continue on the main menu after it has been visible                     |
-| **Engine Debug (F3)**     | `engineDebug`  | on      | Management row + F3; force `debug.active`; hide vanilla Debug / Stats buttons |
+| Setting                   | Key               | Default | Effect                                                                        |
+| ------------------------- | ----------------- | ------- | ----------------------------------------------------------------------------- |
+| **Mod enabled**           | `enabled`         | on      | Master switch for runtime helpers                                             |
+| **Open DevTools on load** | `openDevTools`    | off     | Open Electron DevTools on load. Skipped when `ide-debug.json` is present (F5) |
+| **F12 opens DevTools**    | `f12DevTools`     | on      | Capture-phase F12. Can disconnect an IDE debugger session                     |
+| **Skip splash**           | `skipSplash`      | off     | Runtime click poll while splash logos are visible                             |
+| **Auto-boot Continue**    | `autoBoot`        | off     | Click Continue on the main menu after it has been visible                     |
+| **Engine Debug (F3)**     | `engineDebug`     | on      | Management row + F3; force `debug.active`; hide vanilla Debug / Stats buttons |
+| **Disable autosave**      | `disableAutosave` | on      | Sets `session.settings.autosaveInterval` to `0`. Manual saves still work      |
 
 Turn on **Skip splash**, **Auto-boot Continue**, or **Open DevTools on load** in the debug mod settings when you want those helpers.
 
 ## Features
 
-| Feature               | Where                                                            | Setting       | Notes                                                                           |
-| --------------------- | ---------------------------------------------------------------- | ------------- | ------------------------------------------------------------------------------- |
-| DevTools globals      | [`src/debug/main.ts`](../../src/debug/main.ts)                   | Mod enabled   | `sandkit`, `api`, `enums`, `react` on `globalThis`                              |
-| Open DevTools on load | [`boot-menu.ts`](../../src/debug/boot-menu.ts)                   | Open DevTools | Retries until the Electron bridge is ready; skipped when CDP `:9222` is up (F5) |
-| F12 opens DevTools    | [`boot-menu.ts`](../../src/debug/boot-menu.ts)                   | F12           | Capture-phase keydown; skipped on hot-reload eval                               |
-| Splash skip           | [`splash.ts`](../../src/debug/splash.ts)                         | Skip splash   | Clicks the splash while logos are visible                                       |
-| Main-menu auto-boot   | `boot-menu.ts` + [`menu.ts`](../../src/debug/menu.ts)            | Auto-boot     | Clicks **Continue** after it has been visible                                   |
-| Renderer hot reload   | [`modkit/debug/hot-reload.ts`](../../modkit/debug/hot-reload.ts) | `npm run dev` | Polls `GET /hot-reload/last` on the dev watch server                            |
-| F3 debug toggle       | [`src/debug/toggle/`](../../src/debug/toggle/)                   | Engine Debug  | Management row + F3 opens the engine Debug window                               |
+| Feature               | Where                                                            | Setting           | Notes                                                                           |
+| --------------------- | ---------------------------------------------------------------- | ----------------- | ------------------------------------------------------------------------------- |
+| DevTools globals      | [`src/debug/main.ts`](../../src/debug/main.ts)                   | Mod enabled       | `sandkit`, `api`, `enums`, `react` on `globalThis`                              |
+| Open DevTools on load | [`boot-menu.ts`](../../src/debug/boot-menu.ts)                   | Open DevTools     | Retries until the Electron bridge is ready; skipped when CDP `:9222` is up (F5) |
+| F12 opens DevTools    | [`boot-menu.ts`](../../src/debug/boot-menu.ts)                   | F12               | Capture-phase keydown; skipped on hot-reload eval                               |
+| Splash skip           | [`splash.ts`](../../src/debug/splash.ts)                         | Skip splash       | Clicks the splash while logos are visible                                       |
+| Main-menu auto-boot   | `boot-menu.ts` + [`menu.ts`](../../src/debug/menu.ts)            | Auto-boot         | Clicks **Continue** after it has been visible                                   |
+| Disable autosave      | [`autosave.ts`](../../src/debug/autosave.ts)                     | Disable autosave  | Sets interval to `0` on load and each hot-reload eval                           |
+| Renderer hot reload   | [`modkit/debug/hot-reload.ts`](../../modkit/debug/hot-reload.ts) | `npm run dev`     | Polls `GET /hot-reload/last` on the dev watch server                            |
+| F3 debug toggle       | [`src/debug/toggle/`](../../src/debug/toggle/)                   | Engine Debug      | Management row + F3 opens the engine Debug window                               |
 
-Hot-reload eval skips DevTools shortcut, splash polling, and auto-boot so those do not stack on every save.
+Hot-reload eval skips DevTools shortcut, splash polling, and auto-boot so those do not stack on every save. Autosave disable runs again on each hot-reload eval.
 
 ## DevTools globals
 

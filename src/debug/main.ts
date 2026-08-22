@@ -1,5 +1,6 @@
 import { installHotReload, isHotReloadEval } from "@modkit/debug";
 import { isEnabled } from "@modkit/utils";
+import { disableSessionAutosave } from "./autosave";
 import { registerDevToolsShortcut, scheduleMainMenuBoot } from "./boot-menu";
 import { installGlobals, MOD_ID } from "./globals";
 import { settingOn } from "./settings";
@@ -22,6 +23,7 @@ if (isEnabled(api) && !reloaded) {
 }
 
 if (isEnabled(api)) {
+  if (settingOn(api, "disableAutosave")) disableSessionAutosave();
   installDebugToggle(api, MOD_ID);
 }
 

@@ -10,6 +10,7 @@ const SETTING_DEFAULTS: Record<string, boolean> = {
   skipSplash: false,
   autoBoot: false,
   engineDebug: true,
+  disableAutosave: true,
 };
 
 function boolSetting(api: SandkitApi, key: string): boolean {
