@@ -1,6 +1,6 @@
 - [← Docs home](/)
-- [Overview](ui/README.md)
-- [Gallery](ui/gallery.md)
+- [Gallery](ui/README.md)
+- [Overview](ui/overview.md)
 
 - Panels
   - [UiBox](ui/ui-box.md)
@@ -32,3 +32,14 @@
   - [OverlayRoot](ui/overlay-root.md)
   - [FixedAnchor](ui/fixed-anchor.md)
   - [Interactive](ui/interactive.md)
+
+- Options
+  - [OptionsPanel](ui/options-panel.md)
+  - [OptionsSection](ui/options-section.md)
+  - [OptionsRow](ui/options-row.md)
+  - [OptionsSelect](ui/options-select.md)
+  - [OptionsSliderRow](ui/options-slider-row.md)
+  - [OptionsSlider](ui/options-slider.md)
+  - [OptionsSwitch](ui/options-switch.md)
+  - [OptionsNumberInput](ui/options-number-input.md)
+  - [OptionsButton](ui/options-button.md)

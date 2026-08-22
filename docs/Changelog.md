@@ -8,11 +8,14 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Added
 
+- **UI kit options components:** `OptionsPanel`, `OptionsSection`, `OptionsRow`, `OptionsSelect`, `OptionsSlider`, `OptionsSliderRow`, `OptionsSwitch`, `OptionsNumberInput`, and `OptionsButton` — same Tailwind classes as the in-game Options dialog. Import `@modkit/ui/options.css` only for slider thumb/track. See [ui/overview.md](ui/overview.md).
 - **`npm run build:release`:** release-builds mods into `build/<folder>/` (gitignored), separate from `dist/` and the OS mods folder. Staging is the release bundle plus `workshop.json` / previews only (no `README.md`, `CHANGELOG.md`, or `screenshots/`). `npm run publish` runs this, then uploads with SteamCMD. See [builds.md](builds.md#workshop-publish).
-- **Pixel-perfect Screenshot and GIF recorder:** panel **Show mouse** toggle draws the in-game cursor into PNG/GIF captures; **Greenscreen** / **Show mouse** use pill toggles; **Frames** / **Ticks / frame** use beveled steppers; **Record GIF** / **Screenshot** show bound keys when set.
+- **Pixel-perfect Screenshot and GIF recorder:** panel **Show mouse** toggle draws the in-game cursor into PNG/GIF captures; **Greenscreen** / **Show mouse** use pill toggles; **Frames** / **Ticks / frame** use number boxes with a white up/down strip; **Record GIF** / **Screenshot** show bound keys when set. **Record GIF** clears the **C** marquee when recording starts so you can keep playing. GIF encode runs on a worker after capture so the game does not hitch.
 
 ### Changed
 
+- **`npm run publish`:** if SteamCMD is not on PATH, the script downloads Valve's official installer into `.tmp/steamcmd/` and then uploads. It does not add the npm `steamcmd` package (old `request` / `unzip` deps, and that API is game download, not Workshop). See [builds.md](builds.md#workshop-publish).
+- `OptionsPanel` with **`overlay`** and **`surface`** uses a solid `bg-black` fill and the vanilla Debug window edges (`border-gray-700`, `rounded-lg`, `ui-box`, `card-2`). See [ui/options-panel.md](ui/options-panel.md).
 - Main bundles skip the entry body when the mod **`enabled`** setting is false. Do not put an `enabled` guard in `main.ts`. See [modkit/utils.md](modkit/utils.md).
 - Ambient `sandkit` / `SandkitApi` / `WorkerSandkitApi` are composed in [`modkit/sandkit-global.d.ts`](../modkit/sandkit-global.d.ts) from the types submodule namespaces (types package stays on master; no shipped global).
 - `defineModInfo` returns the manifest only. Export `modinfo` and use `modinfo.id` (no separate `MOD_ID`). See [layout.md](layout.md).
@@ -20,8 +23,11 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Fixed
 
-- Watch rebuilds when files under the mod folder or `modkit/` change (`mod.ts`, new files, kit edits), and Tailwind no longer calls `rebuild()` from inside `onEnd` (that dropped the next save). See [builds.md](builds.md).
+- Release `main.js` does not inject hot-reload boot (`installHotReload` / `isHotReloadEval`). Debug builds still inject. Release defines **`reloaded`** as `false`. See [modkit/debug.md](modkit/debug.md).
+- Options UI components load from `modkit/ui/options/index.ts`. A `./options` import resolved to `options.css`, so `OptionsPanel` was missing and the capture panel did not render. See [ui/overview.md](ui/overview.md).
 - VS Code **Sandustry** F5 is a Node launch of the game process (renderer attach starts when CDP is ready). Debugger **Restart** kills Electron and starts a new process, then the renderer reconnects. A Chrome page reload does not reload workers or patches. See [builds.md](builds.md).
+- `@modkit/ui/options.css` is inlined into `main.js` at build time (same as Tailwind). Mod folders no longer get a stray `main.css` that Sandkit does not load. The resolve plugin prevents an empty `{}` options import.
+- Watch rebuilds when files under the mod folder or `modkit/` change (`mod.ts`, new files, kit edits), and Tailwind no longer calls `rebuild()` from inside `onEnd` (that dropped the next save). See [builds.md](builds.md).
 - Watch hot reload notifies after a Tailwind CSS rebuild, names the rebuilt mod, and reloads even when the game still serves a stale `main.js`. **Ctrl+R** is no longer required after a save. See [modkit/debug.md](modkit/debug.md).
 - Hot reload stops when a mod folder is gone (rename / watch cleanup) so DevTools does not keep logging `ERR_FILE_NOT_FOUND` for that mod's `main.js`. See [modkit/debug.md](modkit/debug.md).
 

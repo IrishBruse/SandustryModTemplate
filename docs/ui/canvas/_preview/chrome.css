@@ -1,3 +1,6 @@
+@import url("https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap");
+@import "../../../../modkit/ui/options/options.css";
+
 .text-outline {
   text-shadow:
     -1px -1px 0 #000,
@@ -59,9 +62,9 @@
 }
 
 .preview-page {
-  background: #1a2332;
+  background: #0a0a0a;
   padding: 24px;
-  font-family: monospace;
+  font-family: Play, sans-serif;
   color: white;
   min-height: 100vh;
   color-scheme: dark;

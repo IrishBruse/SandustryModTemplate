@@ -10,13 +10,13 @@ New to the template? Start with [Quick start](quick-start.md).
 
 ## Repo folders
 
-| Path           | What it is                            |
-| -------------- | ------------------------------------- |
-| `src/<name>/`  | Your mod (`mod.ts` + `main.ts`)       |
-| `modkit/`      | Shared kit. Import as `@modkit/*`     |
-| `dist/<name>/` | Link to that mod's folder in the game |
+| Path            | What it is                                |
+| --------------- | ----------------------------------------- |
+| `src/<name>/`   | Your mod (`mod.ts` + `main.ts`)           |
+| `modkit/`       | Shared kit. Import as `@modkit/*`         |
+| `dist/<name>/`  | Link to that mod's folder in the game     |
 | `build/<name>/` | Release staging (`npm run build:release`) |
-| `logs/`        | Link to Sandustry log files           |
+| `logs/`         | Link to Sandustry log files               |
 
 The game folder uses the `name` field in `mod.ts`, not the `src/` folder name.
 `dist/<src-folder>/` points at that game folder.
@@ -48,22 +48,22 @@ Copy a folder under `src/` to start a new mod. `hello-world-example` is the smal
 
 Every mod needs these files:
 
-| File            | Role                                                                                                                                       |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| File            | Role                                                                                                                                                            |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `mod.ts`        | Manifest and optional patches. `export const modinfo = defineModInfo(...)`. Use `modinfo.id` for the mod id. The build writes `modinfo.json` and `patches.json` |
-| `main.ts`       | Mod entry. Hot reload boots via esbuild inject; use free `reloaded`                                                                        |
-| `tsconfig.json` | Isolated TypeScript project. This folder cannot see sibling mods                                                                           |
+| `main.ts`       | Mod entry. Debug builds inject hot reload; use free `reloaded`. Release defines `reloaded` as `false`                                                           |
+| `tsconfig.json` | Isolated TypeScript project. This folder cannot see sibling mods                                                                                                |
 
 Add these when you need them:
 
-| File                         | Role                                                                                     |
-| ---------------------------- | ---------------------------------------------------------------------------------------- |
-| `worker.ts`                  | Worker entry. The build writes `worker.js`                                               |
-| `ui/`                        | React overlays                                                                           |
-| `mod/`                       | Static files copied into the output folder                                               |
-| `package.json`               | npm packages for this mod only                                                           |
+| File                         | Role                                                                                                |
+| ---------------------------- | --------------------------------------------------------------------------------------------------- |
+| `worker.ts`                  | Worker entry. The build writes `worker.js`                                                          |
+| `ui/`                        | React overlays                                                                                      |
+| `mod/`                       | Static files copied into the output folder                                                          |
+| `package.json`               | npm packages for this mod only                                                                      |
 | `README.md` / `CHANGELOG.md` | Repo docs only. Publish reads `CHANGELOG.md` for Steam change notes; builds do not copy these files |
-| `workshop/`                  | Workshop assets (`workshop.json`, previews, `workshop.txt`, `screenshots/`)              |
+| `workshop/`                  | Workshop assets (`workshop.json`, previews, `workshop.txt`, `screenshots/`)                         |
 
 ## What you import
 

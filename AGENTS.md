@@ -36,18 +36,18 @@ Logs: Linux `~/.config/sandustry/logs`; Windows `%APPDATA%/sandustry/logs`.
 
 Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized demos: `hello-world-example`, `overlay-hotkey-example`, `retro-game-example`, `management-button-example`, `worker-api-example`. Real mod: `selection-capture` (**Pixel-perfect Screenshot and GIF recorder** — **C** marquee, **F7** PNG / GIF). Debug companion: `debug` (debug builds only). Mods cannot import from each other.
 
-| Path                       | Role                                                                                                                                                                                                                                                        |
-| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/<name>/mod.ts`        | Manifest (+ optional `patches` / `debugPatches`) → `modinfo.json` / `patches.json` at build. `export const modinfo = defineModInfo(...)`. Use `modinfo.id` for the mod id.                                                                                                       |
-| `src/<name>/main.ts`       | Mod entry. Build gates on **`enabled`** and boots hot reload (`reloaded` ambient). Import `onDispose` from `@modkit/debug` when needed.                                                                                                                  |
-| `src/<name>/worker.ts`     | Optional worker entry → `worker.js` when present (`workerEntry` in modinfo)                                                                                                                                                                                 |
-| `src/<name>/ui/`           | React overlays (import `react`, resolved to `modkit/esbuild/react.ts`)                                                                                                                                                                                      |
-| `src/<name>/README.md`     | Optional. Repo docs only (not copied into builds). Example mods: lists only — no tables ([`docs/AGENTS.md`](docs/AGENTS.md)).                                                                                                                          |
-| `src/<name>/CHANGELOG.md`  | Optional. Repo docs; publish reads the version `##` section for Steam change notes (file stays in the repo).                                                                                                                                               |
-| `src/<name>/workshop/`     | Optional. `workshop.json`, `preview.gif` (preferred), `preview.png`, `workshop.txt`, `screenshots/`. Build copies `workshop.json` and previews to the mod root. Screenshots stay under `workshop/` only.                                                  |
-| `src/<name>/mod/`          | Optional static files copied into the output folder                                                                                                                                                                                                         |
-| `src/<name>/tsconfig.json` | Isolated TypeScript project (does not see sibling mods)                                                                                                                                                                                                     |
-| `src/<name>/package.json`  | Optional npm deps for that mod only (`node_modules` in the mod folder)                                                                                                                                                                                      |
+| Path                       | Role                                                                                                                                                                                                     |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/<name>/mod.ts`        | Manifest (+ optional `patches` / `debugPatches`) → `modinfo.json` / `patches.json` at build. `export const modinfo = defineModInfo(...)`. Use `modinfo.id` for the mod id.                               |
+| `src/<name>/main.ts`       | Mod entry. Build gates on **`enabled`** and boots hot reload (`reloaded` ambient). Import `onDispose` from `@modkit/debug` when needed.                                                                  |
+| `src/<name>/worker.ts`     | Optional worker entry → `worker.js` when present (`workerEntry` in modinfo)                                                                                                                              |
+| `src/<name>/ui/`           | React overlays (import `react`, resolved to `modkit/esbuild/react.ts`)                                                                                                                                   |
+| `src/<name>/README.md`     | Optional. Repo docs only (not copied into builds). Example mods: lists only — no tables ([`docs/AGENTS.md`](docs/AGENTS.md)).                                                                            |
+| `src/<name>/CHANGELOG.md`  | Optional. Repo docs; publish reads the version `##` section for Steam change notes (file stays in the repo).                                                                                             |
+| `src/<name>/workshop/`     | Optional. `workshop.json`, `preview.gif` (preferred), `preview.png`, `workshop.txt`, `screenshots/`. Build copies `workshop.json` and previews to the mod root. Screenshots stay under `workshop/` only. |
+| `src/<name>/mod/`          | Optional static files copied into the output folder                                                                                                                                                      |
+| `src/<name>/tsconfig.json` | Isolated TypeScript project (does not see sibling mods)                                                                                                                                                  |
+| `src/<name>/package.json`  | Optional npm deps for that mod only (`node_modules` in the mod folder)                                                                                                                                   |
 
 ### `modkit/`
 
@@ -61,19 +61,19 @@ Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized dem
 | `modkit/log.ts`     | File-log helper used with the hot-reload watch server                                                                |
 | `modkit/types/`     | Sandkit API types submodule ([sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types)) |
 
-Hot reload boots automatically (esbuild inject). Use free `reloaded`. Import `onDispose` from `@modkit/debug` when needed. Release stubs `@modkit/debug` to `modkit/esbuild/debug.empty.ts`.
+Hot reload boots via esbuild inject on **debug** builds only. Use free `reloaded`. Import `onDispose` from `@modkit/debug` when needed. Release defines `reloaded` as `false` and stubs `@modkit/debug` to `modkit/esbuild/debug.empty.ts`.
 
 ### `modkit/types/`
 
 Git submodule: [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types). Main API lives under `modkit/types/src/main/`; worker under `modkit/types/src/worker/`; engine under `modkit/types/src/shared/engine/`. Ambient `sandkit` is [`modkit/sandkit-global.d.ts`](modkit/sandkit-global.d.ts) (composed from those namespaces).
 
-| Path                              | Role                                                  |
-| --------------------------------- | ----------------------------------------------------- |
-| `modkit/types/src/main/`          | Main-thread `sandkit.api`                             |
-| `modkit/types/src/worker/`        | Worker-thread `sandkit.api`                           |
-| `modkit/types/src/shared/engine/` | `sandkit.engine` (+ Retro Console)                    |
-| `modkit/types/src/shared/`        | Shared main/worker API pieces                         |
-| `modkit/types/src/common-types/`  | Shared domain shapes                                  |
+| Path                              | Role                                                               |
+| --------------------------------- | ------------------------------------------------------------------ |
+| `modkit/types/src/main/`          | Main-thread `sandkit.api`                                          |
+| `modkit/types/src/worker/`        | Worker-thread `sandkit.api`                                        |
+| `modkit/types/src/shared/engine/` | `sandkit.engine` (+ Retro Console)                                 |
+| `modkit/types/src/shared/`        | Shared main/worker API pieces                                      |
+| `modkit/types/src/common-types/`  | Shared domain shapes                                               |
 | `modkit/sandkit-global.d.ts`      | Ambient `sandkit` / `SandkitApi` / `WorkerSandkitApi` / `reloaded` |
 
 Path aliases: `@modkit/*` → `./modkit/*`. Use ambient `sandkit`, `SandkitApi`, and `WorkerSandkitApi` — do not import them with a `types/` prefix. Retro Console types come from `@modkit/utils`.
@@ -84,27 +84,27 @@ Use the free name `sandkit` in mod and modkit code. Do not import `@modkit/sandk
 
 Folders match `npm run` commands. Shared helpers live in `scripts/lib/`.
 
-| Path                                      | Role                                                                                                                                  |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Path                                      | Role                                                                                                                                                    |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `scripts/build/esbuild.config.mjs`        | `npm run build` / `build:release` — bundle each `src/<name>/main.ts` → `main.js` (and `worker.ts` → `worker.js`), write `modinfo.json` + `patches.json` |
-| `scripts/dev/dev.js`                      | `npm run dev` — watch + write to the game mods folder                                                                                 |
-| `scripts/dev/hot-reload-server.js`        | Hot-reload HTTP server (`/hot-reload`, `/log`)                                                                                        |
-| `scripts/typecheck/typecheck.js`          | `npm run typecheck` — root kit + per-mod `tsc --noEmit`                                                                               |
-| `scripts/mod-install/install-mod-deps.js` | Root `postinstall` — `npm install` in each `src/<name>/` with `package.json`                                                          |
-| `scripts/setup/setup.js`                  | `npm run setup` — check install, extract game source to `sandustry/`, link `logs/`                                                    |
-| `scripts/publish/publish-workshop.js`     | `npm run publish` — release-build + SteamCMD Workshop upload                                                                          |
-| `scripts/sandustry/launch-sandustry.js`   | `npm run sandustry` — stop and launch the game (no build)                                                                             |
-| `scripts/ui/`                             | `npm run ui:css` / `ui:previews` — docs canvas Tailwind + screenshots                                                                 |
-| `scripts/lib/`                            | Shared: mod discovery, patches, paths, mod-path, workshop files, launch helpers                                                       |
+| `scripts/dev/dev.js`                      | `npm run dev` — watch + write to the game mods folder                                                                                                   |
+| `scripts/dev/hot-reload-server.js`        | Hot-reload HTTP server (`/hot-reload`, `/log`)                                                                                                          |
+| `scripts/typecheck/typecheck.js`          | `npm run typecheck` — root kit + per-mod `tsc --noEmit`                                                                                                 |
+| `scripts/mod-install/install-mod-deps.js` | Root `postinstall` — `npm install` in each `src/<name>/` with `package.json`                                                                            |
+| `scripts/setup/setup.js`                  | `npm run setup` — check install, extract game source to `sandustry/`, link `logs/`                                                                      |
+| `scripts/publish/publish-workshop.js`     | `npm run publish` — release-build + SteamCMD Workshop upload                                                                                            |
+| `scripts/sandustry/launch-sandustry.js`   | `npm run sandustry` — stop and launch the game (no build)                                                                                               |
+| `scripts/ui/`                             | `npm run ui:css` / `ui:previews` — docs canvas Tailwind + screenshots                                                                                   |
+| `scripts/lib/`                            | Shared: mod discovery, patches, paths, mod-path, workshop files, launch helpers                                                                         |
 
 ## Builds
 
-| Command              | Debug helpers                                            | `debugPatches` | Output                                                      |
-| -------------------- | -------------------------------------------------------- | -------------- | ----------------------------------------------------------- |
-| `npm run build`      | Stub (`modkit/esbuild/debug.empty.ts`); omit `src/debug` | Omitted        | OS mods folder; `dist/<folder>/` links                      |
-| `npm run build:release` | Stub; omit `src/debug`                                | Omitted        | `build/<folder>/` (Workshop staging; not the OS mods folder) |
-| `npm run dev`        | Included; install `src/debug`                            | Included       | OS mods folder while watching; removed when the watch stops |
-| `--game` / `--debug` | Included; install `src/debug`                            | Included       | Game mods folder                                            |
+| Command                 | Debug helpers                                            | `debugPatches` | Output                                                       |
+| ----------------------- | -------------------------------------------------------- | -------------- | ------------------------------------------------------------ |
+| `npm run build`         | Stub (`modkit/esbuild/debug.empty.ts`); omit `src/debug` | Omitted        | OS mods folder; `dist/<folder>/` links                       |
+| `npm run build:release` | Stub; omit `src/debug`                                   | Omitted        | `build/<folder>/` (Workshop staging; not the OS mods folder) |
+| `npm run dev`           | Included; install `src/debug`                            | Included       | OS mods folder while watching; removed when the watch stops  |
+| `--game` / `--debug`    | Included; install `src/debug`                            | Included       | Game mods folder                                             |
 
 `--no-debug` forces a release-style bundle. Debug builds emit inline source maps; `--sourcemap` / `--no-sourcemap` override. `--mod <folder>` builds one src folder. Debug builds also install `src/debug` unless `--mod debug`.
 

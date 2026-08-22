@@ -4,12 +4,12 @@ The game runs `main.js` as a script body (`new Function`). `sandkit` is already 
 
 ## Debug vs release
 
-| Command              | Debug helpers                                            | `debugPatches` | Output                                                      |
-| -------------------- | -------------------------------------------------------- | -------------- | ----------------------------------------------------------- |
-| `npm run build`      | Stub (`modkit/esbuild/debug.empty.ts`); omit `src/debug` | Omitted        | OS mods folder; `dist/<folder>/` links                      |
-| `npm run build:release` | Stub; omit `src/debug`                                | Omitted        | `build/<folder>/` (Workshop staging; not the OS mods folder) |
-| `npm run dev`        | Included; install `src/debug`                            | Included       | OS mods folder while watching; removed when the watch stops |
-| `--game` / `--debug` | Included; install `src/debug`                            | Included       | Game mods folder                                            |
+| Command                 | Debug helpers                                            | `debugPatches` | Output                                                       |
+| ----------------------- | -------------------------------------------------------- | -------------- | ------------------------------------------------------------ |
+| `npm run build`         | Stub (`modkit/esbuild/debug.empty.ts`); omit `src/debug` | Omitted        | OS mods folder; `dist/<folder>/` links                       |
+| `npm run build:release` | Stub; omit `src/debug`                                   | Omitted        | `build/<folder>/` (Workshop staging; not the OS mods folder) |
+| `npm run dev`           | Included; install `src/debug`                            | Included       | OS mods folder while watching; removed when the watch stops  |
+| `--game` / `--debug`    | Included; install `src/debug`                            | Included       | Game mods folder                                             |
 
 `--no-debug` forces a release-style bundle even when watch or game flags are set. `--mod <folder>` builds one `src/<name>/` folder. Debug builds also install `src/debug` unless `--mod debug`. The build discovers every `src/*/mod.ts`.
 
@@ -25,7 +25,7 @@ See [modkit/debug.md](modkit/debug.md) for what debug helpers do at runtime.
 
 The game ships Tailwind **v3.4.19** inside `bundle.js`. That stylesheet is purged: only classes the HUD uses are present. A class such as `w-[28rem]` has no rule until the mod adds it.
 
-Sandkit loads `main.js` only. There is no CSS file in the mod manifest. The build still has to insert a `<style>` tag. Import shared `@modkit/ui/tailwind.css` from the mod entry. The compiled sheet is **only the utilities this bundle uses**: esbuild lists the source files it packed, then Tailwind scans those files. Unused `modkit/ui` components do not add CSS. Mods that never import the file skip the compile.
+Sandkit loads `main.js` only. There is no CSS file in the mod manifest. The build still has to insert a `<style>` tag. Import shared `@modkit/ui/tailwind.css` from the mod entry. Import `@modkit/ui/options.css` only when you use `OptionsSlider` / `OptionsSliderRow`. The kit re-exports those React components from `modkit/ui/options/index.ts` so esbuild does not pick `options.css` instead. The build inlines CSS as text (no `main.css` in the mod folder). The compiled Tailwind sheet is **only the utilities this bundle uses**: esbuild lists the source files it packed, then Tailwind scans those files. Unused `modkit/ui` components do not add CSS. Mods that never import those files skip the compile.
 
 The insert lives in [src/overlay-hotkey-example/main.ts](../src/overlay-hotkey-example/main.ts) (`style#<mod-id>-tailwind`). Hot reload removes that tag before it inserts a new one.
 
@@ -79,7 +79,7 @@ Renderer attach loads source maps from scripts named `sandkit-workshop://<modId>
 
 ## Workshop publish
 
-`npm run publish` **requires SteamCMD**. Install it from the Valve [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD) page. Put `steamcmd` (or `steamcmd.exe` / `steamcmd.sh`) on your PATH, or unpack it under `.tmp/steamcmd/`.
+`npm run publish` uses [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD). It prefers `steamcmd` on PATH (or `steamcmd.exe` / `steamcmd.sh` under Steam libraries, `~/steamcmd`, `/usr/games`, or `.tmp/steamcmd/`). If none of those exist, it downloads the official Valve installer into `.tmp/steamcmd/` (gitignored).
 
 Log into the Steam client as the Workshop item owner first. SteamCMD keeps its **own** credential cache (separate from the Steam client). The first publish prompts for your Steam password (and Steam Guard if needed), then caches it. Later publishes reuse that cache.
 
