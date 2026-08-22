@@ -6,13 +6,19 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ## Unreleased
 
+### Changed
+
+- Main bundles inject hot reload boot: free **`reloaded`**, no `installHotReload` / `isHotReloadEval` in `main.ts`. Import `onDispose` only when you need cleanup. See [modkit/debug.md](modkit/debug.md).
+
 ### Removed
 
+- Per-mod `globals.ts` and `debug.ts` are gone. `defineModInfo` returns `{ modinfo, MOD_ID }`. Import hot reload from `@modkit/debug` (release stubs that package). See [modkit/debug.md](modkit/debug.md) and [layout.md](layout.md).
 - F5 no longer attaches Electron **main** (`:9230`) or launches with `--inspect`. The **Sandustry** compound attaches the **renderer** only (`:9222`).
 - Per-mod `ide-debug.json` and `SANDUSTRY_IDE_DEBUG` are gone. Keep **Open DevTools on load** off under F5 so Electron DevTools does not steal the IDE session.
 
 ### Changed
 
+- Sample mod folder renamed: `src/hello-toast-example/` → `src/hello-world-example/` (id `author.hello-world-example`). Remove any leftover game folder named **Hello Toast Example** after the next build.
 - F5 waits until CDP `:9222` responds before attach, and records the game PID so **sandustry:stop** / the next F5 preLaunch can kill a stuck session without a full IDE close. See [builds.md](builds.md) and [troubleshooting.md](troubleshooting.md).
 - **Debug companion:** **F3** toggles a top-left companion **Debug** panel (helper status). Vanilla Debug / Stats buttons stay for engine tools; the old custom management **Debug** row is gone. See [modkit/debug.md](modkit/debug.md).
 - Shared Tailwind entry is [`modkit/ui/tailwind.css`](../modkit/ui/tailwind.css). Overlay mods import `@modkit/ui/tailwind.css` instead of a per-mod `ui/tailwind.css` / `ui/css.d.ts`.
@@ -42,7 +48,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 | Folder                           | Shows                                                                            |
 | -------------------------------- | -------------------------------------------------------------------------------- |
-| `src/hello-toast-example/`       | Toast on load                                                                    |
+| `src/hello-world-example/`       | Toast on load                                                                    |
 | `src/overlay-hotkey-example/`    | React overlay + Tailwind; **Alt+E**                                              |
 | `src/retro-game-example/`        | Retro Console Noise Test                                                         |
 | `src/management-button-example/` | Management-column row under Upgrades                                             |

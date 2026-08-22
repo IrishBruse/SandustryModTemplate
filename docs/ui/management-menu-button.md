@@ -9,9 +9,9 @@ Hover plays `blip`; click plays `click` when those sounds exist. `hotkey` is bad
 ## `registerManagementMenuButton`
 
 ```ts
-import { onDispose } from "./debug";
+import { onDispose } from "@modkit/debug";
 import { registerManagementMenuButton } from "@modkit/ui";
-import { MOD_ID } from "./globals";
+import { MOD_ID } from "./mod";
 
 const stop = registerManagementMenuButton({
   id: `${MOD_ID}:example`,

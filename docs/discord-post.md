@@ -17,7 +17,7 @@ npm run dev
 ```
 
 1. Press **F5** in VS Code, or run `npm run sandustry`.
-2. Copy `src/hello-toast-example/` to `src/<your-mod>/` and set `id`, `name`, `author`, and `description` in `mod.ts`.
+2. Copy `src/hello-world-example/` to `src/<your-mod>/` and set `id`, `name`, `author`, and `description` in `mod.ts`.
 
 # Features
 

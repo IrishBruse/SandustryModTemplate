@@ -31,11 +31,11 @@ You do not copy files into the game folder by hand. `npm run dev` and `npm run b
 
 ## Sample mods
 
-Copy a folder under `src/` to start a new mod. `hello-toast-example` is the smallest.
+Copy a folder under `src/` to start a new mod. `hello-world-example` is the smallest.
 
 | Folder                                                           | What it shows                                       |
 | ---------------------------------------------------------------- | --------------------------------------------------- |
-| [`hello-toast-example`](../src/hello-toast-example/)             | Toast on load — good copy target                    |
+| [`hello-world-example`](../src/hello-world-example/)             | Toast on load — good copy target                    |
 | [`overlay-hotkey-example`](../src/overlay-hotkey-example/)       | React overlay + Tailwind (**Alt+E**)                |
 | [`retro-game-example`](../src/retro-game-example/)               | Retro Console demo                                  |
 | [`management-button-example`](../src/management-button-example/) | Management-column row                               |
@@ -47,13 +47,11 @@ Copy a folder under `src/` to start a new mod. `hello-toast-example` is the smal
 
 Every mod needs these files:
 
-| File            | Role                                                                     |
-| --------------- | ------------------------------------------------------------------------ |
-| `mod.ts`        | Manifest and optional patches. The build writes `modinfo.json` and `patches.json` |
-| `main.ts`       | Mod entry. Import hot reload from `./debug`, not from `modkit/debug`     |
-| `debug.ts`      | Thin re-export of hot-reload helpers (release builds replace this)       |
-| `globals.ts`    | `MOD_ID` and `installGlobals`                                            |
-| `tsconfig.json` | Isolated TypeScript project. This folder cannot see sibling mods         |
+| File            | Role                                                                                                                                       |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `mod.ts`        | Manifest and optional patches. `export const { modinfo, MOD_ID } = defineModInfo(...)`. The build writes `modinfo.json` and `patches.json` |
+| `main.ts`       | Mod entry. Hot reload boots via esbuild inject; use free `reloaded`                                                                        |
+| `tsconfig.json` | Isolated TypeScript project. This folder cannot see sibling mods                                                                           |
 
 Add these when you need them:
 
@@ -70,13 +68,13 @@ Add these when you need them:
 
 Import `@modkit/*` and files in your own folder only.
 
-| Import                                         | From                                               |
-| ---------------------------------------------- | -------------------------------------------------- |
-| `@modkit/modinfo`                              | `defineModInfo` / `definePatches`                  |
-| `@modkit/react` / JSX                          | Runtime React from `sandkit.react`                 |
-| `@modkit/utils`                                | `safe`, `isEnabled`, `inGame`, `registerRetroGame` |
-| `@modkit/ui`                                   | Shared React UI components                         |
-| `sandkit` / `SandkitApi` / `WorkerSandkitApi`  | Ambient globals. Do not import with a `types/` prefix |
+| Import                                        | From                                                  |
+| --------------------------------------------- | ----------------------------------------------------- |
+| `@modkit/modinfo`                             | `defineModInfo` / `definePatches`                     |
+| `@modkit/react` / JSX                         | Runtime React from `sandkit.react`                    |
+| `@modkit/utils`                               | `safe`, `isEnabled`, `inGame`, `registerRetroGame`    |
+| `@modkit/ui`                                  | Shared React UI components                            |
+| `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix |
 
 Types submodule: [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types) under `modkit/types/`. Ambient names live in [`modkit/sandkit-global.d.ts`](../modkit/sandkit-global.d.ts).
 

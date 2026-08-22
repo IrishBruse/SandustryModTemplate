@@ -33,22 +33,20 @@ Logs: Linux `~/.config/sandustry/logs`; Windows `%APPDATA%/sandustry/logs`.
 
 ### `src/`
 
-Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized demos: `hello-toast-example`, `overlay-hotkey-example`, `retro-game-example`, `management-button-example`, `worker-api-example`. Real mod: `selection-capture` (**Pixel-perfect Screenshot and GIF recorder** — **C** marquee, **F7** PNG / GIF). Debug companion: `debug` (debug builds only). Mods cannot import from each other.
+Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized demos: `hello-world-example`, `overlay-hotkey-example`, `retro-game-example`, `management-button-example`, `worker-api-example`. Real mod: `selection-capture` (**Pixel-perfect Screenshot and GIF recorder** — **C** marquee, **F7** PNG / GIF). Debug companion: `debug` (debug builds only). Mods cannot import from each other.
 
-| Path                           | Role                                                                                                                                                                                                                                                        |
-| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/<name>/mod.ts`            | Manifest (+ optional `patches` / `debugPatches`) → `modinfo.json` / `patches.json` at build                                                                                                                                                                 |
-| `src/<name>/main.ts`           | Mod entry. Import hot reload from `./debug` (not `modkit/debug`) so release can stub it.                                                                                                                                                                    |
-| `src/<name>/worker.ts`         | Optional worker entry → `worker.js` when present (`workerEntry` in modinfo)                                                                                                                                                                                 |
-| `src/<name>/globals.ts`        | `MOD_ID` (from `./mod`) and `installGlobals`                                                                                                                                                                                                                |
-| `src/<name>/ui/`               | React overlays (import `react`, resolved to `modkit/esbuild/react.ts`)                                                                                                                                                                                      |
-| `src/<name>/debug.ts`          | Thin hot-reload client: re-exports `installHotReload` / `onDispose` / `isHotReloadEval`                                                                                                                                                                     |
-| `src/<name>/README.md`         | Optional. Publish staging copies it into `.tmp/publish/`. Example mods: lists only — no tables ([`docs/AGENTS.md`](docs/AGENTS.md)).                                                                                                                        |
-| `src/<name>/CHANGELOG.md`      | Optional. Publish staging copies it; publish uses the version `##` section for Steam change notes.                                                                                                                                                          |
-| `src/<name>/workshop/`         | Optional. `workshop.json`, `preview.gif` (preferred), `preview.png`, `workshop.txt`, `screenshots/`. Build copies `workshop.json` and previews to the mod root. `npm run publish` also copies `screenshots/`, `README.md`, and `CHANGELOG.md` into staging. |
-| `src/<name>/mod/`              | Optional static files copied into the output folder                                                                                                                                                                                                         |
-| `src/<name>/tsconfig.json`     | Isolated TypeScript project (does not see sibling mods)                                                                                                                                                                                                     |
-| `src/<name>/package.json`      | Optional npm deps for that mod only (`node_modules` in the mod folder)                                                                                                                                                                                      |
+| Path                       | Role                                                                                                                                                                                                                                                        |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/<name>/mod.ts`        | Manifest (+ optional `patches` / `debugPatches`) → `modinfo.json` / `patches.json` at build. `export const { modinfo, MOD_ID } = defineModInfo(...)`.                                                                                                       |
+| `src/<name>/main.ts`       | Mod entry. Hot reload boots via esbuild inject (`reloaded` is ambient). Import `onDispose` from `@modkit/debug` when needed.                                                                                                                                |
+| `src/<name>/worker.ts`     | Optional worker entry → `worker.js` when present (`workerEntry` in modinfo)                                                                                                                                                                                 |
+| `src/<name>/ui/`           | React overlays (import `react`, resolved to `modkit/esbuild/react.ts`)                                                                                                                                                                                      |
+| `src/<name>/README.md`     | Optional. Publish staging copies it into `.tmp/publish/`. Example mods: lists only — no tables ([`docs/AGENTS.md`](docs/AGENTS.md)).                                                                                                                        |
+| `src/<name>/CHANGELOG.md`  | Optional. Publish staging copies it; publish uses the version `##` section for Steam change notes.                                                                                                                                                          |
+| `src/<name>/workshop/`     | Optional. `workshop.json`, `preview.gif` (preferred), `preview.png`, `workshop.txt`, `screenshots/`. Build copies `workshop.json` and previews to the mod root. `npm run publish` also copies `screenshots/`, `README.md`, and `CHANGELOG.md` into staging. |
+| `src/<name>/mod/`          | Optional static files copied into the output folder                                                                                                                                                                                                         |
+| `src/<name>/tsconfig.json` | Isolated TypeScript project (does not see sibling mods)                                                                                                                                                                                                     |
+| `src/<name>/package.json`  | Optional npm deps for that mod only (`node_modules` in the mod folder)                                                                                                                                                                                      |
 
 ### `modkit/`
 
@@ -58,11 +56,11 @@ Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized dem
 | `modkit/patches.ts` | Empty shared patch list (browser stub via `esbuild/patches.empty.ts`)                                                |
 | `modkit/esbuild/`   | esbuild wiring: React/JSX aliases, console inject, patches stub, release debug stub                                  |
 | `modkit/utils/`     | `safe`, `isEnabled`, `inGame`, `registerRetroGame`                                                                   |
-| `modkit/debug/`     | Hot reload (`installHotReload`, `onDispose`, `isHotReloadEval`)                                                      |
+| `modkit/debug/`     | Hot reload helpers (`onDispose`; inject calls `installHotReload` / `isHotReloadEval`)                                |
 | `modkit/log.ts`     | File-log helper used with the hot-reload watch server                                                                |
 | `modkit/types/`     | Sandkit API types submodule ([sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types)) |
 
-Do not import `onDispose` or `isHotReloadEval` from `modkit/debug` in `src/<name>/main.ts`. Import them from `./debug`.
+Hot reload boots automatically (esbuild inject). Use free `reloaded`. Import `onDispose` from `@modkit/debug` when needed. Release stubs `@modkit/debug` to `modkit/esbuild/debug.empty.ts`.
 
 ### `modkit/types/`
 
@@ -149,7 +147,7 @@ In **debug** builds, esbuild injects [`modkit/esbuild/console.ts`](modkit/esbuil
 
 ```ts
 console.log("[my-tag]", { width, collapsed });
-// DevTools + logs/author.hello-toast-example.log
+// DevTools + logs/author.hello-world-example.log
 ```
 
 Release builds do not inject the shim. Restart `npm run dev` after changing `scripts/dev/hot-reload-server.js` (the POST `/log` and `/log/clear` routes live there). Hot reload clears `logs/<modinfo.id>.log` before re-eval.

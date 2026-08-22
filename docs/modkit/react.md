@@ -87,7 +87,7 @@ Do not rely on ES modules at runtime. All dependencies must be bundled into `mai
 esbuild resolves `@modkit/...` to files under `modkit/` (same as TypeScript `paths`). Example:
 
 ```ts
-import { installHotReload } from "@modkit/debug";
+import { onDispose } from "@modkit/debug";
 ```
 
 ## UI overlays

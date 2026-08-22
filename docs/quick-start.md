@@ -43,14 +43,14 @@ With the **debug** companion installed (debug builds), the game can skip the spl
 In game:
 
 - **Alt+E** — overlay from `overlay-hotkey-example`
-- Toast on load — `hello-toast-example`
+- Toast on load — `hello-world-example`
 - **C** then **F7** — Selection Capture (PNG / GIF)
 
 Edit a file under `src/`. Save. The mod reloads without a game restart.
 
 ## 4. Make your own mod
 
-1. Copy `src/hello-toast-example/` to `src/<your-mod>/`.
+1. Copy `src/hello-world-example/` to `src/<your-mod>/`.
 2. Open that folder’s `mod.ts`.
 3. Set `id`, `name`, `author`, and `description`.
 4. Change `main.ts` (and add `ui/` when you need overlays).
@@ -60,7 +60,7 @@ Rules:
 - Each `src/<name>/` with a `mod.ts` is a separate game mod.
 - The OS mods folder uses `modinfo.name`.
 - Import `@modkit/*` and files in your own folder only. Do not import another `src/<name>/` tree.
-- Import hot reload from `./debug`, not from `modkit/debug`.
+- Import hot reload from `@modkit/debug`. Release builds stub that package.
 
 ## Useful commands
 
@@ -72,7 +72,7 @@ Rules:
 | `npm run sandustry` | Stop and launch the game (no build)                              |
 | `npm run typecheck` | TypeScript check                                                 |
 
-Build one folder: `npm run dev -- --mod hello-toast-example`.
+Build one folder: `npm run dev -- --mod hello-world-example`.
 
 ## Next steps
 
