@@ -36,32 +36,6 @@ function getMarqueeCustomData(): MarqueeCustomData | null {
   return data;
 }
 
-/** Debug snapshot of marquee state (safe to log). */
-export function peekMarqueeCustomData(): {
-  hasSession: boolean;
-  hasCustomData: boolean;
-  marqueeSelected: boolean | undefined;
-  start: CellPoint | undefined;
-  end: CellPoint | undefined;
-  structureCount: number;
-  mode: unknown;
-} {
-  const session = sandkit.state.session as
-    | { action?: { customData?: (MarqueeCustomData & { mode?: unknown }) | null } }
-    | null
-    | undefined;
-  const data = session?.action?.customData;
-  return {
-    hasSession: session != null,
-    hasCustomData: data != null && typeof data === "object",
-    marqueeSelected: data?.marqueeSelected,
-    start: data?.start,
-    end: data?.end,
-    structureCount: data?.selectedStructures?.length ?? 0,
-    mode: data?.mode,
-  };
-}
-
 function boundsFromPoints(points: CellPoint[]): CellBounds | null {
   if (points.length === 0) return null;
   let minX = points[0].x;
@@ -88,7 +62,6 @@ function boundsFromStructures(structures: SelectedStructure[], snap: number): Ce
   for (const structure of structures) {
     const origin = structure.originalPos;
     if (!isFinitePoint(origin)) continue;
-    // Structure occupies snap×snap cells from its anchor.
     points.push(origin);
     points.push({
       x: origin.x + snap - 1,
@@ -119,10 +92,7 @@ function cellIsVisible(r: number, g: number, b: number, a: number): boolean {
   return r > 8 || g > 8 || b > 8;
 }
 
-/**
- * Shrink a loose marquee rect to opaque `mapData` cells only (exact content edges).
- */
-export function tightenBoundsToMapData(bounds: CellBounds): CellBounds {
+function tightenBoundsToMapData(bounds: CellBounds): CellBounds {
   const shared = sandkit.state.shared as
     | { mapData?: { data: ArrayLike<number>; width: number; height?: number } }
     | null
@@ -159,7 +129,6 @@ export function tightenBoundsToMapData(bounds: CellBounds): CellBounds {
 /**
  * Read the active selection cell AABB from engine state.
  * Prefer structure footprints; fall back to marquee start/end (exclusive max).
- * Then tighten to opaque mapData cells when possible.
  */
 export function getSelectionCellBounds(api?: SandkitApi): CellBounds | null {
   const data = getMarqueeCustomData();
