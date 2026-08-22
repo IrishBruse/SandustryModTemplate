@@ -77,17 +77,24 @@ export function appendLog(modId: string, line: string, options?: { console?: boo
 
 /**
  * Truncate `logs/<modId>.log`. Hot reload awaits this before re-eval so the file
- * only holds lines from the current session. Safe when the watch server is down.
+ * only holds lines from the current session. Safe when the watch server is down
+ * or when F5 / CDP stalls the POST (abort after 500 ms).
  */
 export function clearLog(modId: string): Promise<void> {
+  const controller = new AbortController();
+  const timer = globalThis.setTimeout(() => controller.abort(), 500);
   return fetch(LOG_CLEAR_URL, {
     method: "POST",
     mode: "cors",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ modId }),
+    signal: controller.signal,
   })
     .then(() => undefined)
     .catch(() => {
-      /* npm run dev not running */
+      /* npm run dev not running, or the IDE debugger stalled HTTP */
+    })
+    .finally(() => {
+      globalThis.clearTimeout(timer);
     });
 }

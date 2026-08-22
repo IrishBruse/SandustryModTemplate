@@ -9,6 +9,7 @@ The template has no release tags yet. Dated sections match the day the change la
 ### Fixed
 
 - **Management menu hover:** mod rows under Upgrades sit as direct siblings of the vanilla column (same as Toolbox / Building). Nested spacer / `pointer-events-none` wraps blocked hover shine, yellow letter, and clicks.
+- **F5 hot reload:** VS Code renderer attach can stall HTTP `EventSource`. The watch build writes `hot-reload.json`; the client polls that stamp through the mod asset URL so save still reloads the mod.
 
 ### Added
 

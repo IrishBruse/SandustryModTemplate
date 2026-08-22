@@ -6,6 +6,7 @@ TypeScript template for Sandustry mods (Steam **[mods]** branch).
 
 # What's new (2026-08-22)
 
+- Hot reload works with **F5** (file poll; CDP attach can stall EventSource)
 - Hot reload clears `logs/<mod-id>.log` and the DevTools console for a clean session
 - Management menu rows: hover / click match vanilla (no nested spacer wrap)
 - Sandkit types nest under `types/src/sandkit/` (`api` / `engine` / `enums`) — no `modkit/types` shim

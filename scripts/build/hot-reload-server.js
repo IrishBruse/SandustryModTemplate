@@ -1,6 +1,7 @@
 /**
  * Hot-reload notify for `npm run dev` (--watch only).
- * Game clients subscribe with EventSource; rebuilds push a small JSON event.
+ * Game clients subscribe with EventSource, and also poll `hot-reload.json`
+ * in each mod outDir (F5 / CDP attach can stall SSE).
  */
 import { appendFileSync, mkdirSync, writeFileSync } from "node:fs";
 import http from "node:http";
@@ -10,6 +11,8 @@ import { sandustryLogsDir } from "../sandustry/paths.js";
 
 export const HOT_RELOAD_PORT = 19147;
 export const HOT_RELOAD_PATH = "/hot-reload";
+/** Tiny JSON in each mod outDir. The renderer polls it via `api.assets` (file URL). */
+export const HOT_RELOAD_STAMP = "hot-reload.json";
 
 /** @returns {string} */
 export function hotReloadUrl() {
@@ -43,11 +46,31 @@ const clients = new Set();
 /** @type {import('node:http').Server | null} */
 let server = null;
 
+/** @type {string[]} */
+let stampDirs = [];
+
+let stampN = 0;
+
 /** @type {ReturnType<typeof setTimeout> | null} */
 let debounceTimer = null;
 
 /** @type {{ changed?: string[] } | null} */
 let pending = null;
+
+/**
+ * @param {{ changed?: string[]; force?: boolean }} payload
+ */
+function writeStampFiles(payload) {
+  stampN += 1;
+  const json = `${JSON.stringify({ v: 1, n: stampN, ...payload })}\n`;
+  for (const dir of stampDirs) {
+    try {
+      writeFileSync(join(dir, HOT_RELOAD_STAMP), json);
+    } catch {
+      /* out dir missing or not writable */
+    }
+  }
+}
 
 /**
  * @param {{ changed?: string[]; force?: boolean }} payload
@@ -61,6 +84,7 @@ export function notifyHotReload(payload) {
     const body = pending;
     pending = null;
     if (!body) return;
+    writeStampFiles(body);
     const chunk = `data: ${JSON.stringify({ v: 1, ...body })}\n\n`;
     for (const res of clients) {
       try {
@@ -135,8 +159,15 @@ function installForceReloadKey() {
   console.log("press Ctrl+R to force a hot reload");
 }
 
-/** Start the SSE server once. No-op if already listening. */
-export function startHotReloadServer() {
+/**
+ * Start the SSE server once. No-op if already listening.
+ * `stampDirs` are mod output folders that receive `hot-reload.json` on each notify
+ * (F5 / CDP attach can stall EventSource; the renderer polls the stamp instead).
+ *
+ * @param {{ stampDirs?: string[] }} [options]
+ */
+export function startHotReloadServer(options = {}) {
+  stampDirs = Array.isArray(options.stampDirs) ? [...options.stampDirs] : [];
   if (server) return;
 
   server = http.createServer((req, res) => {

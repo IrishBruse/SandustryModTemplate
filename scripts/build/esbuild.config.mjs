@@ -10,6 +10,7 @@ import {
 } from "./compile-tailwind.js";
 import { loadMods, modIsolationPlugin, prepareModOutputs } from "./mods.js";
 import {
+  HOT_RELOAD_STAMP,
   hotReloadUrl,
   isHotReloadServerUp,
   notifyHotReload,
@@ -103,7 +104,7 @@ async function syncModFiles(mod, includeModkitDebug) {
   const staticDir = join(mod.dir, "mod");
   if (existsSync(staticDir)) {
     for (const name of readdirSync(staticDir)) {
-      if (name === "patches.json") continue;
+      if (name === "patches.json" || name === HOT_RELOAD_STAMP) continue;
       cpSync(join(staticDir, name), join(mod.outDir, name), {
         recursive: true,
         force: true,
@@ -476,7 +477,7 @@ async function watchOne(mod, includeModkitDebug) {
 const kitDebugFolder = mods[0]?.folder;
 
 if (watch) {
-  startHotReloadServer();
+  startHotReloadServer({ stampDirs: mods.map((mod) => mod.outDir) });
   for (const mod of mods) {
     await watchOne(mod, modDebug && mod.folder === kitDebugFolder);
   }

@@ -154,8 +154,6 @@ export async function buildPatches(outDir, options) {
 
   const dest = join(outDir, "patches.json");
   writeFileSync(dest, `${JSON.stringify(patches, null, 2)}\n`);
-  const mode = modDebug ? "debug" : "release";
-  console.log(`patches: ${patches.length} (${mode}) -> ${dest}`);
 
   return patches;
 }
