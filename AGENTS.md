@@ -66,18 +66,18 @@ Do not import `onDispose` or `isHotReloadEval` from `modkit/debug` in `src/<name
 
 ### `modkit/types/`
 
-Git submodule: [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types). Main API lives under `modkit/types/src/main/`; worker under `modkit/types/src/worker/`; engine under `modkit/types/src/engine/`. Ambient `sandkit` is [`modkit/sandkit-global.d.ts`](modkit/sandkit-global.d.ts).
+Git submodule: [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types). Main API lives under `modkit/types/src/main/`; worker under `modkit/types/src/worker/`; engine under `modkit/types/src/shared/engine/`. Ambient `sandkit` is [`modkit/sandkit-global.d.ts`](modkit/sandkit-global.d.ts).
 
-| Path                             | Role                                                  |
-| -------------------------------- | ----------------------------------------------------- |
-| `modkit/types/src/main/`         | Main-thread `sandkit.api`                             |
-| `modkit/types/src/worker/`       | Worker-thread `sandkit.api`                           |
-| `modkit/types/src/engine/`       | `sandkit.engine` (+ Retro Console)                    |
-| `modkit/types/src/shared/`       | Shared main/worker API pieces                         |
-| `modkit/types/src/common-types/` | Shared domain shapes                                  |
-| `modkit/sandkit-global.d.ts`     | Ambient `sandkit` / `SandkitApi` / `WorkerSandkitApi` |
+| Path                              | Role                                                  |
+| --------------------------------- | ----------------------------------------------------- |
+| `modkit/types/src/main/`          | Main-thread `sandkit.api`                             |
+| `modkit/types/src/worker/`        | Worker-thread `sandkit.api`                           |
+| `modkit/types/src/shared/engine/` | `sandkit.engine` (+ Retro Console)                    |
+| `modkit/types/src/shared/`        | Shared main/worker API pieces                         |
+| `modkit/types/src/common-types/`  | Shared domain shapes                                  |
+| `modkit/sandkit-global.d.ts`      | Ambient `sandkit` / `SandkitApi` / `WorkerSandkitApi` |
 
-Path aliases: `@modkit/*` → `./modkit/*`; `types/api` → `./modkit/types/src/main/index`; `types/worker-api` → `./modkit/types/src/worker/index`; `types/sandkit` → `./modkit/types/src/main/index`; `types/engine` → `./modkit/types/src/engine/index`; `types/*` → `./modkit/types/*`.
+Path aliases: `@modkit/*` → `./modkit/*`. Use ambient `sandkit`, `SandkitApi`, and `WorkerSandkitApi` — do not import them with a `types/` prefix. Retro Console types come from `@modkit/utils`.
 
 Use the free name `sandkit` in mod and modkit code. Do not import `@modkit/sandkit`.
 

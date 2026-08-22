@@ -1,6 +1,6 @@
 # Worker API Example
 
-Probes worker-thread `sandkit.api` against `types/worker-api` (`WorkerSandkitApi`).
+Probes worker-thread `sandkit.api` against ambient `WorkerSandkitApi`.
 
 ## Use
 

@@ -11,6 +11,7 @@ The template has no release tags yet. Dated sections match the day the change la
 - **Debug companion:** **F3** toggles a top-left companion **Debug** panel (helper status). Vanilla Debug / Stats buttons stay for engine tools; the old custom management **Debug** row is gone. See [modkit/debug.md](modkit/debug.md).
 - Shared Tailwind entry is [`modkit/ui/tailwind.css`](../modkit/ui/tailwind.css). Overlay mods import `@modkit/ui/tailwind.css` instead of a per-mod `ui/tailwind.css` / `ui/css.d.ts`.
 - Mods no longer ship empty `patches` exports or `patches/` folders. Add `patches` in `mod.ts` when you need them. See [patches.md](patches.md).
+- Dropped `types/api`, `types/worker-api`, `types/sandkit`, and `types/engine` path aliases. Use ambient `sandkit` / `SandkitApi` / `WorkerSandkitApi`, or `@modkit/utils` for Retro Console types. Engine declarations live under `modkit/types/src/shared/engine/`.
 
 ### Added
 

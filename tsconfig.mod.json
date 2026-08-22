@@ -13,12 +13,7 @@
     "types": ["react"],
     "paths": {
       "*": ["./*"],
-      "@modkit/*": ["./modkit/*"],
-      "types/api": ["./modkit/types/src/main/index"],
-      "types/worker-api": ["./modkit/types/src/worker/index"],
-      "types/sandkit": ["./modkit/types/src/main/index"],
-      "types/engine": ["./modkit/types/src/engine/index"],
-      "types/*": ["./modkit/types/*"]
+      "@modkit/*": ["./modkit/*"]
     }
   }
 }

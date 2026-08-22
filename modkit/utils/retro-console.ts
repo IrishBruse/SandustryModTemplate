@@ -1,4 +1,4 @@
-import type { RetroConsoleGame } from "types/engine";
+import type { RetroConsoleGame } from "../types/src/shared/engine";
 
 export type {
   RetroConsoleApi,
@@ -7,7 +7,7 @@ export type {
   RetroConsoleGameOptions,
   RetroConsoleInput,
   RetroConsolePixel,
-} from "types/engine";
+} from "../types/src/shared/engine";
 
 /**
  * Register a game on the in-world Retro Console.

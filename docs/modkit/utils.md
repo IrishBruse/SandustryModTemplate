@@ -71,7 +71,7 @@ Types re-exported from `@modkit/utils`:
 | `RetroConsoleInput`       | Input interface                      |
 | `RetroConsolePixel`       | Pixel type                           |
 
-Full shapes live in `types/engine` (see the [types repo](https://github.com/flamableassassin/sandustry-modding-types)).
+Full shapes live in `modkit/types/src/shared/engine` (see the [types repo](https://github.com/flamableassassin/sandustry-modding-types)).
 
 ```ts
 import { registerRetroGame } from "@modkit/utils";
