@@ -20,4 +20,17 @@ export {
 } from "./shortcuts/ShortcutBar";
 export { HotbarSlot, HotbarIcon } from "./hotbar/HotbarSlot";
 export { OverlayRoot, FixedAnchor, Interactive } from "./layout/OverlayPanel";
+/** `./options/index` — `./options` would resolve to `options.css`, not the folder. */
+export {
+  OptionsPanel,
+  OptionsSection,
+  OptionsRow,
+  OptionsButton,
+  OptionsNumberInput,
+  OptionsSwitch,
+  OptionsSlider,
+  OptionsSliderRow,
+  OptionsSelect,
+} from "./options/index";
+export type { OptionsSelectOption } from "./options/index";
 export * from "./shared/styles";

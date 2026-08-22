@@ -1,0 +1,50 @@
+/* Game range input. Thumb/track are not Tailwind utilities. */
+.options-slider {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.options-slider::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 3px;
+  background: rgb(51 65 85);
+}
+
+.options-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background: #ffe700;
+  margin-top: -4px;
+  box-shadow: 0 0 8px rgba(255, 231, 0, 0.3);
+  transition: box-shadow 0.2s ease;
+}
+
+.options-slider:hover::-webkit-slider-thumb {
+  box-shadow: 0 0 12px rgba(255, 231, 0, 0.5);
+}
+
+.options-slider::-moz-range-track {
+  height: 6px;
+  border-radius: 3px;
+  background: rgb(51 65 85);
+  border: none;
+}
+
+.options-slider::-moz-range-thumb {
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background: #ffe700;
+  border: none;
+  box-shadow: 0 0 8px rgba(255, 231, 0, 0.3);
+  transition: box-shadow 0.2s ease;
+}
+
+.options-slider:hover::-moz-range-thumb {
+  box-shadow: 0 0 12px rgba(255, 231, 0, 0.5);
+}

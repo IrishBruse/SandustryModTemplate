@@ -9,10 +9,35 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
 /** Shared utilities entry — import `@modkit/ui/tailwind.css` from the mod. */
 export const MODKIT_TAILWIND_CSS = join(ROOT, "modkit/ui/tailwind.css");
 
+/** Options slider chrome — import `@modkit/ui/options.css` when you use OptionsSlider. */
+export const MODKIT_OPTIONS_CSS_ENTRY = join(ROOT, "modkit/ui/options.css");
+export const MODKIT_OPTIONS_CSS = join(ROOT, "modkit/ui/options/options.css");
+
 export const TAILWIND_CSS_FILTER = /[\\/]modkit[\\/]ui[\\/]tailwind\.css$/;
+export const OPTIONS_CSS_FILTER = /[\\/]modkit[\\/]ui[\\/]options\.css$/;
+export const MODKIT_UI_CSS_FILTER = /[\\/]modkit[\\/]ui[\\/](?:tailwind|options)\.css$/;
+
+/** @returns {string} */
+export function readModkitOptionsCss() {
+  return readFileSync(MODKIT_OPTIONS_CSS, "utf8");
+}
 
 /** Docs canvas source — not a mod file, so mods stay isolated. */
 export const PREVIEW_TAILWIND_CSS = join(ROOT, "docs/ui/canvas/_preview/tailwind.css");
+
+/**
+ * esbuild namespace imports appear as `namespace:/absolute/path` in metafile keys.
+ * @param {string} key
+ * @param {string} root
+ */
+function metafileInputPath(key, root) {
+  let abs = isAbsolute(key) ? key : join(root, key);
+  const colon = abs.indexOf(":");
+  if (colon > 0 && abs.startsWith("/", colon + 1)) {
+    abs = abs.slice(colon + 1);
+  }
+  return abs;
+}
 
 /**
  * Absolute path of the modkit Tailwind entry when the bundle imports it.
@@ -23,7 +48,7 @@ export const PREVIEW_TAILWIND_CSS = join(ROOT, "docs/ui/canvas/_preview/tailwind
  */
 export function findTailwindCssEntry(metafile, root) {
   for (const key of Object.keys(metafile.inputs)) {
-    const abs = isAbsolute(key) ? key : join(root, key);
+    const abs = metafileInputPath(key, root);
     if (TAILWIND_CSS_FILTER.test(abs)) return abs;
   }
   return null;
@@ -58,7 +83,7 @@ export async function compileTailwindUtilities(content, cssEntry) {
 export function bundledContentFiles(metafile, root) {
   const files = [];
   for (const key of Object.keys(metafile.inputs)) {
-    const abs = isAbsolute(key) ? key : join(root, key);
+    const abs = metafileInputPath(key, root);
     if (!/\.(ts|tsx|js|jsx)$/.test(abs)) continue;
     if (abs.includes(`${sep}node_modules${sep}`)) continue;
     files.push(abs);

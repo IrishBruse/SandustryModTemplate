@@ -1,10 +1,9 @@
 /**
- * esbuild `inject` target (main bundle only). Boots hot reload and exposes a
- * free `reloaded` binding so mods do not call `installHotReload` /
+ * esbuild `inject` target (debug main bundle only). Boots hot reload and
+ * exposes a free `reloaded` binding so mods do not call `installHotReload` /
  * `isHotReloadEval` themselves.
  *
- * Release builds resolve `@modkit/debug` to `debug.empty.ts` (no-op install,
- * `reloaded === false`).
+ * Release builds omit this file and define `reloaded` as `false`.
  */
 import { installHotReload, isHotReloadEval } from "@modkit/debug";
 

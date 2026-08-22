@@ -17,7 +17,10 @@ import {
   bundledContentFiles,
   compileTailwindUtilities,
   findTailwindCssEntry,
-  TAILWIND_CSS_FILTER,
+  OPTIONS_CSS_FILTER,
+  MODKIT_OPTIONS_CSS,
+  MODKIT_OPTIONS_CSS_ENTRY,
+  readModkitOptionsCss,
 } from "../lib/compile-tailwind.js";
 import { loadMods, modIsolationPlugin, prepareModOutputs, PUBLISH_OUT_ROOT } from "../lib/mods.js";
 import { copyWorkshopInstallFiles, removeWorkshopPublishFiles } from "../lib/workshop-files.js";
@@ -176,12 +179,31 @@ function releaseDebugStubPlugin() {
   };
 }
 
+const MODKIT_CSS_NAMESPACE = "modkit-css";
+
+/** Route `@modkit/ui/*.css` away from esbuild's default CSS loader (emits `main.css` / `{}`). */
+function modkitCssResolvePlugin() {
+  return {
+    name: "modkit-css-resolve",
+    setup(build) {
+      build.onResolve({ filter: /^@modkit\/ui\/(?:tailwind|options)\.css$/ }, (args) => ({
+        path: join(MODKIT_DIR, "ui", args.path.slice("@modkit/ui/".length)),
+        namespace: MODKIT_CSS_NAMESPACE,
+      }));
+      build.onResolve({ filter: /[\\/]modkit[\\/]ui[\\/]options[\\/]options\.css$/ }, (args) => ({
+        path: args.path,
+        namespace: MODKIT_CSS_NAMESPACE,
+      }));
+    },
+  };
+}
+
 /** Empty CSS so the first graph pass can list bundled sources without a CSS cycle. */
 function stubCssPlugin() {
   return {
-    name: "tailwind-stub",
+    name: "modkit-css-stub",
     setup(build) {
-      build.onLoad({ filter: TAILWIND_CSS_FILTER }, (args) => ({
+      build.onLoad({ filter: /.*/, namespace: MODKIT_CSS_NAMESPACE }, (args) => ({
         contents: "",
         loader: "text",
         watchFiles: [args.path],
@@ -190,16 +212,25 @@ function stubCssPlugin() {
   };
 }
 
-/** @param {() => string} getCss */
-function cssTextPlugin(getCss) {
+/** @param {() => string} getTailwindCss */
+function modkitCssTextPlugin(getTailwindCss) {
   return {
-    name: "tailwind-utilities",
+    name: "modkit-css-text",
     setup(build) {
-      build.onLoad({ filter: TAILWIND_CSS_FILTER }, (args) => ({
-        contents: getCss(),
-        loader: "text",
-        watchFiles: [args.path],
-      }));
+      build.onLoad({ filter: /.*/, namespace: MODKIT_CSS_NAMESPACE }, (args) => {
+        if (OPTIONS_CSS_FILTER.test(args.path) || args.path.endsWith("options/options.css")) {
+          return {
+            contents: readModkitOptionsCss(),
+            loader: "text",
+            watchFiles: [MODKIT_OPTIONS_CSS_ENTRY, MODKIT_OPTIONS_CSS],
+          };
+        }
+        return {
+          contents: getTailwindCss(),
+          loader: "text",
+          watchFiles: [args.path],
+        };
+      });
     },
   };
 }
@@ -314,11 +345,11 @@ function bundleOptions(mod) {
       __MOD_DEBUG__: modDebug ? "true" : "false",
       __MOD_ID__: JSON.stringify(manifestModId(mod)),
       __DEV_WATCH_URL__: embedDevWatchUrl ? JSON.stringify(devWatchUrl()) : '""',
+      ...(modDebug ? {} : { reloaded: "false" }),
     },
-    inject: [
-      join(MODKIT_DIR, "esbuild/hot-reload.inject.ts"),
-      ...(modDebug ? [join(MODKIT_DIR, "esbuild/console.ts")] : []),
-    ],
+    inject: modDebug
+      ? [join(MODKIT_DIR, "esbuild/hot-reload.inject.ts"), join(MODKIT_DIR, "esbuild/console.ts")]
+      : [],
     alias: {
       react: join(ROOT, "modkit/esbuild/react.ts"),
       "react/jsx-runtime": join(ROOT, "modkit/esbuild/jsx-runtime.ts"),
@@ -359,6 +390,7 @@ function workerBundleOptions(mod) {
       __MOD_DEBUG__: modDebug ? "true" : "false",
       __MOD_ID__: JSON.stringify(manifestModId(mod)),
       __DEV_WATCH_URL__: '""',
+      reloaded: "false",
     },
     inject: modDebug ? [join(MODKIT_DIR, "esbuild/console.ts")] : [],
     banner: {
@@ -380,9 +412,28 @@ function basePlugins(mod) {
     modIsolationPlugin(ROOT),
     browserPatchesStubPlugin(),
     releaseDebugStubPlugin(),
+    modkitCssResolvePlugin(),
     modkitAliasPlugin(),
     mainEntryBootstrapPlugin(mod),
+    gifWorkerAsTextPlugin(),
   ];
+}
+
+/**
+ * `import source from "modern-gif/worker"` must stay a string. Bundling that
+ * file as JS would run `self.onmessage` on the renderer thread.
+ */
+function gifWorkerAsTextPlugin() {
+  return {
+    name: "gif-worker-as-text",
+    setup(build) {
+      build.onLoad({ filter: /node_modules[\\/]modern-gif[\\/]dist[\\/]worker\.js$/ }, (args) => ({
+        contents: `export default ${JSON.stringify(readFileSync(args.path, "utf8"))};`,
+        loader: "js",
+        watchFiles: [args.path],
+      }));
+    },
+  };
 }
 
 /**
@@ -421,8 +472,8 @@ function collectWatchDirs(root, skipNames = []) {
 /**
  * Main entry only (workers skip this):
  * - Skip the entry body when `api.settings.get("enabled")` is false (`isEnabled`)
- * - Keep the hot-reload inject in the graph via `void reloaded` even when a
- *   mod never reads that binding
+ * - Keep the hot-reload inject in the graph via `void reloaded` on debug
+ *   builds even when a mod never reads that binding
  *
  * Uses an `if` wrap (not top-level `return`) because entries with `import` are
  * ESM and reject top-level return.
@@ -442,7 +493,7 @@ function mainEntryBootstrapPlugin(mod) {
           contents: [
             imports,
             `import { isEnabled } from "@modkit/utils";`,
-            `void reloaded;`,
+            ...(modDebug ? [`void reloaded;`] : []),
             `if (isEnabled(sandkit.api)) {`,
             body,
             `}`,
@@ -451,10 +502,7 @@ function mainEntryBootstrapPlugin(mod) {
             .join("\n"),
           loader,
           watchFiles: [args.path, mod.modTs],
-          watchDirs: [
-            ...collectWatchDirs(mod.dir),
-            ...collectWatchDirs(MODKIT_DIR, ["types"]),
-          ],
+          watchDirs: [...collectWatchDirs(mod.dir), ...collectWatchDirs(MODKIT_DIR, ["types"])],
         };
       });
     },
@@ -493,6 +541,11 @@ async function compileFromBundleGraph(mod) {
   return compileTailwindUtilities(bundledContentFiles(result.metafile, ROOT), cssEntry);
 }
 
+function removeStrayMainCss(mod) {
+  const stray = join(mod.outDir, "main.css");
+  if (existsSync(stray)) rmSync(stray);
+}
+
 /**
  * @param {import("./mods.js").LoadedMod} mod
  */
@@ -501,8 +554,9 @@ async function buildOne(mod) {
   let tailwindCss = await compileFromBundleGraph(mod);
   const result = await esbuild.build({
     ...bundleOptions(mod),
-    plugins: [...basePlugins(mod), cssTextPlugin(() => tailwindCss)],
+    plugins: [...basePlugins(mod), modkitCssTextPlugin(() => tailwindCss)],
   });
+  removeStrayMainCss(mod);
   maybeRewriteDebugMaps(mod);
   logBuildResult(mod, result);
 
@@ -530,7 +584,7 @@ async function watchOne(mod) {
     metafile: true,
     plugins: [
       ...basePlugins(mod),
-      cssTextPlugin(() => tailwindCss),
+      modkitCssTextPlugin(() => tailwindCss),
       {
         name: "sync-mod",
         setup(build) {
@@ -563,6 +617,7 @@ async function watchOne(mod) {
             }
 
             maybeRewriteDebugMaps(mod);
+            removeStrayMainCss(mod);
             await syncModFiles(mod);
             notifyHotReload({ changed: ["main.js"], modIds: [modId] });
             logBuildResult(mod, result);

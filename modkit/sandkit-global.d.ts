@@ -39,8 +39,9 @@ declare global {
   type Sandkit = SandkitHost;
   const sandkit: Sandkit;
   /**
-   * Set by esbuild inject (`modkit/esbuild/hot-reload.inject.ts`).
    * True when this `main.js` eval is a hot-reload pass.
+   * Debug builds set it via esbuild inject (`modkit/esbuild/hot-reload.inject.ts`).
+   * Release builds define it as `false`.
    */
   const reloaded: boolean;
 }
