@@ -29,12 +29,7 @@ Short player-facing copy. `npm run publish` copies each file into `.tmp/publish/
 
 ## Changelog and Discord
 
-When a change is **user-visible** (new feature, behaviour change, fix, removal, or docs that announce a product change):
-
-1. Update [`Changelog.md`](Changelog.md).
-2. Update the short **What's new** block in [`discord-post.md`](discord-post.md).
-
-Do this in the same change set as the work. Do not wait for a release tag.
+When a change is **user-visible** (new feature, behaviour change, fix, removal, or docs that announce a product change), update [`Changelog.md`](Changelog.md) in the same change set. Do not wait for a release tag.
 
 ### `Changelog.md`
 
@@ -46,8 +41,6 @@ Do this in the same change set as the work. Do not wait for a release tag.
 
 ### `discord-post.md`
 
-- Keep the **What's new** section short: a few bullets, not a copy of the full changelog.
-- One date heading that matches the latest changelog day you are announcing.
-- Prefer outcome-focused lines (what a modder gets), not internal file lists.
-- Keep the **Full changelog** link. Do not paste the whole `Changelog.md` into the Discord draft.
-- Update Features / Quick start only when those sections are wrong for the announcement.
+- Evergreen pitch only: Quick start, Features, and the **Full changelog** link.
+- Do not put a **What's new** / dated change list here. Put those in `Changelog.md` only.
+- Update Features / Quick start only when those sections are wrong.
