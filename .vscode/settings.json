@@ -1,0 +1,5 @@
+{
+  "[html][css][scss][html][json][jsonc][yaml][github-actions-workflow]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  }
+}
