@@ -30,15 +30,14 @@ Full steps, copy-a-mod, and sample list: [Quick start](https://ethanconneely.com
 
 ## Commands
 
-| Command               | Effect                                                                                                                         |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `npm run setup`       | Check install, extract game source to `sandustry/`, link `logs/`                                                               |
-| `npm run dev`         | Watch and write to the OS mods folder (`~/.config/...` or `%APPDATA%`)                                                         |
-| `npm run build`       | Release bundle (no debug helpers)                                                                                              |
-| `npm run publish`     | Requires [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD). Release-build to `.tmp/publish/`, then Workshop upload |
-| `npm run typecheck`   | TypeScript check                                                                                                               |
-| `npm run mod:install` | `npm install` in each `src/<name>/` with `package.json`                                                                        |
-| `npm run sandustry`   | Stop and launch the game (no build)                                                                                            |
+| Command             | Effect                                                                                                                         |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `npm run setup`     | Check install, extract game source to `sandustry/`, link `logs/`                                                               |
+| `npm run dev`       | Watch and write to the OS mods folder (`~/.config/...` or `%APPDATA%`)                                                         |
+| `npm run build`     | Release bundle (no debug helpers)                                                                                              |
+| `npm run publish`   | Requires [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD). Release-build to `.tmp/publish/`, then Workshop upload |
+| `npm run typecheck` | TypeScript check                                                                                                               |
+| `npm run sandustry` | Stop and launch the game (no build)                                                                                            |
 
 ## Troubleshooting
 

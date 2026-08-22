@@ -92,7 +92,7 @@ Folders match `npm run` commands. Shared helpers live in `scripts/lib/`.
 | `scripts/dev/dev.js`                      | `npm run dev` — watch + write to the game mods folder                                                                                 |
 | `scripts/dev/hot-reload-server.js`        | Hot-reload HTTP server (`/hot-reload`, `/log`)                                                                                        |
 | `scripts/typecheck/typecheck.js`          | `npm run typecheck` — root kit + per-mod `tsc --noEmit`                                                                               |
-| `scripts/mod-install/install-mod-deps.js` | `npm run mod:install` — `npm install` in each `src/<name>/` with `package.json`                                                       |
+| `scripts/mod-install/install-mod-deps.js` | Root `postinstall` — `npm install` in each `src/<name>/` with `package.json`                                                          |
 | `scripts/setup/setup.js`                  | `npm run setup` — check install, extract game source to `sandustry/`, link `logs/`                                                    |
 | `scripts/publish/publish-workshop.js`     | `npm run publish` — release-build + SteamCMD Workshop upload                                                                          |
 | `scripts/sandustry/launch-sandustry.js`   | `npm run sandustry` — stop and launch the game (no build)                                                                             |

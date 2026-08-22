@@ -117,13 +117,13 @@ Release builds skip the inject. The shim uses `globalThis.console` so it does no
 
 ## Debug patches
 
-Optional extra debug-only patches can still be exported from a mod's `mod.ts` as `debugPatches`. Splash skip lives on the debug companion, not in `modkit/patches.ts`. See [patches.md](../patches.md).
+Optional extra debug-only patches can still be exported from a mod's `mod.ts` as `debugPatches`. Splash skip is a settings-gated runtime helper on the debug companion (no bundle patch). See [patches.md](../patches.md).
 
 ## Files
 
 | Path                             | Role                                                                       |
 | -------------------------------- | -------------------------------------------------------------------------- |
-| [`src/debug/`](../../src/debug/) | Companion mod: DevTools, splash, auto-boot, F3, splash patch, settings     |
+| [`src/debug/`](../../src/debug/) | Companion mod: DevTools, splash, auto-boot, F3, settings                   |
 | `modkit/debug/index.ts`          | Re-exports `installHotReload`, `onDispose`, `isHotReloadEval`              |
 | `modkit/debug/hot-reload.ts`     | Poll `GET /hot-reload/last`, `onDispose`, `isHotReloadEval`                |
 | `modkit/esbuild/debug.empty.ts`  | Release stub: no-op `installHotReload`, `onDispose`, `isHotReloadEval`     |

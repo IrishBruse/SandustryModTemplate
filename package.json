@@ -6,7 +6,6 @@
     "build": "node scripts/build/esbuild.config.mjs",
     "dev": "node scripts/dev/dev.js",
     "typecheck": "node scripts/typecheck/typecheck.js",
-    "mod:install": "node scripts/mod-install/install-mod-deps.js",
     "postinstall": "node scripts/mod-install/install-mod-deps.js",
     "lint": "npm run typecheck && oxlint && oxfmt --check",
     "lint:fix": "oxlint --fix && oxfmt",

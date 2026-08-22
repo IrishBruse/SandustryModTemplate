@@ -136,9 +136,7 @@ function checkModPackageInstalls() {
     ok("Mod npm packages (src/<name>/package.json)");
     return;
   }
-  fail(
-    `Missing node_modules in src/${missing.join(", src/")}. Run npm install (or npm run mod:install).`,
-  );
+  fail(`Missing node_modules in src/${missing.join(", src/")}. Run npm install.`);
 }
 
 function checkGameBinary() {

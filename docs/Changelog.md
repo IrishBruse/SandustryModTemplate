@@ -44,7 +44,7 @@ The template has no release tags yet. Dated sections match the day the change la
 - Quick start flows (root README, docs home, [Quick start](quick-start.md), [Builds](builds.md)) include **`npm run setup`** after `npm install`. Docs describe its checks (Node, npm installs, types submodule, game binary, asar, **[mods]** beta, `sandkit`) plus extract and `logs/` link. See [troubleshooting](troubleshooting.md).
 - **Debug companion defaults:** **Open DevTools on load**, **Skip splash**, and **Auto-boot Continue** default to **off**. Turn them on in the debug mod settings when you want them. See [modkit/debug.md](modkit/debug.md).
 - **`modkit/esbuild/`** holds esbuild wiring (React/JSX aliases, console inject, patches stub, release debug stub).
-- **Scripts folders** match `npm run` commands (`scripts/build`, `dev`, `typecheck`, `mod-install`, `setup`, `publish`, `sandustry`, `ui`). Shared helpers live in `scripts/lib/`.
+- **Scripts folders** match `npm run` commands (`scripts/build`, `dev`, `typecheck`, `setup`, `publish`, `sandustry`, `ui`). Shared helpers live in `scripts/lib/`. Root `postinstall` runs `scripts/mod-install/install-mod-deps.js` for per-mod `package.json` folders.
 - **Types submodule** lives at [`modkit/types/`](../modkit/types/) (was top-level `types/`). Import aliases (`types/api`, `types/worker-api`, `types/engine`) are unchanged.
 - **[Folder layout](layout.md)** rewritten for new authors: repo folders as a table (not a code block), required vs optional files, sample copy targets, and where the game stores mods. Tooling (`docs/`, `scripts/`, `sandustry/`) stays off that page.
 - Docs home and root README point at the Quick start page instead of a long inline walkthrough.
@@ -54,7 +54,7 @@ The template has no release tags yet. Dated sections match the day the change la
 - **Workshop assets** live under `src/<name>/workshop/` (`workshop.json`, `preview.gif`, `preview.png`, `workshop.txt`, `screenshots/`). The build copies `workshop.json` and previews to the mod root. `npm run publish` copies `screenshots/`, `README.md`, and `CHANGELOG.md` into staging. `publishedFileId` is no longer set in `mod.ts`.
 - **Pixel-perfect Screenshot and GIF recorder** `0.2.0` (`src/selection-capture/`): player-facing name (was Selection Capture) and Workshop copy. Folder and mod id stay `selection-capture`. Build copies **preview.gif** (preferred) and **preview.png** from `workshop/`.
 - **`npm run setup`** (was `npm run references`): validates the local install, extracts game source to top-level `sandustry/`, and links `logs/`. Workshop mod copies under `references/` are removed.
-- **Mod npm deps:** optional `src/<name>/package.json` holds packages for that mod only. Root `npm install` and `npm run mod:install` run `npm install` in those folders. **Selection Capture** `modern-gif` moved from the repo root into `src/selection-capture/package.json`.
+- **Mod npm deps:** optional `src/<name>/package.json` holds packages for that mod only. Root `npm install` (`postinstall`) runs `npm install` in those folders. **Selection Capture** `modern-gif` moved from the repo root into `src/selection-capture/package.json`.
 - **`npm run sandustry`** only stops and launches the game. It does not build. Keep `npm run dev` (or `npm run build`) for the bundle. See [builds.md](builds.md).
 - **Selection Capture** GIF encode uses **modern-gif** instead of **gifenc** (typed API, same 2× pixel look).
 - **`npm run dev` cleanup:** when the watch stops (Ctrl+C, terminal close, or process exit), it removes OS mod folders this template owns and the matching `dist/<folder>` links. Use `npm run build` to leave mods installed. See [builds.md](builds.md).
@@ -84,6 +84,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Removed
 
+- **`npm run mod:install`**. Per-mod `package.json` folders still install via root `postinstall` (`scripts/mod-install/install-mod-deps.js`).
 - **Debug splash bundle patch** (`skip-startup-splash`). Splash skip is settings-gated runtime only.
 - **`references/`** Workshop mod copies and **`npm run references`**. Use **`npm run setup`** for checks, extracted game source in `sandustry/`, and the `logs/` link.
 - **Selection Capture** panel **Scale** control. PNG and GIF are always **2×** nearest-neighbor.

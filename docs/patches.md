@@ -19,7 +19,7 @@ Patch `code` runs outside the game bundle IIFE. Put shared runtime helpers on `g
 | `patches` in that mod's `mod.ts`                 | Production patches (always written)               |
 | `debugPatches` in that mod's `mod.ts` (optional) | Extra debug-only patches (dev / `--debug` builds) |
 
-Release builds (`npm run build`) omit `debugPatches`. Dev builds (`npm run dev`, `--game` / `--debug`) include them. Splash skip lives on [`src/debug/mod.ts`](../src/debug/mod.ts) (companion installed on debug builds only).
+Release builds (`npm run build`) omit `debugPatches`. Dev builds (`npm run dev`, `--game` / `--debug`) include them. Splash skip is a settings-gated runtime helper on the debug companion ([`src/debug/`](../src/debug/)), not a game-file patch.
 
 ## Fields
 
@@ -70,7 +70,7 @@ export const debugPatches = definePatches([
 ]);
 ```
 
-Splash skip lives on [`src/debug/mod.ts`](../src/debug/mod.ts). The browser bundle stubs `@modkit/patches` so patch payloads stay out of `main.js`.
+Splash skip is runtime-only on the debug companion. The browser bundle stubs `@modkit/patches` so patch payloads stay out of `main.js`.
 
 ## Build output
 
