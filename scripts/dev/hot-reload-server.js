@@ -6,6 +6,7 @@
 import { appendFileSync, mkdirSync, writeFileSync } from "node:fs";
 import http from "node:http";
 import { join } from "node:path";
+import { styleText } from "../lib/cli-style.js";
 import { sandustryLogsDir } from "../lib/paths.js";
 
 export const DEV_WATCH_PORT = 19147;
@@ -119,9 +120,11 @@ function installForceReloadKey() {
     }
     if (key !== "\u0012") return;
     notifyHotReload({ changed: ["main.js"], force: true });
-    console.log("forced hot reload (Ctrl+R)");
+    console.log(styleText(["bold", "magenta"], "forced hot reload (Ctrl+R)"));
   });
-  console.log("press Ctrl+R to force a hot reload");
+  console.log(
+    `${styleText("yellow", "press")} ${styleText(["bold", "yellow"], "Ctrl+R")} ${styleText("yellow", "to force a hot reload")}`,
+  );
 }
 
 /** Start the dev watch HTTP server once. No-op if already listening. */
@@ -207,11 +210,13 @@ export function startHotReloadServer() {
   });
 
   server.listen(DEV_WATCH_PORT, "127.0.0.1", () => {
-    console.log(`dev watch: ${devWatchUrl()} (GET ${HOT_RELOAD_LAST_PATH})`);
+    console.log(
+      `${styleText("cyan", "dev watch")}${styleText("dim", ":")} ${styleText(["underline", "cyan"], devWatchUrl())} ${styleText("dim", `(GET ${HOT_RELOAD_LAST_PATH})`)}`,
+    );
     installForceReloadKey();
   });
 
   server.on("error", (error) => {
-    console.error(`dev watch server failed: ${error.message}`);
+    console.error(styleText("red", `dev watch server failed: ${error.message}`));
   });
 }

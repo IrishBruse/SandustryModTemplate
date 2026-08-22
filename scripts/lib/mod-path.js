@@ -15,6 +15,7 @@ import {
   unlinkSync,
 } from "node:fs";
 import { dirname, join, resolve } from "node:path";
+import { styleText } from "./cli-style.js";
 import { linkDirectory, samePath, sandustryModsDir } from "./paths.js";
 
 export const REPO_DIST_LINK = "dist";
@@ -176,7 +177,9 @@ export function linkRepoDistToModOutputs(repoRoot, mods, keepFolders) {
     }
 
     linkDirectory(target, linkPath);
-    console.log(`Linked ${REPO_DIST_LINK}/${mod.folder} -> ${target}`);
+    console.log(
+      `${styleText("green", "Linked")} ${styleText("bold", `${REPO_DIST_LINK}/${mod.folder}`)} ${styleText("dim", `-> ${target}`)}`,
+    );
   }
 
   const keptTargets = readDistSymlinkTargets(distPath);

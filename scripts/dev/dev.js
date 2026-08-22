@@ -9,12 +9,13 @@
 import { spawn } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { styleText } from "../lib/cli-style.js";
 import { removeOwnedGameMods } from "../lib/mod-path.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const extra = process.argv.slice(2);
 
-console.log("Watching src/ mods");
+console.log(styleText(["bold", "cyan"], "Watching src/ mods"));
 
 const child = spawn("node", [join(ROOT, "scripts/build/esbuild.config.mjs"), "--watch", ...extra], {
   stdio: "inherit",
@@ -30,7 +31,7 @@ function cleanup() {
   try {
     removeOwnedGameMods(ROOT);
   } catch (err) {
-    console.error("Failed to remove owned mods:", err);
+    console.error(styleText("red", "Failed to remove owned mods:"), err);
   }
 }
 

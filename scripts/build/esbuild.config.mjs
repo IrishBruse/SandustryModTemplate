@@ -11,6 +11,7 @@ import {
 import { dirname, isAbsolute, join, normalize } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { buildPatches } from "../lib/build-patches.js";
+import { kv, styleText } from "../lib/cli-style.js";
 import {
   bundledContentFiles,
   compileTailwindUtilities,
@@ -76,11 +77,12 @@ if (publishOut) {
   prepareModOutputs(ROOT, mods, { includeDebugKit: modDebug });
 }
 
-console.log(`mods: ${mods.map((mod) => mod.folder).join(", ")}`);
-console.log(`mod debug: ${modDebug ? "on" : "off"}`);
-console.log(`output: ${publishOut ? ".tmp/publish/<folder>" : "OS mods folder"}`);
-console.log(`sourcemap: ${sourcemap ?? "off"}`);
-console.log(`dev watch URL: ${embedDevWatchUrl ? devWatchUrl() : "(none)"}`);
+console.log(
+  kv("mods", mods.map((mod) => styleText("bold", mod.folder)).join(styleText("dim", ", "))),
+);
+console.log(kv("mod debug", modDebug ? styleText("green", "on") : styleText("dim", "off")));
+console.log(kv("output", publishOut ? ".tmp/publish/<folder>" : "OS mods folder"));
+console.log(kv("sourcemap", sourcemap ?? styleText("dim", "off")));
 
 /**
  * Write modinfo.json from that mod's `mod.ts`.
@@ -122,7 +124,9 @@ async function syncModFiles(mod) {
 
 function logBuildResult(mod, result) {
   if (result.errors.length > 0) return;
-  console.log(`built ${mod.folder} to ${mod.outDir}`);
+  console.log(
+    `${styleText("green", "built")} ${styleText("bold", mod.folder)} ${styleText("dim", `to ${mod.outDir}`)}`,
+  );
 }
 
 /** Resolve `@modkit/...` to `modkit/...`. */
@@ -447,7 +451,6 @@ async function watchOne(mod) {
   });
 
   await mainCtx.watch();
-  console.log(`watching src/${mod.folder} -> ${join(mod.outDir, "main.js")}`);
 
   if (mod.worker) {
     const workerOut =
@@ -473,7 +476,6 @@ async function watchOne(mod) {
       ],
     });
     await workerCtx.watch();
-    console.log(`watching src/${mod.folder} -> ${join(mod.outDir, workerOut)}`);
   }
 }
 
