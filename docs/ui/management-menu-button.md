@@ -27,16 +27,16 @@ onDispose(stop);
 
 | Param     | Type         | Default | Description                                                          |
 | --------- | ------------ | ------- | -------------------------------------------------------------------- |
-| `id`      | `string`     | —       | Stable spacer id. Prefer `${modId}:name` (required).                 |
+| `id`      | `string`     | —       | Stable row id. Prefer `${modId}:name` (required).                    |
 | `icon`    | `string`     | —       | SVG markup for the 20×20 slot. Use `fill="currentColor"` (required). |
 | `label`   | `string`     | —       | Row label (required).                                                |
 | `hotkey`  | `string`     | —       | Badge text only (required).                                          |
 | `onClick` | `() => void` | —       | Click handler.                                                       |
-| `active`  | `boolean`    | `true`  | When false, the row and spacer are removed.                          |
+| `active`  | `boolean`    | `true`  | When false, the row is removed.                                      |
 
 Returns a dispose function. Pass it to `onDispose` so hot reload removes the row.
 
-Rows stack under Upgrades in registration order. The first register injects a host overlay; the last dispose removes it.
+Rows stack under Upgrades in registration order. Each row root is placed as a **direct sibling** of the vanilla column rows (same as Toolbox / Building). The first register injects a host overlay; the last dispose removes it.
 
 ## `ManagementMenuButton` (React)
 
@@ -54,12 +54,12 @@ import { ManagementMenuButton } from "@modkit/ui";
 
 | Prop              | Type         | Default               | Description                                   |
 | ----------------- | ------------ | --------------------- | --------------------------------------------- |
-| `id`              | `string`     | —                     | Stable spacer id (unique per row) (required). |
+| `id`              | `string`     | —                     | Stable row id (unique per row) (required).    |
 | `icon`            | `ReactNode`  | —                     | Icon on the left (required).                  |
 | `label`           | `string`     | —                     | Row label (required).                         |
 | `hotkey`          | `string`     | —                     | Hotkey badge text (required).                 |
 | `highlightLetter` | `string`     | first char of `label` | Letter highlighted on hover.                  |
-| `active`          | `boolean`    | `true`                | When false, the row and spacer are removed.   |
+| `active`          | `boolean`    | `true`                | When false, the row is removed.               |
 | `onClick`         | `() => void` | —                     | Click handler (also plays vanilla `click`).   |
 
 Register the component through `api.ui.inject` (or use `registerManagementMenuButton` instead).

@@ -1,0 +1,46 @@
+# Docs agent notes
+
+Rules for editing files under `docs/`.
+
+## Writing style
+
+Use **ASD-STE100 Simplified Technical English**:
+
+- Short sentences. One idea per sentence.
+- Prefer active voice and clear verbs (`run`, `set`, `open`, `write`).
+- Prefer lists. Use a markdown table only when the table stays narrow.
+- Prefer concrete paths, commands, and UI labels over vague wording.
+- Prefer **bold** for key terms and UI labels. Do not bold whole sentences.
+- Link related pages with relative paths (`layout.md`, `modkit/debug.md`).
+- Match the tone of nearby pages. Do not invent a new voice.
+
+Avoid:
+
+- Long compound sentences and filler.
+- Marketing tone in guide pages.
+- Duplicating large code samples that already live next to the feature.
+
+## Changelog and Discord
+
+When a change is **user-visible** (new feature, behaviour change, fix, removal, or docs that announce a product change):
+
+1. Update [`Changelog.md`](Changelog.md).
+2. Update the short **What's new** block in [`discord-post.md`](discord-post.md).
+
+Do this in the same change set as the work. Do not wait for a release tag.
+
+### `Changelog.md`
+
+- Newest first. Follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+- Use dated sections (`## YYYY-MM-DD`) for work that landed on `main`. Put in-progress notes under `## Unreleased` until they land.
+- Group under `### Added`, `### Changed`, `### Fixed`, `### Removed` as needed.
+- Write full bullets: what changed and why it matters. Link to related docs when useful.
+- Keep sample-mod tables and debugger notes in the full changelog when they help a reader.
+
+### `discord-post.md`
+
+- Keep the **What's new** section short: a few bullets, not a copy of the full changelog.
+- One date heading that matches the latest changelog day you are announcing.
+- Prefer outcome-focused lines (what a modder gets), not internal file lists.
+- Keep the **Full changelog** link. Do not paste the whole `Changelog.md` into the Discord draft.
+- Update Features / Quick start only when those sections are wrong for the announcement.

@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from "react";
+import type { CSSProperties, ReactNode, Ref } from "react";
 import { HotkeyBadge } from "../badges/HotkeyBadge";
 import { menuButtonShineStyle } from "../shared/styles";
 
@@ -17,6 +17,8 @@ type MenuButtonProps = {
   className?: string;
   style?: CSSProperties;
   rowProps?: Record<string, string>;
+  /** Root row element (management column places this next to vanilla rows). */
+  rootRef?: Ref<HTMLDivElement>;
   onClick?: () => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
@@ -51,6 +53,7 @@ export function MenuButton({
   className = "",
   style,
   rowProps,
+  rootRef,
   onClick,
   onMouseEnter,
   onMouseLeave,
@@ -62,6 +65,7 @@ export function MenuButton({
 
   return (
     <div
+      ref={rootRef}
       {...rowProps}
       className={`mb-2 relative group cursor-pointer pointer-events-auto ${className}`}
       style={liveSync ? style : { width: widthStyle, ...style }}

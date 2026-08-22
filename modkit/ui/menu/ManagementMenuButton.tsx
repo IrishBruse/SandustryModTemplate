@@ -1,14 +1,11 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { safe } from "../../utils/safe";
-import { Interactive } from "../layout/OverlayPanel";
 import { MenuButton } from "./MenuButton";
 
 const api = sandkit.api;
 
-const SPACER_ATTR = "data-modkit-management-spacer";
 const ROW_ATTR = "data-modkit-management-row";
-const SPACER_HEIGHT_PX = 42;
 const COLLAPSED_WIDTH_PX = 52;
 const DEFAULT_EXPANDED_WIDTH_PX = 208;
 const STOP_KEY = "__modkitManagementLayoutStops";
@@ -35,12 +32,12 @@ function trackStop(stop: () => void): () => void {
 }
 
 const rowOrder: string[] = [];
-const spacers = new Map<string, HTMLDivElement>();
+/** Live row roots placed as direct siblings under the vanilla column (like Upgrades). */
+const placedRows = new Map<string, HTMLElement>();
 const anchorListeners = new Map<string, (anchor: ManagementAnchor | null) => void>();
 const columnListeners = new Set<() => void>();
 
 export type ManagementAnchor = {
-  spacer: HTMLDivElement;
   expandedWidth: number;
 };
 
@@ -101,7 +98,7 @@ function findUpgradesButton(): HTMLElement | null {
     ".mb-2.relative.group.cursor-pointer.pointer-events-auto",
   );
   for (const row of rows) {
-    if (row.hasAttribute(SPACER_ATTR) || row.hasAttribute(ROW_ATTR)) continue;
+    if (row.hasAttribute(ROW_ATTR)) continue;
     const text = row.textContent ?? "";
     if (text.includes("Upgrades") || text.includes("pgrades")) return row;
   }
@@ -123,7 +120,7 @@ function vanillaColumnRows(): HTMLElement[] {
   );
   const out: HTMLElement[] = [];
   for (const row of nodes) {
-    if (row.hasAttribute(SPACER_ATTR) || row.hasAttribute(ROW_ATTR)) continue;
+    if (row.hasAttribute(ROW_ATTR)) continue;
     out.push(row);
   }
   return out;
@@ -179,31 +176,13 @@ function easeInOut(t: number): number {
   return ((ay * x + by) * x + cy) * x;
 }
 
-function setRowWidth(
-  dest: HTMLElement,
-  spacer: HTMLDivElement,
-  wrap: HTMLElement,
-  w: number,
-  _expanded: number,
-): void {
+function setRowWidth(dest: HTMLElement, w: number): void {
   const px = `${w}px`;
   // Vanilla row style is only `width: Npx` (engine also uses min-width:0).
-  // Keep overflow visible on the row so label/hotkey flex boxes are not crushed.
   dest.style.transition = "none";
   dest.style.setProperty("width", px);
   dest.style.minWidth = "0";
   dest.style.overflow = "";
-  spacer.style.transition = "none";
-  spacer.style.setProperty("width", px);
-  spacer.style.minWidth = "0";
-  // Vanilla row overflow is visible — clip here and hover `left-2` / key
-  // badge shadow get cut, so the label and hotkey look unfaded.
-  spacer.style.overflow = "";
-  spacer.style.alignSelf = "flex-start";
-  wrap.style.transition = "none";
-  wrap.style.width = px;
-  wrap.style.minWidth = "";
-  wrap.style.overflow = "";
 }
 
 function detailProgress(rowWidth: number, expanded: number): number {
@@ -422,8 +401,6 @@ function placeAll() {
   const upgrades = findUpgradesButton();
   if (!upgrades) {
     for (const id of rowOrder) {
-      const spacer = spacers.get(id);
-      if (spacer?.parentElement) spacer.remove();
       anchorListeners.get(id)?.(null);
     }
     return;
@@ -433,18 +410,23 @@ function placeAll() {
   let previous: HTMLElement = upgrades;
 
   for (const id of rowOrder) {
-    const spacer = spacers.get(id);
+    const row = placedRows.get(id);
     const notify = anchorListeners.get(id);
-    if (!spacer || !notify) continue;
-    spacer.style.height = `${SPACER_HEIGHT_PX}px`;
-    if (
-      spacer.previousElementSibling !== previous ||
-      spacer.parentElement !== previous.parentElement
-    ) {
-      previous.after(spacer);
+    if (!notify) continue;
+    // Notify even before the row DOM exists so the component can mount and place it.
+    if (!row) {
+      notify({ expandedWidth });
+      continue;
     }
-    previous = spacer;
-    notify({ spacer, expandedWidth });
+    // Direct sibling under the vanilla column — nested spacer/wrap blocked hover.
+    if (
+      row.previousElementSibling !== previous ||
+      row.parentElement !== previous.parentElement
+    ) {
+      previous.after(row);
+    }
+    previous = row;
+    notify({ expandedWidth });
   }
 
   for (const fn of columnListeners) fn();
@@ -452,20 +434,6 @@ function placeAll() {
 
 function registerRow(id: string, setAnchor: (anchor: ManagementAnchor | null) => void): () => void {
   if (!rowOrder.includes(id)) rowOrder.push(id);
-
-  let spacer = spacers.get(id);
-  if (!spacer) {
-    spacer = document.createElement("div");
-    spacer.setAttribute(SPACER_ATTR, id);
-    spacer.className = "mb-2";
-    spacer.style.height = `${SPACER_HEIGHT_PX}px`;
-    spacer.style.pointerEvents = "none";
-    spacer.style.minWidth = "0";
-    spacer.style.overflow = "";
-    spacer.style.alignSelf = "flex-start";
-    spacers.set(id, spacer);
-  }
-
   anchorListeners.set(id, setAnchor);
   retainLayoutWatch();
   placeAll();
@@ -474,13 +442,17 @@ function registerRow(id: string, setAnchor: (anchor: ManagementAnchor | null) =>
     const index = rowOrder.indexOf(id);
     if (index >= 0) rowOrder.splice(index, 1);
     anchorListeners.delete(id);
-    const el = spacers.get(id);
-    el?.remove();
-    spacers.delete(id);
+    placedRows.delete(id);
     setAnchor(null);
     releaseLayoutWatch();
     placeAll();
   };
+}
+
+function setPlacedRow(id: string, row: HTMLElement | null): void {
+  if (row) placedRows.set(id, row);
+  else placedRows.delete(id);
+  placeAll();
 }
 
 function useManagementAnchor(id: string, active: boolean): ManagementAnchor | null {
@@ -496,12 +468,7 @@ function useManagementAnchor(id: string, active: boolean): ManagementAnchor | nu
 
     const unregister = registerRow(id, (next) => {
       setAnchorRef.current((prev) => {
-        if (
-          prev &&
-          next &&
-          prev.spacer === next.spacer &&
-          prev.expandedWidth === next.expandedWidth
-        ) {
+        if (prev && next && prev.expandedWidth === next.expandedWidth) {
           return prev;
         }
         return next;
@@ -531,6 +498,8 @@ export type ManagementMenuButtonProps = {
 
 /**
  * Vanilla-style management column row under Upgrades.
+ * The row root is placed as a direct sibling of Toolbox / Building / … so
+ * hover and clicks match vanilla (nested spacer/wrap blocked pointer hit-testing).
  * Collapse copies a vanilla row's live `width` when that row resizes.
  * Hover uses a local 0.2s ease-in-out tween.
  */
@@ -545,7 +514,7 @@ export function ManagementMenuButton({
 }: ManagementMenuButtonProps) {
   const anchor = useManagementAnchor(id, active);
   const homeRef = useRef<HTMLDivElement>(null);
-  const wrapRef = useRef<HTMLDivElement>(null);
+  const rowRef = useRef<HTMLDivElement>(null);
   const hoveredRef = useRef(false);
   const collapsedRef = useRef(getManagementCollapsed());
   const tweenRef = useRef<{ from: number; to: number; start: number } | null>(null);
@@ -554,23 +523,23 @@ export function ManagementMenuButton({
   const mounted = Boolean(active && anchor);
 
   if (!mounted) {
-    returnRowHome(homeRef.current, wrapRef.current);
+    returnRowHome(homeRef.current, rowRef.current);
   }
 
   useLayoutEffect(() => {
     if (!mounted || !anchor) return;
-    const wrap = wrapRef.current;
-    if (!wrap) return;
-    if (wrap.parentElement !== anchor.spacer) anchor.spacer.appendChild(wrap);
+    const row = rowRef.current;
+    if (!row) return;
 
-    const spacer = anchor.spacer;
+    setPlacedRow(id, row);
+
     let raf = 0;
     let live = true;
     let watchedPack: HTMLElement | null = null;
     const WIDTH_MS = 200;
     const measured: MeasuredDetails = { destLabel: 0, destHot: 0, packLabel: 0, packHot: 0 };
 
-    const destRow = () => spacer.querySelector<HTMLElement>(`[${ROW_ATTR}]`);
+    const destRow = () => rowRef.current;
 
     const syncHoverFlag = () => {
       const dest = destRow();
@@ -585,14 +554,14 @@ export function ManagementMenuButton({
     };
 
     const ensureNaturals = (dest: HTMLElement) => {
-      const label = dest.querySelector<HTMLElement>(".tracking-wider");
+      const labelEl = dest.querySelector<HTMLElement>(".tracking-wider");
       const hot = rowHotkey(dest);
-      const labelInner = label?.querySelector<HTMLElement>("span.inline-block");
+      const labelInner = labelEl?.querySelector<HTMLElement>("span.inline-block");
       const hotInner = hot?.querySelector<HTMLElement>("span.inline-block");
       // While collapsed, the wrappers are width:0 — measure the inner nowrap spans.
       if (measured.destLabel <= 0) {
         measured.destLabel =
-          labelInner?.scrollWidth || label?.scrollWidth || labelInner?.offsetWidth || 0;
+          labelInner?.scrollWidth || labelEl?.scrollWidth || labelInner?.offsetWidth || 0;
       }
       if (measured.destHot <= 0) {
         measured.destHot =
@@ -623,7 +592,7 @@ export function ManagementMenuButton({
         (packLabel?.style.width === "auto" || packLabel?.style.width === "") &&
         (packHot?.style.width === "auto" || packHot?.style.width === "");
       if (atRest) cacheNaturals(dest, pack, measured);
-      setRowWidth(dest, spacer, wrap, packStyleW, expandedRef.current);
+      setRowWidth(dest, packStyleW);
       applyDetailsFromPack(dest, pack, measured);
     };
 
@@ -687,7 +656,7 @@ export function ManagementMenuButton({
       if (!dest || !tw) return;
       const t = Math.min(1, (now - tw.start) / WIDTH_MS);
       const w = tw.from + (tw.to - tw.from) * easeInOut(t);
-      setRowWidth(dest, spacer, wrap, w, expandedRef.current);
+      setRowWidth(dest, w);
       applyDetails(dest, detailProgress(w, expandedRef.current), measured);
       if (t >= 1) {
         tweenRef.current = null;
@@ -711,7 +680,7 @@ export function ManagementMenuButton({
       const from = dest.getBoundingClientRect().width;
       if (Math.abs(from - to) < 0.5) {
         tweenRef.current = null;
-        setRowWidth(dest, spacer, wrap, to, expandedRef.current);
+        setRowWidth(dest, to);
         applyDetails(dest, detailProgress(to, expandedRef.current), measured);
         return;
       }
@@ -742,7 +711,8 @@ export function ManagementMenuButton({
       if (followRaf) cancelAnimationFrame(followRaf);
       raf = 0;
       followRaf = 0;
-      returnRowHome(homeRef.current, wrap);
+      setPlacedRow(id, null);
+      returnRowHome(homeRef.current, row);
     };
 
     return trackStop(stop);
@@ -752,43 +722,39 @@ export function ManagementMenuButton({
 
   return (
     <div ref={homeRef} hidden aria-hidden>
-      <div ref={wrapRef} className="pointer-events-none">
-        <Interactive>
-          <MenuButton
-            icon={icon}
-            label={label}
-            hotkey={hotkey}
-            highlightLetter={highlightLetter}
-            liveSync
-            className="!mb-0"
-            rowProps={{ [ROW_ATTR]: id }}
-            onMouseEnter={() => {
-              hoveredRef.current = true;
-              playMenuHover();
-              // Vanilla: a = collapsed && !hovered → hover forces expandedWidth.
-              tweenToRef.current(expandedRef.current);
-            }}
-            onMouseLeave={() => {
-              hoveredRef.current = false;
-              // Vanilla: leave restores collapsed ? 52 : expandedWidth.
-              tweenToRef.current(
-                collapsedRef.current ? COLLAPSED_WIDTH_PX : expandedRef.current,
-              );
-            }}
-            onPointerLeave={() => {
-              if (!hoveredRef.current) return;
-              hoveredRef.current = false;
-              tweenToRef.current(
-                collapsedRef.current ? COLLAPSED_WIDTH_PX : expandedRef.current,
-              );
-            }}
-            onClick={() => {
-              playMenuClick();
-              onClick?.();
-            }}
-          />
-        </Interactive>
-      </div>
+      <MenuButton
+        rootRef={rowRef}
+        icon={icon}
+        label={label}
+        hotkey={hotkey}
+        highlightLetter={highlightLetter}
+        liveSync
+        rowProps={{ [ROW_ATTR]: id }}
+        onMouseEnter={() => {
+          hoveredRef.current = true;
+          playMenuHover();
+          // Vanilla: a = collapsed && !hovered → hover forces expandedWidth.
+          tweenToRef.current(expandedRef.current);
+        }}
+        onMouseLeave={() => {
+          hoveredRef.current = false;
+          // Vanilla: leave restores collapsed ? 52 : expandedWidth.
+          tweenToRef.current(
+            collapsedRef.current ? COLLAPSED_WIDTH_PX : expandedRef.current,
+          );
+        }}
+        onPointerLeave={() => {
+          if (!hoveredRef.current) return;
+          hoveredRef.current = false;
+          tweenToRef.current(
+            collapsedRef.current ? COLLAPSED_WIDTH_PX : expandedRef.current,
+          );
+        }}
+        onClick={() => {
+          playMenuClick();
+          onClick?.();
+        }}
+      />
     </div>
   );
 }

@@ -101,6 +101,7 @@ export function parseModFilter(argv) {
  * @property {string} dir
  * @property {string} modTs
  * @property {string} main
+ * @property {string | null} worker
  * @property {string} tsconfig
  * @property {any} manifest
  * @property {string} gameName
@@ -129,6 +130,7 @@ export async function loadMods(argv = process.argv.slice(2)) {
     const dir = join(SRC_DIR, folder);
     const modTs = join(dir, "mod.ts");
     const main = join(dir, "main.ts");
+    const workerTs = join(dir, "worker.ts");
     const tsconfig = join(dir, "tsconfig.json");
     if (!existsSync(main)) {
       throw new Error(`src/${folder}/mod.ts needs src/${folder}/main.ts`);
@@ -143,12 +145,18 @@ export async function loadMods(argv = process.argv.slice(2)) {
       );
     }
 
+    const worker = existsSync(workerTs) ? workerTs : null;
+    if (worker && typeof manifest.workerEntry !== "string") {
+      manifest.workerEntry = "worker.js";
+    }
+
     const gameName = name.trim();
     mods.push({
       folder,
       dir,
       modTs,
       main,
+      worker,
       tsconfig,
       manifest,
       gameName,

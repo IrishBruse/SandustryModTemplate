@@ -33,12 +33,13 @@ Logs: Linux `~/.config/sandustry/logs`; Windows `%APPDATA%/sandustry/logs`.
 
 ### `src/`
 
-Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized demos: `hello-toast-example`, `overlay-hotkey-example`, `retro-game-example`, `management-button-example`. Mods cannot import from each other.
+Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized demos: `hello-toast-example`, `overlay-hotkey-example`, `retro-game-example`, `management-button-example`, `worker-api-example`, `selection-screenshot-example`. Mods cannot import from each other.
 
 | Path                           | Role                                                                                |
 | ------------------------------ | ----------------------------------------------------------------------------------- |
 | `src/<name>/mod.ts`            | Manifest + patches → `modinfo.json` / `patches.json` at build                       |
 | `src/<name>/main.ts`           | Mod entry. Import debug from `./debug` (not `modkit/debug`) so release can stub it. |
+| `src/<name>/worker.ts`         | Optional worker entry → `worker.js` when present (`workerEntry` in modinfo)          |
 | `src/<name>/globals.ts`        | `MOD_ID` (from `./mod`) and `installGlobals`                                        |
 | `src/<name>/ui/`               | React overlays (import `react`, resolved to `modkit/react.ts`)                      |
 | `src/<name>/debug/`            | Mod debug entry: calls `modkit/debug`, re-exports `onDispose` / `isHotReloadEval`   |
@@ -74,10 +75,11 @@ Git submodule: [sandustry-modding-types](https://github.com/flamableassassin/san
 | `types/src/shared/`                       | Shared main/worker API pieces                        |
 | `types/src/common-types/`                 | Shared domain shapes                                 |
 | `types/src/sandkit/api/sandkit-api.d.ts`  | Composed `SandkitApi` (`types/api`)                  |
+| `types/src/worker/sandkit-api.d.ts`       | Composed `WorkerSandkitApi` (`types/worker-api`)     |
 | `types/src/sandkit/index.d.ts`            | `Sandkit` shape (`types/sandkit`)                    |
 | `types/src/global.d.ts`                   | Ambient `sandkit` value + type names (no import)     |
 
-Path aliases: `@modkit/*` → `./modkit/*`; `types/api` → `./types/src/sandkit/api/sandkit-api`; `types/sandkit` → `./types/src/sandkit`; `types/engine` → `./types/src/sandkit/engine`; `types/enums` → `./types/src/sandkit/enums`; `types/*` → `./types/*`.
+Path aliases: `@modkit/*` → `./modkit/*`; `types/api` → `./types/src/sandkit/api/sandkit-api`; `types/worker-api` → `./types/src/worker/sandkit-api`; `types/sandkit` → `./types/src/sandkit`; `types/engine` → `./types/src/sandkit/engine`; `types/enums` → `./types/src/sandkit/enums`; `types/*` → `./types/*`.
 
 Use the free name `sandkit` in mod and modkit code. Do not import `@modkit/sandkit`.
 
@@ -85,7 +87,7 @@ Use the free name `sandkit` in mod and modkit code. Do not import `@modkit/sandk
 
 | Path                                    | Role                                                                                |
 | --------------------------------------- | ----------------------------------------------------------------------------------- |
-| `scripts/build/esbuild.config.mjs`      | Bundle each `src/<name>/main.ts` → `main.js`, write `modinfo.json` + `patches.json` |
+| `scripts/build/esbuild.config.mjs`      | Bundle each `src/<name>/main.ts` → `main.js` (and `worker.ts` → `worker.js`), write `modinfo.json` + `patches.json` |
 | `scripts/build/mods.js`                 | Discover `src/*/mod.ts`, `--mod` filter, isolation plugin                           |
 | `scripts/build/typecheck.js`            | Root kit + per-mod `tsc --noEmit`                                                   |
 | `scripts/build/build-patches.js`        | Load that mod's `mod.ts` patch exports and write `patches.json`                     |

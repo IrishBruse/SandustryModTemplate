@@ -4,7 +4,7 @@ import { ManagementMenuButton } from "./ManagementMenuButton";
 const api = sandkit.api;
 
 export type RegisterManagementMenuButtonOptions = {
-  /** Stable spacer id. Prefer `${modId}:name`. */
+  /** Stable row id. Prefer `${modId}:name`. */
   id: string;
   /** SVG markup for the 20×20 icon slot. Use `fill="currentColor"`. */
   icon: string;
@@ -12,7 +12,7 @@ export type RegisterManagementMenuButtonOptions = {
   /** Badge text only — does not bind a key. */
   hotkey: string;
   onClick?: () => void;
-  /** When false, the row and spacer are removed. Default true. */
+  /** When false, the row is removed. Default true. */
   active?: boolean;
 };
 

@@ -6,12 +6,20 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ## Unreleased
 
+### Fixed
+
+- **Management menu hover:** mod rows under Upgrades sit as direct siblings of the vanilla column (same as Toolbox / Building). Nested spacer / `pointer-events-none` wraps blocked hover shine, yellow letter, and clicks.
+
+### Added
+
+- **Selection screenshot example** (`src/selection-screenshot-example/`): after a **C** marquee selection, **F8** downloads a PNG cropped to the selection’s cell edges.
+- **Worker API example** (`src/worker-api-example/`): optional `worker.ts` → `worker.js`, probes worker-thread `sandkit.api` against `types/worker-api` (`WorkerSandkitApi`). Build bundles `worker.ts` when present.
+
 ### Changed
 
 - Sandkit type folders nest under `src/sandkit/` (`api`, `engine`, `enums`, …) to match the live object. Path aliases `types/api`, `types/sandkit`, `types/engine`, and `types/enums` point at `types/src/sandkit/…`.
 - `sandkit` is an ambient free variable from `types/src/global.d.ts` (plus ambient `Sandkit` / `SandkitApi` / …). Mod and modkit code use `sandkit` with no import. Removed `@modkit/sandkit`.
-
-## 2026-08-21
+- TypeDoc nests `api` / `engine` / `enums` under `sandkit` (disk + live object); `worker` stays a sibling entry.
 
 ### Added
 
@@ -19,12 +27,14 @@ The template has no release tags yet. Dated sections match the day the change la
 - **Isolation.** Mods cannot import from another `src/` folder. Typecheck uses a per-mod `tsconfig.json`. The bundle fails sibling imports.
 - **Sample mods** (copy one to start a new mod):
 
-| Folder                           | Shows                                |
-| -------------------------------- | ------------------------------------ |
-| `src/hello-toast-example/`       | Toast on load                        |
-| `src/overlay-hotkey-example/`    | React overlay + Tailwind; **Alt+E**  |
-| `src/retro-game-example/`        | Retro Console Noise Test             |
-| `src/management-button-example/` | Management-column row under Upgrades |
+| Folder                              | Shows                                              |
+| ----------------------------------- | -------------------------------------------------- |
+| `src/hello-toast-example/`          | Toast on load                                      |
+| `src/overlay-hotkey-example/`       | React overlay + Tailwind; **Alt+E**                |
+| `src/retro-game-example/`           | Retro Console Noise Test                           |
+| `src/management-button-example/`    | Management-column row under Upgrades               |
+| `src/worker-api-example/`           | Worker-thread `sandkit.api` probe                  |
+| `src/selection-screenshot-example/` | **C** selection → **F8** PNG crop to cell edges    |
 
 - Windows and Linux mods, logs, and launch paths (`~/.config/sandustry` or `%APPDATA%\sandustry`).
 - `createLogger` and debug `console.*` lines that also append to `logs/<mod-id>.log` while `npm run dev` runs.

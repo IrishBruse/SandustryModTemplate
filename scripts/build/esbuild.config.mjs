@@ -318,6 +318,39 @@ function bundleOptions(mod) {
 }
 
 /**
+ * Worker bundle — same IIFE + free `sandkit`, no React / hot-reload inject.
+ * @param {import("./mods.js").LoadedMod} mod
+ */
+function workerBundleOptions(mod) {
+  const workerEntry =
+    typeof mod.manifest.workerEntry === "string" && mod.manifest.workerEntry.length > 0
+      ? mod.manifest.workerEntry
+      : "worker.js";
+  return {
+    entryPoints: [mod.worker],
+    outfile: join(mod.outDir, workerEntry),
+    bundle: true,
+    format: "iife",
+    platform: "browser",
+    target: "es2020",
+    sourcemap,
+    define: {
+      __MOD_DEBUG__: modDebug ? "true" : "false",
+      __MOD_ID__: JSON.stringify(typeof mod.manifest.id === "string" ? mod.manifest.id : "mod"),
+      __HOT_RELOAD_URL__: '""',
+    },
+    banner: {
+      js: [
+        `// Generated — edit src/${mod.folder}/worker.ts and run npm run dev.`,
+        "// Worker entry via new Function(...). No import/export.",
+        "// sandkit is already in scope (worker-thread api).",
+      ].join("\n"),
+    },
+    logLevel: "info",
+  };
+}
+
+/**
  * @param {import("./mods.js").LoadedMod} mod
  */
 function basePlugins(mod) {
@@ -358,6 +391,14 @@ async function buildOne(mod, includeModkitDebug) {
   });
   maybeRewriteDebugMaps(mod);
   logBuildResult(mod, result);
+
+  if (mod.worker) {
+    const workerResult = await esbuild.build({
+      ...workerBundleOptions(mod),
+      plugins: basePlugins(mod),
+    });
+    logBuildResult(mod, workerResult);
+  }
 }
 
 /**
@@ -403,6 +444,33 @@ async function watchOne(mod, includeModkitDebug) {
 
   await mainCtx.watch();
   console.log(`watching src/${mod.folder} -> ${join(mod.outDir, "main.js")}`);
+
+  if (mod.worker) {
+    const workerOut =
+      typeof mod.manifest.workerEntry === "string" && mod.manifest.workerEntry.length > 0
+        ? mod.manifest.workerEntry
+        : "worker.js";
+    const workerCtx = await esbuild.context({
+      ...workerBundleOptions(mod),
+      plugins: [
+        ...basePlugins(mod),
+        {
+          name: "sync-worker",
+          setup(build) {
+            build.onEnd(async (result) => {
+              if (result.errors.length > 0) return;
+              await syncModFiles(mod, includeModkitDebug);
+              // Worker scripts do not hot-reload — toast asks for a game restart.
+              notifyHotReload({ changed: [workerOut] });
+              logBuildResult(mod, result);
+            });
+          },
+        },
+      ],
+    });
+    await workerCtx.watch();
+    console.log(`watching src/${mod.folder} -> ${join(mod.outDir, workerOut)}`);
+  }
 }
 
 const kitDebugFolder = mods[0]?.folder;
