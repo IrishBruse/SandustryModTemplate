@@ -33,17 +33,19 @@ Logs: Linux `~/.config/sandustry/logs`; Windows `%APPDATA%/sandustry/logs`.
 
 ### `src/`
 
-Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized demos: `hello-toast-example`, `overlay-hotkey-example`, `retro-game-example`, `management-button-example`, `worker-api-example`, `selection-screenshot-example`, `gif-recorder-example`. Mods cannot import from each other.
+Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized demos: `hello-toast-example`, `overlay-hotkey-example`, `retro-game-example`, `management-button-example`, `worker-api-example`. Real mod: `selection-capture` (**C** marquee, **F8** PNG, **F7** GIF). Mods cannot import from each other.
 
 | Path                           | Role                                                                                |
 | ------------------------------ | ----------------------------------------------------------------------------------- |
 | `src/<name>/mod.ts`            | Manifest + patches → `modinfo.json` / `patches.json` at build                       |
 | `src/<name>/main.ts`           | Mod entry. Import debug from `./debug` (not `modkit/debug`) so release can stub it. |
-| `src/<name>/worker.ts`         | Optional worker entry → `worker.js` when present (`workerEntry` in modinfo)          |
+| `src/<name>/worker.ts`         | Optional worker entry → `worker.js` when present (`workerEntry` in modinfo)         |
 | `src/<name>/globals.ts`        | `MOD_ID` (from `./mod`) and `installGlobals`                                        |
 | `src/<name>/ui/`               | React overlays (import `react`, resolved to `modkit/react.ts`)                      |
 | `src/<name>/debug/`            | Mod debug entry: calls `modkit/debug`, re-exports `onDispose` / `isHotReloadEval`   |
 | `src/<name>/patches/README.md` | Points at [`docs/patches.md`](docs/patches.md)                                      |
+| `src/<name>/README.md`         | Optional. Copied into the installed mod folder with `CHANGELOG.md`                  |
+| `src/<name>/CHANGELOG.md`      | Optional. Player-facing changelog for that mod                                      |
 | `src/<name>/mod/`              | Optional static files copied into the output folder                                 |
 | `src/<name>/tsconfig.json`     | Isolated TypeScript project (does not see sibling mods)                             |
 
@@ -66,18 +68,18 @@ Do not import `onDispose` or `isHotReloadEval` from `modkit/debug` in `src/<name
 
 Git submodule: [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types). Definitions live under `types/src/` and nest live `sandkit.*` bags under `types/src/sandkit/` (`api`, `engine`, `enums`, …).
 
-| Path                              | Role                                                 |
-| --------------------------------- | ---------------------------------------------------- |
-| `types/src/sandkit/api/`                  | Main-thread `sandkit.api`                            |
-| `types/src/worker/`                       | Worker-thread `sandkit.api`                          |
-| `types/src/sandkit/engine/`               | `sandkit.engine` (+ Retro Console)                   |
-| `types/src/sandkit/enums/`                | `sandkit.enums`                                      |
-| `types/src/shared/`                       | Shared main/worker API pieces                        |
-| `types/src/common-types/`                 | Shared domain shapes                                 |
-| `types/src/sandkit/api/sandkit-api.d.ts`  | Composed `SandkitApi` (`types/api`)                  |
-| `types/src/worker/sandkit-api.d.ts`       | Composed `WorkerSandkitApi` (`types/worker-api`)     |
-| `types/src/sandkit/index.d.ts`            | `Sandkit` shape (`types/sandkit`)                    |
-| `types/src/global.d.ts`                   | Ambient `sandkit` value + type names (no import)     |
+| Path                                     | Role                                             |
+| ---------------------------------------- | ------------------------------------------------ |
+| `types/src/sandkit/api/`                 | Main-thread `sandkit.api`                        |
+| `types/src/worker/`                      | Worker-thread `sandkit.api`                      |
+| `types/src/sandkit/engine/`              | `sandkit.engine` (+ Retro Console)               |
+| `types/src/sandkit/enums/`               | `sandkit.enums`                                  |
+| `types/src/shared/`                      | Shared main/worker API pieces                    |
+| `types/src/common-types/`                | Shared domain shapes                             |
+| `types/src/sandkit/api/sandkit-api.d.ts` | Composed `SandkitApi` (`types/api`)              |
+| `types/src/worker/sandkit-api.d.ts`      | Composed `WorkerSandkitApi` (`types/worker-api`) |
+| `types/src/sandkit/index.d.ts`           | `Sandkit` shape (`types/sandkit`)                |
+| `types/src/global.d.ts`                  | Ambient `sandkit` value + type names (no import) |
 
 Path aliases: `@modkit/*` → `./modkit/*`; `types/api` → `./types/src/sandkit/api/sandkit-api`; `types/worker-api` → `./types/src/worker/sandkit-api`; `types/sandkit` → `./types/src/sandkit`; `types/engine` → `./types/src/sandkit/engine`; `types/enums` → `./types/src/sandkit/enums`; `types/*` → `./types/*`.
 
@@ -85,23 +87,23 @@ Use the free name `sandkit` in mod and modkit code. Do not import `@modkit/sandk
 
 ### `scripts/`
 
-| Path                                    | Role                                                                                |
-| --------------------------------------- | ----------------------------------------------------------------------------------- |
+| Path                                    | Role                                                                                                                |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | `scripts/build/esbuild.config.mjs`      | Bundle each `src/<name>/main.ts` → `main.js` (and `worker.ts` → `worker.js`), write `modinfo.json` + `patches.json` |
-| `scripts/build/mods.js`                 | Discover `src/*/mod.ts`, `--mod` filter, isolation plugin                           |
-| `scripts/build/typecheck.js`            | Root kit + per-mod `tsc --noEmit`                                                   |
-| `scripts/build/build-patches.js`        | Load that mod's `mod.ts` patch exports and write `patches.json`                     |
-| `scripts/build/dev.js`                  | Watch + write to the game mods folder                                               |
-| `scripts/sandustry/paths.js`            | OS user-data + Steam binary paths                                                   |
-| `scripts/sandustry/mod-path.js`         | Game mod dir from `modinfo.name`; `dist/<folder>` links                             |
-| `scripts/sandustry/launch-sandustry.js` | Build (debug) and launch the game                                                   |
+| `scripts/build/mods.js`                 | Discover `src/*/mod.ts`, `--mod` filter, isolation plugin                                                           |
+| `scripts/build/typecheck.js`            | Root kit + per-mod `tsc --noEmit`                                                                                   |
+| `scripts/build/build-patches.js`        | Load that mod's `mod.ts` patch exports and write `patches.json`                                                     |
+| `scripts/build/dev.js`                  | Watch + write to the game mods folder                                                                               |
+| `scripts/sandustry/paths.js`            | OS user-data + Steam binary paths                                                                                   |
+| `scripts/sandustry/mod-path.js`         | Game mod dir from `modinfo.name`; `dist/<folder>` links                                                             |
+| `scripts/sandustry/launch-sandustry.js` | Build (debug) and launch the game                                                                                   |
 
 ## Builds
 
 | Command                                    | Debug helpers                  | `debugPatches` | Output                                                         |
 | ------------------------------------------ | ------------------------------ | -------------- | -------------------------------------------------------------- |
 | `npm run build`                            | Stub (`modkit/debug/empty.ts`) | Omitted        | OS mods folder; `dist/<folder>/` links                         |
-| `npm run dev`                              | Included                       | Included       | OS mods folder (`~/.config/...` or `%APPDATA%/sandustry/mods`) |
+| `npm run dev`                              | Included                       | Included       | OS mods folder while watching; removed when the watch stops |
 | `npm run sandustry` / `--game` / `--debug` | Included                       | Included       | Game mods folder                                               |
 
 `--no-debug` forces a release-style bundle. Debug builds emit inline source maps; `--sourcemap` / `--no-sourcemap` override. `--mod <folder>` builds one src folder.

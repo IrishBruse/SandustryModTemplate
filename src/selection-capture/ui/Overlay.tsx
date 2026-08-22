@@ -7,16 +7,21 @@ import {
   SectionHeading,
   UiBox,
 } from "@modkit/ui";
+import { captureSelectionPng } from "../capturePng";
 import { MOD_ID } from "../globals";
 import { recordSelectionGif } from "../recordGif";
 
 const TOGGLE_CODE = "F7";
+const SCREENSHOT_CODE = "F8";
 const DEFAULT_FRAMES = 60;
 
-/** Survives hot reload so the management row always toggles the latest overlay. */
-type GifUi = { toggle: () => void };
-export const gifUi = ((globalThis as unknown as { __gifRecorderUi?: GifUi }).__gifRecorderUi ??= {
+/** Survives hot reload so the management row and F8 always call the latest handlers. */
+type CaptureUi = { toggle: () => void; screenshot: () => void };
+export const captureUi = ((
+  globalThis as unknown as { __selectionCaptureUi?: CaptureUi }
+).__selectionCaptureUi ??= {
   toggle: () => undefined,
+  screenshot: () => undefined,
 });
 
 function parsePositiveInt(raw: string, fallback: number): number {
@@ -35,17 +40,52 @@ export function Overlay() {
     setOpen((value) => !value);
   }, []);
 
+  const screenshot = useCallback(() => {
+    if (busy) return;
+    const api = sandkit.api;
+    void (async () => {
+      try {
+        const result = await captureSelectionPng(api);
+        switch (result) {
+          case "ok":
+            api.ui.toast("Copied — paste with Ctrl+V", {});
+            break;
+          case "no-selection":
+            api.ui.toast("No marquee selection — press C, drag, then F8", {});
+            break;
+          case "out-of-view":
+            api.ui.toast("Selection is off-screen — pan the camera and try again", {});
+            break;
+          default:
+            api.ui.toast("Clipboard copy failed", {});
+            break;
+        }
+      } catch (error) {
+        console.error(`[${MOD_ID}] PNG capture threw:`, error);
+        api.ui.toast("Clipboard copy failed", {});
+      }
+    })();
+  }, [busy]);
+
   useEffect(() => {
-    gifUi.toggle = toggle;
-  }, [toggle]);
+    captureUi.toggle = toggle;
+    captureUi.screenshot = screenshot;
+  }, [toggle, screenshot]);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
-      if (event.code !== TOGGLE_CODE || event.repeat) return;
-      if (event.ctrlKey || event.altKey || event.metaKey) return;
-      event.preventDefault();
-      event.stopPropagation();
-      toggle();
+      if (event.repeat || event.ctrlKey || event.altKey || event.metaKey) return;
+      if (event.code === TOGGLE_CODE) {
+        event.preventDefault();
+        event.stopPropagation();
+        toggle();
+        return;
+      }
+      if (event.code === SCREENSHOT_CODE) {
+        event.preventDefault();
+        event.stopPropagation();
+        captureUi.screenshot();
+      }
     }
     window.addEventListener("keydown", onKeyDown, true);
     return () => window.removeEventListener("keydown", onKeyDown, true);
@@ -96,9 +136,10 @@ export function Overlay() {
       <FixedAnchor anchor="top-right">
         <Interactive>
           <UiBox className="bg-black bg-opacity-85 p-4 shadow-lg card-2 w-72 text-white">
-            <SectionHeading size="md">GIF Recorder</SectionHeading>
+            <SectionHeading size="md">Selection Capture</SectionHeading>
             <p className="text-sm opacity-80 mb-3">
-              Select with <HotkeyBadge>C</HotkeyBadge>, then Record. <br />
+              Select with <HotkeyBadge>C</HotkeyBadge>. <HotkeyBadge>F8</HotkeyBadge> copies a PNG.{" "}
+              <br />
               Press <HotkeyBadge>F7</HotkeyBadge> to close.
             </p>
             <label className="block text-sm mb-2">
@@ -110,7 +151,9 @@ export function Overlay() {
                 max={120}
                 value={frames}
                 disabled={busy}
-                onChange={(event) => setFrames(parsePositiveInt(event.target.value, DEFAULT_FRAMES))}
+                onChange={(event) =>
+                  setFrames(parsePositiveInt(event.target.value, DEFAULT_FRAMES))
+                }
               />
             </label>
             <label className="block text-sm mb-2">
@@ -146,7 +189,7 @@ export function Overlay() {
                 void onRecord();
               }}
             >
-              {busy ? "Recording…" : "Record"}
+              {busy ? "Recording…" : "Record GIF"}
             </button>
           </UiBox>
         </Interactive>

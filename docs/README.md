@@ -5,7 +5,7 @@ TypeScript template for [Sandustry](https://store.steampowered.com/app/2764460/S
 ## Features
 
 - **[Multi-mod](layout.md)** — One repo, many mods. Each `src/<name>/` folder with a `mod.ts` builds to its own game folder. Mods cannot import from each other.
-- **[TypeScript](https://github.com/flamableassassin/sandustry-modding-types ':target=_blank')** — Write your code in Typescript and use Sandkit API types from  `flamableassassin/sandustry-modding-types`.
+- **[TypeScript](https://github.com/flamableassassin/sandustry-modding-types ":target=_blank")** — Write your code in Typescript and use Sandkit API types from `flamableassassin/sandustry-modding-types`.
 - **[React HUD](modkit/react.md)** — JSX via `sandkit.react` (no extra React package), plus the [UI kit](ui/README.md) and [gallery](ui/gallery.md).
 - **[Modkit utils](modkit/utils.md)** — `safe`, settings, scene checks, and retro console helpers.
 - **[Hot reload](builds.md)** — `npm run dev` reloads the mod without a game restart.
@@ -33,17 +33,21 @@ npm install
 
 Copy [`src/hello-toast-example/`](../src/hello-toast-example/) to `src/<your-mod>/` (or edit one of the demos). Set `id`, `name`, `author`, and `description` in that folder’s `mod.ts`. The mods folder uses `name`. Each `src/<name>/` with a `mod.ts` is a separate mod. Mods cannot import from each other.
 
+### Mods
+
+| Folder                                                | Shows                                  |
+| ----------------------------------------------------- | -------------------------------------- |
+| [`src/selection-capture/`](../src/selection-capture/) | **C** marquee → **F8** PNG, **F7** GIF |
+
 ### Examples
 
-| Folder                                                                  | Shows                                              |
-| ----------------------------------------------------------------------- | -------------------------------------------------- |
-| [`src/hello-toast-example/`](../src/hello-toast-example/)               | Toast on load                                      |
-| [`src/overlay-hotkey-example/`](../src/overlay-hotkey-example/)         | React overlay + Tailwind; **Alt+E**                |
-| [`src/retro-game-example/`](../src/retro-game-example/)                 | Retro Console Noise Test                           |
-| [`src/management-button-example/`](../src/management-button-example/)   | Management-column row under Upgrades               |
-| [`src/worker-api-example/`](../src/worker-api-example/)                 | Worker-thread `sandkit.api` probe                  |
-| [`src/selection-screenshot-example/`](../src/selection-screenshot-example/) | **C** selection → **F8** PNG crop to cell edges |
-| [`src/gif-recorder-example/`](../src/gif-recorder-example/)             | **C** selection → **F7** GIF of stepped sim ticks |
+| Folder                                                                | Shows                                |
+| --------------------------------------------------------------------- | ------------------------------------ |
+| [`src/hello-toast-example/`](../src/hello-toast-example/)             | Toast on load                        |
+| [`src/overlay-hotkey-example/`](../src/overlay-hotkey-example/)       | React overlay + Tailwind; **Alt+E**  |
+| [`src/retro-game-example/`](../src/retro-game-example/)               | Retro Console Noise Test             |
+| [`src/management-button-example/`](../src/management-button-example/) | Management-column row under Upgrades |
+| [`src/worker-api-example/`](../src/worker-api-example/)               | Worker-thread `sandkit.api` probe    |
 
 ### Run
 
@@ -55,7 +59,7 @@ In game, **Alt+E** opens the overlay from `overlay-hotkey-example`. More: [docs 
 
 | Command             | Effect                                                                 |
 | ------------------- | ---------------------------------------------------------------------- |
-| `npm run dev`       | Watch and write to the OS mods folder (`~/.config/...` or `%APPDATA%`) |
+| `npm run dev`       | Watch OS mods folder; remove owned mods when the watch stops |
 | `npm run build`     | Release bundle (no debug helpers)                                      |
 | `npm run typecheck` | TypeScript check                                                       |
 | `npm run sandustry` | Debug build and launch                                                 |

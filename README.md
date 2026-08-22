@@ -33,17 +33,21 @@ npm install
 
 Copy [`src/hello-toast-example/`](src/hello-toast-example/) to `src/<your-mod>/` (or edit one of the demos). Set `id`, `name`, `author`, and `description` in that folder’s `mod.ts`. The mods folder uses `name`. Each `src/<name>/` with a `mod.ts` is a separate mod. Mods cannot import from each other.
 
+### Mods
+
+| Folder                                             | Shows                                  |
+| -------------------------------------------------- | -------------------------------------- |
+| [`src/selection-capture/`](src/selection-capture/) | **C** marquee → **F8** PNG, **F7** GIF |
+
 ### Examples
 
-| Folder                                                                   | Shows                                              |
-| ------------------------------------------------------------------------ | -------------------------------------------------- |
-| [`src/hello-toast-example/`](src/hello-toast-example/)                   | Toast on load                                      |
-| [`src/overlay-hotkey-example/`](src/overlay-hotkey-example/)             | React overlay + Tailwind; **Alt+E**                |
-| [`src/retro-game-example/`](src/retro-game-example/)                     | Retro Console Noise Test                           |
-| [`src/management-button-example/`](src/management-button-example/)       | Management-column row under Upgrades               |
-| [`src/worker-api-example/`](src/worker-api-example/)                     | Worker-thread `sandkit.api` probe                  |
-| [`src/selection-screenshot-example/`](src/selection-screenshot-example/) | **C** selection → **F8** PNG crop to cell edges    |
-| [`src/gif-recorder-example/`](src/gif-recorder-example/)                 | **C** selection → **F7** GIF of stepped sim ticks  |
+| Folder                                                             | Shows                                |
+| ------------------------------------------------------------------ | ------------------------------------ |
+| [`src/hello-toast-example/`](src/hello-toast-example/)             | Toast on load                        |
+| [`src/overlay-hotkey-example/`](src/overlay-hotkey-example/)       | React overlay + Tailwind; **Alt+E**  |
+| [`src/retro-game-example/`](src/retro-game-example/)               | Retro Console Noise Test             |
+| [`src/management-button-example/`](src/management-button-example/) | Management-column row under Upgrades |
+| [`src/worker-api-example/`](src/worker-api-example/)               | Worker-thread `sandkit.api` probe    |
 
 ### Run
 

@@ -6,14 +6,14 @@ TypeScript template for Sandustry mods (Steam **[mods]** branch).
 
 # What's new (2026-08-22)
 
+- Stopping `npm run dev` removes owned OS mod folders (use `npm run build` to keep them)
 - Hot reload works with **F5** (file poll; CDP attach can stall EventSource)
 - Hot reload clears `logs/<mod-id>.log` and the DevTools console for a clean session
 - Management menu rows: hover / click match vanilla (no nested spacer wrap)
 - Sandkit types nest under `types/src/sandkit/` (`api` / `engine` / `enums`) — no `modkit/types` shim
 - Use free `sandkit` (ambient types) — no `@modkit/sandkit` import
 - Worker API example mod probes worker-thread `sandkit.api` (`worker.ts` → `worker.js`)
-- Selection screenshot example: **C** marquee, then **F8** downloads a PNG cropped to the selection edges
-- GIF recorder example: **C** marquee, then **F7** records an animated GIF (default **60** frames)
+- **Selection Capture** (`src/selection-capture/`): **C** marquee, then **F8** PNG or **F7** GIF (default 60 frames); sample mods ship a short `README.md` in the installed folder
 
 # What's new (2026-08-21)
 
