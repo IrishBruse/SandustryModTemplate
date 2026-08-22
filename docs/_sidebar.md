@@ -15,4 +15,4 @@
 
 - Reference
   - [Patches](patches.md)
-  - [Types](https://github.com/flamableassassin/sandustry-modding-types ':target=_blank')
+  - [Types](https://github.com/flamableassassin/sandustry-modding-types ":target=_blank")

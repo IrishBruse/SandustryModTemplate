@@ -132,7 +132,7 @@ The build merges [`modkitDebugPatches`](../../modkit/patches.ts) into the first 
 | `boot-menu.ts`     | DevTools on load, F12, auto-boot schedule                                        |
 | `menu.ts`          | Find and click the main-menu Continue row                                        |
 | `splash.ts`        | Runtime splash click poll                                                        |
-| `hot-reload.ts`    | Stamp poll + SSE subscribe (`npm run dev`), `onDispose`, `isHotReloadEval`   |
+| `hot-reload.ts`    | Stamp poll + SSE subscribe (`npm run dev`), `onDispose`, `isHotReloadEval`       |
 | `toggle/`          | F3 / management Debug row; force `debug.active`; hide engine Debug/Stats buttons |
 
 ## Wiring

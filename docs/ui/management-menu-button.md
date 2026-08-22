@@ -52,14 +52,14 @@ import { ManagementMenuButton } from "@modkit/ui";
 />;
 ```
 
-| Prop              | Type         | Default               | Description                                   |
-| ----------------- | ------------ | --------------------- | --------------------------------------------- |
-| `id`              | `string`     | —                     | Stable row id (unique per row) (required).    |
-| `icon`            | `ReactNode`  | —                     | Icon on the left (required).                  |
-| `label`           | `string`     | —                     | Row label (required).                         |
-| `hotkey`          | `string`     | —                     | Hotkey badge text (required).                 |
-| `highlightLetter` | `string`     | first char of `label` | Letter highlighted on hover.                  |
-| `active`          | `boolean`    | `true`                | When false, the row is removed.               |
-| `onClick`         | `() => void` | —                     | Click handler (also plays vanilla `click`).   |
+| Prop              | Type         | Default               | Description                                 |
+| ----------------- | ------------ | --------------------- | ------------------------------------------- |
+| `id`              | `string`     | —                     | Stable row id (unique per row) (required).  |
+| `icon`            | `ReactNode`  | —                     | Icon on the left (required).                |
+| `label`           | `string`     | —                     | Row label (required).                       |
+| `hotkey`          | `string`     | —                     | Hotkey badge text (required).               |
+| `highlightLetter` | `string`     | first char of `label` | Letter highlighted on hover.                |
+| `active`          | `boolean`    | `true`                | When false, the row is removed.             |
+| `onClick`         | `() => void` | —                     | Click handler (also plays vanilla `click`). |
 
 Register the component through `api.ui.inject` (or use `registerManagementMenuButton` instead).
