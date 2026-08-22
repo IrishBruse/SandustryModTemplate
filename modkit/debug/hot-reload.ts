@@ -27,8 +27,6 @@ const RESTART_FILES = ["patches.json", "modinfo.json"] as const;
 const POLL_MS = 400;
 const FETCH_TIMEOUT_MS = 2000;
 const NOTIFY_PATH = "/hot-reload/last";
-/** Written by F5 / `sandustry:vscode` (`sandustryDebugEnv`). */
-const IDE_DEBUG_MARKER = "ide-debug.json";
 
 type Host = {
   modId: string;
@@ -41,8 +39,6 @@ type Host = {
   pollTimer: ReturnType<typeof setInterval> | null;
   /** Last `n` from GET /hot-reload/last. Null until the first successful read. */
   notifyN: number | null;
-  /** Null until `ide-debug.json` has been probed. */
-  ideDebug: boolean | null;
 };
 
 type GlobalHotReload = {
@@ -101,7 +97,6 @@ function ensureHost(modId: string, api?: SandkitApi): Host {
     sources: {},
     pollTimer: null,
     notifyN: null,
-    ideDebug: null,
   };
   hostMap()[modId] = created;
   return created;
@@ -267,11 +262,8 @@ async function reloadRenderer(host: Host, source: string): Promise<void> {
   host.sources[host.entry] = source;
 
   // Fresh file + DevTools console for this reload session.
-  // Skip HTTP `/log/clear` while the IDE debugger is attached — CDP can stall
-  // that POST forever. `clearLog` also times out, but skip is the sure path.
-  if (host.ideDebug !== true) {
-    await clearLog(host.modId);
-  }
+  // clearLog aborts after 500 ms if F5 / CDP stalls the POST.
+  await clearLog(host.modId);
   try {
     globalThis.console.clear();
   } catch {
@@ -358,11 +350,6 @@ function startPolling(host: Host): void {
   void pollNotify(host);
 }
 
-async function detectIdeDebug(host: Host): Promise<void> {
-  const text = await readAsset(host.api, IDE_DEBUG_MARKER);
-  host.ideDebug = text != null && text.trim() === "1";
-}
-
 function syncWatching(host: Host): void {
   if (devWatchUrl()) startPolling(host);
   else stopPolling(host);
@@ -383,10 +370,7 @@ export function installHotReload(api: SandkitApi, modId: string): void {
   if (!host.installed) host.installed = true;
 
   syncWatching(host);
-  void detectIdeDebug(host).then(() => {
-    if (!firstInstall) return;
-    if (!devWatchUrl()) {
-      console.log(`[${modId}] hot reload idle (start with npm run dev)`);
-    }
-  });
+  if (firstInstall && !devWatchUrl()) {
+    console.log(`[${modId}] hot reload idle (start with npm run dev)`);
+  }
 }
