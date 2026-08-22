@@ -83,32 +83,111 @@ function boundsFromPoints(points: CellPoint[]): CellBounds | null {
 }
 
 /**
- * Read the active marquee selection cell AABB from engine state.
- * Prefer `start`/`end`; fall back to `selectedStructures` world positions.
+ * Tight AABB around selected structure footprints (snap grid cells).
+ * Prefer this over the marquee rect — the dashed box is often one cell past the content
+ * on the right and bottom.
  */
-export function getSelectionCellBounds(): CellBounds | null {
+function boundsFromStructures(
+  structures: SelectedStructure[],
+  snap: number,
+): CellBounds | null {
+  const points: CellPoint[] = [];
+  for (const structure of structures) {
+    const origin = structure.originalPos;
+    if (!isFinitePoint(origin)) continue;
+    // Structure occupies snap×snap cells from its anchor.
+    points.push(origin);
+    points.push({
+      x: origin.x + snap - 1,
+      y: origin.y + snap - 1,
+    });
+  }
+  return boundsFromPoints(points);
+}
+
+/**
+ * Marquee `end` is exclusive on the max edges (left/top flush, right/bottom one cell past).
+ */
+function boundsFromMarquee(start: CellPoint, end: CellPoint): CellBounds {
+  const rawMinX = Math.min(start.x, end.x);
+  const rawMinY = Math.min(start.y, end.y);
+  const rawMaxX = Math.max(start.x, end.x);
+  const rawMaxY = Math.max(start.y, end.y);
+  return {
+    minX: rawMinX,
+    minY: rawMinY,
+    maxX: Math.max(rawMinX, rawMaxX - 1),
+    maxY: Math.max(rawMinY, rawMaxY - 1),
+  };
+}
+
+function cellIsVisible(r: number, g: number, b: number, a: number): boolean {
+  if (a >= 8) return true;
+  return r > 8 || g > 8 || b > 8;
+}
+
+/**
+ * Shrink a loose marquee rect to opaque `mapData` cells only (exact content edges).
+ */
+export function tightenBoundsToMapData(bounds: CellBounds): CellBounds {
+  const shared = sandkit.state.shared as
+    | { mapData?: { data: ArrayLike<number>; width: number; height?: number } }
+    | null
+    | undefined;
+  const mapData = shared?.mapData;
+  if (!mapData?.data || !mapData.width) return bounds;
+
+  const mapH =
+    mapData.height ?? Math.floor(mapData.data.length / (4 * mapData.width));
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+
+  for (let cy = bounds.minY; cy <= bounds.maxY; cy++) {
+    for (let cx = bounds.minX; cx <= bounds.maxX; cx++) {
+      if (cx < 0 || cy < 0 || cx >= mapData.width || cy >= mapH) continue;
+      const i = 4 * (cx + cy * mapData.width);
+      const r = Number(mapData.data[i] ?? 0);
+      const g = Number(mapData.data[i + 1] ?? 0);
+      const b = Number(mapData.data[i + 2] ?? 0);
+      const a = Number(mapData.data[i + 3] ?? 0);
+      if (!cellIsVisible(r, g, b, a)) continue;
+      if (cx < minX) minX = cx;
+      if (cy < minY) minY = cy;
+      if (cx > maxX) maxX = cx;
+      if (cy > maxY) maxY = cy;
+    }
+  }
+
+  if (!Number.isFinite(minX)) return bounds;
+  return { minX, minY, maxX, maxY };
+}
+
+/**
+ * Read the active selection cell AABB from engine state.
+ * Prefer structure footprints; fall back to marquee start/end (exclusive max).
+ * Then tighten to opaque mapData cells when possible.
+ */
+export function getSelectionCellBounds(api?: SandkitApi): CellBounds | null {
   const data = getMarqueeCustomData();
   if (!data?.marqueeSelected) return null;
 
-  if (isFinitePoint(data.start) && isFinitePoint(data.end)) {
-    return {
-      minX: Math.min(data.start.x, data.end.x),
-      minY: Math.min(data.start.y, data.end.y),
-      maxX: Math.max(data.start.x, data.end.x),
-      maxY: Math.max(data.start.y, data.end.y),
-    };
+  const snap =
+    api?.rendering.getGridMetrics().snapGridCellSize ||
+    sandkit.api.rendering.getGridMetrics().snapGridCellSize ||
+    4;
+
+  let bounds: CellBounds | null = null;
+
+  if (data.selectedStructures?.length) {
+    bounds = boundsFromStructures(data.selectedStructures, snap);
   }
 
-  const structures = data.selectedStructures;
-  if (!structures?.length) return null;
-
-  const points: CellPoint[] = [];
-  for (const structure of structures) {
-    if (isFinitePoint(structure.originalPos)) {
-      points.push(structure.originalPos);
-    } else if (Number.isFinite(structure.x) && Number.isFinite(structure.y)) {
-      points.push({ x: structure.x, y: structure.y });
-    }
+  if (!bounds && isFinitePoint(data.start) && isFinitePoint(data.end)) {
+    bounds = boundsFromMarquee(data.start, data.end);
   }
-  return boundsFromPoints(points);
+
+  if (!bounds) return null;
+  return tightenBoundsToMapData(bounds);
 }

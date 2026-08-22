@@ -9,11 +9,9 @@ const reloaded = isHotReloadEval(MOD_ID);
 installGlobals(api);
 installDebug(api, MOD_ID);
 
-const BINDING_ID = `${MOD_ID}:screenshot-selection`;
-const DEFAULT_KEYS = ["F8"];
 const LOG = `[${MOD_ID}]`;
 
-/** Survives hot reload so registerBinding always calls the latest capture. */
+/** Survives hot reload so the key listener always calls the latest capture. */
 type ShotGlobal = { run: () => void };
 const shotGlobal = ((globalThis as unknown as { __selectionScreenshot?: ShotGlobal })
   .__selectionScreenshot ??= { run: () => undefined });
@@ -25,7 +23,7 @@ function toast(message: string): void {
 }
 
 async function screenshotSelection(): Promise<void> {
-  console.log(`${LOG} F8 fired (handler build: mapData-raster)`);
+  console.log(`${LOG} F8 fired (handler build: dynamic2D-clipboard)`);
   if (captureInFlight) {
     console.log(`${LOG} skipped — capture already in flight`);
     return;
@@ -34,7 +32,7 @@ async function screenshotSelection(): Promise<void> {
   const peek = peekMarqueeCustomData();
   console.log(`${LOG} marquee customData:`, peek);
 
-  const bounds = getSelectionCellBounds();
+  const bounds = getSelectionCellBounds(api);
   if (!bounds) {
     console.warn(`${LOG} no selection bounds`);
     toast("No marquee selection — press C, drag, then F8");
@@ -48,24 +46,24 @@ async function screenshotSelection(): Promise<void> {
     console.log(`${LOG} capture result:`, result);
     switch (result) {
       case "ok":
-        toast("Selection screenshot saved");
+        toast("Copied — paste with Ctrl+V");
         break;
       case "no-canvas":
-        toast("Could not find map data");
+        toast("Could not find structure canvas");
         break;
       case "out-of-view":
         toast("Selection is off-screen — pan the camera and try again");
         break;
       case "blank":
-        toast("Screenshot was blank — mapData had no cells");
+        toast("Screenshot was blank — nothing in the crop");
         break;
       default:
-        toast("Selection screenshot failed");
+        toast("Clipboard copy failed");
         break;
     }
   } catch (error) {
     console.error(`${LOG} capture threw:`, error);
-    toast("Selection screenshot failed");
+    toast("Clipboard copy failed");
   } finally {
     captureInFlight = false;
   }
@@ -76,7 +74,7 @@ shotGlobal.run = () => {
 };
 
 function registerHotkey(): void {
-  // Capture-phase listener — removed on dispose so hot reload cannot stack stale handlers.
+  // Only a window listener — Sandkit registerBinding can keep stale F8 handlers across hot reload.
   function onKeyDown(event: KeyboardEvent) {
     if (event.code !== "F8" || event.repeat) return;
     if (event.ctrlKey || event.altKey || event.metaKey) return;
@@ -86,18 +84,7 @@ function registerHotkey(): void {
   }
   window.addEventListener("keydown", onKeyDown, true);
   onDispose(() => window.removeEventListener("keydown", onKeyDown, true));
-
-  // Also register in Settings when possible (indirection keeps handler fresh).
-  console.log(`${LOG} registering binding ${BINDING_ID} → ${DEFAULT_KEYS.join("+")}`);
-  api.input.registerBinding(BINDING_ID, DEFAULT_KEYS, {
-    displayName: "Screenshot selection",
-    category: "editing",
-    handlers: {
-      down: () => {
-        shotGlobal.run();
-      },
-    },
-  });
+  console.log(`${LOG} F8 window listener armed (clipboard copy)`);
 }
 
 if (isEnabled(api)) {
@@ -109,5 +96,5 @@ if (isEnabled(api)) {
 }
 
 console.log(
-  `${LOG} ${reloaded ? "reloaded" : "loaded"} — select with C, then F8 (mapData raster)`,
+  `${LOG} ${reloaded ? "reloaded" : "loaded"} — select with C, then F8 (dynamic2D crop)`,
 );

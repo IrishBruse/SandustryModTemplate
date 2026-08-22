@@ -8,7 +8,7 @@ export const modinfo = defineModInfo({
   apiVersion: 1,
   entry: "main.js",
   author: "Your Name",
-  description: "Screenshot the C-cursor marquee selection as a PNG cropped to its cell edges (F8).",
+  description: "Copy a PNG of the C-cursor marquee selection to the clipboard (F8).",
   dependencies: [],
   loadOrder: 0,
   configSchema: {

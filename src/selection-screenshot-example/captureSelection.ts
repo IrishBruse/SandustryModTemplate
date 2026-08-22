@@ -3,33 +3,33 @@ import { MOD_ID } from "./globals";
 
 const LOG = `[${MOD_ID}]`;
 
-type PixelRect = { x: number; y: number; width: number; height: number };
+/** Sky fill when the WebGL backdrop cannot be sampled. */
+const FALLBACK_SKY = "#3d6b78";
 
-type MapData = {
-  data: Uint8Array | Uint8ClampedArray | number[];
-  width: number;
-  height?: number;
-};
+/** Clipboard PNG vs captured screen pixels. Nearest-neighbor — no blur. */
+const UPSCALE = 2;
+
+/** Extra screen pixels on each edge so structure outlines are not clipped. */
+const BORDER_PX = 1;
 
 type SessionRendering = {
+  canvas?: HTMLCanvasElement;
   overlayCanvas?: HTMLCanvasElement;
   pixi?: {
-    colorBuffer?: Uint8Array | Uint8ClampedArray | number[];
-    tilemapSize?: { width: number; height: number };
+    app?: {
+      canvas?: HTMLCanvasElement;
+      view?: HTMLCanvasElement;
+    };
+    dynamic2D?: {
+      context?: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
+    };
   };
 };
 
 type SessionShape = {
   rendering?: SessionRendering;
-  view?: { zoom?: number };
   camera?: { x?: number; y?: number };
-};
-
-type SelectedStructure = {
-  x: number;
-  y: number;
-  type?: string | number;
-  originalPos?: { x: number; y: number };
+  view?: { zoom?: number };
 };
 
 function getSession(): SessionShape | null {
@@ -37,300 +37,212 @@ function getSession(): SessionShape | null {
   return session ?? null;
 }
 
-function getMapData(): MapData | null {
-  const shared = sandkit.state.shared as { mapData?: MapData } | null | undefined;
-  const mapData = shared?.mapData;
-  if (!mapData?.data || !mapData.width) {
-    console.warn(`${LOG} shared.mapData missing`, {
-      hasShared: shared != null,
-      keys: shared ? Object.keys(shared).slice(0, 20) : [],
-      mapData,
-    });
-    return null;
-  }
-  const height =
-    mapData.height ??
-    Math.floor(mapData.data.length / (4 * mapData.width));
-  return { data: mapData.data, width: mapData.width, height };
+function getGameCanvas(): HTMLCanvasElement | null {
+  const session = getSession();
+  const rendering = session?.rendering;
+  return (
+    rendering?.canvas ??
+    rendering?.pixi?.app?.canvas ??
+    rendering?.pixi?.app?.view ??
+    null
+  );
 }
 
-function getViewZoom(): number {
-  const zoom = getSession()?.view?.zoom;
-  return typeof zoom === "number" && zoom > 0 ? zoom : 1;
+/**
+ * Foundations (and other buildings) are drawn into this 2D canvas each frame,
+ * then uploaded as a Pixi texture. `mapData` RGB is not the on-screen colour
+ * (Block cells often store the red missing-soil fallback).
+ */
+function getDynamic2DCanvas(): HTMLCanvasElement | OffscreenCanvas | null {
+  const context = getSession()?.rendering?.pixi?.dynamic2D?.context;
+  const canvas = context?.canvas;
+  return canvas ?? null;
 }
 
-function getSelectedStructures(): SelectedStructure[] {
-  const session = sandkit.state.session as
-    | { action?: { customData?: { selectedStructures?: SelectedStructure[] } } }
-    | null
-    | undefined;
-  const list = session?.action?.customData?.selectedStructures;
-  return Array.isArray(list) ? list : [];
-}
+type ScreenRect = { x: number; y: number; width: number; height: number };
 
-/** Viewport rect (for overlay composite). */
-export function cellBoundsToPixelRect(
+function getSelectionScreenRect(
   api: SandkitApi,
   bounds: CellBounds,
-): PixelRect | null {
+): ScreenRect | null {
   const topLeft = api.rendering.getDrawPositionAtCell(bounds.minX, bounds.minY);
   const bottomRight = api.rendering.getDrawPositionAtCell(
     bounds.maxX + 1,
     bounds.maxY + 1,
   );
-  const zoom = getViewZoom();
-  if (!topLeft || !bottomRight) return null;
-  const x = Math.round(Math.min(topLeft.x, bottomRight.x) * zoom);
-  const y = Math.round(Math.min(topLeft.y, bottomRight.y) * zoom);
-  const width = Math.round(Math.abs(bottomRight.x - topLeft.x) * zoom);
-  const height = Math.round(Math.abs(bottomRight.y - topLeft.y) * zoom);
+  if (
+    !Number.isFinite(topLeft.x) ||
+    !Number.isFinite(topLeft.y) ||
+    !Number.isFinite(bottomRight.x) ||
+    !Number.isFinite(bottomRight.y)
+  ) {
+    return null;
+  }
+  const x = Math.round(topLeft.x);
+  const y = Math.round(topLeft.y);
+  const width = Math.round(bottomRight.x - topLeft.x);
+  const height = Math.round(bottomRight.y - topLeft.y);
   if (width <= 0 || height <= 0) return null;
-  return { x, y, width, height };
+  return {
+    x: x - BORDER_PX,
+    y: y - BORDER_PX,
+    width: width + BORDER_PX * 2,
+    height: height + BORDER_PX * 2,
+  };
 }
 
-function clampRect(rect: PixelRect, canvas: HTMLCanvasElement): PixelRect | null {
-  const x0 = Math.max(0, Math.min(canvas.width, rect.x));
-  const y0 = Math.max(0, Math.min(canvas.height, rect.y));
-  const x1 = Math.max(0, Math.min(canvas.width, rect.x + rect.width));
-  const y1 = Math.max(0, Math.min(canvas.height, rect.y + rect.height));
+function clipRectToCanvas(
+  rect: ScreenRect,
+  canvasW: number,
+  canvasH: number,
+): ScreenRect | null {
+  const x0 = Math.max(0, rect.x);
+  const y0 = Math.max(0, rect.y);
+  const x1 = Math.min(canvasW, rect.x + rect.width);
+  const y1 = Math.min(canvasH, rect.y + rect.height);
   const width = x1 - x0;
   const height = y1 - y0;
   if (width <= 0 || height <= 0) return null;
   return { x: x0, y: y0, width, height };
 }
 
-function cellIsVisible(r: number, g: number, b: number, a: number): boolean {
-  // Some cells store colour with a===0; treat any strong RGB as solid.
-  if (a >= 8) return true;
-  return r > 8 || g > 8 || b > 8;
-}
-
-function paintCell(
-  ctx: CanvasRenderingContext2D,
-  localX: number,
-  localY: number,
-  cellSize: number,
-  r: number,
-  g: number,
-  b: number,
-  a: number,
-): void {
-  const alpha = a >= 8 ? a / 255 : 1;
-  ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
-  ctx.fillRect(localX * cellSize, localY * cellSize, cellSize, cellSize);
-}
-
-/**
- * Primary: `shared.mapData` (per-cell RGBA the tilemap uploads).
- * Fallback: viewport `pixi.colorBuffer`, then yellow structure footprints.
- */
 function rasterizeSelection(
   api: SandkitApi,
   bounds: CellBounds,
 ): HTMLCanvasElement | null {
-  const { cellSize } = api.rendering.getGridMetrics();
-  const cellsW = bounds.maxX - bounds.minX + 1;
-  const cellsH = bounds.maxY - bounds.minY + 1;
-  const width = cellsW * cellSize;
-  const height = cellsH * cellSize;
-
-  const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
-  const ctx = canvas.getContext("2d", { willReadFrequently: true });
-  if (!ctx) return null;
-  ctx.imageSmoothingEnabled = false;
-  ctx.fillStyle = "#6eb6d4";
-  ctx.fillRect(0, 0, width, height);
-
-  let painted = 0;
-
-  const mapData = getMapData();
-  if (mapData) {
-    const mapH = mapData.height ?? 0;
-    console.log(`${LOG} mapData`, {
-      width: mapData.width,
-      height: mapH,
-      dataLength: mapData.data.length,
-      cellSize,
-      bounds,
-    });
-
-    // Probe centre cell raw bytes for debugging.
-    const midX = Math.floor((bounds.minX + bounds.maxX) / 2);
-    const midY = Math.floor((bounds.minY + bounds.maxY) / 2);
-    if (midX >= 0 && midY >= 0 && midX < mapData.width && midY < mapH) {
-      const pi = 4 * (midX + midY * mapData.width);
-      console.log(`${LOG} centre cell raw`, {
-        midX,
-        midY,
-        rgba: [
-          mapData.data[pi],
-          mapData.data[pi + 1],
-          mapData.data[pi + 2],
-          mapData.data[pi + 3],
-        ],
-      });
-    }
-
-    for (let cy = bounds.minY; cy <= bounds.maxY; cy++) {
-      for (let cx = bounds.minX; cx <= bounds.maxX; cx++) {
-        if (cx < 0 || cy < 0 || cx >= mapData.width || cy >= mapH) continue;
-        const i = 4 * (cx + cy * mapData.width);
-        const r = Number(mapData.data[i] ?? 0);
-        const g = Number(mapData.data[i + 1] ?? 0);
-        const b = Number(mapData.data[i + 2] ?? 0);
-        const a = Number(mapData.data[i + 3] ?? 0);
-        if (!cellIsVisible(r, g, b, a)) continue;
-        paintCell(ctx, cx - bounds.minX, cy - bounds.minY, cellSize, r, g, b, a);
-        painted++;
-      }
-    }
-    console.log(`${LOG} mapData painted cells:`, painted);
-  }
-
-  // Viewport colour buffer (same RGBA tilemap, camera-relative).
-  if (painted === 0) {
-    const session = getSession();
-    const buf = session?.rendering?.pixi?.colorBuffer;
-    const tile = session?.rendering?.pixi?.tilemapSize;
-    const camera = session?.camera;
-    if (buf && tile && camera && cellSize > 0) {
-      const camX = camera.x ?? 0;
-      const camY = camera.y ?? 0;
-      const camCellX = Math.floor(camX / cellSize);
-      const camCellY = Math.floor(camY / cellSize);
-      console.log(`${LOG} trying colorBuffer`, {
-        tile,
-        camCellX,
-        camCellY,
-        bufLen: buf.length,
-      });
-      for (let cy = bounds.minY; cy <= bounds.maxY; cy++) {
-        for (let cx = bounds.minX; cx <= bounds.maxX; cx++) {
-          const lx = cx - camCellX;
-          const ly = cy - camCellY;
-          if (lx < 0 || ly < 0 || lx >= tile.width || ly >= tile.height) continue;
-          const i = 4 * (lx + ly * tile.width);
-          const r = Number(buf[i] ?? 0);
-          const g = Number(buf[i + 1] ?? 0);
-          const b = Number(buf[i + 2] ?? 0);
-          const a = Number(buf[i + 3] ?? 0);
-          if (!cellIsVisible(r, g, b, a)) continue;
-          paintCell(ctx, cx - bounds.minX, cy - bounds.minY, cellSize, r, g, b, a);
-          painted++;
-        }
-      }
-      console.log(`${LOG} colorBuffer painted cells:`, painted);
-    }
-  }
-
-  // Last resort: paint selected structure footprints (foundation yellow).
-  if (painted === 0) {
-    const structures = getSelectedStructures();
-    const snap =
-      api.rendering.getGridMetrics().snapGridCellSize || 4;
-    console.log(`${LOG} painting structure footprints`, {
-      count: structures.length,
-      snap,
-    });
-    // Typical foundation / block yellow in-game.
-    const fr = 232;
-    const fg = 196;
-    const fb = 64;
-    for (const structure of structures) {
-      const origin = structure.originalPos ?? {
-        x: structure.x + bounds.minX,
-        y: structure.y + bounds.minY,
-      };
-      for (let dy = 0; dy < snap; dy++) {
-        for (let dx = 0; dx < snap; dx++) {
-          const cx = origin.x + dx;
-          const cy = origin.y + dy;
-          if (cx < bounds.minX || cy < bounds.minY || cx > bounds.maxX || cy > bounds.maxY) {
-            continue;
-          }
-          paintCell(
-            ctx,
-            cx - bounds.minX,
-            cy - bounds.minY,
-            cellSize,
-            fr,
-            fg,
-            fb,
-            255,
-          );
-          painted++;
-        }
-      }
-    }
-    console.log(`${LOG} structure footprint cells:`, painted);
-  }
-
-  if (painted === 0) {
-    console.warn(`${LOG} nothing painted for selection`);
+  const screenRect = getSelectionScreenRect(api, bounds);
+  if (!screenRect) {
+    console.warn(`${LOG} could not map cell bounds to screen`);
     return null;
   }
-  return canvas;
-}
 
-function compositeOverlay(
-  base: HTMLCanvasElement,
-  viewportRect: PixelRect | null,
-): HTMLCanvasElement {
-  if (!viewportRect) return base;
-  const overlay = getSession()?.rendering?.overlayCanvas;
-  if (!(overlay instanceof HTMLCanvasElement)) return base;
-  const clamped = clampRect(viewportRect, overlay);
-  if (!clamped) return base;
-  const ctx = base.getContext("2d");
-  if (!ctx) return base;
-  ctx.imageSmoothingEnabled = false;
-  ctx.drawImage(
-    overlay,
-    clamped.x,
-    clamped.y,
-    clamped.width,
-    clamped.height,
-    0,
-    0,
-    base.width,
-    base.height,
+  const dynamicCanvas = getDynamic2DCanvas();
+  if (!dynamicCanvas) {
+    console.warn(`${LOG} dynamic2D canvas missing`);
+    return null;
+  }
+
+  const clip = clipRectToCanvas(
+    screenRect,
+    dynamicCanvas.width,
+    dynamicCanvas.height,
   );
-  console.log(`${LOG} composited overlay`);
-  return base;
+  if (!clip) {
+    console.warn(`${LOG} selection off-screen`, { screenRect });
+    return null;
+  }
+
+  const out = document.createElement("canvas");
+  out.width = clip.width;
+  out.height = clip.height;
+  const ctx = out.getContext("2d", { willReadFrequently: true });
+  if (!ctx) return null;
+  ctx.imageSmoothingEnabled = false;
+
+  // Backdrop: real WebGL frame (sky / terrain). Structures sit on dynamic2D above it.
+  ctx.fillStyle = FALLBACK_SKY;
+  ctx.fillRect(0, 0, out.width, out.height);
+  const gameCanvas = getGameCanvas();
+  if (gameCanvas && gameCanvas.width > 0 && gameCanvas.height > 0) {
+    try {
+      ctx.drawImage(
+        gameCanvas,
+        clip.x,
+        clip.y,
+        clip.width,
+        clip.height,
+        0,
+        0,
+        clip.width,
+        clip.height,
+      );
+    } catch (error) {
+      console.warn(`${LOG} WebGL backdrop draw failed:`, error);
+    }
+  }
+
+  // Structure sprites (gold foundations, etc.) — no cyan selection chrome (that is overlay-only).
+  try {
+    ctx.drawImage(
+      dynamicCanvas,
+      clip.x,
+      clip.y,
+      clip.width,
+      clip.height,
+      0,
+      0,
+      clip.width,
+      clip.height,
+    );
+  } catch (error) {
+    console.error(`${LOG} dynamic2D draw failed:`, error);
+    return null;
+  }
+
+  const scaled = document.createElement("canvas");
+  scaled.width = out.width * UPSCALE;
+  scaled.height = out.height * UPSCALE;
+  const scaledCtx = scaled.getContext("2d");
+  if (!scaledCtx) return out;
+  // Duplicate each pixel into a UPSCALE×UPSCALE block (bilinear would blur).
+  scaledCtx.imageSmoothingEnabled = false;
+  scaledCtx.drawImage(out, 0, 0, scaled.width, scaled.height);
+
+  console.log(`${LOG} rasterized dynamic2D crop`, {
+    bounds,
+    screenRect,
+    clip,
+    size: { width: scaled.width, height: scaled.height },
+    upscale: UPSCALE,
+  });
+  return scaled;
 }
 
-function downloadPng(canvas: HTMLCanvasElement, filename: string): Promise<boolean> {
+function canvasToPngBlob(canvas: HTMLCanvasElement): Promise<Blob | null> {
   return new Promise((resolve) => {
-    canvas.toBlob((blob) => {
-      if (!blob) {
-        console.error(`${LOG} toBlob returned null`);
-        resolve(false);
-        return;
-      }
-      console.log(`${LOG} downloading`, { filename, bytes: blob.size });
-      const url = URL.createObjectURL(blob);
-      const anchor = document.createElement("a");
-      anchor.href = url;
-      anchor.download = filename;
-      anchor.click();
-      URL.revokeObjectURL(url);
-      resolve(true);
-    }, "image/png");
+    canvas.toBlob((blob) => resolve(blob), "image/png");
   });
 }
 
+/** Write the PNG to the system clipboard (no file download). */
+async function copyPngToClipboard(canvas: HTMLCanvasElement): Promise<boolean> {
+  const blob = await canvasToPngBlob(canvas);
+  if (!blob) {
+    console.error(`${LOG} toBlob returned null`);
+    return false;
+  }
+  if (!navigator.clipboard?.write || typeof ClipboardItem === "undefined") {
+    console.error(`${LOG} clipboard image write unavailable`);
+    return false;
+  }
+  try {
+    await navigator.clipboard.write([
+      new ClipboardItem({ "image/png": Promise.resolve(blob) }),
+    ]);
+    console.log(`${LOG} copied PNG to clipboard`, { bytes: blob.size });
+    return true;
+  } catch (error) {
+    console.error(`${LOG} clipboard.write failed:`, error);
+    return false;
+  }
+}
+
+/**
+ * Capture after structures are painted into dynamic2D, and after Pixi uploads
+ * that texture (`frame:render` fires just before `texture.update` + render —
+ * wait a microtask so the WebGL backdrop matches the same frame).
+ */
 export function captureSelectionPng(
   api: SandkitApi,
   bounds: CellBounds,
 ): Promise<"ok" | "no-canvas" | "out-of-view" | "blank" | "failed"> {
-  const viewportRect = cellBoundsToPixelRect(api, bounds);
-  console.log(`${LOG} capture start (mapData raster)`, { bounds, viewportRect });
+  console.log(`${LOG} capture start (dynamic2D + no overlay)`, { bounds });
 
   return new Promise((resolve) => {
     let settled = false;
-    const finish = (result: "ok" | "no-canvas" | "out-of-view" | "blank" | "failed") => {
+    const finish = (
+      result: "ok" | "no-canvas" | "out-of-view" | "blank" | "failed",
+    ) => {
       if (settled) return;
       settled = true;
       clearTimeout(timeoutId);
@@ -347,19 +259,34 @@ export function captureSelectionPng(
     const unsubscribe = api.events.on("frame:render", () => {
       if (settled) return;
       unsubscribe();
-      void (async () => {
-        const raster = rasterizeSelection(api, bounds);
-        if (!raster) {
-          finish(getMapData() ? "blank" : "no-canvas");
-          return;
-        }
-        const finalCrop = compositeOverlay(raster, viewportRect);
-        const ok = await downloadPng(
-          finalCrop,
-          `sandustry-selection-${Date.now()}.png`,
-        );
-        finish(ok ? "ok" : "failed");
-      })();
+      queueMicrotask(() => {
+        void (async () => {
+          if (!getDynamic2DCanvas()) {
+            finish("no-canvas");
+            return;
+          }
+          const screenRect = getSelectionScreenRect(api, bounds);
+          if (!screenRect) {
+            finish("failed");
+            return;
+          }
+          const dyn = getDynamic2DCanvas();
+          if (
+            dyn &&
+            clipRectToCanvas(screenRect, dyn.width, dyn.height) == null
+          ) {
+            finish("out-of-view");
+            return;
+          }
+          const raster = rasterizeSelection(api, bounds);
+          if (!raster) {
+            finish("blank");
+            return;
+          }
+          const ok = await copyPngToClipboard(raster);
+          finish(ok ? "ok" : "failed");
+        })();
+      });
     });
   });
 }
