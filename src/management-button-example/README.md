@@ -1,13 +1,13 @@
 # Management Button Example
 
-Adds a **Tools** row under **Upgrades** in the left management column.
+Adds an **Example** row under **Upgrades** in the left management column.
 
 ## Use
 
 1. Enable the mod.
 2. Open the management column (left side of the HUD).
-3. Click **Tools** (or press **F4**).
-4. Look for the toast: **Tools row clicked**.
+3. Click **Example** (hotkey badge **F1**).
+4. Look for the toast: **Example row clicked**.
 
 Use `registerManagementMenuButton` from `@modkit/ui` — not a one-off DOM spacer.
 
