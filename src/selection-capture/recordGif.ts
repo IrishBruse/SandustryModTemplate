@@ -27,6 +27,7 @@ export type RecordGifOptions = {
   frames: number;
   ticksPerFrame: number;
   greenscreen: boolean;
+  showMouse: boolean;
 };
 
 export type RecordGifResult = "ok" | "downloaded" | "no-selection" | "out-of-view" | "failed";
@@ -267,6 +268,7 @@ export async function recordSelectionGif(
   const delayMs = Math.max(20, ticksPerFrame * 20);
   const look: CaptureLook = {
     greenscreen: options.greenscreen,
+    showMouse: options.showMouse,
   };
 
   const bounds = getSelectionCellBounds(api);
@@ -282,6 +284,7 @@ export async function recordSelectionGif(
     framesWanted,
     ticksPerFrame,
     greenscreen: look.greenscreen,
+    showMouse: look.showMouse,
   });
 
   const frames: ImageData[] = [];

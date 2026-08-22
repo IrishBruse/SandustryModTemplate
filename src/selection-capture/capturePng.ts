@@ -38,7 +38,7 @@ export type CapturePngResult = "ok" | "no-selection" | "out-of-view" | "failed";
 /** Crop the C marquee after the next paint, then copy a PNG to the clipboard. */
 export async function captureSelectionPng(
   api: SandkitApi,
-  look: CaptureLook = { greenscreen: false },
+  look: CaptureLook = { greenscreen: false, showMouse: false },
 ): Promise<CapturePngResult> {
   const bounds = getSelectionCellBounds(api);
   if (!bounds) {

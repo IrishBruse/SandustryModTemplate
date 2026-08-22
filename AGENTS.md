@@ -64,7 +64,7 @@ Hot reload boots automatically (esbuild inject). Use free `reloaded`. Import `on
 
 ### `modkit/types/`
 
-Git submodule: [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types). Main API lives under `modkit/types/src/main/`; worker under `modkit/types/src/worker/`; engine under `modkit/types/src/shared/engine/`. Ambient `sandkit` is [`modkit/sandkit-global.d.ts`](modkit/sandkit-global.d.ts).
+Git submodule: [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types). Main API lives under `modkit/types/src/main/`; worker under `modkit/types/src/worker/`; engine under `modkit/types/src/shared/engine/`. Ambient `sandkit` is [`modkit/sandkit-global.d.ts`](modkit/sandkit-global.d.ts) (composed from those namespaces).
 
 | Path                              | Role                                                  |
 | --------------------------------- | ----------------------------------------------------- |
@@ -73,7 +73,7 @@ Git submodule: [sandustry-modding-types](https://github.com/flamableassassin/san
 | `modkit/types/src/shared/engine/` | `sandkit.engine` (+ Retro Console)                    |
 | `modkit/types/src/shared/`        | Shared main/worker API pieces                         |
 | `modkit/types/src/common-types/`  | Shared domain shapes                                  |
-| `modkit/sandkit-global.d.ts`      | Ambient `sandkit` / `SandkitApi` / `WorkerSandkitApi` |
+| `modkit/sandkit-global.d.ts`      | Ambient `sandkit` / `SandkitApi` / `WorkerSandkitApi` / `reloaded` |
 
 Path aliases: `@modkit/*` → `./modkit/*`. Use ambient `sandkit`, `SandkitApi`, and `WorkerSandkitApi` — do not import them with a `types/` prefix. Retro Console types come from `@modkit/utils`.
 

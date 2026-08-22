@@ -6,6 +6,14 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ## Unreleased
 
+### Added
+
+- **Pixel-perfect Screenshot and GIF recorder:** panel **Show mouse** toggle draws the in-game cursor into PNG/GIF captures; **Greenscreen** / **Show mouse** use pill toggles.
+
+### Changed
+
+- Ambient `sandkit` / `SandkitApi` / `WorkerSandkitApi` are composed in [`modkit/sandkit-global.d.ts`](../modkit/sandkit-global.d.ts) from the types submodule namespaces (types package stays on master; no shipped global).
+
 ### Fixed
 
 - Hot reload stops when a mod folder is gone (rename / watch cleanup) so DevTools does not keep logging `ERR_FILE_NOT_FOUND` for that mod's `main.js`. See [modkit/debug.md](modkit/debug.md).

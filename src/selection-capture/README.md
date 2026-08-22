@@ -20,8 +20,11 @@ Share a machine, a line, or a whole scene without a blurry screenshot. **Screens
 - **Frames** — 2–120 (default 60)
 - **Ticks / frame** — 1–30 (default 1)
 - **Greenscreen** — on/off (default off)
+- **Show mouse** — on/off (default off)
 
 **Greenscreen** hides the parallax sky and fills empty pixels with `#00FF00` for chroma key.
+
+**Show mouse** draws the in-game cursor into the PNG or GIF when the pointer tip is inside the selection.
 
 **Record GIF** pauses the sim on each painted frame, then steps the ticks you set before the next capture. The GIF is **2×** nearest-neighbor, same as the PNG. Clipboard copy of GIF is attempted; Chromium often rejects `image/gif`.
 

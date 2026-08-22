@@ -11,6 +11,7 @@ const GREENSCREEN = "#00ff00";
 
 export type CaptureLook = {
   greenscreen: boolean;
+  showMouse: boolean;
 };
 
 /** Extra screen pixels on each edge so structure outlines are not clipped. */
@@ -22,6 +23,17 @@ type SessionPixi = {
   app?: {
     canvas?: HTMLCanvasElement;
     view?: HTMLCanvasElement;
+    renderer?: {
+      events?: {
+        cursorStyles?: { default?: string };
+        currentCursor?: string;
+      };
+    };
+  };
+  cursors?: {
+    default?: string;
+    marquee?: string;
+    demolish?: string;
   };
   dynamic2D?: {
     context?: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
@@ -35,13 +47,23 @@ type SessionPixi = {
   toggleSkyFilter?: (enabled: boolean) => void;
 };
 
+type SessionImage = { image?: HTMLImageElement | CanvasImageSource };
+
 type SessionRendering = {
   canvas?: HTMLCanvasElement;
   pixi?: SessionPixi;
+  images?: Record<string, SessionImage | undefined>;
 };
 
 type SessionShape = {
   paused?: boolean;
+  settings?: { cursorScale?: number };
+  input?: {
+    mouse?: {
+      position?: { x?: number; y?: number };
+      available?: boolean;
+    };
+  };
   rendering?: SessionRendering;
 };
 
@@ -150,6 +172,110 @@ function clipRectToCanvas(rect: ScreenRect, canvasW: number, canvasH: number): S
   const height = y1 - y0;
   if (width <= 0 || height <= 0) return null;
   return { x: x0, y: y0, width, height };
+}
+
+type CursorKey = "default" | "marquee" | "demolish";
+
+const CURSOR_PATHS: Record<Exclude<CursorKey, "default">, string> = {
+  marquee: "img/cursor_marquee.png",
+  demolish: "img/cursor_demolish.png",
+};
+
+const pathCursorCache = new Map<string, HTMLImageElement>();
+
+function resolveActiveCursorKey(pixi: SessionPixi | undefined): CursorKey {
+  const style =
+    pixi?.app?.renderer?.events?.cursorStyles?.default ??
+    pixi?.app?.renderer?.events?.currentCursor ??
+    pixi?.cursors?.default ??
+    "";
+  const text = String(style);
+  if (text.includes("marquee") || text === pixi?.cursors?.marquee) return "marquee";
+  if (text.includes("demolish") || text === pixi?.cursors?.demolish) return "demolish";
+  return "default";
+}
+
+function isDrawableImage(image: CanvasImageSource | undefined): image is CanvasImageSource {
+  if (!image) return false;
+  if (image instanceof HTMLImageElement) {
+    return image.complete && image.naturalWidth > 0 && image.naturalHeight > 0;
+  }
+  if (image instanceof HTMLCanvasElement || image instanceof OffscreenCanvas) {
+    return image.width > 0 && image.height > 0;
+  }
+  return true;
+}
+
+function imageNaturalSize(image: CanvasImageSource): { width: number; height: number } | null {
+  if (image instanceof HTMLImageElement) {
+    return { width: image.naturalWidth, height: image.naturalHeight };
+  }
+  if ("width" in image && "height" in image) {
+    const width = Number(image.width);
+    const height = Number(image.height);
+    if (width > 0 && height > 0) return { width, height };
+  }
+  return null;
+}
+
+function getCursorImage(key: CursorKey): CanvasImageSource | null {
+  const session = getSession();
+  if (key === "default") {
+    const image = session?.rendering?.images?.cursor_default?.image;
+    return isDrawableImage(image) ? image : null;
+  }
+
+  const path = CURSOR_PATHS[key];
+  let cached = pathCursorCache.get(path);
+  if (!cached) {
+    cached = new Image();
+    cached.src = path;
+    pathCursorCache.set(path, cached);
+  }
+  return isDrawableImage(cached) ? cached : null;
+}
+
+/**
+ * Paint the in-game CSS cursor into the 1× crop (hotspot = top-left).
+ * Skips when the tip is outside the crop or the image is not ready.
+ */
+function drawMouseCursor(
+  ctx: CanvasRenderingContext2D,
+  clip: ScreenRect,
+  cropWidth: number,
+  cropHeight: number,
+): void {
+  const session = getSession();
+  const mouse = session?.input?.mouse;
+  if (mouse?.available === false) return;
+  const mx = mouse?.position?.x;
+  const my = mouse?.position?.y;
+  if (!Number.isFinite(mx) || !Number.isFinite(my)) return;
+
+  const localX = (mx as number) - clip.x;
+  const localY = (my as number) - clip.y;
+  if (localX < 0 || localY < 0 || localX >= cropWidth || localY >= cropHeight) return;
+
+  const key = resolveActiveCursorKey(session?.rendering?.pixi);
+  const image = getCursorImage(key) ?? getCursorImage("default");
+  if (!image) return;
+
+  const natural = imageNaturalSize(image);
+  if (!natural) return;
+
+  const scale = Math.max(1, Number(session?.settings?.cursorScale) || 1);
+  const width = Math.max(1, Math.round(natural.width * scale));
+  const height = Math.max(1, Math.round(natural.height * scale));
+
+  const previousSmooth = ctx.imageSmoothingEnabled;
+  ctx.imageSmoothingEnabled = false;
+  try {
+    ctx.drawImage(image, localX, localY, width, height);
+  } catch (error) {
+    console.warn(`${LOG} cursor draw failed:`, error);
+  } finally {
+    ctx.imageSmoothingEnabled = previousSmooth;
+  }
 }
 
 let cropScratch: HTMLCanvasElement | null = null;
@@ -291,6 +417,10 @@ export function rasterizeSelection(
   } catch (error) {
     console.error(`${LOG} dynamic2D draw failed:`, error);
     return null;
+  }
+
+  if (look?.showMouse) {
+    drawMouseCursor(ctx, clip, out.width, out.height);
   }
 
   const pixelScale = Math.max(1, Math.round(scale));
