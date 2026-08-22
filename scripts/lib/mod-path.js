@@ -10,6 +10,7 @@ import {
   lstatSync,
   mkdirSync,
   readdirSync,
+  readFileSync,
   readlinkSync,
   rmSync,
   unlinkSync,
@@ -118,10 +119,63 @@ export function ensureGameModDir(gameName) {
   return dir;
 }
 
+/** @param {string} dir @returns {string | null} */
+function readModinfoId(dir) {
+  const modinfoPath = join(dir, "modinfo.json");
+  if (!existsSync(modinfoPath)) return null;
+  try {
+    const parsed = JSON.parse(readFileSync(modinfoPath, "utf8"));
+    return typeof parsed?.id === "string" && parsed.id.trim() ? parsed.id.trim() : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * After a `modinfo.name` rename, an old folder can keep the same `id`.
+ * Sandustry rejects every copy of a duplicate manifest id — remove the leftovers.
+ * @param {{ gameName: string; manifest?: { id?: string } }[]} mods
+ */
+export function removeStaleSameIdGameDirs(mods) {
+  /** @type {Map<string, string>} id → current game folder name */
+  const wantedById = new Map();
+  for (const mod of mods) {
+    const id = typeof mod.manifest?.id === "string" ? mod.manifest.id.trim() : "";
+    if (!id) continue;
+    wantedById.set(id, mod.gameName);
+  }
+  if (wantedById.size === 0) return;
+
+  const root = sandustryModsDir();
+  if (!existsSync(root)) return;
+
+  for (const name of readdirSync(root)) {
+    const dir = join(root, name);
+    let stat;
+    try {
+      stat = lstatSync(dir);
+    } catch {
+      continue;
+    }
+    if (!stat.isDirectory() && !stat.isSymbolicLink()) continue;
+    if (!isOwnedGameDir(dir)) continue;
+
+    const id = readModinfoId(dir);
+    if (!id) continue;
+    const wantedName = wantedById.get(id);
+    if (!wantedName || name === wantedName) continue;
+
+    removePath(dir);
+    console.log(
+      `${styleText("yellow", "Removed")} stale mod folder ${styleText("bold", name)} ${styleText("dim", `(same id as "${wantedName}")`)}`,
+    );
+  }
+}
+
 /**
  * `dist/` is a directory of per-mod links named after the src folder.
  * @param {string} repoRoot
- * @param {{ folder: string; gameName: string }[]} mods
+ * @param {{ folder: string; gameName: string; manifest?: { id?: string } }[]} mods
  * @param {string[]} [keepFolders] Src folders that should keep a dist link (all discovered mods).
  */
 export function linkRepoDistToModOutputs(repoRoot, mods, keepFolders) {
@@ -157,6 +211,8 @@ export function linkRepoDistToModOutputs(repoRoot, mods, keepFolders) {
       console.log(`Removed stale ${REPO_DIST_LINK}/${name}`);
     }
   }
+
+  removeStaleSameIdGameDirs(mods);
 
   for (const mod of mods) {
     const linkPath = join(distPath, mod.folder);
