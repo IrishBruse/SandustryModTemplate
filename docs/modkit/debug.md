@@ -108,12 +108,13 @@ Free **`reloaded`** is true when this script body is running because a reload ev
 
 ## File logging (`console`)
 
-Debug builds use esbuild [`inject`](https://esbuild.github.io/api/#inject) with [`modkit/esbuild/console.ts`](../../modkit/esbuild/console.ts). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code still print in DevTools and also `POST` to `http://127.0.0.1:19147/log` while `npm run dev` is up. Lines append to `logs/<modinfo.id>.log` (workspace `logs/` → OS sandustry logs: `~/.config/sandustry/logs` or `%APPDATA%/sandustry/logs`).
+Debug builds use esbuild [`inject`](https://esbuild.github.io/api/#inject) with [`modkit/esbuild/console.ts`](../../modkit/esbuild/console.ts). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code print in DevTools with a `[modinfo.id]` prefix and also `POST` to `http://127.0.0.1:19147/log` while `npm run dev` is up. Lines append to `logs/<modinfo.id>.log` (workspace `logs/` → OS sandustry logs: `~/.config/sandustry/logs` or `%APPDATA%/sandustry/logs`). Do not add the mod id in the message — the inject adds it.
 
 A renderer hot reload (save or **Ctrl+R**) truncates that file via `POST /log/clear` and calls `console.clear()` so the session starts clean. Use `clearLog(modId)` from `@modkit/log` to clear by hand. `clearLog` aborts after 500 ms if F5 / CDP stalls the POST.
 
 ```ts
-console.log("[my-feature]", payload);
+console.log("my-feature", payload);
+// DevTools: [author.hello-world-example] my-feature {…}
 ```
 
 Release builds skip the inject. The shim uses `globalThis.console` so it does not recurse. `__MOD_ID__` is defined from that mod's `mod.ts` at build time.
@@ -138,7 +139,6 @@ Optional extra debug-only patches can still be exported from a mod's `mod.ts` as
 ```ts
 // src/hello-world-example/main.ts — inject boots hot reload and sets `reloaded`
 import { onDispose } from "@modkit/debug"; // only when you need cleanup
-import { MOD_ID } from "./mod";
 
 const api = sandkit.api;
 if (!reloaded) {

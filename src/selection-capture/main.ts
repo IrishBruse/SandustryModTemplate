@@ -1,6 +1,6 @@
 import { onDispose } from "@modkit/debug";
 import { isEnabled, safe } from "@modkit/utils";
-import { MOD_ID } from "./mod";
+import { modinfo } from "./mod";
 import { Overlay } from "./ui/Overlay";
 import tailwindCss from "@modkit/ui/tailwind.css";
 
@@ -8,7 +8,7 @@ const api = sandkit.api;
 const OVERLAY_ID = "selection-capture";
 
 function installTailwind() {
-  const id = `${MOD_ID}-tailwind`;
+  const id = `${modinfo.id}-tailwind`;
   document.getElementById(id)?.remove();
   const style = document.createElement("style");
   style.id = id;
@@ -20,7 +20,7 @@ function installTailwind() {
 function registerUi() {
   const dispose = api.ui.inject(OVERLAY_ID, Overlay);
   if (!dispose) {
-    console.warn(`[${MOD_ID}] UI panel registration failed`);
+    console.warn("UI panel registration failed");
     return;
   }
   onDispose(dispose);
@@ -32,7 +32,7 @@ if (isEnabled(api)) {
     registerUi();
   });
 } else {
-  console.warn(`[${MOD_ID}] mod disabled in settings — UI not registered`);
+  console.warn("mod disabled in settings — UI not registered");
 }
 
-console.log(`[${MOD_ID}] ${reloaded ? "reloaded" : "loaded"} — C then F7 (PNG or GIF)`);
+console.log(`${reloaded ? "reloaded" : "loaded"} — C then F7 (PNG or GIF)`);

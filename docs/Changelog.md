@@ -8,11 +8,13 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Added
 
-- **Pixel-perfect Screenshot and GIF recorder:** panel **Show mouse** toggle draws the in-game cursor into PNG/GIF captures; **Greenscreen** / **Show mouse** use pill toggles.
+- **Pixel-perfect Screenshot and GIF recorder:** panel **Show mouse** toggle draws the in-game cursor into PNG/GIF captures; **Greenscreen** / **Show mouse** use pill toggles; **Record GIF** / **Screenshot** show bound keys when set.
 
 ### Changed
 
 - Ambient `sandkit` / `SandkitApi` / `WorkerSandkitApi` are composed in [`modkit/sandkit-global.d.ts`](../modkit/sandkit-global.d.ts) from the types submodule namespaces (types package stays on master; no shipped global).
+- `defineModInfo` returns the manifest only. Export `modinfo` and use `modinfo.id` (no separate `MOD_ID`). See [layout.md](layout.md).
+- Debug `console.*` inject prefixes DevTools output with `[modinfo.id]`. Do not add that tag in call sites. See [modkit/debug.md](modkit/debug.md).
 
 ### Fixed
 
@@ -24,7 +26,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Removed
 
-- Per-mod `globals.ts` and `debug.ts` are gone. `defineModInfo` returns `{ modinfo, MOD_ID }`. Import hot reload from `@modkit/debug` (release stubs that package). See [modkit/debug.md](modkit/debug.md) and [layout.md](layout.md).
+- Per-mod `globals.ts` and `debug.ts` are gone. `defineModInfo` returns the manifest as `modinfo`; use `modinfo.id`. Import hot reload from `@modkit/debug` (release stubs that package). See [modkit/debug.md](modkit/debug.md) and [layout.md](layout.md).
 - F5 no longer attaches Electron **main** (`:9230`) or launches with `--inspect`. The **Sandustry** compound attaches the **renderer** only (`:9222`).
 - Per-mod `ide-debug.json` and `SANDUSTRY_IDE_DEBUG` are gone. Keep **Open DevTools on load** off under F5 so Electron DevTools does not steal the IDE session.
 

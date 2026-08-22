@@ -1,5 +1,4 @@
 import { isEnabled, registerRetroGame, safe } from "@modkit/utils";
-import { MOD_ID } from "./mod";
 
 const api = sandkit.api;
 const WIDTH = 160;
@@ -55,4 +54,4 @@ if (isEnabled(api)) {
   });
 }
 
-console.log(`[${MOD_ID}] ${reloaded ? "reloaded" : "loaded"} — open Retro Console for Noise Test`);
+console.log(`${reloaded ? "reloaded" : "loaded"} — open Retro Console for Noise Test`);

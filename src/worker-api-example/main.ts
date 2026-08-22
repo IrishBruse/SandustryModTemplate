@@ -1,5 +1,4 @@
 import { isEnabled, safe } from "@modkit/utils";
-import { MOD_ID } from "./mod";
 
 const api = sandkit.api;
 if (isEnabled(api)) {
@@ -10,6 +9,4 @@ if (isEnabled(api)) {
   });
 }
 
-console.log(
-  `[${MOD_ID}] main ${reloaded ? "reloaded" : "loaded"} — workerEntry probes WorkerSandkitApi`,
-);
+console.log(`main ${reloaded ? "reloaded" : "loaded"} — workerEntry probes WorkerSandkitApi`);

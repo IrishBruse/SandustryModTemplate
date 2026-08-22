@@ -1,14 +1,11 @@
 import { encode, type UnencodedFrame } from "modern-gif";
 import { applyCaptureLook, getSession, snapshotOnPaint, type CaptureLook } from "./captureFrame";
-import { MOD_ID } from "./mod";
 import {
   getSelectionCellBounds,
   restoreMarqueeSelection,
   snapshotMarqueeSelection,
   type CellBounds,
 } from "./selectionBounds";
-
-const LOG = `[${MOD_ID}]`;
 
 const MIN_FRAMES = 2;
 const MAX_FRAMES = 120;
@@ -55,7 +52,7 @@ function setSimulationPaused(paused: boolean): void {
   try {
     manager.postMessage([WORKER_SET_PAUSED, paused]);
   } catch (error) {
-    console.warn(`${LOG} SetPaused worker message failed:`, error);
+    console.warn(`SetPaused worker message failed:`, error);
   }
 }
 
@@ -93,12 +90,12 @@ async function captureGifFrame(
   try {
     return await snap();
   } catch (error) {
-    console.warn(`${LOG} paint wait failed, retry:`, error);
+    console.warn(`paint wait failed, retry:`, error);
     setSimulationPaused(false);
     try {
       return await snap();
     } catch (retryError) {
-      console.warn(`${LOG} paint wait failed:`, retryError);
+      console.warn(`paint wait failed:`, retryError);
       return null;
     }
   }
@@ -204,17 +201,17 @@ function bytesToBase64(bytes: Uint8Array): string {
  */
 async function copyGifToClipboard(bytes: Uint8Array, preview: HTMLCanvasElement): Promise<boolean> {
   if (!navigator.clipboard?.write || typeof ClipboardItem === "undefined") {
-    console.error(`${LOG} clipboard image write unavailable`);
+    console.error(`clipboard image write unavailable`);
     return false;
   }
 
   const gifBlob = bytesToGifBlob(bytes);
   try {
     await navigator.clipboard.write([new ClipboardItem({ "image/gif": Promise.resolve(gifBlob) })]);
-    console.log(`${LOG} copied GIF to clipboard`, { bytes: gifBlob.size });
+    console.log(`copied GIF to clipboard`, { bytes: gifBlob.size });
     return true;
   } catch (error) {
-    console.warn(`${LOG} image/gif not accepted:`, error);
+    console.warn(`image/gif not accepted:`, error);
   }
 
   const pngBlob = await canvasToPngBlob(preview);
@@ -228,18 +225,18 @@ async function copyGifToClipboard(bytes: Uint8Array, preview: HTMLCanvasElement)
         "text/html": Promise.resolve(new Blob([html], { type: "text/html" })),
       }),
     ]);
-    console.log(`${LOG} copied PNG+HTML clipboard`, { png: pngBlob.size, gif: gifBlob.size });
+    console.log(`copied PNG+HTML clipboard`, { png: pngBlob.size, gif: gifBlob.size });
     return true;
   } catch (error) {
-    console.warn(`${LOG} PNG+HTML clipboard failed:`, error);
+    console.warn(`PNG+HTML clipboard failed:`, error);
   }
 
   try {
     await navigator.clipboard.write([new ClipboardItem({ "image/png": Promise.resolve(pngBlob) })]);
-    console.log(`${LOG} copied PNG to clipboard`, { bytes: pngBlob.size });
+    console.log(`copied PNG to clipboard`, { bytes: pngBlob.size });
     return true;
   } catch (error) {
-    console.error(`${LOG} clipboard.write failed:`, error);
+    console.error(`clipboard.write failed:`, error);
     return false;
   }
 }
@@ -273,13 +270,13 @@ export async function recordSelectionGif(
 
   const bounds = getSelectionCellBounds(api);
   if (!bounds) {
-    console.warn(`${LOG} no selection bounds`);
+    console.warn(`no selection bounds`);
     return "no-selection";
   }
 
   const marquee = snapshotMarqueeSelection();
   const wasPaused = getSession()?.paused === true;
-  console.log(`${LOG} record start`, {
+  console.log(`record start`, {
     bounds,
     framesWanted,
     ticksPerFrame,
@@ -299,12 +296,12 @@ export async function recordSelectionGif(
         await waitTicks(api, ticksPerFrame);
         const frame = await captureGifFrame(api, bounds, look);
         if (!frame) {
-          console.warn(`${LOG} frame ${i + 1} missing — abort`);
+          console.warn(`frame ${i + 1} missing — abort`);
           return "failed";
         }
         frames.push(frame);
         if (i === 1 || i % 10 === 0) {
-          console.log(`${LOG} captured frame ${i + 1}/${framesWanted}`);
+          console.log(`captured frame ${i + 1}/${framesWanted}`);
         }
       }
     } finally {
@@ -325,14 +322,14 @@ export async function recordSelectionGif(
     const previewCanvas = encodeScaleScratch;
     if (!previewCanvas) return "failed";
     const copied = await copyGifToClipboard(bytes, previewCanvas);
-    console.log(`${LOG} GIF ready`, {
+    console.log(`GIF ready`, {
       frames: frames.length,
       bytes: bytes.byteLength,
       copied,
     });
     return copied ? "ok" : "downloaded";
   } catch (error) {
-    console.error(`${LOG} record threw:`, error);
+    console.error(`record threw:`, error);
     return "failed";
   } finally {
     if (marquee) restoreMarqueeSelection(api, marquee, bounds);

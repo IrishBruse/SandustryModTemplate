@@ -1,8 +1,5 @@
 import { applyCaptureLook, rasterizeOnPaint, type CaptureLook } from "./captureFrame";
-import { MOD_ID } from "./mod";
 import { getSelectionCellBounds } from "./selectionBounds";
-
-const LOG = `[${MOD_ID}]`;
 
 /** Same nearest-neighbor scale as the PNG screenshot. */
 const PNG_SCALE = 2;
@@ -16,19 +13,19 @@ function canvasToPngBlob(canvas: HTMLCanvasElement): Promise<Blob | null> {
 async function copyPngToClipboard(canvas: HTMLCanvasElement): Promise<boolean> {
   const blob = await canvasToPngBlob(canvas);
   if (!blob) {
-    console.error(`${LOG} toBlob returned null`);
+    console.error(`toBlob returned null`);
     return false;
   }
   if (!navigator.clipboard?.write || typeof ClipboardItem === "undefined") {
-    console.error(`${LOG} clipboard image write unavailable`);
+    console.error(`clipboard image write unavailable`);
     return false;
   }
   try {
     await navigator.clipboard.write([new ClipboardItem({ "image/png": Promise.resolve(blob) })]);
-    console.log(`${LOG} copied PNG to clipboard`, { bytes: blob.size });
+    console.log(`copied PNG to clipboard`, { bytes: blob.size });
     return true;
   } catch (error) {
-    console.error(`${LOG} clipboard.write failed:`, error);
+    console.error(`clipboard.write failed:`, error);
     return false;
   }
 }
@@ -42,7 +39,7 @@ export async function captureSelectionPng(
 ): Promise<CapturePngResult> {
   const bounds = getSelectionCellBounds(api);
   if (!bounds) {
-    console.warn(`${LOG} no selection bounds`);
+    console.warn(`no selection bounds`);
     return "no-selection";
   }
 
@@ -51,7 +48,7 @@ export async function captureSelectionPng(
   try {
     raster = await rasterizeOnPaint(api, bounds, PNG_SCALE, undefined, look);
   } catch (error) {
-    console.warn(`${LOG} PNG paint wait failed:`, error);
+    console.warn(`PNG paint wait failed:`, error);
     return "failed";
   } finally {
     restoreLook();

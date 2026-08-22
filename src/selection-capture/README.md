@@ -15,6 +15,8 @@ Share a machine, a line, or a whole scene without a blurry screenshot. **Screens
 - **Screenshot** — copy a **2×** PNG; paste with **Ctrl+V**
 - **Record GIF** — record an animated GIF of sim ticks; the `.gif` downloads
 
+Set keys for **Screenshot** and **Record GIF** in Options → Controls. The panel buttons show those keys when bound.
+
 ## Panel
 
 - **Frames** — 2–120 (default 60)

@@ -1,6 +1,6 @@
 import { defineModInfo } from "@modkit/modinfo";
 
-export const { modinfo, MOD_ID } = defineModInfo({
+export const modinfo = defineModInfo({
   manifestVersion: 1,
   id: "author.retro-game-example",
   name: "Retro Game Example",

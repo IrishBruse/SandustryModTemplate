@@ -8,6 +8,7 @@ Notable changes to **Pixel-perfect Screenshot and GIF recorder**. Newest first. 
 
 - Panel **Show mouse** toggle — draws the in-game cursor into PNG/GIF when the pointer is inside the selection (default off).
 - Panel **Greenscreen** and **Show mouse** use yellow/gray pill toggles.
+- Panel **Record GIF** and **Screenshot** buttons show the bound key when one is set in Options.
 - Controls bindings for **Toggle panel** (default **F7**), **Screenshot**, and **Record GIF** (empty by default — set keys in Options).
 
 ### Changed

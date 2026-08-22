@@ -2,7 +2,7 @@ import { onDispose } from "@modkit/debug";
 import { isEnabled, safe } from "@modkit/utils";
 import { disableSessionAutosave } from "./autosave";
 import { registerDevToolsShortcut, scheduleMainMenuBoot } from "./boot-menu";
-import { MOD_ID } from "./mod";
+import { modinfo } from "./mod";
 import { settingOn } from "./settings";
 import { installDebugToggle } from "./toggle/install";
 import tailwindCss from "@modkit/ui/tailwind.css";
@@ -14,7 +14,7 @@ function registerSandkitGlobals(): void {
 }
 
 function installTailwind(): void {
-  const id = `${MOD_ID}-tailwind`;
+  const id = `${modinfo.id}-tailwind`;
   document.getElementById(id)?.remove();
   const style = document.createElement("style");
   style.id = id;
@@ -26,15 +26,15 @@ function installTailwind(): void {
 if (isEnabled(api) && !reloaded) {
   registerSandkitGlobals();
   if (settingOn(api, "f12DevTools")) registerDevToolsShortcut();
-  scheduleMainMenuBoot(api, MOD_ID);
+  scheduleMainMenuBoot(api, modinfo.id);
 }
 
 if (isEnabled(api)) {
   safe(() => {
     if (settingOn(api, "disableAutosave")) disableSessionAutosave();
     installTailwind();
-    installDebugToggle(api, MOD_ID);
+    installDebugToggle(api, modinfo.id);
   });
 }
 
-console.log(`[${MOD_ID}] ${reloaded ? "reloaded" : "loaded"} — debug companion`);
+console.log(`${reloaded ? "reloaded" : "loaded"} — debug companion`);

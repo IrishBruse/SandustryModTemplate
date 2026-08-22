@@ -8,8 +8,6 @@
  * The game loads this script on every simulation worker. Probe once on
  * worker 0 — the API bag is the same on each index.
  */
-import { MOD_ID } from "./mod";
-
 const api = sandkit.api as unknown as WorkerSandkitApi;
 
 type Probe = { path: string; kind: string };
@@ -30,7 +28,7 @@ try {
   index = api.worker.getIndex();
   count = api.worker.getCount();
 } catch (error) {
-  console.error(`[${MOD_ID}] worker.getIndex/getCount failed`, error);
+  console.error(`worker.getIndex/getCount failed`, error);
 }
 
 // Other workers share the same api surface — skip duplicate probe spam.
@@ -61,13 +59,13 @@ if (index === 0) {
   const missing = probes.filter((p) => p.kind === "undefined");
   const engineMissing = engineProbes.filter((p) => p.kind === "undefined");
 
-  console.log(`[${MOD_ID}] worker probe (index 0 of ${count})`, {
+  console.log(`worker probe (index 0 of ${count})`, {
     present: probes.length - missing.length,
     missing: missing.map((p) => p.path),
     probes,
   });
 
-  console.log(`[${MOD_ID}] worker engine probe (index 0 of ${count})`, {
+  console.log(`worker engine probe (index 0 of ${count})`, {
     present: engineProbes.length - engineMissing.length,
     missing: engineMissing.map((p) => p.path),
     probes: engineProbes,
@@ -76,13 +74,13 @@ if (index === 0) {
 
   if (missing.length > 0) {
     console.warn(
-      `[${MOD_ID}] ${missing.length} typed path(s) missing at runtime — update modkit/types/src/worker or the probe list`,
+      `${missing.length} typed path(s) missing at runtime — update modkit/types/src/worker or the probe list`,
     );
   }
 
   if (engineMissing.length > 0) {
     console.warn(
-      `[${MOD_ID}] worker sandkit.engine missing paths: ${engineMissing.map((p) => p.path).join(", ")}`,
+      `worker sandkit.engine missing paths: ${engineMissing.map((p) => p.path).join(", ")}`,
     );
   }
 }

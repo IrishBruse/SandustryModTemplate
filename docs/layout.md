@@ -49,7 +49,7 @@ Every mod needs these files:
 
 | File            | Role                                                                                                                                       |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `mod.ts`        | Manifest and optional patches. `export const { modinfo, MOD_ID } = defineModInfo(...)`. The build writes `modinfo.json` and `patches.json` |
+| `mod.ts`        | Manifest and optional patches. `export const modinfo = defineModInfo(...)`. Use `modinfo.id` for the mod id. The build writes `modinfo.json` and `patches.json` |
 | `main.ts`       | Mod entry. Hot reload boots via esbuild inject; use free `reloaded`                                                                        |
 | `tsconfig.json` | Isolated TypeScript project. This folder cannot see sibling mods                                                                           |
 

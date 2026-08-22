@@ -8,14 +8,14 @@ import {
   UiBox,
 } from "@modkit/ui";
 import { captureSelectionPng } from "../capturePng";
-import { MOD_ID, modinfo } from "../mod";
+import { modinfo } from "../mod";
 import { recordSelectionGif } from "../recordGif";
 
 /** Game `registerBinding` forwards `displayNameKey`, not `displayName`. */
 const BINDINGS = {
-  togglePanel: `${MOD_ID}.togglePanel`,
-  screenshot: `${MOD_ID}.screenshot`,
-  recordGif: `${MOD_ID}.recordGif`,
+  togglePanel: `${modinfo.id}.togglePanel`,
+  screenshot: `${modinfo.id}.screenshot`,
+  recordGif: `${modinfo.id}.recordGif`,
 } as const;
 
 const DEFAULT_FRAMES = 60;
@@ -98,7 +98,7 @@ export function Overlay() {
             break;
         }
       } catch (error) {
-        console.error(`[${MOD_ID}] PNG capture threw:`, error);
+        console.error("PNG capture threw:", error);
         api.ui.toast("Clipboard copy failed", {});
       }
     })();
@@ -133,7 +133,7 @@ export function Overlay() {
           break;
       }
     } catch (error) {
-      console.error(`[${MOD_ID}] record threw:`, error);
+      console.error("record threw:", error);
       api.ui.toast("GIF record failed", {});
     } finally {
       setBusy(false);
@@ -174,7 +174,11 @@ export function Overlay() {
   if (!open) return null;
 
   const toggleKey = sandkit.api.input.getDisplayKey(BINDINGS.togglePanel, "F7");
+  const screenshotKey = sandkit.api.input.getDisplayKey(BINDINGS.screenshot);
+  const recordGifKey = sandkit.api.input.getDisplayKey(BINDINGS.recordGif);
   const fieldClass = "w-full bg-black text-white text-sm px-2 py-1 rounded border border-white/20";
+  const actionButtonClass =
+    "w-full text-sm tracking-wider bg-white bg-opacity-15 hover:bg-opacity-25 disabled:opacity-50 py-2 px-2 rounded flex items-center justify-center gap-2";
 
   return (
     <OverlayRoot>
@@ -227,24 +231,26 @@ export function Overlay() {
               onChange={setShowMouse}
             />
             <button
-              className="w-full text-sm tracking-wider bg-white bg-opacity-15 hover:bg-opacity-25 disabled:opacity-50 py-2 rounded"
+              className={actionButtonClass}
               type="button"
               disabled={busy}
               onClick={() => {
                 void recordGif();
               }}
             >
-              {busy ? "Recording…" : "Record GIF"}
+              <span>{busy ? "Recording…" : "Record GIF"}</span>
+              {!busy && recordGifKey ? <HotkeyBadge>{recordGifKey}</HotkeyBadge> : null}
             </button>
             <button
-              className="w-full text-sm tracking-wider bg-white bg-opacity-15 hover:bg-opacity-25 disabled:opacity-50 py-2 rounded mt-2"
+              className={`${actionButtonClass} mt-2`}
               type="button"
               disabled={busy}
               onClick={() => {
                 screenshot();
               }}
             >
-              Screenshot
+              <span>Screenshot</span>
+              {screenshotKey ? <HotkeyBadge>{screenshotKey}</HotkeyBadge> : null}
             </button>
           </UiBox>
         </Interactive>

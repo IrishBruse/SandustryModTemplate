@@ -1,5 +1,4 @@
 import { isEnabled, safe } from "@modkit/utils";
-import { MOD_ID } from "./mod";
 
 const api = sandkit.api;
 if (isEnabled(api)) {
@@ -8,4 +7,4 @@ if (isEnabled(api)) {
   });
 }
 
-console.log(`[${MOD_ID}] ${reloaded ? "reloaded" : "loaded"} — use api in DevTools`);
+console.log(`${reloaded ? "reloaded" : "loaded"} — use api in DevTools`);

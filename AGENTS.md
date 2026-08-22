@@ -37,7 +37,7 @@ Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized dem
 
 | Path                       | Role                                                                                                                                                                                                                                                        |
 | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/<name>/mod.ts`        | Manifest (+ optional `patches` / `debugPatches`) → `modinfo.json` / `patches.json` at build. `export const { modinfo, MOD_ID } = defineModInfo(...)`.                                                                                                       |
+| `src/<name>/mod.ts`        | Manifest (+ optional `patches` / `debugPatches`) → `modinfo.json` / `patches.json` at build. `export const modinfo = defineModInfo(...)`. Use `modinfo.id` for the mod id.                                                                                                       |
 | `src/<name>/main.ts`       | Mod entry. Hot reload boots via esbuild inject (`reloaded` is ambient). Import `onDispose` from `@modkit/debug` when needed.                                                                                                                                |
 | `src/<name>/worker.ts`     | Optional worker entry → `worker.js` when present (`workerEntry` in modinfo)                                                                                                                                                                                 |
 | `src/<name>/ui/`           | React overlays (import `react`, resolved to `modkit/esbuild/react.ts`)                                                                                                                                                                                      |
@@ -143,10 +143,10 @@ npm run sandustry        # stop + launch (no build)
 
 The renderer does not write `console.log` into `logs/main.log` (that file is the Electron main process).
 
-In **debug** builds, esbuild injects [`modkit/esbuild/console.ts`](modkit/esbuild/console.ts) so bare `console.log` / `info` / `warn` / `error` / `debug` also append to `logs/<modinfo.id>.log` (link: `logs/` → OS sandustry logs) when `npm run dev` is running.
+In **debug** builds, esbuild injects [`modkit/esbuild/console.ts`](modkit/esbuild/console.ts) so bare `console.log` / `info` / `warn` / `error` / `debug` print with a `[modinfo.id]` prefix in DevTools and also append to `logs/<modinfo.id>.log` (link: `logs/` → OS sandustry logs) when `npm run dev` is running.
 
 ```ts
-console.log("[my-tag]", { width, collapsed });
+console.log("my-feature", { width, collapsed });
 // DevTools + logs/author.hello-world-example.log
 ```
 

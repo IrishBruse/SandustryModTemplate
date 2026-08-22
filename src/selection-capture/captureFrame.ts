@@ -1,7 +1,4 @@
 import type { CellBounds } from "./selectionBounds";
-import { MOD_ID } from "./mod";
-
-const LOG = `[${MOD_ID}]`;
 
 /** Sky fill when the WebGL backdrop cannot be sampled. */
 const FALLBACK_SKY = "#3d6b78";
@@ -272,7 +269,7 @@ function drawMouseCursor(
   try {
     ctx.drawImage(image, localX, localY, width, height);
   } catch (error) {
-    console.warn(`${LOG} cursor draw failed:`, error);
+    console.warn(`cursor draw failed:`, error);
   } finally {
     ctx.imageSmoothingEnabled = previousSmooth;
   }
@@ -360,19 +357,19 @@ export function rasterizeSelection(
 ): HTMLCanvasElement | null {
   const screenRect = getSelectionScreenRect(api, bounds);
   if (!screenRect) {
-    console.warn(`${LOG} could not map cell bounds to screen`);
+    console.warn(`could not map cell bounds to screen`);
     return null;
   }
 
   const dynamicCanvas = getDynamic2DCanvas();
   if (!dynamicCanvas) {
-    console.warn(`${LOG} dynamic2D canvas missing`);
+    console.warn(`dynamic2D canvas missing`);
     return null;
   }
 
   const clip = clipRectToCanvas(screenRect, dynamicCanvas.width, dynamicCanvas.height);
   if (!clip) {
-    console.warn(`${LOG} selection off-screen`, { screenRect });
+    console.warn(`selection off-screen`, { screenRect });
     return null;
   }
 
@@ -398,7 +395,7 @@ export function rasterizeSelection(
         clip.height,
       );
     } catch (error) {
-      console.warn(`${LOG} WebGL backdrop draw failed:`, error);
+      console.warn(`WebGL backdrop draw failed:`, error);
     }
   }
 
@@ -415,7 +412,7 @@ export function rasterizeSelection(
       clip.height,
     );
   } catch (error) {
-    console.error(`${LOG} dynamic2D draw failed:`, error);
+    console.error(`dynamic2D draw failed:`, error);
     return null;
   }
 

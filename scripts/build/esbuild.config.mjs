@@ -327,6 +327,7 @@ function bundleOptions(mod) {
 
 /**
  * Worker bundle — same IIFE + free `sandkit`, no React / hot-reload inject.
+ * Debug builds still inject `console.ts` so logs get the `[modId]` prefix.
  * @param {import("./mods.js").LoadedMod} mod
  */
 function workerBundleOptions(mod) {
@@ -347,6 +348,7 @@ function workerBundleOptions(mod) {
       __MOD_ID__: JSON.stringify(typeof mod.manifest.id === "string" ? mod.manifest.id : "mod"),
       __DEV_WATCH_URL__: '""',
     },
+    inject: modDebug ? [join(MODKIT_DIR, "esbuild/console.ts")] : [],
     banner: {
       js: [
         `// Generated — edit src/${mod.folder}/worker.ts and run npm run dev.`,

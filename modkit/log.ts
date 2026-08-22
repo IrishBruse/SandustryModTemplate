@@ -33,9 +33,9 @@ export type ModLogger = {
  *
  * ```ts
  * import { createLogger } from "@modkit/log";
- * import { MOD_ID } from "./mod";
+ * import { modinfo } from "./mod";
  *
- * const log = createLogger(MOD_ID);
+ * const log = createLogger(modinfo.id);
  * log("booted");
  * log("place", { x: 1, y: 2 });
  * ```
@@ -64,7 +64,8 @@ export function createLogger(modId: string, options?: CreateLoggerOptions): ModL
  * Append one line to `logs/<modId>.log`. Prefer {@link createLogger} at call sites.
  */
 export function appendLog(modId: string, line: string, options?: { console?: boolean }): void {
-  if (options?.console !== false) console.log(line);
+  // Bypass the console inject — the line already carries its tag, and we POST below.
+  if (options?.console !== false) globalThis.console.log(line);
   void fetch(LOG_URL, {
     method: "POST",
     mode: "cors",

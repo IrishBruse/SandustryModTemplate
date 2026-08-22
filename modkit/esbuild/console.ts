@@ -1,6 +1,7 @@
 /**
  * esbuild `inject` target (debug builds). Bare `console.*` in the mod bundle
  * call through here so DevTools and `logs/<mod-id>.log` both see the line.
+ * DevTools lines are prefixed with `[modId]` — do not repeat that in call sites.
  *
  * Use `globalThis.console` only — never the exported name — or inject recurses.
  */
@@ -42,7 +43,7 @@ function mirror(level: string, args: unknown[]): void {
 
 function wrap(level: "log" | "info" | "warn" | "error" | "debug") {
   return (...args: unknown[]) => {
-    native[level](...args);
+    native[level](`[${modId()}]`, ...args);
     mirror(level, args);
   };
 }
