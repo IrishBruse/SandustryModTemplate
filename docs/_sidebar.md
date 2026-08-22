@@ -2,6 +2,7 @@
 - [Changelog](Changelog.md)
 
 - Guide
+  - [Quick start](quick-start.md)
   - [Folder layout](layout.md)
   - [Builds](builds.md)
   - [Troubleshooting](troubleshooting.md)
@@ -16,3 +17,4 @@
 - Reference
   - [Patches](patches.md)
   - [Types](https://github.com/flamableassassin/sandustry-modding-types ":target=_blank")
+  - [Modkit todos](todos/README.md)

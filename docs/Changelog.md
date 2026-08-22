@@ -8,19 +8,34 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Added
 
+- **[Quick start](quick-start.md)** guide: clone, `npm run dev`, launch, try samples, copy a mod folder.
+
+### Changed
+
+- **`modkit/esbuild/`** holds esbuild wiring (React/JSX aliases, console inject, patches stub, release debug stub).
+- **Scripts folders** match `npm run` commands (`scripts/build`, `dev`, `typecheck`, `mod-install`, `setup`, `publish`, `sandustry`, `ui`). Shared helpers live in `scripts/lib/`.
+- **Types submodule** lives at [`modkit/types/`](../modkit/types/) (was top-level `types/`). Import aliases (`types/api`, `types/worker-api`, `types/engine`) are unchanged.
+- **[Folder layout](layout.md)** rewritten for new authors: repo folders as a table (not a code block), required vs optional files, sample copy targets, and where the game stores mods. Tooling (`docs/`, `scripts/`, `sandustry/`) stays off that page.
+- Docs home and root README point at the Quick start page instead of a long inline walkthrough.
+- **Build / publish staging:** `npm run build` and `npm run dev` copy only `workshop.json` and previews. They also remove leftover `README.md`, `CHANGELOG.md`, and `screenshots/` from the game folder. `npm run publish` adds those files into `.tmp/publish/`. See [builds.md](builds.md#workshop-publish).
+- **`npm run publish` confirm** prints the full Steam change-notes text (from that mod's `CHANGELOG.md`) before Upload / Cancel.
+
+### Added
+
 - **Dedicated debug mod** (`src/debug/`, game folder **debug**): DevTools on load, F12, splash skip, main-menu auto-boot, F3 engine Debug, and the splash bundle patch. Debug builds (`npm run dev`, `--debug`) install it. Release (`npm run build`) omits it and removes a leftover `mods/debug`. Settings live on that mod only. See [modkit/debug.md](modkit/debug.md).
 - **`npm run publish`:** release-builds the target into `.tmp/publish/<folder>/` so `npm run dev` cannot overwrite the upload. Then SteamCMD uploads from that folder. **SteamCMD is required** ([SteamCMD docs](https://developer.valvesoftware.com/wiki/SteamCMD)). Steam change notes come from that mod's `CHANGELOG.md` for `modinfo.version` (or `## Unreleased` if that heading is missing). See [builds.md](builds.md#workshop-publish).
 
 ### Fixed
 
 - **SteamCMD hang after Workshop upload:** `npm run publish` no longer inherits the terminal. After a successful upload it sends `quit` and stops SteamCMD if it stays on the `Steam>` prompt.
+- **SteamCMD "No cached credentials":** SteamCMD login is separate from the Steam client. On a TTY, publish prompts for password / Steam Guard once, then retries the upload. See [troubleshooting](troubleshooting.md).
 - **`--mod` no longer deletes sibling OS mod folders.** Dist links that stay (other src folders still exist) keep their game dirs. Release still removes leftover `mods/debug`.
 - **`npm run publish` description:** keep real line breaks. Do not write `\n` into the Steam listing.
 
 ### Changed
 
 - **Types submodule layout:** `types/src/main`, `types/src/worker`, `types/src/engine`. Ambient `sandkit` / `SandkitApi` live in [`modkit/sandkit-global.d.ts`](../modkit/sandkit-global.d.ts). Path aliases `types/api` and `types/worker-api` point at those indexes.
-- **Workshop assets** live under `src/<name>/workshop/` (`workshop.json`, `preview.gif`, `preview.png`, `workshop.txt`, `screenshots/`). The build copies `workshop.json` and previews to the mod root. `npm run publish` copies `screenshots/` into the uploaded item. `publishedFileId` is no longer set in `mod.ts`.
+- **Workshop assets** live under `src/<name>/workshop/` (`workshop.json`, `preview.gif`, `preview.png`, `workshop.txt`, `screenshots/`). The build copies `workshop.json` and previews to the mod root. `npm run publish` copies `screenshots/`, `README.md`, and `CHANGELOG.md` into staging. `publishedFileId` is no longer set in `mod.ts`.
 - **Pixel-perfect Screenshot and GIF recorder** `0.2.0` (`src/selection-capture/`): player-facing name (was Selection Capture) and Workshop copy. Folder and mod id stay `selection-capture`. Build copies **preview.gif** (preferred) and **preview.png** from `workshop/`.
 - **`npm run setup`** (was `npm run references`): extracts game source to top-level `sandustry/` and links `logs/`. Workshop mod copies under `references/` are removed.
 - **Mod npm deps:** optional `src/<name>/package.json` holds packages for that mod only. Root `npm install` and `npm run mod:install` run `npm install` in those folders. **Selection Capture** `modern-gif` moved from the repo root into `src/selection-capture/package.json`.

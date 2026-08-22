@@ -6,16 +6,20 @@ TypeScript template for Sandustry mods (Steam **[mods]** branch).
 
 # What's new (2026-08-22)
 
+- **Docs:** [Quick start](https://ethanconneely.com/SandustryModTemplate/#/quick-start) guide; [Folder layout](https://ethanconneely.com/SandustryModTemplate/#/layout) uses tables and beginner copy
+- **`modkit/esbuild/`** for React/JSX aliases, console inject, and release stubs
+- **Scripts folders** match `npm run` commands; shared helpers in `scripts/lib/`
+- **Types submodule** moved to `modkit/types/` (import aliases `types/api` etc. unchanged)
 - **Dedicated debug mod** (`src/debug`, game folder **debug**): DevTools, splash skip, auto-boot, F3, and splash patch. Debug builds install it; release omits it. Settings live on that mod (not on every example). Each example keeps a one-file `debug.ts` for hot reload.
 - **`npm run publish`:** SteamCMD exits after upload (no leftover `Steam>` prompt). Release-builds into `.tmp/publish/<folder>/` so `npm run dev` cannot overwrite it. Change notes come from that mod's `CHANGELOG.md`. Requires [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD).
 - Mod npm deps live in `src/<name>/package.json` (root `npm install` installs them too)
-- Build copies `workshop/workshop.json` and `workshop/preview.gif` (preferred) / `workshop/preview.png` to the mod root when present
+- Build copies `workshop/workshop.json` and preview images to the mod root; `npm run publish` also copies `screenshots/`, `README.md`, and `CHANGELOG.md` into `.tmp/publish/`
 - **`npm run sandustry`** only launches (no build) — keep `npm run dev` for the bundle
 - Stopping `npm run dev` removes owned OS mod folders (use `npm run build` to keep them)
 - Hot reload works with **F5** (same HTTP poll to the dev watch server)
 - Hot reload clears `logs/<mod-id>.log` and the DevTools console for a clean session
 - Management menu rows: hover / click match vanilla (no nested spacer wrap)
-- Sandkit types: `types/src/main`, `types/src/worker`, `types/src/engine`; ambient `sandkit` in `modkit/sandkit-global.d.ts`
+- Sandkit types: `modkit/types/src/main`, `modkit/types/src/worker`, `modkit/types/src/engine`; ambient `sandkit` in `modkit/sandkit-global.d.ts`
 - Use free `sandkit` (ambient types) — no `@modkit/sandkit` import
 - Worker API example mod probes worker-thread `sandkit.api` (`worker.ts` → `worker.js`)
 - **Pixel-perfect Screenshot and GIF recorder** `0.2.0` (`src/selection-capture/`): **C** marquee, then **F7** panel for PNG / GIF (default 60 frames, 2×); **Greenscreen** on the panel; Workshop copy in `README.md` / `workshop/workshop.txt`
@@ -35,7 +39,7 @@ TypeScript template for Sandustry mods (Steam **[mods]** branch).
 **TypeScript:**
 Split each mod across files in `src/<mod-name>/`.
 esbuild bundles them to one `main.js`.
-Sandkit API types come from the `types/` submodule.
+Sandkit API types come from the `modkit/types/` submodule.
 
 **React HUD:**
 Write JSX overlays with the UI kit.
@@ -60,19 +64,16 @@ Keep `npm run dev` running.
 
 ## Quick start
 
-Node 24 installed.
+Node 24 installed. Full guide: https://ethanconneely.com/SandustryModTemplate/#/quick-start
 
 ```
 git clone --recursive https://github.com/IrishBruse/SandustryModTemplate.git <project-name>
 cd <project-name>
 npm install
+npm run dev
 ```
 
-Set `id`, `name`, `author`, and `description` in `src/example/mod.ts`.
-
-1. Run `npm run dev` (this build the mods and watches for changes).
-2. Press **F5** in VS Code, or run `npm run sandustry`.
-3. Sandustry will launch and quickly skip past the splash and
-   autoamtically press the continue button for your last save to start testing.
+1. Press **F5** in VS Code, or run `npm run sandustry`.
+2. Copy `src/hello-toast-example/` to `src/<your-mod>/` and set `id`, `name`, `author`, and `description` in `mod.ts`.
 
 Questions and feedback are welcome.

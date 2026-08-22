@@ -16,47 +16,16 @@ TypeScript template for [Sandustry](https://store.steampowered.com/app/2764460/S
 
 Node 24 installed.
 
-### Clone or use as a template
-
 ```bash
-git clone --recursive https://github.com/IrishBruse/SandustryModTemplate.git <my-folder-name-here>
-```
-
-### Install dependencies
-
-```bash
-cd <my-folder-name-here>
+git clone --recursive https://github.com/IrishBruse/SandustryModTemplate.git <my-folder>
+cd <my-folder>
 npm install
+npm run dev
 ```
 
-Root `npm install` sets up the template (esbuild, TypeScript, lint). It also runs `npm install` in each `src/<name>/` folder that has a `package.json`. Put mod-only npm packages there — not in the repo root. Run `npm run mod:install` to refresh mod folders after you add or change a mod `package.json`.
+Then **F5** in VS Code (or `npm run sandustry`). In game, **Alt+E** opens the overlay sample.
 
-### Configure a mod
-
-Copy [`src/hello-toast-example/`](src/hello-toast-example/) to `src/<your-mod>/` (or edit one of the demos). Set `id`, `name`, `author`, and `description` in that folder’s `mod.ts`. The mods folder uses `name`. Each `src/<name>/` with a `mod.ts` is a separate mod. Mods cannot import from each other.
-
-### Mods
-
-| Folder                                             | Shows                                                                            |
-| -------------------------------------------------- | -------------------------------------------------------------------------------- |
-| [`src/debug/`](src/debug/)                         | Dev companion (debug builds only): DevTools, splash skip, F3                     |
-| [`src/selection-capture/`](src/selection-capture/) | **Pixel-perfect Screenshot and GIF recorder** — **C** marquee → **F7** PNG / GIF |
-
-### Examples
-
-| Folder                                                             | Shows                                |
-| ------------------------------------------------------------------ | ------------------------------------ |
-| [`src/hello-toast-example/`](src/hello-toast-example/)             | Toast on load                        |
-| [`src/overlay-hotkey-example/`](src/overlay-hotkey-example/)       | React overlay + Tailwind; **Alt+E**  |
-| [`src/retro-game-example/`](src/retro-game-example/)               | Retro Console Noise Test             |
-| [`src/management-button-example/`](src/management-button-example/) | Management-column row under Upgrades |
-| [`src/worker-api-example/`](src/worker-api-example/)               | Worker-thread `sandkit.api` probe    |
-
-### Run
-
-Run `npm run dev`, then **F5** in VS Code (or `npm run sandustry`). Neither launches a build — the watch owns the bundle. See [builds](https://ethanconneely.com/SandustryModTemplate/#/builds).
-
-In game, **Alt+E** opens the overlay from `overlay-hotkey-example`. More: [docs site](https://ethanconneely.com/SandustryModTemplate/) · [modkit](https://ethanconneely.com/SandustryModTemplate/#/modkit/) · [`AGENTS.md`](AGENTS.md)
+Full steps, copy-a-mod, and sample list: [Quick start](https://ethanconneely.com/SandustryModTemplate/#/quick-start). Folder map: [layout](https://ethanconneely.com/SandustryModTemplate/#/layout).
 
 ## Commands
 

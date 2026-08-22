@@ -6,10 +6,10 @@ Each other mod keeps a one-file hot-reload client: [`src/<name>/debug.ts`](../..
 
 ## When it is installed
 
-| Build   | Command                                       | `src/debug` mod            | Per-mod `./debug`              | `debugPatches` |
-| ------- | --------------------------------------------- | -------------------------- | ------------------------------ | -------------- |
-| Release | `npm run build`                               | Omitted (leftover removed) | Stub (`modkit/debug/empty.ts`) | Omitted        |
-| Dev     | `npm run dev`, `--watch`, `--game`, `--debug` | Installed (`mods/debug`)   | Bundled (`installHotReload`)   | Included       |
+| Build   | Command                                       | `src/debug` mod            | Per-mod `./debug`                      | `debugPatches` |
+| ------- | --------------------------------------------- | -------------------------- | -------------------------------------- | -------------- |
+| Release | `npm run build`                               | Omitted (leftover removed) | Stub (`modkit/esbuild/debug.empty.ts`) | Omitted        |
+| Dev     | `npm run dev`, `--watch`, `--game`, `--debug` | Installed (`mods/debug`)   | Bundled (`installHotReload`)           | Included       |
 
 `--mod hello-toast-example` on a debug build still installs **debug**. `--mod debug` builds only that folder. `npm run publish` never lists the companion.
 
@@ -109,7 +109,7 @@ A monkey-patch or a trigger with no unregister path stays until the game restart
 
 ## File logging (`console`)
 
-Debug builds use esbuild [`inject`](https://esbuild.github.io/api/#inject) with [`modkit/console.ts`](../../modkit/console.ts). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code still print in DevTools and also `POST` to `http://127.0.0.1:19147/log` while `npm run dev` is up. Lines append to `logs/<modinfo.id>.log` (workspace `logs/` → OS sandustry logs: `~/.config/sandustry/logs` or `%APPDATA%/sandustry/logs`).
+Debug builds use esbuild [`inject`](https://esbuild.github.io/api/#inject) with [`modkit/esbuild/console.ts`](../../modkit/esbuild/console.ts). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code still print in DevTools and also `POST` to `http://127.0.0.1:19147/log` while `npm run dev` is up. Lines append to `logs/<modinfo.id>.log` (workspace `logs/` → OS sandustry logs: `~/.config/sandustry/logs` or `%APPDATA%/sandustry/logs`).
 
 A renderer hot reload (save or **Ctrl+R**) truncates that file via `POST /log/clear` and calls `console.clear()` so the session starts clean. Use `clearLog(modId)` from `@modkit/log` to clear by hand. **F5** skips the HTTP clear (CDP can stall that POST) and still calls `console.clear()`.
 
@@ -129,9 +129,9 @@ Optional extra debug-only patches can still be exported from a mod's `mod.ts` as
 | -------------------------------- | -------------------------------------------------------------------------- |
 | [`src/debug/`](../../src/debug/) | Companion mod: DevTools, splash, auto-boot, F3, splash patch, settings     |
 | `modkit/debug/index.ts`          | Re-exports `installHotReload`, `onDispose`, `isHotReloadEval`              |
-| `modkit/debug/empty.ts`          | Release stub: no-op `installHotReload`, `onDispose`, `isHotReloadEval`     |
 | `modkit/debug/hot-reload.ts`     | Poll `GET /hot-reload/last`, `onDispose`, `isHotReloadEval`                |
-| `modkit/console.ts`              | esbuild inject: mirror `console.*` to watch-server file log (debug builds) |
+| `modkit/esbuild/debug.empty.ts`  | Release stub: no-op `installHotReload`, `onDispose`, `isHotReloadEval`     |
+| `modkit/esbuild/console.ts`      | esbuild inject: mirror `console.*` to watch-server file log (debug builds) |
 | `src/<name>/debug.ts`            | Thin re-export so release can stub `./debug`                               |
 
 ## Wiring
@@ -145,4 +145,4 @@ import { installHotReload, isHotReloadEval, onDispose } from "./debug";
 installHotReload(api, MOD_ID);
 ```
 
-Release builds resolve `./debug` (from that mod's `main.ts`) to `modkit/debug/empty.ts` (`installHotReload` no-op, `onDispose` no-op, `isHotReloadEval` false).
+Release builds resolve `./debug` (from that mod's `main.ts`) to `modkit/esbuild/debug.empty.ts` (`installHotReload` no-op, `onDispose` no-op, `isHotReloadEval` false).

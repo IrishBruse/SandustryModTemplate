@@ -22,7 +22,7 @@ Avoid:
 
 ## Sample mod READMEs (`src/*-example/README.md`)
 
-Short player-facing copy. The build copies each file into the installed mod folder.
+Short player-facing copy. `npm run publish` copies each file into `.tmp/publish/` staging.
 
 - Use lists for steps and controls. Do not use markdown tables.
 - Match the tone and structure of the other `*-example` READMEs.
