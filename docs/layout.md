@@ -19,7 +19,7 @@ Logs: Linux `~/.config/sandustry/logs`; Windows `%APPDATA%/sandustry/logs`.
 
 ## `src/`
 
-Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized demos: [`hello-toast-example`](../src/hello-toast-example/), [`overlay-hotkey-example`](../src/overlay-hotkey-example/), [`retro-game-example`](../src/retro-game-example/), [`management-button-example`](../src/management-button-example/), [`worker-api-example`](../src/worker-api-example/). Real mod: [`selection-capture`](../src/selection-capture/) (**C** marquee, **F7** PNG / GIF). A mod may import `@modkit/*`, `types/*`, and files in its own folder. It must not import another `src/<name>/` tree. Shared code stays in `modkit/`.
+Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized demos: [`hello-toast-example`](../src/hello-toast-example/), [`overlay-hotkey-example`](../src/overlay-hotkey-example/), [`retro-game-example`](../src/retro-game-example/), [`management-button-example`](../src/management-button-example/), [`worker-api-example`](../src/worker-api-example/). Real mod: [`selection-capture`](../src/selection-capture/) (**Pixel-perfect Screenshot and GIF recorder** — **C** marquee, **F7** PNG / GIF). A mod may import `@modkit/*`, `types/*`, and files in its own folder. It must not import another `src/<name>/` tree. Shared code stays in `modkit/`.
 
 | Path                           | Role                                                                                |
 | ------------------------------ | ----------------------------------------------------------------------------------- |
@@ -30,10 +30,9 @@ Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized dem
 | `src/<name>/ui/`               | React overlays and `tailwind.css` (`@tailwind utilities`)                           |
 | `src/<name>/debug/`            | Mod debug entry: calls `modkit/debug`, re-exports `onDispose` / `isHotReloadEval`   |
 | `src/<name>/patches/README.md` | Points at [patches.md](patches.md)                                                  |
-| `src/<name>/README.md`         | Optional. Copied into the installed mod folder with `CHANGELOG.md` and `preview.png` |
-| `src/<name>/CHANGELOG.md`      | Optional. Player-facing changelog for that mod                                                         |
-| `src/<name>/preview.png`       | Optional. Workshop preview; copied into the installed mod folder when present                          |
-| `publishedFileId` in `mod.ts`  | Optional. Build writes `workshop.json` in the installed mod folder (not in `modinfo.json`)             |
+| `src/<name>/README.md`         | Optional. Copied into the installed mod folder with `CHANGELOG.md` |
+| `src/<name>/CHANGELOG.md`      | Optional. Player-facing changelog for that mod                     |
+| `src/<name>/workshop/`         | Optional. `workshop.json`, `preview.gif` (preferred), `preview.png`, `workshop.txt`, `screenshots/`. Build copies `workshop.json` and previews to the mod root. `npm run publish` copies `screenshots/` into the uploaded item. Steam local publish uses `preview.gif` before `preview.png`. |
 | `src/<name>/mod/`              | Optional static files copied into the output folder                                 |
 | `src/<name>/tsconfig.json`     | Isolated TypeScript project (does not see sibling mods)                             |
 | `src/<name>/package.json`      | Optional npm deps for that mod only (`node_modules` in the mod folder)                |
@@ -89,7 +88,8 @@ Use the free name `sandkit` in mod and modkit code. Do not import a `sandkit` va
 | `scripts/sandustry/paths.js`            | OS user-data + Steam binary paths                                                                             |
 | `scripts/sandustry/mod-path.js`         | Game mod dir from `modinfo.name`; `dist/<folder>` links                                                       |
 | `scripts/sandustry/setup.js`            | Extract game source to `sandustry/`, link `logs/` (`npm run setup`)                                           |
-| `scripts/sandustry/launch-sandustry.js` | Stop and launch the game (no build)                                                                   |
+| `scripts/sandustry/workshop-files.js`   | Shared `workshop/` paths (manifest, preview, description, install copy)            |
+| `scripts/sandustry/publish-workshop.js` | `npm run publish` — release-build + SteamCMD upload from `workshop/`               |
 
 ## Output
 

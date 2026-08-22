@@ -1,8 +1,23 @@
 # Changelog
 
-Notable changes to **Selection Capture**. Newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+Notable changes to **Pixel-perfect Screenshot and GIF recorder**. Newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## Unreleased
+
+### Changed
+
+- Workshop title and `workshop.txt` use **Pixel-perfect Screenshot and GIF recorder** (not Sandshot).
+- `npm run publish` keeps real line breaks in the Steam description (no literal `\n`).
+
+## 0.2.0
+
+### Changed
+
+- Display name is **Pixel-perfect Screenshot and GIF recorder** (was Selection Capture). Folder and mod id stay `selection-capture`.
+- Workshop description: tagline, steps, features, and limits (`README.md`, `workshop.txt`). Screenshot copies a PNG to the clipboard.
+- Workshop **preview.gif** (Steam thumbnail). **preview.png** stays as a still fallback.
+
+## 0.1.1
 
 ### Added
 

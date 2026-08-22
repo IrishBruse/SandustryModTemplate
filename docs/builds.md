@@ -57,6 +57,8 @@ npm run dev              # watch all src/ mods, debug on (required before F5)
 npm run dev -- --mod overlay-hotkey-example
 npm run build            # release all mods (stay in the OS mods folder)
 npm run build -- --mod overlay-hotkey-example
+npm run publish          # release-build, then SteamCMD Workshop upload
+npm run publish -- --mod selection-capture
 npm run typecheck
 npm run mod:install      # npm install in each src/<name>/ with package.json
 npm run sandustry        # stop + launch (no build; keep npm run dev for the bundle)
@@ -66,6 +68,20 @@ npm run ui:previews      # compile preview CSS, then screenshot preview.html
 
 When `npm run dev` stops (Ctrl+C, terminal close, or process exit), it removes the OS mod folders this template owns and the matching `dist/<folder>` links. Use `npm run build` when you want mods to stay installed.
 
-**F5** (VS Code `Sandustry` compound) stops any running game, launches with debug ports, then attaches the debugger to the **renderer** (`:9222`, where mods run) and Electron **main** (`:9230`). It does not rebuild the mod — keep `npm run dev` running for the bundle, hot reload, and file logs. Hot reload under F5 polls `hot-reload.json` in the mod folder (file URL). It does not use EventSource — the renderer CDP attach can stall that HTTP stream.
+**F5** (VS Code `Sandustry` compound) stops any running game, launches with debug ports, then attaches the debugger to the **renderer** (`:9222`, where mods run) and Electron **main** (`:9230`). It does not rebuild the mod — keep `npm run dev` running for the bundle, hot reload, and file logs. Hot reload polls `GET http://127.0.0.1:19147/hot-reload/last` on the dev watch server (same path as normal dev).
 
 Renderer attach loads source maps from scripts named `sandkit-workshop://<modId>/main.js` (and from the OS mods folder / `dist/`). Debug builds rewrite inline maps to `file://` sources, add a sandkit loader line offset, and set matching `sourceURL` so breakpoints in `src/<name>/` bind through `new Function` eval. Do not press **F12** while the IDE debugger is attached — Electron DevTools steals that session.
+
+## Workshop publish
+
+`npm run publish` **requires SteamCMD**. Install it from the Valve [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD) page. Put `steamcmd` (or `steamcmd.exe` / `steamcmd.sh`) on your PATH, or unpack it under `.tmp/steamcmd/`.
+
+Log into the Steam client as the Workshop item owner first. In a terminal, `npm run publish` shows an arrow-key list of mods, then a confirm step (Upload / Cancel). **SteamCMD is required** ([SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD)).
+
+```bash
+npm run publish
+npm run publish -- --mod selection-capture
+npm run publish -- --mod selection-capture --yes
+```
+
+The command then release-builds that folder and uploads `workshop.json`, **preview.gif** (or **preview.png**), `workshop.txt`, and images in `workshop/screenshots/` (copied into the item as `screenshots/`).

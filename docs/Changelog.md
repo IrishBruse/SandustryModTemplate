@@ -6,8 +6,19 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ## Unreleased
 
+### Added
+
+- **`npm run publish`:** arrow-key mod list and Upload/Cancel confirm, then release-build + SteamCMD upload from `workshop/` (including `screenshots/`). **SteamCMD is required** ([SteamCMD docs](https://developer.valvesoftware.com/wiki/SteamCMD)). See [builds.md](builds.md#workshop-publish).
+
+### Fixed
+
+- **`npm run publish` description:** keep real line breaks. Do not write `\n` into the Steam listing.
+
 ### Changed
 
+- **Hot reload:** one path — the client polls `GET http://127.0.0.1:19147/hot-reload/last` while Debug is on. No `hot-reload.json` stamp file. No SSE `EventSource`. Dev mod cleanup uses `dist/` symlinks instead of `.owned-game-names.json`.
+- **Workshop assets** live under `src/<name>/workshop/` (`workshop.json`, `preview.gif`, `preview.png`, `workshop.txt`, `screenshots/`). The build copies `workshop.json` and previews to the mod root. `npm run publish` copies `screenshots/` into the uploaded item. `publishedFileId` is no longer set in `mod.ts`.
+- **Pixel-perfect Screenshot and GIF recorder** `0.2.0` (`src/selection-capture/`): player-facing name (was Selection Capture) and Workshop copy. Folder and mod id stay `selection-capture`. Build copies **preview.gif** (preferred) and **preview.png** from `workshop/`.
 - **`npm run setup`** (was `npm run references`): extracts game source to top-level `sandustry/` and links `logs/`. Workshop mod copies under `references/` are removed.
 - **Mod npm deps:** optional `src/<name>/package.json` holds packages for that mod only. Root `npm install` and `npm run mod:install` run `npm install` in those folders. **Selection Capture** `modern-gif` moved from the repo root into `src/selection-capture/package.json`.
 - **`npm run sandustry`** only stops and launches the game. It does not build. Keep `npm run dev` (or `npm run build`) for the bundle. See [builds.md](builds.md).
@@ -27,11 +38,10 @@ The template has no release tags yet. Dated sections match the day the change la
 - **Selection Capture:** a sync read on `frame:render` ran before Pixi painted, so every GIF frame was the sky fill. The recorder now copies on the first microtask after that event and builds one palette from every frame.
 - **Selection Capture GIF:** pause on paint before the crop so large selections do not skip sim ticks.
 - **Management menu hover:** mod rows under Upgrades sit as direct siblings of the vanilla column (same as Toolbox / Building). Nested spacer / `pointer-events-none` wraps blocked hover shine, yellow letter, and clicks.
-- **F5 hot reload:** VS Code renderer attach can stall HTTP `EventSource`. The watch build writes `hot-reload.json`; the client polls that stamp through the mod asset URL so save still reloads the mod.
 
 ### Added
 
-- **Workshop `workshop.json`:** set `publishedFileId` in `src/<name>/mod.ts`; the build writes `workshop.json` into the installed mod folder (omitted from `modinfo.json`). **`preview.png`** is still copied when present.
+- **Workshop `workshop.json`:** put `workshop/workshop.json` in the mod (with `publishedFileId`). The build copies it to the mod root. Put **`workshop/preview.gif`** (preferred) and **`workshop/preview.png`** in the mod; the build copies them to the mod root too.
 - **Hot reload clears logs:** each renderer reload truncates `logs/<mod-id>.log` and clears the DevTools console so the file only holds the current session. `clearLog(modId)` from `@modkit/log` and `POST /log/clear` on the watch server.
 - **Selection Capture** (`src/selection-capture/`): after a **C** marquee, **F7** opens the panel to copy a PNG or record a GIF of stepped sim ticks. The folder has `README.md` and `CHANGELOG.md`; the build copies them into the installed mod.
 - **Selection Capture** panel: **Greenscreen** (`#00FF00` behind the world).
@@ -57,7 +67,7 @@ The template has no release tags yet. Dated sections match the day the change la
 | `src/retro-game-example/`        | Retro Console Noise Test             |
 | `src/management-button-example/` | Management-column row under Upgrades |
 | `src/worker-api-example/`        | Worker-thread `sandkit.api` probe    |
-| `src/selection-capture/`         | **C** marquee → **F7** PNG / GIF     |
+| `src/selection-capture/`         | **Pixel-perfect Screenshot and GIF recorder** — **C** marquee → **F7** PNG / GIF |
 
 - Windows and Linux mods, logs, and launch paths (`~/.config/sandustry` or `%APPDATA%\sandustry`).
 - `createLogger` and debug `console.*` lines that also append to `logs/<mod-id>.log` while `npm run dev` runs.

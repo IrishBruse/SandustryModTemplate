@@ -34,7 +34,7 @@ Logs: Linux `~/.config/sandustry/logs`; Windows `%APPDATA%/sandustry/logs`.
 
 ### `src/`
 
-Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized demos: `hello-toast-example`, `overlay-hotkey-example`, `retro-game-example`, `management-button-example`, `worker-api-example`. Real mod: `selection-capture` (**C** marquee, **F7** PNG / GIF). Mods cannot import from each other.
+Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized demos: `hello-toast-example`, `overlay-hotkey-example`, `retro-game-example`, `management-button-example`, `worker-api-example`. Real mod: `selection-capture` (**Pixel-perfect Screenshot and GIF recorder** — **C** marquee, **F7** PNG / GIF). Mods cannot import from each other.
 
 | Path                           | Role                                                                                |
 | ------------------------------ | ----------------------------------------------------------------------------------- |
@@ -45,10 +45,9 @@ Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized dem
 | `src/<name>/ui/`               | React overlays (import `react`, resolved to `modkit/react.ts`)                      |
 | `src/<name>/debug/`            | Mod debug entry: calls `modkit/debug`, re-exports `onDispose` / `isHotReloadEval`   |
 | `src/<name>/patches/README.md` | Points at [`docs/patches.md`](docs/patches.md)                                      |
-| `src/<name>/README.md`         | Optional. Copied into the installed mod folder with `CHANGELOG.md` and `preview.png` |
-| `src/<name>/CHANGELOG.md`      | Optional. Player-facing changelog for that mod                                                         |
-| `src/<name>/preview.png`       | Optional. Workshop preview; copied into the installed mod folder when present                          |
-| `publishedFileId` in `mod.ts`  | Optional. Build writes `workshop.json` in the installed mod folder (not in `modinfo.json`)             |
+| `src/<name>/README.md`         | Optional. Copied into the installed mod folder with `CHANGELOG.md` |
+| `src/<name>/CHANGELOG.md`      | Optional. Player-facing changelog for that mod                     |
+| `src/<name>/workshop/`         | Optional. `workshop.json`, `preview.gif` (preferred), `preview.png`, `workshop.txt`, `screenshots/` (extra images). Build copies `workshop.json` and previews to the mod root. `npm run publish` also copies `screenshots/` into the uploaded item. |
 | `src/<name>/mod/`              | Optional static files copied into the output folder                                 |
 | `src/<name>/tsconfig.json`     | Isolated TypeScript project (does not see sibling mods)                             |
 | `src/<name>/package.json`      | Optional npm deps for that mod only (`node_modules` in the mod folder)                |
@@ -141,6 +140,7 @@ Full format: [`docs/patches.md`](docs/patches.md).
 npm run setup            # extract game source, link logs
 npm run dev              # watch, debug on
 npm run build            # release
+npm run publish          # requires SteamCMD — https://developer.valvesoftware.com/wiki/SteamCMD
 npm run typecheck
 npm run sandustry        # stop + launch (no build)
 ```

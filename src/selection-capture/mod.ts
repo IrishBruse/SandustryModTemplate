@@ -3,13 +3,13 @@ import { defineModInfo, definePatches } from "@modkit/modinfo";
 export const modinfo = defineModInfo({
   manifestVersion: 1,
   id: "irishbruse.selection-capture",
-  name: "Selection Capture",
-  version: "0.1.1",
+  name: "Pixel-perfect Screenshot and GIF recorder",
+  version: "0.2.0",
   apiVersion: 1,
   entry: "main.js",
   author: "IrishBruse",
   description:
-    "F7 opens the panel to copy a PNG or record a GIF of the currently selected structure into a crisp pixel perfect image or Gif.",
+    "Pixel-perfect PNG and GIF of your C selection. Press C, drag a box, then F7. Screenshot copies a PNG to the clipboard. Record GIF captures sim ticks. Optional greenscreen for chroma key.",
   dependencies: [],
   loadOrder: 0,
   configSchema: {
@@ -20,7 +20,6 @@ export const modinfo = defineModInfo({
       descriptionKey: "Turn the mod off without unsubscribing.",
     },
   },
-  publishedFileId: "3787806696",
 });
 
 /** Production patches — always written to `patches.json`. */

@@ -3,4 +3,5 @@ dist
 dist/
 logs
 /sandustry/
+.tmp/
 *.tsbuildinfo

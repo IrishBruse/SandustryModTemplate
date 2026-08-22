@@ -5,22 +5,11 @@
  *
  * Mods dir: Linux ~/.config/sandustry/mods ; Windows %APPDATA%/sandustry/mods
  */
-import {
-  existsSync,
-  lstatSync,
-  mkdirSync,
-  readdirSync,
-  readFileSync,
-  readlinkSync,
-  rmSync,
-  unlinkSync,
-  writeFileSync,
-} from "node:fs";
+import { existsSync, lstatSync, mkdirSync, readdirSync, readlinkSync, rmSync, unlinkSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { linkDirectory, samePath, sandustryModsDir } from "./paths.js";
 
 export const REPO_DIST_LINK = "dist";
-const OWNED_GAME_NAMES_FILE = ".owned-game-names.json";
 
 /** Remove a symlink (including a dangling one) or a real file/directory. */
 function removePath(path) {
@@ -41,56 +30,66 @@ function isOwnedGameDir(dir) {
   return samePath(dirname(resolve(dir)), sandustryModsDir());
 }
 
-/** @param {string} distPath @returns {string[]} */
-function readOwnedGameNames(distPath) {
-  const file = join(distPath, OWNED_GAME_NAMES_FILE);
-  if (!existsSync(file)) return [];
-  try {
-    const data = JSON.parse(readFileSync(file, "utf8"));
-    return Array.isArray(data)
-      ? data.filter((name) => typeof name === "string" && name.length > 0)
-      : [];
-  } catch {
-    return [];
-  }
-}
+/** @param {string} distPath @returns {Set<string>} */
+function readDistSymlinkTargets(distPath) {
+  /** @type {Set<string>} */
+  const targets = new Set();
+  if (!existsSync(distPath) || !lstatSync(distPath).isDirectory()) return targets;
 
-/** @param {string} distPath @param {string[]} names */
-function writeOwnedGameNames(distPath, names) {
-  writeFileSync(join(distPath, OWNED_GAME_NAMES_FILE), `${JSON.stringify(names, null, 2)}\n`);
+  for (const name of readdirSync(distPath)) {
+    const child = join(distPath, name);
+    try {
+      if (!lstatSync(child).isSymbolicLink()) continue;
+      targets.add(resolve(distPath, readlinkSync(child)));
+    } catch {
+      /* skip unreadable link */
+    }
+  }
+  return targets;
 }
 
 /** Remove a game folder this template used to own. */
-function removeOwnedGameDir(gameName) {
-  const dir = gameModDir(gameName);
-  if (!existsSync(dir) || !isOwnedGameDir(dir)) return;
-  removePath(dir);
-  console.log(`Removed game mod ${dir}`);
+function removeOwnedGameDir(gameDir) {
+  if (!existsSync(gameDir) || !isOwnedGameDir(gameDir)) return;
+  removePath(gameDir);
+  console.log(`Removed game mod ${gameDir}`);
 }
 
 /**
- * Remove OS mod folders tracked in `dist/.owned-game-names.json` and their
- * `dist/<folder>` links. Used when `npm run dev` stops.
+ * Remove OS mod folders linked from `dist/<folder>` and those links.
+ * Used when `npm run dev` stops.
  * @param {string} repoRoot
  */
 export function removeOwnedGameMods(repoRoot) {
   const distPath = join(repoRoot, REPO_DIST_LINK);
-  const names = readOwnedGameNames(distPath);
-  for (const name of names) {
-    removeOwnedGameDir(name);
-  }
-
   if (!existsSync(distPath) || !lstatSync(distPath).isDirectory()) return;
 
   for (const name of readdirSync(distPath)) {
     const child = join(distPath, name);
-    if (name === OWNED_GAME_NAMES_FILE) {
-      removePath(child);
+    let stat;
+    try {
+      stat = lstatSync(child);
+    } catch {
       continue;
     }
-    if (!lstatSync(child).isSymbolicLink()) continue;
-    removePath(child);
-    console.log(`Removed ${REPO_DIST_LINK}/${name}`);
+
+    if (stat.isSymbolicLink()) {
+      let target = "";
+      try {
+        target = resolve(distPath, readlinkSync(child));
+      } catch {
+        target = "";
+      }
+      removePath(child);
+      console.log(`Removed ${REPO_DIST_LINK}/${name}`);
+      if (target) removeOwnedGameDir(target);
+      continue;
+    }
+
+    // Legacy tracking file from older template versions.
+    if (name === ".owned-game-names.json") {
+      removePath(child);
+    }
   }
 }
 
@@ -128,9 +127,11 @@ export function linkRepoDistToModOutputs(repoRoot, mods, keepFolders) {
 
   mkdirSync(distPath, { recursive: true });
 
+  const previousTargets = readDistSymlinkTargets(distPath);
+
   const wanted = new Set(keepFolders ?? mods.map((mod) => mod.folder));
   for (const name of readdirSync(distPath)) {
-    if (wanted.has(name) || name === OWNED_GAME_NAMES_FILE) continue;
+    if (wanted.has(name) || name === ".owned-game-names.json") continue;
     const child = join(distPath, name);
     if (!lstatSync(child).isSymbolicLink()) continue;
     let target = "";
@@ -170,10 +171,12 @@ export function linkRepoDistToModOutputs(repoRoot, mods, keepFolders) {
     console.log(`Linked ${REPO_DIST_LINK}/${mod.folder} -> ${target}`);
   }
 
-  const currentNames = [...new Set(mods.map((mod) => mod.gameName))];
-  for (const name of readOwnedGameNames(distPath)) {
-    if (currentNames.includes(name)) continue;
-    removeOwnedGameDir(name);
+  const newTargets = new Set(mods.map((mod) => gameModDir(mod.gameName)));
+  for (const target of previousTargets) {
+    if (newTargets.has(target)) continue;
+    removeOwnedGameDir(target);
   }
-  writeOwnedGameNames(distPath, currentNames);
+
+  const legacyNamesFile = join(distPath, ".owned-game-names.json");
+  if (existsSync(legacyNamesFile)) removePath(legacyNamesFile);
 }

@@ -8,11 +8,9 @@ import { debugEnabled, safe } from "../utils";
  * through {@link onDispose}. A monkey-patch or a trigger with no unregister
  * path stays in place until the game restarts.
  *
- * Notify channel: `npm run dev` (--watch) writes `hot-reload.json` into each
- * mod folder and runs an SSE server. The client polls that stamp through
- * `api.assets` (file URL). EventSource is a fast path only when the IDE
- * debugger is not attached — VS Code F5 / CDP can stall HTTP streams.
- * One-shot builds do not write the stamp.
+ * Notify channel: `npm run dev` (--watch) serves GET /hot-reload/last on
+ * `127.0.0.1:19147`. The client polls that endpoint; when `n` changes it
+ * reads `main.js` once and reloads. One path for normal dev and F5.
  *
  * Stages (honest, as in SandLoader):
  * - `renderer` — build notify for `main.js`: dispose, then evaluate the new
@@ -22,14 +20,13 @@ import { debugEnabled, safe } from "../utils";
  *   or workers.
  */
 
-declare const __HOT_RELOAD_URL__: string;
+declare const __DEV_WATCH_URL__: string;
 
 const MAIN_ENTRY = "main.js";
 const RESTART_FILES = ["patches.json", "modinfo.json"] as const;
-const RECONNECT_MS = 1000;
 const POLL_MS = 400;
-/** Must match `HOT_RELOAD_STAMP` in `scripts/build/hot-reload-server.js`. */
-const STAMP_FILE = "hot-reload.json";
+const FETCH_TIMEOUT_MS = 2000;
+const NOTIFY_PATH = "/hot-reload/last";
 /** Written by F5 / `sandustry:vscode` (`sandustryDebugEnv`). */
 const IDE_DEBUG_MARKER = "ide-debug.json";
 
@@ -41,12 +38,10 @@ type Host = {
   reloading: boolean;
   disposers: Array<() => void>;
   sources: Record<string, string>;
-  eventSource: EventSource | null;
-  reconnectTimer: ReturnType<typeof setTimeout> | null;
   pollTimer: ReturnType<typeof setInterval> | null;
-  /** Last `n` from `hot-reload.json`. Null until the first successful read. */
-  stampN: number | null;
-  /** Null until `ide-debug.json` has been probed. SSE stays off until false. */
+  /** Last `n` from GET /hot-reload/last. Null until the first successful read. */
+  notifyN: number | null;
+  /** Null until `ide-debug.json` has been probed. */
   ideDebug: boolean | null;
   settingsOff: (() => void) | null;
 };
@@ -86,8 +81,8 @@ function activeModId(): string | undefined {
   return globals().__sandkitHotReloadActive__;
 }
 
-function hotReloadUrl(): string {
-  return typeof __HOT_RELOAD_URL__ === "string" ? __HOT_RELOAD_URL__ : "";
+function devWatchUrl(): string {
+  return typeof __DEV_WATCH_URL__ === "string" ? __DEV_WATCH_URL__ : "";
 }
 
 function ensureHost(modId: string, api?: SandkitApi): Host {
@@ -105,10 +100,8 @@ function ensureHost(modId: string, api?: SandkitApi): Host {
     reloading: false,
     disposers: [],
     sources: {},
-    eventSource: null,
-    reconnectTimer: null,
     pollTimer: null,
-    stampN: null,
+    notifyN: null,
     ideDebug: null,
     settingsOff: null,
   };
@@ -161,6 +154,28 @@ async function readAsset(api: SandkitApi, relativePath: string): Promise<string 
     // Electron file URLs often reject fetch; XHR still works.
   }
   return readXhr(busted);
+}
+
+async function fetchNotify(): Promise<(NotifyPayload & { n: number }) | null> {
+  const base = devWatchUrl();
+  if (!base) return null;
+
+  const controller = new AbortController();
+  const timer = globalThis.setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  try {
+    const response = await fetch(`${base}${NOTIFY_PATH}`, {
+      cache: "no-store",
+      signal: controller.signal,
+    });
+    if (!response.ok) return null;
+    const parsed = (await response.json()) as NotifyPayload;
+    if (typeof parsed.n !== "number" || !Number.isFinite(parsed.n)) return null;
+    return { ...parsed, n: parsed.n };
+  } catch {
+    return null;
+  } finally {
+    globalThis.clearTimeout(timer);
+  }
 }
 
 /**
@@ -321,40 +336,28 @@ function stopPolling(host: Host): void {
   host.pollTimer = null;
 }
 
-async function readStamp(host: Host): Promise<(NotifyPayload & { n: number }) | null> {
-  const text = await readAsset(host.api, STAMP_FILE);
-  if (text == null) return null;
-  try {
-    const parsed = JSON.parse(text) as NotifyPayload;
-    if (typeof parsed.n !== "number" || !Number.isFinite(parsed.n)) return null;
-    return { ...parsed, n: parsed.n };
-  } catch {
-    return null;
-  }
-}
-
-async function pollStamp(host: Host): Promise<void> {
+async function pollNotify(host: Host): Promise<void> {
   if (host.reloading) return;
-  const payload = await readStamp(host);
+  const payload = await fetchNotify();
   if (payload == null) return;
 
-  if (host.stampN == null) {
-    host.stampN = payload.n;
+  if (host.notifyN == null) {
+    host.notifyN = payload.n;
     void refreshTrackedFiles(host);
-    console.log(`[${host.modId}] hot reload watching ${STAMP_FILE}`);
+    console.log(`[${host.modId}] hot reload watching ${devWatchUrl()}${NOTIFY_PATH}`);
     return;
   }
-  if (payload.n === host.stampN) return;
-  host.stampN = payload.n;
+  if (payload.n === host.notifyN) return;
+  host.notifyN = payload.n;
   await handleNotify(host, payload);
 }
 
 function startPolling(host: Host): void {
   if (host.pollTimer != null) return;
   host.pollTimer = globalThis.setInterval(() => {
-    void pollStamp(host);
+    void pollNotify(host);
   }, POLL_MS);
-  void pollStamp(host);
+  void pollNotify(host);
 }
 
 async function detectIdeDebug(host: Host): Promise<void> {
@@ -362,85 +365,15 @@ async function detectIdeDebug(host: Host): Promise<void> {
   host.ideDebug = text != null && text.trim() === "1";
 }
 
-function stopReconnect(host: Host): void {
-  if (host.reconnectTimer == null) return;
-  globalThis.clearTimeout(host.reconnectTimer);
-  host.reconnectTimer = null;
-}
-
-function scheduleReconnect(host: Host): void {
-  stopReconnect(host);
-  if (!debugEnabled(host.api) || !hotReloadUrl() || host.ideDebug === true) return;
-  host.reconnectTimer = globalThis.setTimeout(() => {
-    host.reconnectTimer = null;
-    startListening(host);
-  }, RECONNECT_MS);
-}
-
-function stopListening(host: Host): void {
-  stopReconnect(host);
-  if (host.eventSource == null) return;
-  host.eventSource.close();
-  host.eventSource = null;
-}
-
-function startListening(host: Host): void {
-  const url = hotReloadUrl();
-  if (!url || host.eventSource != null || host.ideDebug === true) return;
-
-  let source: EventSource;
-  try {
-    source = new EventSource(url);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    console.warn(`[${host.modId}] hot reload EventSource failed: ${message}`);
-    scheduleReconnect(host);
-    return;
-  }
-
-  host.eventSource = source;
-
-  source.onopen = () => {
-    console.log(`[${host.modId}] hot reload listening ${url}`);
-    void refreshTrackedFiles(host);
-  };
-
-  source.onmessage = (event) => {
-    let payload: NotifyPayload = {};
-    try {
-      payload = JSON.parse(String(event.data)) as NotifyPayload;
-    } catch {
-      payload = { changed: [MAIN_ENTRY] };
-    }
-    void handleNotify(host, payload);
-  };
-
-  source.onerror = () => {
-    if (source.readyState !== EventSource.CLOSED) return;
-    host.eventSource = null;
-    scheduleReconnect(host);
-  };
-}
-
 function syncWatching(host: Host): void {
-  const on = debugEnabled(host.api);
-  const useSse = on && Boolean(hotReloadUrl()) && host.ideDebug === false;
-  if (useSse) startListening(host);
-  else stopListening(host);
-
-  // Poll when SSE is off. F5 / CDP can stall EventSource; the stamp is a file URL.
-  if (on && !useSse) startPolling(host);
+  if (debugEnabled(host.api) && devWatchUrl()) startPolling(host);
   else stopPolling(host);
 }
 
 /**
- * Subscribe to watch notify when Debug is on.
+ * Poll the dev watch server when Debug is on.
  * Call once from `installDebug`. A later eval replaces the listener so new
  * watch logic takes effect without a game restart.
- *
- * F5 attaches CDP to the renderer. That can stall HTTP EventSource, so this
- * polls `hot-reload.json` (mod asset / file URL) when SSE is not used, and
- * only opens SSE when the IDE debug marker is absent.
  */
 export function installHotReload(api: SandkitApi, modId: string): void {
   setActive(modId);
@@ -458,14 +391,10 @@ export function installHotReload(api: SandkitApi, modId: string): void {
     );
   }
 
-  stopListening(host);
   syncWatching(host);
   void detectIdeDebug(host).then(() => {
-    syncWatching(host);
     if (!firstInstall) return;
-    if (host.ideDebug === true) {
-      console.log(`[${modId}] hot reload file poll (F5) — keep npm run dev running`);
-    } else if (!hotReloadUrl()) {
+    if (!devWatchUrl()) {
       console.log(`[${modId}] hot reload idle (start with npm run dev)`);
     }
   });

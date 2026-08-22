@@ -1,75 +1,46 @@
 /**
- * Hot-reload notify for `npm run dev` (--watch only).
- * Game clients subscribe with EventSource, and also poll `hot-reload.json`
- * in each mod outDir (F5 / CDP attach can stall SSE).
+ * Dev watch server for `npm run dev` (--watch only).
+ * Hot reload notify: in-memory counter at GET /hot-reload/last.
+ * Also accepts POST /log and POST /log/clear for renderer file logging.
  */
 import { appendFileSync, mkdirSync, writeFileSync } from "node:fs";
 import http from "node:http";
-import net from "node:net";
 import { join } from "node:path";
 import { sandustryLogsDir } from "../sandustry/paths.js";
 
-export const HOT_RELOAD_PORT = 19147;
-export const HOT_RELOAD_PATH = "/hot-reload";
-/** Tiny JSON in each mod outDir. The renderer polls it via `api.assets` (file URL). */
-export const HOT_RELOAD_STAMP = "hot-reload.json";
+export const DEV_WATCH_PORT = 19147;
+export const HOT_RELOAD_LAST_PATH = "/hot-reload/last";
 
 /** @returns {string} */
-export function hotReloadUrl() {
-  return `http://127.0.0.1:${HOT_RELOAD_PORT}${HOT_RELOAD_PATH}`;
+export function devWatchUrl() {
+  return `http://127.0.0.1:${DEV_WATCH_PORT}`;
 }
-
-/**
- * True when the watch SSE server is accepting connections.
- * Used so one-shot `--game` builds keep the notify URL while `npm run dev` runs.
- * @param {number} [timeoutMs]
- * @returns {Promise<boolean>}
- */
-export function isHotReloadServerUp(timeoutMs = 200) {
-  return new Promise((resolve) => {
-    const socket = net.connect({ host: "127.0.0.1", port: HOT_RELOAD_PORT }, () => {
-      socket.destroy();
-      resolve(true);
-    });
-    const fail = () => {
-      socket.destroy();
-      resolve(false);
-    };
-    socket.on("error", fail);
-    socket.setTimeout(timeoutMs, fail);
-  });
-}
-
-/** @type {Set<import('node:http').ServerResponse>} */
-const clients = new Set();
 
 /** @type {import('node:http').Server | null} */
 let server = null;
 
-/** @type {string[]} */
-let stampDirs = [];
+let notifyN = 0;
 
-let stampN = 0;
+/** @type {{ v: number; n: number; changed?: string[]; force?: boolean }} */
+let lastNotify = { v: 1, n: 0 };
 
 /** @type {ReturnType<typeof setTimeout> | null} */
 let debounceTimer = null;
 
-/** @type {{ changed?: string[] } | null} */
+/** @type {{ changed?: string[]; force?: boolean } | null} */
 let pending = null;
 
 /**
  * @param {{ changed?: string[]; force?: boolean }} payload
  */
-function writeStampFiles(payload) {
-  stampN += 1;
-  const json = `${JSON.stringify({ v: 1, n: stampN, ...payload })}\n`;
-  for (const dir of stampDirs) {
-    try {
-      writeFileSync(join(dir, HOT_RELOAD_STAMP), json);
-    } catch {
-      /* out dir missing or not writable */
-    }
-  }
+function applyNotify(payload) {
+  notifyN += 1;
+  lastNotify = {
+    v: 1,
+    n: notifyN,
+    ...(payload.changed?.length ? { changed: payload.changed } : {}),
+    ...(payload.force === true ? { force: true } : {}),
+  };
 }
 
 /**
@@ -84,15 +55,7 @@ export function notifyHotReload(payload) {
     const body = pending;
     pending = null;
     if (!body) return;
-    writeStampFiles(body);
-    const chunk = `data: ${JSON.stringify({ v: 1, ...body })}\n\n`;
-    for (const res of clients) {
-      try {
-        res.write(chunk);
-      } catch {
-        clients.delete(res);
-      }
-    }
+    applyNotify(body);
   }, 50);
 }
 
@@ -140,6 +103,8 @@ export function clearModLog(modId) {
   writeFileSync(logFilePath(modId), "");
 }
 
+const CORS = { "Access-Control-Allow-Origin": "*" };
+
 /** Ctrl+R in the `npm run dev` TTY forces a client reload even if main.js is unchanged. */
 function installForceReloadKey() {
   if (!process.stdin.isTTY || process.stdin.isRaw) return;
@@ -159,21 +124,14 @@ function installForceReloadKey() {
   console.log("press Ctrl+R to force a hot reload");
 }
 
-/**
- * Start the SSE server once. No-op if already listening.
- * `stampDirs` are mod output folders that receive `hot-reload.json` on each notify
- * (F5 / CDP attach can stall EventSource; the renderer polls the stamp instead).
- *
- * @param {{ stampDirs?: string[] }} [options]
- */
-export function startHotReloadServer(options = {}) {
-  stampDirs = Array.isArray(options.stampDirs) ? [...options.stampDirs] : [];
+/** Start the dev watch HTTP server once. No-op if already listening. */
+export function startHotReloadServer() {
   if (server) return;
 
   server = http.createServer((req, res) => {
     if (req.method === "OPTIONS") {
       res.writeHead(204, {
-        "Access-Control-Allow-Origin": "*",
+        ...CORS,
         "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type",
       });
@@ -196,7 +154,7 @@ export function startHotReloadServer(options = {}) {
           /* plain text or empty body — default mod id */
         }
         clearModLog(modId);
-        res.writeHead(204, { "Access-Control-Allow-Origin": "*" });
+        res.writeHead(204, CORS);
         res.end();
       });
       return;
@@ -220,37 +178,32 @@ export function startHotReloadServer(options = {}) {
           /* plain text body */
         }
         appendFileSync(logFilePath(modId), line.endsWith("\n") ? line : `${line}\n`);
-        res.writeHead(204, { "Access-Control-Allow-Origin": "*" });
+        res.writeHead(204, CORS);
         res.end();
       });
       return;
     }
 
-    if (req.url !== HOT_RELOAD_PATH) {
-      res.writeHead(404, { "Access-Control-Allow-Origin": "*" });
-      res.end("not found");
+    if (req.method === "GET" && (req.url === HOT_RELOAD_LAST_PATH || req.url?.startsWith(`${HOT_RELOAD_LAST_PATH}?`))) {
+      res.writeHead(200, {
+        ...CORS,
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store",
+      });
+      res.end(`${JSON.stringify(lastNotify)}\n`);
       return;
     }
 
-    res.writeHead(200, {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache",
-      Connection: "keep-alive",
-      "Access-Control-Allow-Origin": "*",
-    });
-    res.write("\n");
-    clients.add(res);
-    req.on("close", () => {
-      clients.delete(res);
-    });
+    res.writeHead(404, CORS);
+    res.end("not found");
   });
 
-  server.listen(HOT_RELOAD_PORT, "127.0.0.1", () => {
-    console.log(`hot reload notify: ${hotReloadUrl()}`);
+  server.listen(DEV_WATCH_PORT, "127.0.0.1", () => {
+    console.log(`dev watch: ${devWatchUrl()} (GET ${HOT_RELOAD_LAST_PATH})`);
     installForceReloadKey();
   });
 
   server.on("error", (error) => {
-    console.error(`hot reload notify failed: ${error.message}`);
+    console.error(`dev watch server failed: ${error.message}`);
   });
 }

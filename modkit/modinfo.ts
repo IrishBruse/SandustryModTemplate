@@ -111,11 +111,9 @@ export interface ModManifest {
   configOverrides?: Record<string, string>;
   textureOverrides?: TextureOverrides;
   map?: MapConfig;
-  /** Steam Workshop item id — build writes `workshop.json`; not copied into `modinfo.json`. */
-  publishedFileId?: string;
 }
 
-/** Shape written to `workshop.json` at build when `publishedFileId` is set in `mod.ts`. */
+/** Shape of `src/<name>/workshop/workshop.json`. The build copies it to the mod root. */
 export interface WorkshopManifest {
   schemaVersion: 1;
   publishedFileId: string;

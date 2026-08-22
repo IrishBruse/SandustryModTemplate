@@ -6,18 +6,19 @@ TypeScript template for Sandustry mods (Steam **[mods]** branch).
 
 # What's new (2026-08-22)
 
-- **`npm run setup`** extracts game source to `sandustry/` and links `logs/` (replaces `npm run references`; no Workshop copies)
+- **`npm run publish`:** requires [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD); arrow-key list + confirm, then upload from `workshop/` (including `screenshots/`)
 - Mod npm deps live in `src/<name>/package.json` (root `npm install` installs them too)
-- Build writes `workshop.json` from `publishedFileId` in `mod.ts`; `preview.png` still copies when present (Workshop)
+- Build copies `workshop/workshop.json` and `workshop/preview.gif` (preferred) / `workshop/preview.png` to the mod root when present
 - **`npm run sandustry`** only launches (no build) — keep `npm run dev` for the bundle
 - Stopping `npm run dev` removes owned OS mod folders (use `npm run build` to keep them)
-- Hot reload works with **F5** (file poll; CDP attach can stall EventSource)
+- Hot reload works with **F5** (same HTTP poll to the dev watch server)
 - Hot reload clears `logs/<mod-id>.log` and the DevTools console for a clean session
 - Management menu rows: hover / click match vanilla (no nested spacer wrap)
 - Sandkit types nest under `types/src/sandkit/` (`api` / `engine` / `enums`) — no `modkit/types` shim
 - Use free `sandkit` (ambient types) — no `@modkit/sandkit` import
 - Worker API example mod probes worker-thread `sandkit.api` (`worker.ts` → `worker.js`)
-- **Selection Capture** (`src/selection-capture/`): **C** marquee, then **F7** panel for PNG / GIF (default 60 frames, 2×); **Greenscreen** on the panel; sample mods ship a short `README.md` in the installed folder
+- **Pixel-perfect Screenshot and GIF recorder** `0.2.0` (`src/selection-capture/`): **C** marquee, then **F7** panel for PNG / GIF (default 60 frames, 2×); **Greenscreen** on the panel; Workshop copy in `README.md` / `workshop/workshop.txt`
+- Sample mods ship a short `README.md` in the installed folder
 
 # What's new (2026-08-21)
 

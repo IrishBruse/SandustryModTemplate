@@ -9,13 +9,8 @@ import {
   TAILWIND_CSS_FILTER,
 } from "./compile-tailwind.js";
 import { loadMods, modIsolationPlugin, prepareModOutputs } from "./mods.js";
-import {
-  HOT_RELOAD_STAMP,
-  hotReloadUrl,
-  isHotReloadServerUp,
-  notifyHotReload,
-  startHotReloadServer,
-} from "./hot-reload-server.js";
+import { copyWorkshopInstallFiles } from "../sandustry/workshop-files.js";
+import { devWatchUrl, notifyHotReload, startHotReloadServer } from "./hot-reload-server.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const MODKIT_DIR = join(ROOT, "modkit");
@@ -49,9 +44,8 @@ function resolveSourcemap() {
 
 const sourcemap = resolveSourcemap();
 
-// Watch always embeds the URL. One-shot `--game` embeds it when
-// `npm run dev` is already serving notify (F5 does not build).
-const embedHotReloadUrl = watch || (modDebug && (await isHotReloadServerUp()));
+// Watch embeds the dev watch base URL for hot-reload GET polling.
+const embedDevWatchUrl = watch;
 
 const mods = await loadMods(args);
 prepareModOutputs(ROOT, mods);
@@ -59,7 +53,7 @@ prepareModOutputs(ROOT, mods);
 console.log(`mods: ${mods.map((mod) => mod.folder).join(", ")}`);
 console.log(`mod debug: ${modDebug ? "on" : "off"}`);
 console.log(`sourcemap: ${sourcemap ?? "off"}`);
-console.log(`hot reload URL: ${embedHotReloadUrl ? hotReloadUrl() : "(none)"}`);
+console.log(`dev watch URL: ${embedDevWatchUrl ? devWatchUrl() : "(none)"}`);
 
 /** @type {any | null} */
 let debugSchemaCache = null;
@@ -81,7 +75,6 @@ async function loadDebugSchema() {
  */
 async function writeModinfo(mod, includeDebugSetting) {
   const manifest = structuredClone(mod.manifest);
-  delete manifest.publishedFileId;
   if (includeDebugSetting) {
     const debugSchema = await loadDebugSchema();
     if (debugSchema && typeof debugSchema === "object") {
@@ -94,16 +87,6 @@ async function writeModinfo(mod, includeDebugSetting) {
   writeFileSync(join(mod.outDir, "modinfo.json"), `${JSON.stringify(manifest, null, 2)}\n`);
 }
 
-/** Write workshop.json when `publishedFileId` is set in `src/<name>/mod.ts`. */
-function writeWorkshopJson(mod) {
-  const id = mod.manifest?.publishedFileId;
-  if (typeof id !== "string" || id.length === 0) return;
-  writeFileSync(
-    join(mod.outDir, "workshop.json"),
-    `${JSON.stringify({ schemaVersion: 1, publishedFileId: id }, null, 2)}\n`,
-  );
-}
-
 /**
  * Copy static files and write modinfo.json + patches.json.
  * @param {import("./mods.js").LoadedMod} mod
@@ -112,18 +95,18 @@ function writeWorkshopJson(mod) {
 async function syncModFiles(mod, includeModkitDebug) {
   mkdirSync(mod.outDir, { recursive: true });
   await writeModinfo(mod, modDebug);
-  writeWorkshopJson(mod);
+  copyWorkshopInstallFiles(mod.dir, mod.outDir);
   const staticDir = join(mod.dir, "mod");
   if (existsSync(staticDir)) {
     for (const name of readdirSync(staticDir)) {
-      if (name === "patches.json" || name === HOT_RELOAD_STAMP) continue;
+      if (name === "patches.json") continue;
       cpSync(join(staticDir, name), join(mod.outDir, name), {
         recursive: true,
         force: true,
       });
     }
   }
-  for (const name of ["README.md", "CHANGELOG.md", "preview.png"]) {
+  for (const name of ["README.md", "CHANGELOG.md"]) {
     const from = join(mod.dir, name);
     if (!existsSync(from)) continue;
     cpSync(from, join(mod.outDir, name), { force: true });
@@ -314,7 +297,7 @@ function bundleOptions(mod) {
     define: {
       __MOD_DEBUG__: modDebug ? "true" : "false",
       __MOD_ID__: JSON.stringify(typeof mod.manifest.id === "string" ? mod.manifest.id : "mod"),
-      __HOT_RELOAD_URL__: embedHotReloadUrl ? JSON.stringify(hotReloadUrl()) : '""',
+      __DEV_WATCH_URL__: embedDevWatchUrl ? JSON.stringify(devWatchUrl()) : '""',
     },
     inject: modDebug ? [join(MODKIT_DIR, "console.ts")] : [],
     alias: {
@@ -355,7 +338,7 @@ function workerBundleOptions(mod) {
     define: {
       __MOD_DEBUG__: modDebug ? "true" : "false",
       __MOD_ID__: JSON.stringify(typeof mod.manifest.id === "string" ? mod.manifest.id : "mod"),
-      __HOT_RELOAD_URL__: '""',
+      __DEV_WATCH_URL__: '""',
     },
     banner: {
       js: [
@@ -494,7 +477,7 @@ async function watchOne(mod, includeModkitDebug) {
 const kitDebugFolder = mods[0]?.folder;
 
 if (watch) {
-  startHotReloadServer({ stampDirs: mods.map((mod) => mod.outDir) });
+  startHotReloadServer();
   for (const mod of mods) {
     await watchOne(mod, modDebug && mod.folder === kitDebugFolder);
   }

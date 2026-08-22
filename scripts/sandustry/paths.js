@@ -48,6 +48,7 @@ function defaultSteamRoots() {
   return [
     join(homedir(), "games", "SteamLibrary"),
     join(homedir(), ".steam", "steam"),
+    join(homedir(), ".steam", "root"),
     join(homedir(), ".local", "share", "Steam"),
     join(homedir(), ".var", "app", "com.valvesoftware.Steam", "data", "Steam"),
   ];
@@ -90,22 +91,26 @@ function libraryRootsFromSteamInstall(steamRoot) {
   return [steamRoot, ...fromVdf];
 }
 
-/** @returns {string[]} Candidate game binaries, preferred first. */
-function binaryCandidates() {
-  /** @type {string[]} */
-  const names = IS_WIN ? ["Sandustry.exe", "sandustry.exe"] : ["sandustry"];
+/** Unique Steam install / library roots (defaults + libraryfolders.vdf). */
+export function steamLibraryRoots() {
   /** @type {Set<string>} */
   const steamRoots = new Set();
-
   for (const root of defaultSteamRoots()) {
     for (const lib of libraryRootsFromSteamInstall(root)) {
       steamRoots.add(lib);
     }
   }
+  return [...steamRoots];
+}
+
+/** @returns {string[]} Candidate game binaries, preferred first. */
+function binaryCandidates() {
+  /** @type {string[]} */
+  const names = IS_WIN ? ["Sandustry.exe", "sandustry.exe"] : ["sandustry"];
 
   /** @type {string[]} */
   const out = [];
-  for (const root of steamRoots) {
+  for (const root of steamLibraryRoots()) {
     const common = join(root, "steamapps", "common", "Sandustry");
     for (const name of names) {
       out.push(join(common, name));

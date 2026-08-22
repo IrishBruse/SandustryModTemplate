@@ -9,6 +9,7 @@ import {
 } from "@modkit/ui";
 import { captureSelectionPng } from "../capturePng";
 import { MOD_ID } from "../globals";
+import { modinfo } from "../mod";
 import { recordSelectionGif } from "../recordGif";
 
 const TOGGLE_CODE = "F7";
@@ -107,14 +108,14 @@ export function Overlay() {
   if (!open) return null;
 
   const fieldClass =
-    "w-full bg-black bg-opacity-50 text-white text-sm px-2 py-1 rounded border border-white border-opacity-20";
+    "w-full bg-black text-white text-sm px-2 py-1 rounded border border-white/20";
 
   return (
     <OverlayRoot>
       <FixedAnchor anchor="top-right">
         <Interactive>
-          <UiBox className="bg-black bg-opacity-85 p-4 shadow-lg card-2 w-72 text-white">
-            <SectionHeading size="md">Selection Capture</SectionHeading>
+          <UiBox className="bg-black p-4 shadow-lg card-2 w-72 text-white">
+            <SectionHeading size="md">{modinfo.name}</SectionHeading>
             <p className="text-sm opacity-80 mb-3">
               Select with <HotkeyBadge>C</HotkeyBadge>.<br />
               Press <HotkeyBadge>F7</HotkeyBadge> to close.

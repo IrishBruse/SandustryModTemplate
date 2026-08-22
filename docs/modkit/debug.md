@@ -25,7 +25,7 @@ Mod-only extra debug code lives in each mod’s `debug/` folder (for example [`s
 | Splash skip (runtime) | `splash.ts`                                                                  | Always in a debug build    | Clicks the splash while logos are visible                                                |
 | Splash skip (bundle)  | [`../../modkit/patches.ts`](../../modkit/patches.ts) (`skip-startup-splash`) | Debug **build**            | Rewrites `js/bundle.js`; not toggled at runtime                                          |
 | Main-menu auto-boot   | `boot-menu.ts` + `menu.ts`                                                   | Must be on                 | Clicks **Continue** after it has been visible                                            |
-| Renderer hot reload   | `hot-reload.ts`                                                              | Must be on + `npm run dev` | Stamp poll + SSE; F5 uses the stamp (CDP can stall EventSource)                          |
+| Renderer hot reload   | `hot-reload.ts`                                                              | Must be on + `npm run dev` | Polls `GET /hot-reload/last` on the dev watch server                                     |
 | F3 debug toggle       | `toggle/`                                                                    | Must be on                 | Management row + F3 opens the engine Debug window; engine Debug/Stats buttons are hidden |
 
 ### F3 debug toggle
@@ -75,14 +75,9 @@ When the Debug setting is on, the helper waits until a **Continue** control is v
 
 ## Hot reload
 
-Hot reload runs only with **`npm run dev`**. That watch build writes `hot-reload.json` into each mod folder and starts an SSE server on `http://127.0.0.1:19147/hot-reload`. With the Debug setting on, the client watches for a rebuild, then re-reads `main.js`, clears `logs/<modinfo.id>.log` and the DevTools console, runs `onDispose` callbacks, and evaluates the new source with `new Function("sandkit", source)`. In the watch terminal, **Ctrl+R** forces the same path even when `main.js` has not changed.
+Hot reload runs only with **`npm run dev`**. That watch build starts a dev server on `http://127.0.0.1:19147`. With the Debug setting on, the client polls **`GET /hot-reload/last`** every ~400 ms. When the notify counter changes, it re-reads `main.js`, clears `logs/<modinfo.id>.log` and the DevTools console, runs `onDispose` callbacks, and evaluates the new source with `new Function("sandkit", source)`. In the watch terminal, **Ctrl+R** forces the same path even when `main.js` has not changed.
 
-Notify paths:
-
-- **File poll** — the client reads `hot-reload.json` through `api.assets` (a file URL). This is the path **F5** uses. VS Code’s renderer attach can stall HTTP `EventSource`, so SSE is off while `ide-debug.json` is present.
-- **SSE** — when F5 is not attached, the debug bundle also opens `EventSource` to the watch URL for a faster notify.
-
-One-shot builds (`npm run build`, `--game`) do not write the stamp. They leave the hot-reload URL empty **unless** the watch SSE server is already up. **F5** and `npm run sandustry` do not build — run `npm run dev` first so the watch owns `main.js`.
+One-shot builds (`npm run build`, `--game`) leave the dev watch URL empty. **F5** and `npm run sandustry` do not build — run `npm run dev` first so the watch owns `main.js`.
 
 JavaScript cannot be unloaded. The loader only reclaims what you register:
 
@@ -103,7 +98,7 @@ A monkey-patch or a trigger with no unregister path stays until the game restart
 
 `isHotReloadEval(modId)` is true when this script body is running because a reload evaluated a new `main.js`. Use it to skip one-shot boot work (toasts, DevTools, splash skip).
 
-Turning Debug off stops the poll and the EventSource. Turning it on starts them again.
+Turning Debug off stops the poll. Turning it on starts it again.
 
 ## File logging (`console`)
 

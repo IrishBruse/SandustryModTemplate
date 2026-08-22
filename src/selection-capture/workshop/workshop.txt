@@ -1,0 +1,27 @@
+[h1]Pixel-perfect Screenshot and GIF recorder[/h1]
+[b]Pixel-perfect PNG and GIF of your C selection.[/b]
+
+Share a machine, a line, or a whole scene without a blurry screenshot. Screenshot copies a PNG to the clipboard. Record GIF steps the sim and downloads an animation. Optional greenscreen for chroma key.
+
+[h2]How to use[/h2]
+[olist]
+[*]Press [b]C[/b] and drag a box around the area.
+[*]Keep that box on screen.
+[*]Press [b]F7[/b] to open the panel.
+[*][b]Screenshot[/b] copies a PNG. Paste with Ctrl+V.
+[*][b]Record GIF[/b] downloads an animated GIF of sim ticks.
+[/olist]
+
+[h2]Features[/h2]
+[list]
+[*]2× nearest-neighbor — sharp pixels, no blur
+[*]GIF of stepped sim ticks (2–120 frames, 1–30 ticks per frame)
+[*]Greenscreen (#00FF00) for chroma key
+[*]HUD and marquee handles stay out of the image
+[/list]
+
+[h2]Limits[/h2]
+[list]
+[*]The crop is the selection box, plus 1 px on each edge
+[*]A selection that is off-screen cannot be captured — pan the camera and try again
+[/list]
