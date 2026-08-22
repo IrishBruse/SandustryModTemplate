@@ -6,6 +6,10 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ## Unreleased
 
+### Fixed
+
+- Hot reload stops when a mod folder is gone (rename / watch cleanup) so DevTools does not keep logging `ERR_FILE_NOT_FOUND` for that mod's `main.js`. See [modkit/debug.md](modkit/debug.md).
+
 ### Changed
 
 - Main bundles inject hot reload boot: free **`reloaded`**, no `installHotReload` / `isHotReloadEval` in `main.ts`. Import `onDispose` only when you need cleanup. See [modkit/debug.md](modkit/debug.md).

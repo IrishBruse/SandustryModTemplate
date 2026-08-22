@@ -138,15 +138,20 @@ async function readAsset(api: SandkitApi, relativePath: string): Promise<string 
   if (!url) return null;
 
   const busted = cacheBust(url);
+  // file://: skip fetch — Electron often rejects it, and a missing file then
+  // falls through to XHR and logs ERR_FILE_NOT_FOUND twice in DevTools.
+  if (url.startsWith("file:") || busted.startsWith("file:")) {
+    return readXhr(busted);
+  }
+
   try {
     const response = await fetch(busted, { cache: "no-store" });
     if (response.ok) return await response.text();
     // A completed 404 must not fall through to XHR — that logs twice.
     return null;
   } catch {
-    // Electron file URLs often reject fetch; XHR still works.
+    return readXhr(busted);
   }
-  return readXhr(busted);
 }
 
 async function fetchNotify(): Promise<(NotifyPayload & { n: number }) | null> {
@@ -289,7 +294,14 @@ async function reloadRenderer(host: Host, source: string): Promise<void> {
 }
 
 async function refreshTrackedFiles(host: Host): Promise<void> {
-  for (const file of [MAIN_ENTRY, ...RESTART_FILES]) {
+  const main = await readAsset(host.api, MAIN_ENTRY);
+  if (main == null) {
+    forgetRemovedMod(host);
+    return;
+  }
+  host.sources[MAIN_ENTRY] = main;
+
+  for (const file of RESTART_FILES) {
     const text = await readAsset(host.api, file);
     if (text != null) host.sources[file] = text;
   }
@@ -304,7 +316,11 @@ async function handleNotify(host: Host, payload: NotifyPayload): Promise<void> {
   if (host.reloading) return;
 
   const mainSource = await readAsset(host.api, host.entry);
-  if (mainSource != null && (payload.force === true || mainSource !== host.sources[host.entry])) {
+  if (mainSource == null) {
+    forgetRemovedMod(host);
+    return;
+  }
+  if (payload.force === true || mainSource !== host.sources[host.entry]) {
     await reloadRenderer(host, mainSource);
   }
 
@@ -326,14 +342,29 @@ function stopPolling(host: Host): void {
   host.pollTimer = null;
 }
 
+/**
+ * Mod folder gone (rename / `npm run dev` cleanup) while the game still has
+ * this host. Stop polling so DevTools does not keep logging missing main.js.
+ */
+function forgetRemovedMod(host: Host): void {
+  if (!getHost(host.modId)) return;
+  stopPolling(host);
+  disposeRegistered(host);
+  delete hostMap()[host.modId];
+  if (activeModId() === host.modId) delete globals().__sandkitHotReloadActive__;
+  console.log(`[${host.modId}] hot reload stopped (mod files missing)`);
+}
+
 async function pollNotify(host: Host): Promise<void> {
   if (host.reloading) return;
+  if (!getHost(host.modId)) return;
   const payload = await fetchNotify();
   if (payload == null) return;
 
   if (host.notifyN == null) {
     host.notifyN = payload.n;
     void refreshTrackedFiles(host);
+    if (!getHost(host.modId)) return;
     console.log(`[${host.modId}] hot reload watching ${devWatchUrl()}${NOTIFY_PATH}`);
     return;
   }

@@ -100,6 +100,7 @@ onDispose(() => clearInterval(timer));
 | ------------------------------------------------------ | ------------------------------------- |
 | `main.js` (dev rebuild notify)                         | Dispose, then evaluate the new source |
 | `patches.json`, `modinfo.json`, declared `workerEntry` | Toast: restart the game               |
+| Mod folder removed while the game is still open        | Stop polling; one quiet log line      |
 
 A monkey-patch or a trigger with no unregister path stays until the game restarts.
 
