@@ -25,6 +25,14 @@
           "SANDUSTRY_DEBUG_DETACHED": "1"
         }
       },
+      "presentation": {
+        "echo": true,
+        "reveal": "never",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": true,
+        "clear": false
+      },
       "isBackground": true,
       "problemMatcher": {
         "pattern": {
@@ -49,6 +57,14 @@
         "cwd": "${workspaceFolder}"
       },
       "isBackground": true,
+      "presentation": {
+        "echo": true,
+        "reveal": "never",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": true,
+        "clear": false
+      },
       "problemMatcher": {
         "pattern": {
           "regexp": ".",

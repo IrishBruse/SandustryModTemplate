@@ -54,18 +54,5 @@
         "order": 2
       }
     }
-  ],
-  "compounds": [
-    {
-      "name": "Sandustry: Attach Renderer (build + launch)",
-      "configurations": ["Sandustry Renderer"],
-      "preLaunchTask": "sandustry:vscode-background",
-      "postDebugTask": "sandustry:stop",
-      "stopAll": true,
-      "presentation": {
-        "order": 3,
-        "group": "sandustry"
-      }
-    }
   ]
 }
