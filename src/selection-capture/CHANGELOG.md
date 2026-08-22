@@ -7,9 +7,13 @@ Notable changes to **Selection Capture**. Newest first. The format follows [Keep
 ### Added
 
 - **F8** copies a **2×** nearest-neighbor PNG of the **C** marquee.
+- Panel **Screenshot** button (same capture as **F8**), under **Record GIF**.
 - **F7** opens a panel to record a GIF (frames, ticks per frame, scale).
-- Management-column **Capture** row under Upgrades.
 - README and this changelog (copied into the installed mod folder).
+
+### Removed
+
+- Management-column **Capture** row — open the panel with **F7** only.
 
 ### Changed
 

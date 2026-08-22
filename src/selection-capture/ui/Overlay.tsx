@@ -15,12 +15,11 @@ const TOGGLE_CODE = "F7";
 const SCREENSHOT_CODE = "F8";
 const DEFAULT_FRAMES = 60;
 
-/** Survives hot reload so the management row and F8 always call the latest handlers. */
-type CaptureUi = { toggle: () => void; screenshot: () => void };
+/** Survives hot reload so F8 always calls the latest screenshot handler. */
+type CaptureUi = { screenshot: () => void };
 export const captureUi = ((
   globalThis as unknown as { __selectionCaptureUi?: CaptureUi }
 ).__selectionCaptureUi ??= {
-  toggle: () => undefined,
   screenshot: () => undefined,
 });
 
@@ -51,7 +50,7 @@ export function Overlay() {
             api.ui.toast("Copied — paste with Ctrl+V", {});
             break;
           case "no-selection":
-            api.ui.toast("No marquee selection — press C, drag, then F8", {});
+            api.ui.toast("No marquee selection — press C, drag, then Screenshot", {});
             break;
           case "out-of-view":
             api.ui.toast("Selection is off-screen — pan the camera and try again", {});
@@ -68,9 +67,8 @@ export function Overlay() {
   }, [busy]);
 
   useEffect(() => {
-    captureUi.toggle = toggle;
     captureUi.screenshot = screenshot;
-  }, [toggle, screenshot]);
+  }, [screenshot]);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -138,8 +136,8 @@ export function Overlay() {
           <UiBox className="bg-black bg-opacity-85 p-4 shadow-lg card-2 w-72 text-white">
             <SectionHeading size="md">Selection Capture</SectionHeading>
             <p className="text-sm opacity-80 mb-3">
-              Select with <HotkeyBadge>C</HotkeyBadge>. <HotkeyBadge>F8</HotkeyBadge> copies a PNG.{" "}
-              <br />
+              Select with <HotkeyBadge>C</HotkeyBadge>.<br />
+              <HotkeyBadge>F8</HotkeyBadge> copies a PNG. <br />
               Press <HotkeyBadge>F7</HotkeyBadge> to close.
             </p>
             <label className="block text-sm mb-2">
@@ -190,6 +188,16 @@ export function Overlay() {
               }}
             >
               {busy ? "Recording…" : "Record GIF"}
+            </button>
+            <button
+              className="w-full text-sm tracking-wider bg-white bg-opacity-15 hover:bg-opacity-25 disabled:opacity-50 py-2 rounded mt-2"
+              type="button"
+              disabled={busy}
+              onClick={() => {
+                screenshot();
+              }}
+            >
+              Screenshot
             </button>
           </UiBox>
         </Interactive>

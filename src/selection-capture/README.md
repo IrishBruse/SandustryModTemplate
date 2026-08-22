@@ -8,24 +8,24 @@ Copy a PNG or record a GIF of a **C** marquee selection.
 2. Keep that selection on screen.
 3. Choose one:
 
-| Key | Action |
-| --- | ------ |
-| **F8** | Copy a **2×** PNG (nearest-neighbor). Paste with **Ctrl+V**. |
-| **F7** | Open the GIF panel. Click **Record GIF**. |
+| Key / control | Action |
+| --- | --- |
+| **F8** or **Screenshot** | Copy a **2×** PNG (nearest-neighbor). Paste with **Ctrl+V**. |
+| **F7** | Open the panel. Click **Record GIF** for an animated GIF. |
 
-The left management column has a **Capture** row (**F7**).
-
-## GIF panel
+## Panel
 
 | Field | Range | Default |
-| ----- | ----- | ------- |
+| --- | --- | --- |
 | Frames | 2–120 | 60 |
 | Ticks / frame | 1–30 | 1 |
 | Scale | 1× / 2× / 4× | 2× (nearest) |
 
-The sim pauses, then steps the ticks you set between frames. The `.gif` downloads. Clipboard copy of GIF is attempted; Chromium often rejects `image/gif`.
+**Record GIF** pauses the sim, then steps the ticks you set between frames. The `.gif` downloads. Clipboard copy of GIF is attempted; Chromium often rejects `image/gif`.
 
-The dashed **C** marquee is restored after the recording.
+**Screenshot** copies a PNG (same as **F8**).
+
+The dashed **C** marquee is restored after a GIF recording.
 
 ## Limits
 
