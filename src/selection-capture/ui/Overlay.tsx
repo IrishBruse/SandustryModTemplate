@@ -1,11 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FixedAnchor,
   HotkeyBadge,
   Interactive,
+  OptionsButton,
+  OptionsNumberInput,
+  OptionsPanel,
+  OptionsRow,
+  OptionsSection,
+  OptionsSwitch,
   OverlayRoot,
-  SectionHeading,
-  UiBox,
 } from "@modkit/ui";
 import { captureSelectionPng } from "../capturePng";
 import { modinfo } from "../mod";
@@ -20,130 +24,85 @@ const BINDINGS = {
 
 const DEFAULT_FRAMES = 60;
 
-function parsePositiveInt(raw: string, fallback: number): number {
-  const n = Number(raw);
-  return Number.isFinite(n) ? n : fallback;
-}
-
-type PillToggleProps = {
-  label: string;
-  checked: boolean;
-  disabled?: boolean;
-  className?: string;
-  onChange: (checked: boolean) => void;
+type OverlayLive = {
+  bindingsInstalled: boolean;
+  open: boolean;
+  toggle: () => void;
+  screenshot: () => void;
+  recordGif: () => void;
 };
 
-/** Flat yellow/gray pill switch — native checkbox under the hood. */
-function PillToggle({ label, checked, disabled, className = "", onChange }: PillToggleProps) {
-  return (
-    <label
-      className={`flex items-center justify-between gap-3 text-sm ${disabled ? "opacity-50" : ""} ${className}`}
-    >
-      <span>{label}</span>
-      <span className="relative inline-flex h-5 w-9 shrink-0 items-center">
-        <input
-          className="absolute inset-0 z-10 m-0 h-full w-full cursor-pointer opacity-0 disabled:cursor-not-allowed"
-          type="checkbox"
-          checked={checked}
-          disabled={disabled}
-          onChange={(event) => onChange(event.target.checked)}
-        />
-        <span
-          className={`pointer-events-none absolute inset-0 rounded-full transition-colors ${
-            checked ? "bg-[#FFD700]" : "bg-[#373D48]"
-          }`}
-          aria-hidden
-        />
-        <span
-          className={`pointer-events-none absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white transition-transform ${
-            checked ? "translate-x-4" : "translate-x-0"
-          }`}
-          aria-hidden
-        />
-      </span>
-    </label>
-  );
+/**
+ * Binding handlers stay registered for the process. Keep the latest Overlay
+ * methods here so a remount or hot reload does not stack a second F7 toggle.
+ */
+const live: OverlayLive = (() => {
+  const key = `${modinfo.id}:overlay`;
+  const root = globalThis as typeof globalThis & Record<string, OverlayLive | undefined>;
+  return (root[key] ??= {
+    bindingsInstalled: false,
+    open: false,
+    toggle: () => {},
+    screenshot: () => {},
+    recordGif: () => {},
+  });
+})();
+
+function clampInt(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, Math.round(value)));
 }
 
-type NumberStepperProps = {
-  label: string;
-  value: number;
-  min: number;
-  max: number;
-  disabled?: boolean;
-  onChange: (value: number) => void;
-};
+function isToggleKey(event: KeyboardEvent): boolean {
+  if (event.key === "F7" || event.code === "F7") return true;
+  const bound = sandkit.api.input.getBoundKeys(BINDINGS.togglePanel);
+  return bound.some((key) => {
+    const k = key.toLowerCase();
+    return event.key.toLowerCase() === k || event.code.toLowerCase() === k;
+  });
+}
 
-/** Beveled value box with a light up/down strip — matches vanilla spinner chrome. */
-function NumberStepper({ label, value, min, max, disabled, onChange }: NumberStepperProps) {
-  const clamp = (n: number) => Math.min(max, Math.max(min, Math.round(n)));
-  const setClamped = (n: number) => onChange(clamp(n));
+function installBindings() {
+  if (live.bindingsInstalled) return;
+  live.bindingsInstalled = true;
 
-  return (
-    <label className={`block text-sm mb-2 ${disabled ? "opacity-50" : ""}`}>
-      {label}
-      <div
-        className="mt-1 flex h-9 w-full overflow-hidden border border-[#3d4450] bg-black"
-        style={{
-          clipPath:
-            "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))",
-        }}
-      >
-        <input
-          className="min-w-0 flex-1 bg-transparent px-3 text-lg text-white outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none disabled:cursor-not-allowed"
-          type="number"
-          min={min}
-          max={max}
-          value={value}
-          disabled={disabled}
-          onChange={(event) => setClamped(parsePositiveInt(event.target.value, value))}
-        />
-        <div className="flex w-6 shrink-0 flex-col bg-[#d1d5db]">
-          <button
-            className="flex flex-1 items-center justify-center hover:bg-white disabled:opacity-40"
-            type="button"
-            tabIndex={-1}
-            disabled={disabled || value >= max}
-            aria-label={`Increase ${label}`}
-            onClick={() => setClamped(value + 1)}
-          >
-            <span
-              className="inline-block h-0 w-0 border-l-[4px] border-r-[4px] border-b-[5px] border-l-transparent border-r-transparent border-b-[#4b5563]"
-              aria-hidden
-            />
-          </button>
-          <button
-            className="flex flex-1 items-center justify-center hover:bg-white disabled:opacity-40"
-            type="button"
-            tabIndex={-1}
-            disabled={disabled || value <= min}
-            aria-label={`Decrease ${label}`}
-            onClick={() => setClamped(value - 1)}
-          >
-            <span
-              className="inline-block h-0 w-0 border-l-[4px] border-r-[4px] border-t-[5px] border-l-transparent border-r-transparent border-t-[#4b5563]"
-              aria-hidden
-            />
-          </button>
-        </div>
-      </div>
-    </label>
-  );
+  const api = sandkit.api;
+  const category = modinfo.name;
+
+  // F-keys never reach these handlers — toggle uses capture-phase keydown below.
+  api.input.registerBinding(BINDINGS.togglePanel, ["F7"], {
+    displayName: "Toggle panel",
+    displayNameKey: "Toggle panel",
+    category,
+    handlers: { down: () => {} },
+  });
+  api.input.registerBinding(BINDINGS.screenshot, [], {
+    displayName: "Screenshot",
+    displayNameKey: "Screenshot",
+    category,
+    handlers: { down: () => live.screenshot() },
+  });
+  api.input.registerBinding(BINDINGS.recordGif, [], {
+    displayName: "Record GIF",
+    displayNameKey: "Record GIF",
+    category,
+    handlers: { down: () => void live.recordGif() },
+  });
 }
 
 export function Overlay() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(() => live.open);
   const [frames, setFrames] = useState(DEFAULT_FRAMES);
   const [ticksPerFrame, setTicksPerFrame] = useState(1);
   const [greenscreen, setGreenscreen] = useState(false);
   const [showMouse, setShowMouse] = useState(false);
   const [busy, setBusy] = useState(false);
 
-  const toggle = useCallback(() => {
-    setOpen((value) => !value);
-  }, []);
+  live.toggle = () => {
+    live.open = !live.open;
+    setOpen(live.open);
+  };
 
-  const screenshot = useCallback(() => {
+  live.screenshot = () => {
     if (busy) return;
     const api = sandkit.api;
     void (async () => {
@@ -168,146 +127,123 @@ export function Overlay() {
         api.ui.toast("Clipboard copy failed", {});
       }
     })();
-  }, [busy, greenscreen, showMouse]);
+  };
 
-  const recordGif = useCallback(async () => {
+  live.recordGif = () => {
     if (busy) return;
     setBusy(true);
     const api = sandkit.api;
-    try {
-      const result = await recordSelectionGif(api, {
-        frames,
-        ticksPerFrame,
-        greenscreen,
-        showMouse,
-      });
-      switch (result) {
-        case "ok":
-          api.ui.toast("GIF saved", {});
-          break;
-        case "downloaded":
-          api.ui.toast("GIF saved — check your downloads", {});
-          break;
-        case "no-selection":
-          api.ui.toast("No marquee selection — press C, drag, then Record", {});
-          break;
-        case "out-of-view":
-          api.ui.toast("Selection is off-screen — pan the camera and try again", {});
-          break;
-        default:
-          api.ui.toast("GIF record failed", {});
-          break;
+    void (async () => {
+      try {
+        const result = await recordSelectionGif(api, {
+          frames,
+          ticksPerFrame,
+          greenscreen,
+          showMouse,
+        });
+        switch (result) {
+          case "ok":
+            api.ui.toast("GIF saved — check your downloads", {});
+            break;
+          case "no-selection":
+            api.ui.toast("No marquee selection — press C, drag, then Record", {});
+            break;
+          case "out-of-view":
+            api.ui.toast("Selection is off-screen — pan the camera and try again", {});
+            break;
+          default:
+            api.ui.toast("GIF record failed", {});
+            break;
+        }
+      } catch (error) {
+        console.error("record threw:", error);
+        api.ui.toast("GIF record failed", {});
+      } finally {
+        setBusy(false);
       }
-    } catch (error) {
-      console.error("record threw:", error);
-      api.ui.toast("GIF record failed", {});
-    } finally {
-      setBusy(false);
-    }
-  }, [busy, frames, greenscreen, showMouse, ticksPerFrame]);
-
-  const toggleRef = useRef(toggle);
-  const screenshotRef = useRef(screenshot);
-  const recordGifRef = useRef(recordGif);
-  toggleRef.current = toggle;
-  screenshotRef.current = screenshot;
-  recordGifRef.current = recordGif;
+    })();
+  };
 
   useEffect(() => {
-    const api = sandkit.api;
-    const category = modinfo.name;
+    installBindings();
 
-    api.input.registerBinding(BINDINGS.togglePanel, ["F7"], {
-      displayName: "Toggle panel",
-      displayNameKey: "Toggle panel",
-      category,
-      handlers: { down: () => toggleRef.current() },
-    });
-    api.input.registerBinding(BINDINGS.screenshot, [], {
-      displayName: "Screenshot",
-      displayNameKey: "Screenshot",
-      category,
-      handlers: { down: () => screenshotRef.current() },
-    });
-    api.input.registerBinding(BINDINGS.recordGif, [], {
-      displayName: "Record GIF",
-      displayNameKey: "Record GIF",
-      category,
-      handlers: { down: () => void recordGifRef.current() },
-    });
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.repeat || event.ctrlKey || event.altKey || event.metaKey) return;
+      if (!isToggleKey(event)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      live.toggle();
+    }
+
+    window.addEventListener("keydown", onKeyDown, true);
+    return () => window.removeEventListener("keydown", onKeyDown, true);
   }, []);
 
   if (!open) return null;
 
-  const toggleKey = sandkit.api.input.getDisplayKey(BINDINGS.togglePanel, "F7");
   const screenshotKey = sandkit.api.input.getDisplayKey(BINDINGS.screenshot);
   const recordGifKey = sandkit.api.input.getDisplayKey(BINDINGS.recordGif);
-  const actionButtonClass =
-    "w-full text-sm tracking-wider bg-white bg-opacity-15 hover:bg-opacity-25 disabled:opacity-50 py-2 px-2 rounded flex items-center justify-center gap-2";
 
   return (
     <OverlayRoot>
       <FixedAnchor anchor="top-right">
         <Interactive>
-          <UiBox className="bg-black p-4 shadow-lg card-2 w-fit min-w-72 text-white">
-            <SectionHeading size="md">{modinfo.name}</SectionHeading>
-            <p className="text-sm opacity-80 mb-3">
-              Select with <HotkeyBadge>C</HotkeyBadge>.<br />
-              Press <HotkeyBadge>{toggleKey}</HotkeyBadge> to close.
-            </p>
-            <NumberStepper
-              label="Frames"
-              value={frames}
-              min={2}
-              max={120}
-              disabled={busy}
-              onChange={setFrames}
-            />
-            <NumberStepper
-              label="Ticks / frame"
-              value={ticksPerFrame}
-              min={1}
-              max={30}
-              disabled={busy}
-              onChange={setTicksPerFrame}
-            />
-            <PillToggle
-              className="mb-2"
-              label="Greenscreen"
-              checked={greenscreen}
-              disabled={busy}
-              onChange={setGreenscreen}
-            />
-            <PillToggle
-              className="mb-3"
-              label="Show mouse"
-              checked={showMouse}
-              disabled={busy}
-              onChange={setShowMouse}
-            />
-            <button
-              className={actionButtonClass}
-              type="button"
-              disabled={busy}
-              onClick={() => {
-                void recordGif();
-              }}
+          <OptionsPanel surface overlay className="min-w-[18rem]">
+            <OptionsSection
+              title={modinfo.name}
+              first
+              description={
+                <>
+                  Select with <HotkeyBadge>C</HotkeyBadge> the structure to capture.
+                </>
+              }
             >
-              <span>{busy ? "Recording…" : "Record GIF"}</span>
-              {!busy && recordGifKey ? <HotkeyBadge>{recordGifKey}</HotkeyBadge> : null}
-            </button>
-            <button
-              className={`${actionButtonClass} mt-2`}
-              type="button"
-              disabled={busy}
-              onClick={() => {
-                screenshot();
-              }}
-            >
-              <span>Screenshot</span>
-              {screenshotKey ? <HotkeyBadge>{screenshotKey}</HotkeyBadge> : null}
-            </button>
-          </UiBox>
+              <OptionsRow label="Frames">
+                <OptionsNumberInput
+                  value={frames}
+                  min={2}
+                  max={120}
+                  disabled={busy}
+                  aria-label="Frames"
+                  onChange={(value) => setFrames(clampInt(value, 2, 120))}
+                />
+              </OptionsRow>
+              <OptionsRow label="Ticks / frame">
+                <OptionsNumberInput
+                  value={ticksPerFrame}
+                  min={1}
+                  max={30}
+                  disabled={busy}
+                  aria-label="Ticks per frame"
+                  onChange={(value) => setTicksPerFrame(clampInt(value, 1, 30))}
+                />
+              </OptionsRow>
+              <OptionsRow label="Greenscreen">
+                <OptionsSwitch checked={greenscreen} disabled={busy} onChange={setGreenscreen} />
+              </OptionsRow>
+              <OptionsRow label="Show mouse">
+                <OptionsSwitch checked={showMouse} disabled={busy} onChange={setShowMouse} />
+              </OptionsRow>
+            </OptionsSection>
+            <OptionsSection title="Actions">
+              <OptionsRow label={busy ? "Recording…" : "Record GIF"}>
+                <div className="flex items-center gap-2">
+                  {!busy && recordGifKey ? <HotkeyBadge>{recordGifKey}</HotkeyBadge> : null}
+                  <OptionsButton disabled={busy} onClick={() => live.recordGif()}>
+                    Record
+                  </OptionsButton>
+                </div>
+              </OptionsRow>
+              <OptionsRow label="Screenshot">
+                <div className="flex items-center gap-2">
+                  {screenshotKey ? <HotkeyBadge>{screenshotKey}</HotkeyBadge> : null}
+                  <OptionsButton disabled={busy} onClick={() => live.screenshot()}>
+                    Copy PNG
+                  </OptionsButton>
+                </div>
+              </OptionsRow>
+            </OptionsSection>
+          </OptionsPanel>
         </Interactive>
       </FixedAnchor>
     </OverlayRoot>

@@ -1,11 +1,7 @@
-import { encode, type UnencodedFrame } from "modern-gif";
+import { Encoder, type UnencodedFrame } from "modern-gif";
+import gifWorkerSource from "modern-gif/worker";
 import { applyCaptureLook, getSession, snapshotOnPaint, type CaptureLook } from "./captureFrame";
-import {
-  getSelectionCellBounds,
-  restoreMarqueeSelection,
-  snapshotMarqueeSelection,
-  type CellBounds,
-} from "./selectionBounds";
+import { clearMarqueeSelection, getSelectionCellBounds, type CellBounds } from "./selectionBounds";
 
 const MIN_FRAMES = 2;
 const MAX_FRAMES = 120;
@@ -27,7 +23,7 @@ export type RecordGifOptions = {
   showMouse: boolean;
 };
 
-export type RecordGifResult = "ok" | "downloaded" | "no-selection" | "out-of-view" | "failed";
+export type RecordGifResult = "ok" | "no-selection" | "out-of-view" | "failed";
 
 type EnvironmentShape = {
   multithreading?: {
@@ -143,34 +139,60 @@ function frameToRgba(
   return canvasToRgba(scaled);
 }
 
+function yieldToRenderer(): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, 0);
+  });
+}
+
+let gifWorkerBlobUrl: string | undefined;
+
+function gifEncodeWorkerUrl(): string | undefined {
+  if (gifWorkerBlobUrl) return gifWorkerBlobUrl;
+  try {
+    gifWorkerBlobUrl = URL.createObjectURL(
+      new Blob([gifWorkerSource], { type: "text/javascript" }),
+    );
+    return gifWorkerBlobUrl;
+  } catch (error) {
+    console.warn(`GIF worker URL failed:`, error);
+    return undefined;
+  }
+}
+
 async function encodeGif(frames: ImageData[], delayMs: number): Promise<Uint8Array | null> {
   if (frames.length === 0) return null;
 
   const prepared: UnencodedFrame[] = [];
   let width = 0;
   let height = 0;
-  for (const frame of frames) {
-    const rgba = frameToRgba(frame);
+  for (let i = 0; i < frames.length; i++) {
+    const rgba = frameToRgba(frames[i]);
     if (!rgba) return null;
     width = rgba.width;
     height = rgba.height;
     // Scratch canvases reuse the same backing store — copy before the next frame.
-    // Cast: TS types Uint8ClampedArray.buffer as ArrayBufferLike; modern-gif wants BufferSource.
     const data = new Uint8ClampedArray(rgba.data) as UnencodedFrame["data"];
     prepared.push({
       data,
       delay: delayMs,
       disposal: 1,
     });
+    await yieldToRenderer();
   }
+  frames.length = 0;
 
-  const buffer = await encode({
+  const encoder = new Encoder({
     width,
     height,
-    frames: prepared,
     maxColors: 255,
     looped: true,
+    workerUrl: gifEncodeWorkerUrl(),
   });
+  for (const frame of prepared) {
+    await encoder.encode(frame);
+  }
+  const buffer = await encoder.flush();
   return new Uint8Array(buffer);
 }
 
@@ -178,67 +200,6 @@ function bytesToGifBlob(bytes: Uint8Array): Blob {
   const copy = new Uint8Array(bytes.byteLength);
   copy.set(bytes);
   return new Blob([copy], { type: "image/gif" });
-}
-
-function canvasToPngBlob(canvas: HTMLCanvasElement): Promise<Blob | null> {
-  return new Promise((resolve) => {
-    canvas.toBlob((blob) => resolve(blob), "image/png");
-  });
-}
-
-function bytesToBase64(bytes: Uint8Array): string {
-  let binary = "";
-  const chunkSize = 8192;
-  for (let i = 0; i < bytes.length; i += chunkSize) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
-  }
-  return btoa(binary);
-}
-
-/**
- * Chromium / Electron rejects `image/gif` on `clipboard.write`.
- * PNG is accepted (same as the screenshot example). HTML carries the GIF for apps that read it.
- */
-async function copyGifToClipboard(bytes: Uint8Array, preview: HTMLCanvasElement): Promise<boolean> {
-  if (!navigator.clipboard?.write || typeof ClipboardItem === "undefined") {
-    console.error(`clipboard image write unavailable`);
-    return false;
-  }
-
-  const gifBlob = bytesToGifBlob(bytes);
-  try {
-    await navigator.clipboard.write([new ClipboardItem({ "image/gif": Promise.resolve(gifBlob) })]);
-    console.log(`copied GIF to clipboard`, { bytes: gifBlob.size });
-    return true;
-  } catch (error) {
-    console.warn(`image/gif not accepted:`, error);
-  }
-
-  const pngBlob = await canvasToPngBlob(preview);
-  if (!pngBlob) return false;
-
-  try {
-    const html = `<img src="data:image/gif;base64,${bytesToBase64(bytes)}" alt="" />`;
-    await navigator.clipboard.write([
-      new ClipboardItem({
-        "image/png": Promise.resolve(pngBlob),
-        "text/html": Promise.resolve(new Blob([html], { type: "text/html" })),
-      }),
-    ]);
-    console.log(`copied PNG+HTML clipboard`, { png: pngBlob.size, gif: gifBlob.size });
-    return true;
-  } catch (error) {
-    console.warn(`PNG+HTML clipboard failed:`, error);
-  }
-
-  try {
-    await navigator.clipboard.write([new ClipboardItem({ "image/png": Promise.resolve(pngBlob) })]);
-    console.log(`copied PNG to clipboard`, { bytes: pngBlob.size });
-    return true;
-  } catch (error) {
-    console.error(`clipboard.write failed:`, error);
-    return false;
-  }
 }
 
 function downloadGif(bytes: Uint8Array): void {
@@ -254,7 +215,7 @@ function downloadGif(bytes: Uint8Array): void {
 }
 
 /**
- * Pause, capture N frames with `ticksPerFrame` sim ticks between them, encode a GIF, copy it.
+ * Pause, capture N frames with `ticksPerFrame` sim ticks between them, encode a GIF, download it.
  */
 export async function recordSelectionGif(
   api: SandkitApi,
@@ -274,7 +235,7 @@ export async function recordSelectionGif(
     return "no-selection";
   }
 
-  const marquee = snapshotMarqueeSelection();
+  clearMarqueeSelection(api);
   const wasPaused = getSession()?.paused === true;
   console.log(`record start`, {
     bounds,
@@ -306,33 +267,23 @@ export async function recordSelectionGif(
       }
     } finally {
       restoreLook();
+      setSimulationPaused(wasPaused);
     }
 
     if (frames.length < 2) return "failed";
 
     api.ui.toast("Encoding GIF…", {});
-    await new Promise<void>((resolve) => {
-      setTimeout(resolve, 0);
-    });
     const bytes = await encodeGif(frames, delayMs);
     if (!bytes) return "failed";
 
     downloadGif(bytes);
-    if (!frameToRgba(frames[0])) return "failed";
-    const previewCanvas = encodeScaleScratch;
-    if (!previewCanvas) return "failed";
-    const copied = await copyGifToClipboard(bytes, previewCanvas);
     console.log(`GIF ready`, {
       frames: frames.length,
       bytes: bytes.byteLength,
-      copied,
     });
-    return copied ? "ok" : "downloaded";
+    return "ok";
   } catch (error) {
     console.error(`record threw:`, error);
     return "failed";
-  } finally {
-    if (marquee) restoreMarqueeSelection(api, marquee, bounds);
-    setSimulationPaused(wasPaused);
   }
 }

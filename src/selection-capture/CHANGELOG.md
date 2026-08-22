@@ -1,22 +1,17 @@
 # Changelog
 
-Notable changes to **Pixel-perfect Screenshot and GIF recorder**. Newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
-
-## Unreleased
+## 0.3.0
 
 ### Added
 
-- Panel **Show mouse** toggle — draws the in-game cursor into PNG/GIF when the pointer is inside the selection (default off).
-- Panel **Greenscreen** and **Show mouse** use yellow/gray pill toggles.
-- Panel **Frames** and **Ticks / frame** use beveled number steppers.
-- Panel **Record GIF** and **Screenshot** buttons show the bound key when one is set in Options.
-- Controls bindings for **Toggle panel** (default **F7**), **Screenshot**, and **Record GIF** (empty by default — set keys in Options).
+- **Show mouse** — draw the in-game cursor into PNG/GIF when the pointer is inside the selection.
+- Options bindings for **Toggle panel** (default **F7**), **Screenshot**, and **Record GIF**. Panel buttons show the bound keys.
 
 ### Changed
 
-- Panel toggle uses `api.input.registerBinding` instead of a capture-phase `keydown` listener.
-- Workshop title and `workshop.txt` use **Pixel-perfect Screenshot and GIF recorder** (not Sandshot).
-- `npm run publish` keeps real line breaks in the Steam description (no literal `\n`).
+- **Record GIF** encodes on a worker so the game stays smooth after capture.
+- **Record GIF** clears the **C** marquee while recording so you can keep playing. The crop stays the box you selected.
+- Panel matches the game options UI (pills, number boxes).
 
 ## 0.2.0
 

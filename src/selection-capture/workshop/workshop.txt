@@ -18,6 +18,7 @@ Share a machine, a line, or a whole scene without a blurry screenshot. Screensho
 [*]GIF of stepped sim ticks (2–120 frames, 1–30 ticks per frame)
 [*]Greenscreen (#00FF00) for chroma key
 [*]HUD and marquee handles stay out of the image
+[*]Record GIF clears the C selection when it starts so you can keep playing during the capture
 [/list]
 
 [h2]Limits[/h2]

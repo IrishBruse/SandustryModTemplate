@@ -28,9 +28,9 @@ Set keys for **Screenshot** and **Record GIF** in Options → Controls. The pane
 
 **Show mouse** draws the in-game cursor into the PNG or GIF when the pointer tip is inside the selection.
 
-**Record GIF** pauses the sim on each painted frame, then steps the ticks you set before the next capture. The GIF is **2×** nearest-neighbor, same as the PNG. Clipboard copy of GIF is attempted; Chromium often rejects `image/gif`.
+**Record GIF** pauses the sim on each painted frame, then steps the ticks you set before the next capture. After the last frame the sim unpauses and the GIF encodes on a worker so the game stays responsive. The GIF is **2×** nearest-neighbor, same as the PNG. The file downloads.
 
-The dashed **C** marquee is restored after a GIF recording.
+**Record GIF** clears the dashed **C** marquee when recording starts so you can keep building. The crop stays the box you selected. The marquee is not restored when the GIF finishes.
 
 ## Limits
 
@@ -42,7 +42,7 @@ The dashed **C** marquee is restored after a GIF recording.
 
 This mod is published on the Steam Workshop: [Pixel-perfect Screenshot and GIF recorder](https://steamcommunity.com/sharedfiles/filedetails/?id=3787806696).
 
-`npm run publish` **requires [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD)**. It uploads from `build/` with [`workshop.json`](workshop/workshop.json) and **preview.gif** (or **preview.png**). [`workshop.txt`](workshop/workshop.txt) supplies the Steam description. `README.md`, `CHANGELOG.md`, and [`screenshots/`](workshop/screenshots/) stay in the repo. Change notes for Steam come from `CHANGELOG.md` at upload time.
+`npm run publish` uploads from `build/` with [`workshop.json`](workshop/workshop.json) and **preview.gif** (or **preview.png**). It uses [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD) on PATH, or downloads Valve's installer into `.tmp/steamcmd/`. [`workshop.txt`](workshop/workshop.txt) supplies the Steam description. `README.md`, `CHANGELOG.md`, and [`screenshots/`](workshop/screenshots/) stay in the repo. Change notes for Steam come from `CHANGELOG.md` at upload time.
 
 ## Changelog
 
