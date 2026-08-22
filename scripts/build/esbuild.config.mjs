@@ -2,7 +2,7 @@ import * as esbuild from "esbuild";
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, isAbsolute, join, normalize } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { buildPatches, bundleAndImport } from "./build-patches.js";
+import { buildPatches } from "./build-patches.js";
 import {
   bundledContentFiles,
   compileTailwindUtilities,
@@ -47,54 +47,30 @@ const sourcemap = resolveSourcemap();
 // Watch embeds the dev watch base URL for hot-reload GET polling.
 const embedDevWatchUrl = watch;
 
-const mods = await loadMods(args);
-prepareModOutputs(ROOT, mods);
+const mods = await loadMods(args, { includeDebugKit: modDebug });
+prepareModOutputs(ROOT, mods, { includeDebugKit: modDebug });
 
 console.log(`mods: ${mods.map((mod) => mod.folder).join(", ")}`);
 console.log(`mod debug: ${modDebug ? "on" : "off"}`);
 console.log(`sourcemap: ${sourcemap ?? "off"}`);
 console.log(`dev watch URL: ${embedDevWatchUrl ? devWatchUrl() : "(none)"}`);
 
-/** @type {any | null} */
-let debugSchemaCache = null;
-
-async function loadDebugSchema() {
-  if (debugSchemaCache) return debugSchemaCache;
-  const kit = await bundleAndImport(
-    join(MODKIT_DIR, "debug/config-schema.ts"),
-    "modkit-debug-schema.mjs",
-  );
-  debugSchemaCache = structuredClone(kit.modkitDebugConfigSchema ?? {});
-  return debugSchemaCache;
-}
-
 /**
- * Write modinfo.json — debug builds merge framework debug settings into configSchema.
+ * Write modinfo.json from that mod's `mod.ts`.
  * @param {import("./mods.js").LoadedMod} mod
- * @param {boolean} includeDebugSetting
  */
-async function writeModinfo(mod, includeDebugSetting) {
+function writeModinfo(mod) {
   const manifest = structuredClone(mod.manifest);
-  if (includeDebugSetting) {
-    const debugSchema = await loadDebugSchema();
-    if (debugSchema && typeof debugSchema === "object") {
-      manifest.configSchema = {
-        ...manifest.configSchema,
-        ...debugSchema,
-      };
-    }
-  }
   writeFileSync(join(mod.outDir, "modinfo.json"), `${JSON.stringify(manifest, null, 2)}\n`);
 }
 
 /**
  * Copy static files and write modinfo.json + patches.json.
  * @param {import("./mods.js").LoadedMod} mod
- * @param {boolean} includeModkitDebug
  */
-async function syncModFiles(mod, includeModkitDebug) {
+async function syncModFiles(mod) {
   mkdirSync(mod.outDir, { recursive: true });
-  await writeModinfo(mod, modDebug);
+  writeModinfo(mod);
   copyWorkshopInstallFiles(mod.dir, mod.outDir);
   const staticDir = join(mod.dir, "mod");
   if (existsSync(staticDir)) {
@@ -115,7 +91,6 @@ async function syncModFiles(mod, includeModkitDebug) {
     modDebug,
     modTs: mod.modTs,
     cachePrefix: mod.folder,
-    includeModkitDebug,
     label: `src/${mod.folder}/mod.ts`,
   });
 }
@@ -381,10 +356,9 @@ async function compileFromBundleGraph(mod) {
 
 /**
  * @param {import("./mods.js").LoadedMod} mod
- * @param {boolean} includeModkitDebug
  */
-async function buildOne(mod, includeModkitDebug) {
-  await syncModFiles(mod, includeModkitDebug);
+async function buildOne(mod) {
+  await syncModFiles(mod);
   let tailwindCss = await compileFromBundleGraph(mod);
   const result = await esbuild.build({
     ...bundleOptions(mod),
@@ -404,10 +378,9 @@ async function buildOne(mod, includeModkitDebug) {
 
 /**
  * @param {import("./mods.js").LoadedMod} mod
- * @param {boolean} includeModkitDebug
  */
-async function watchOne(mod, includeModkitDebug) {
-  await syncModFiles(mod, includeModkitDebug);
+async function watchOne(mod) {
+  await syncModFiles(mod);
   let tailwindCss = await compileFromBundleGraph(mod);
   const cssEntry = join(mod.dir, "ui/tailwind.css");
 
@@ -434,7 +407,7 @@ async function watchOne(mod, includeModkitDebug) {
               }
             }
             maybeRewriteDebugMaps(mod);
-            await syncModFiles(mod, includeModkitDebug);
+            await syncModFiles(mod);
             notifyHotReload({ changed: ["main.js"] });
             logBuildResult(mod, result);
           });
@@ -460,7 +433,7 @@ async function watchOne(mod, includeModkitDebug) {
           setup(build) {
             build.onEnd(async (result) => {
               if (result.errors.length > 0) return;
-              await syncModFiles(mod, includeModkitDebug);
+              await syncModFiles(mod);
               // Worker scripts do not hot-reload — toast asks for a game restart.
               notifyHotReload({ changed: [workerOut] });
               logBuildResult(mod, result);
@@ -474,15 +447,13 @@ async function watchOne(mod, includeModkitDebug) {
   }
 }
 
-const kitDebugFolder = mods[0]?.folder;
-
 if (watch) {
   startHotReloadServer();
   for (const mod of mods) {
-    await watchOne(mod, modDebug && mod.folder === kitDebugFolder);
+    await watchOne(mod);
   }
 } else {
   for (const mod of mods) {
-    await buildOne(mod, modDebug && mod.folder === kitDebugFolder);
+    await buildOne(mod);
   }
 }

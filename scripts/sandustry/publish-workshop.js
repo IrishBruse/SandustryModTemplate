@@ -374,7 +374,7 @@ if (!steamCmd) {
 }
 
 const account = steamAccountName();
-const allMods = await loadMods([]);
+const allMods = await loadMods([], { includeDebugKit: false });
 const selected = await pickMod(allMods);
 
 let publishedFileId;

@@ -1,6 +1,5 @@
 /**
  * Write patches.json from a mod's `mod.ts` (`patches` + optional `debugPatches`).
- * Debug builds can also merge `modkitDebugPatches` from the framework (once).
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -115,27 +114,16 @@ function validatePatches(patches) {
  *   modDebug?: boolean;
  *   modTs: string;
  *   cachePrefix: string;
- *   includeModkitDebug?: boolean;
  *   label?: string;
  * }} options
  */
 export async function buildPatches(outDir, options) {
-  const {
-    modDebug = false,
-    modTs,
-    cachePrefix,
-    includeModkitDebug = false,
-    label = "mod.ts",
-  } = options;
+  const { modDebug = false, modTs, cachePrefix, label = "mod.ts" } = options;
   mkdirSync(outDir, { recursive: true });
 
-  const [mod, kit] = await Promise.all([
-    bundleAndImport(modTs, `${cachePrefix}-patches.mjs`),
-    bundleAndImport(join(MODKIT_DIR, "patches.ts"), "modkit-patches.mjs"),
-  ]);
+  const mod = await bundleAndImport(modTs, `${cachePrefix}-patches.mjs`);
   const production = structuredClone(mod.patches ?? []);
   const debugPatches = structuredClone(mod.debugPatches ?? []);
-  const modkitDebugPatches = structuredClone(kit.modkitDebugPatches ?? []);
 
   if (!Array.isArray(production)) {
     throw new Error(`${label} must export a \`patches\` array`);
@@ -143,13 +131,8 @@ export async function buildPatches(outDir, options) {
   if (mod.debugPatches != null && !Array.isArray(mod.debugPatches)) {
     throw new Error(`${label} \`debugPatches\` must be an array when exported`);
   }
-  if (!Array.isArray(modkitDebugPatches)) {
-    throw new Error("modkit/patches.ts must export a `modkitDebugPatches` array");
-  }
 
-  const patches = modDebug
-    ? [...production, ...(includeModkitDebug ? modkitDebugPatches : []), ...(debugPatches ?? [])]
-    : [...production];
+  const patches = modDebug ? [...production, ...(debugPatches ?? [])] : [...production];
   validatePatches(patches);
 
   const dest = join(outDir, "patches.json");

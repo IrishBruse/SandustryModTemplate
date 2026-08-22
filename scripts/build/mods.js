@@ -11,6 +11,9 @@ import { ensureGameModDir, gameModDir, linkRepoDistToModOutputs } from "../sandu
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const SRC_DIR = join(ROOT, "src");
 
+/** Companion mod folder. Debug builds install it; release builds omit it. */
+export const DEBUG_MOD_FOLDER = "debug";
+
 /**
  * Src-folder name for a path under `src/<name>/...`, or null when outside.
  * @param {string | undefined} filePath
@@ -110,18 +113,29 @@ export function parseModFilter(argv) {
 
 /**
  * @param {string[]} [argv]
+ * @param {{ includeDebugKit?: boolean }} [options]
  * @returns {Promise<LoadedMod[]>}
  */
-export async function loadMods(argv = process.argv.slice(2)) {
+export async function loadMods(argv = process.argv.slice(2), options = {}) {
+  const includeDebugKit = options.includeDebugKit === true;
   const folders = discoverModFolders();
   if (folders.length === 0) {
     throw new Error("No mods found. Add src/<name>/mod.ts");
   }
 
   const filter = parseModFilter(argv);
-  const selected = filter ? folders.filter((name) => name === filter) : folders;
+  let selected = filter ? folders.filter((name) => name === filter) : folders;
   if (filter && selected.length === 0) {
     throw new Error(`Unknown --mod ${JSON.stringify(filter)}. Found: ${folders.join(", ")}`);
+  }
+
+  if (!includeDebugKit) {
+    selected = selected.filter((name) => name !== DEBUG_MOD_FOLDER);
+    if (selected.length === 0) {
+      throw new Error("src/debug is omitted from release builds");
+    }
+  } else if (filter && filter !== DEBUG_MOD_FOLDER && folders.includes(DEBUG_MOD_FOLDER)) {
+    selected = [...selected, DEBUG_MOD_FOLDER];
   }
 
   /** @type {LoadedMod[]} */
@@ -169,10 +183,16 @@ export async function loadMods(argv = process.argv.slice(2)) {
 /**
  * Create each game mod folder and `dist/<folder>` links.
  * Stale dist links are removed only when that src folder is gone, not when `--mod` filters the build.
+ * Release builds omit `src/debug` from keepFolders so leftover `mods/debug` is removed.
  * @param {string} repoRoot
  * @param {LoadedMod[]} mods
+ * @param {{ includeDebugKit?: boolean }} [options]
  */
-export function prepareModOutputs(repoRoot, mods) {
+export function prepareModOutputs(repoRoot, mods, options = {}) {
+  const includeDebugKit = options.includeDebugKit === true;
+  const keepFolders = discoverModFolders().filter(
+    (folder) => folder !== DEBUG_MOD_FOLDER || includeDebugKit,
+  );
   for (const mod of mods) ensureGameModDir(mod.gameName);
-  linkRepoDistToModOutputs(repoRoot, mods, discoverModFolders());
+  linkRepoDistToModOutputs(repoRoot, mods, keepFolders);
 }

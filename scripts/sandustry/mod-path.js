@@ -171,9 +171,9 @@ export function linkRepoDistToModOutputs(repoRoot, mods, keepFolders) {
     console.log(`Linked ${REPO_DIST_LINK}/${mod.folder} -> ${target}`);
   }
 
-  const newTargets = new Set(mods.map((mod) => gameModDir(mod.gameName)));
+  const keptTargets = readDistSymlinkTargets(distPath);
   for (const target of previousTargets) {
-    if (newTargets.has(target)) continue;
+    if (keptTargets.has(target)) continue;
     removeOwnedGameDir(target);
   }
 
