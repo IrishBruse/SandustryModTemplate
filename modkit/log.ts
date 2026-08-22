@@ -1,8 +1,8 @@
 /**
  * File logging for the renderer while `npm run dev` is running.
  *
- * The watch server accepts POST `/log` and appends to
- * `~/.config/sandustry/logs/<modId>.log` on Linux or
+ * The watch server accepts POST `/log` (append) and POST `/log/clear`
+ * (truncate) for `~/.config/sandustry/logs/<modId>.log` on Linux or
  * `%APPDATA%/sandustry/logs/<modId>.log` on Windows (repo `logs/` link).
  * Electron `logs/main.log` only gets the main process — not `console.log`
  * from the game UI — so use this for in-game UI debugging.
@@ -11,6 +11,7 @@
  */
 
 const LOG_URL = "http://127.0.0.1:19147/log";
+const LOG_CLEAR_URL = "http://127.0.0.1:19147/log/clear";
 
 export type CreateLoggerOptions = {
   /** Bracket tag in each line (default: `modId`). */
@@ -72,4 +73,21 @@ export function appendLog(modId: string, line: string, options?: { console?: boo
   }).catch(() => {
     /* npm run dev not running */
   });
+}
+
+/**
+ * Truncate `logs/<modId>.log`. Hot reload awaits this before re-eval so the file
+ * only holds lines from the current session. Safe when the watch server is down.
+ */
+export function clearLog(modId: string): Promise<void> {
+  return fetch(LOG_CLEAR_URL, {
+    method: "POST",
+    mode: "cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ modId }),
+  })
+    .then(() => undefined)
+    .catch(() => {
+      /* npm run dev not running */
+    });
 }

@@ -148,4 +148,4 @@ console.log("[my-tag]", { width, collapsed });
 // DevTools + logs/author.hello-toast-example.log
 ```
 
-Release builds do not inject the shim. Restart `npm run dev` after changing `scripts/build/hot-reload-server.js` (the POST `/log` route lives there).
+Release builds do not inject the shim. Restart `npm run dev` after changing `scripts/build/hot-reload-server.js` (the POST `/log` and `/log/clear` routes live there). Hot reload clears `logs/<modinfo.id>.log` before re-eval.

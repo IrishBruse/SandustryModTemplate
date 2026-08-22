@@ -75,7 +75,7 @@ When the Debug setting is on, the helper waits until a **Continue** control is v
 
 ## Hot reload
 
-Hot reload runs only with **`npm run dev`**. That watch build starts an SSE server on `http://127.0.0.1:19147/hot-reload` and embeds the URL in the debug bundle. With the Debug setting on, the mod opens `EventSource` to that URL. Each successful rebuild pushes a notify event; the client then re-reads `main.js`, runs `onDispose` callbacks, and evaluates the new source with `new Function("sandkit", source)`. In the watch terminal, **Ctrl+R** forces the same path even when `main.js` has not changed.
+Hot reload runs only with **`npm run dev`**. That watch build starts an SSE server on `http://127.0.0.1:19147/hot-reload` and embeds the URL in the debug bundle. With the Debug setting on, the mod opens `EventSource` to that URL. Each successful rebuild pushes a notify event; the client then re-reads `main.js`, clears `logs/<modinfo.id>.log` and the DevTools console, runs `onDispose` callbacks, and evaluates the new source with `new Function("sandkit", source)`. In the watch terminal, **Ctrl+R** forces the same path even when `main.js` has not changed.
 
 One-shot builds (`npm run build`, `npm run sandustry`, `--game`) leave the hot-reload URL empty **unless** the watch SSE server is already up. **F5** does not build — run `npm run dev` first so the watch owns `main.js`.
 
@@ -103,6 +103,8 @@ Turning Debug off closes the EventSource. Turning it on connects again when the 
 ## File logging (`console`)
 
 Debug builds use esbuild [`inject`](https://esbuild.github.io/api/#inject) with [`modkit/console.ts`](../../modkit/console.ts). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code still print in DevTools and also `POST` to `http://127.0.0.1:19147/log` while `npm run dev` is up. Lines append to `logs/<modinfo.id>.log` (workspace `logs/` → OS sandustry logs: `~/.config/sandustry/logs` or `%APPDATA%/sandustry/logs`).
+
+A renderer hot reload (save or **Ctrl+R**) truncates that file via `POST /log/clear` and calls `console.clear()` so the session starts clean. Use `clearLog(modId)` from `@modkit/log` to clear by hand.
 
 ```ts
 console.log("[my-feature]", payload);

@@ -12,6 +12,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Added
 
+- **Hot reload clears logs:** each renderer reload truncates `logs/<mod-id>.log` and clears the DevTools console so the file only holds the current session. `clearLog(modId)` from `@modkit/log` and `POST /log/clear` on the watch server.
 - **Selection screenshot example** (`src/selection-screenshot-example/`): after a **C** marquee selection, **F8** downloads a PNG cropped to the selection’s cell edges.
 - **Worker API example** (`src/worker-api-example/`): optional `worker.ts` → `worker.js`, probes worker-thread `sandkit.api` against `types/worker-api` (`WorkerSandkitApi`). Build bundles `worker.ts` when present.
 

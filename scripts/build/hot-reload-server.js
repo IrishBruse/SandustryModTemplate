@@ -2,7 +2,7 @@
  * Hot-reload notify for `npm run dev` (--watch only).
  * Game clients subscribe with EventSource; rebuilds push a small JSON event.
  */
-import { appendFileSync, mkdirSync } from "node:fs";
+import { appendFileSync, mkdirSync, writeFileSync } from "node:fs";
 import http from "node:http";
 import net from "node:net";
 import { join } from "node:path";
@@ -90,6 +90,32 @@ function mergePayload(a, b) {
   };
 }
 
+/**
+ * @param {string} modId
+ * @returns {string}
+ */
+function safeLogId(modId) {
+  return String(modId).replace(/[^a-zA-Z0-9._-]+/g, "_") || "mod";
+}
+
+/**
+ * @param {string} modId
+ * @returns {string}
+ */
+function logFilePath(modId) {
+  const dir = sandustryLogsDir();
+  mkdirSync(dir, { recursive: true });
+  return join(dir, `${safeLogId(modId)}.log`);
+}
+
+/**
+ * Truncate `logs/<modId>.log` so the next append starts a fresh session.
+ * @param {string} modId
+ */
+export function clearModLog(modId) {
+  writeFileSync(logFilePath(modId), "");
+}
+
 /** Ctrl+R in the `npm run dev` TTY forces a client reload even if main.js is unchanged. */
 function installForceReloadKey() {
   if (!process.stdin.isTTY || process.stdin.isRaw) return;
@@ -124,6 +150,27 @@ export function startHotReloadServer() {
       return;
     }
 
+    if (req.method === "POST" && (req.url === "/log/clear" || req.url?.startsWith("/log/clear?"))) {
+      const chunks = [];
+      req.on("data", (c) => chunks.push(c));
+      req.on("end", () => {
+        const raw = Buffer.concat(chunks).toString("utf8");
+        let modId = "mod";
+        try {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === "object" && typeof parsed.modId === "string" && parsed.modId.trim()) {
+            modId = parsed.modId.trim();
+          }
+        } catch {
+          /* plain text or empty body — default mod id */
+        }
+        clearModLog(modId);
+        res.writeHead(204, { "Access-Control-Allow-Origin": "*" });
+        res.end();
+      });
+      return;
+    }
+
     if (req.method === "POST" && (req.url === "/log" || req.url?.startsWith("/log?"))) {
       const chunks = [];
       req.on("data", (c) => chunks.push(c));
@@ -141,10 +188,7 @@ export function startHotReloadServer() {
         } catch {
           /* plain text body */
         }
-        const safeId = modId.replace(/[^a-zA-Z0-9._-]+/g, "_") || "mod";
-        const dir = sandustryLogsDir();
-        mkdirSync(dir, { recursive: true });
-        appendFileSync(join(dir, `${safeId}.log`), line.endsWith("\n") ? line : `${line}\n`);
+        appendFileSync(logFilePath(modId), line.endsWith("\n") ? line : `${line}\n`);
         res.writeHead(204, { "Access-Control-Allow-Origin": "*" });
         res.end();
       });

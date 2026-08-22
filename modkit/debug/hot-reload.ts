@@ -1,3 +1,4 @@
+import { clearLog } from "../log";
 import { debugEnabled, safe } from "../utils";
 
 /**
@@ -230,10 +231,18 @@ function modDisplayName(host: Host): string {
   return host.modId;
 }
 
-function reloadRenderer(host: Host, source: string): void {
+async function reloadRenderer(host: Host, source: string): Promise<void> {
   if (host.reloading) return;
   host.reloading = true;
   host.sources[host.entry] = source;
+
+  // Fresh file + DevTools console for this reload session.
+  await clearLog(host.modId);
+  try {
+    globalThis.console.clear();
+  } catch {
+    /* DevTools clear is best-effort */
+  }
 
   const report = disposeRegistered(host);
   console.log(
@@ -270,7 +279,7 @@ async function handleNotify(host: Host, payload: NotifyPayload): Promise<void> {
 
   const mainSource = await readAsset(host.api, host.entry);
   if (mainSource != null && (payload.force === true || mainSource !== host.sources[host.entry])) {
-    reloadRenderer(host, mainSource);
+    await reloadRenderer(host, mainSource);
   }
 
   for (const file of Object.keys(host.sources)) {
