@@ -24,13 +24,13 @@ Settings live on the debug mod only (`src/debug/mod.ts` `configSchema`):
 | Setting                   | Key            | Default | Effect                                                                        |
 | ------------------------- | -------------- | ------- | ----------------------------------------------------------------------------- |
 | **Mod enabled**           | `enabled`      | on      | Master switch for runtime helpers                                             |
-| **Open DevTools on load** | `openDevTools` | on      | Open Electron DevTools on load. Skipped when `ide-debug.json` is present (F5) |
+| **Open DevTools on load** | `openDevTools` | off     | Open Electron DevTools on load. Skipped when `ide-debug.json` is present (F5) |
 | **F12 opens DevTools**    | `f12DevTools`  | on      | Capture-phase F12. Can disconnect an IDE debugger session                     |
-| **Skip splash**           | `skipSplash`   | on      | Runtime click poll while splash logos are visible                             |
-| **Auto-boot Continue**    | `autoBoot`     | on      | Click Continue on the main menu after it has been visible                     |
+| **Skip splash**           | `skipSplash`   | off     | Runtime click poll while splash logos are visible                             |
+| **Auto-boot Continue**    | `autoBoot`     | off     | Click Continue on the main menu after it has been visible                     |
 | **Engine Debug (F3)**     | `engineDebug`  | on      | Management row + F3; force `debug.active`; hide vanilla Debug / Stats buttons |
 
-The splash **bundle patch** applies while the debug mod is installed. The **Skip splash** setting only gates the runtime poll.
+Turn on **Skip splash**, **Auto-boot Continue**, or **Open DevTools on load** in the debug mod settings when you want those helpers.
 
 ## Features
 
@@ -39,8 +39,7 @@ The splash **bundle patch** applies while the debug mod is installed. The **Skip
 | DevTools globals      | [`src/debug/main.ts`](../../src/debug/main.ts)                   | Mod enabled   | `sandkit`, `api`, `enums`, `react` on `globalThis`                              |
 | Open DevTools on load | [`boot-menu.ts`](../../src/debug/boot-menu.ts)                   | Open DevTools | Retries until the Electron bridge is ready; skipped when CDP `:9222` is up (F5) |
 | F12 opens DevTools    | [`boot-menu.ts`](../../src/debug/boot-menu.ts)                   | F12           | Capture-phase keydown; skipped on hot-reload eval                               |
-| Splash skip (runtime) | [`splash.ts`](../../src/debug/splash.ts)                         | Skip splash   | Clicks the splash while logos are visible                                       |
-| Splash skip (bundle)  | [`src/debug/mod.ts`](../../src/debug/mod.ts)                     | Mod installed | Rewrites `js/bundle.js`; not toggled at runtime                                 |
+| Splash skip           | [`splash.ts`](../../src/debug/splash.ts)                         | Skip splash   | Clicks the splash while logos are visible                                       |
 | Main-menu auto-boot   | `boot-menu.ts` + [`menu.ts`](../../src/debug/menu.ts)            | Auto-boot     | Clicks **Continue** after it has been visible                                   |
 | Renderer hot reload   | [`modkit/debug/hot-reload.ts`](../../modkit/debug/hot-reload.ts) | `npm run dev` | Polls `GET /hot-reload/last` on the dev watch server                            |
 | F3 debug toggle       | [`src/debug/toggle/`](../../src/debug/toggle/)                   | Engine Debug  | Management row + F3 opens the engine Debug window                               |
@@ -69,10 +68,7 @@ After the mod has loaded, you can paste a runtime API dump script into DevTools.
 
 ## Splash skip
 
-Two layers, both only while the debug mod is installed:
-
-1. **Bundle patch** — `skip-startup-splash` in [`src/debug/mod.ts`](../../src/debug/mod.ts) registers a `requestAnimationFrame` click loop next to the game splash listeners. Format: [patches.md](../patches.md).
-2. **Runtime poll** — `startSplashSkipPolling` clicks `document` every 100 ms while `#splash-logo-1` / `#splash-logo-2` / `#splash-logo-3` or `#splash-screen` is visible, until `sessionStorage.splashShown` is set.
+When **Skip splash** is on, `startSplashSkipPolling` clicks `document` every 100 ms while `#splash-logo-1` / `#splash-logo-2` / `#splash-logo-3` or `#splash-screen` is visible, until `sessionStorage.splashShown` is set. There is no game-file patch; the setting gates runtime only.
 
 ## Main-menu auto-boot
 

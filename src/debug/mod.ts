@@ -21,7 +21,7 @@ export const modinfo = defineModInfo({
     },
     openDevTools: {
       type: "boolean",
-      default: true,
+      default: false,
       labelKey: "Open DevTools on load",
       descriptionKey:
         "Open Electron DevTools when the mod loads. Skipped when the IDE debugger is attached (F5).",
@@ -34,14 +34,13 @@ export const modinfo = defineModInfo({
     },
     skipSplash: {
       type: "boolean",
-      default: true,
+      default: false,
       labelKey: "Skip splash",
-      descriptionKey:
-        "Click through the startup splash while logos are visible. The bundle patch still runs while this mod is installed.",
+      descriptionKey: "Click through the startup splash while logos are visible.",
     },
     autoBoot: {
       type: "boolean",
-      default: true,
+      default: false,
       labelKey: "Auto-boot Continue",
       descriptionKey: "Click Continue on the main menu after it has been visible.",
     },
@@ -55,21 +54,5 @@ export const modinfo = defineModInfo({
   },
 });
 
-/** Splash skip — this mod is debug-build only, so these always write to patches.json. */
-export const patches = definePatches([
-  {
-    id: "skip-startup-splash",
-    file: "js/bundle.js",
-    find: 'document.addEventListener("keydown",p),document.addEventListener("click",h);',
-    operation: "replace",
-    expectedMatches: 1,
-    code: `document.addEventListener("keydown", p), document.addEventListener("click", h), (function(){
-  var n=0;
-  requestAnimationFrame(function _skipStartupSplash() {
-    document.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
-    n++;
-    if (!sessionStorage.getItem("splashShown") && n<90) requestAnimationFrame(_skipStartupSplash);
-  });
-})();`,
-  },
-]);
+/** No game-file patches. Splash skip is settings-gated runtime only (`skipSplash`). */
+export const patches = definePatches([]);
