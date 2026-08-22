@@ -8,19 +8,27 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Changed
 
+- **Selection Capture** GIF encode uses **modern-gif** instead of **gifenc** (typed API, same 2× pixel look).
 - **`npm run dev` cleanup:** when the watch stops (Ctrl+C, terminal close, or process exit), it removes OS mod folders this template owns and the matching `dist/<folder>` links. Use `npm run build` to leave mods installed. See [builds.md](builds.md).
-- **Selection Capture** (`src/selection-capture/`): one mod for **C** marquee capture. **F8** copies a PNG. **F7** records a GIF (default **60** frames). This is not an example folder.
+- **Selection Capture** (`src/selection-capture/`): one mod for **C** marquee capture. **F7** opens the panel for PNG and GIF (default **60** frames). This is not an example folder.
+
+### Removed
+
+- **Selection Capture** panel **Scale** control. PNG and GIF are always **2×** nearest-neighbor.
+- **Selection Capture** **F8** screenshot hotkey. Copy a PNG with the panel **Screenshot** button.
 
 ### Fixed
 
 - **Selection Capture:** a sync read on `frame:render` ran before Pixi painted, so every GIF frame was the sky fill. The recorder now copies on the first microtask after that event and builds one palette from every frame.
+- **Selection Capture GIF:** pause on paint before the crop so large selections do not skip sim ticks.
 - **Management menu hover:** mod rows under Upgrades sit as direct siblings of the vanilla column (same as Toolbox / Building). Nested spacer / `pointer-events-none` wraps blocked hover shine, yellow letter, and clicks.
 - **F5 hot reload:** VS Code renderer attach can stall HTTP `EventSource`. The watch build writes `hot-reload.json`; the client polls that stamp through the mod asset URL so save still reloads the mod.
 
 ### Added
 
 - **Hot reload clears logs:** each renderer reload truncates `logs/<mod-id>.log` and clears the DevTools console so the file only holds the current session. `clearLog(modId)` from `@modkit/log` and `POST /log/clear` on the watch server.
-- **Selection Capture** (`src/selection-capture/`): after a **C** marquee, **F8** copies a PNG and **F7** records a GIF of stepped sim ticks. The folder has `README.md` and `CHANGELOG.md`; the build copies them into the installed mod.
+- **Selection Capture** (`src/selection-capture/`): after a **C** marquee, **F7** opens the panel to copy a PNG or record a GIF of stepped sim ticks. The folder has `README.md` and `CHANGELOG.md`; the build copies them into the installed mod.
+- **Selection Capture** panel: **Freeze background** (sky/cloud time = 0) and **Greenscreen** (`#00FF00` behind the world).
 - **Sample mod READMEs:** each `src/*-example/` folder has a short `README.md`. The build copies it into the installed mod when present.
 - **Worker API example** (`src/worker-api-example/`): optional `worker.ts` → `worker.js`, probes worker-thread `sandkit.api` against `types/worker-api` (`WorkerSandkitApi`). Build bundles `worker.ts` when present.
 
@@ -36,14 +44,14 @@ The template has no release tags yet. Dated sections match the day the change la
 - **Isolation.** Mods cannot import from another `src/` folder. Typecheck uses a per-mod `tsconfig.json`. The bundle fails sibling imports.
 - **Sample mods** (copy one to start a new mod):
 
-| Folder                           | Shows                                  |
-| -------------------------------- | -------------------------------------- |
-| `src/hello-toast-example/`       | Toast on load                          |
-| `src/overlay-hotkey-example/`    | React overlay + Tailwind; **Alt+E**    |
-| `src/retro-game-example/`        | Retro Console Noise Test               |
-| `src/management-button-example/` | Management-column row under Upgrades   |
-| `src/worker-api-example/`        | Worker-thread `sandkit.api` probe      |
-| `src/selection-capture/`         | **C** marquee → **F8** PNG, **F7** GIF |
+| Folder                           | Shows                                |
+| -------------------------------- | ------------------------------------ |
+| `src/hello-toast-example/`       | Toast on load                        |
+| `src/overlay-hotkey-example/`    | React overlay + Tailwind; **Alt+E**  |
+| `src/retro-game-example/`        | Retro Console Noise Test             |
+| `src/management-button-example/` | Management-column row under Upgrades |
+| `src/worker-api-example/`        | Worker-thread `sandkit.api` probe    |
+| `src/selection-capture/`         | **C** marquee → **F7** PNG / GIF     |
 
 - Windows and Linux mods, logs, and launch paths (`~/.config/sandustry` or `%APPDATA%\sandustry`).
 - `createLogger` and debug `console.*` lines that also append to `logs/<mod-id>.log` while `npm run dev` runs.

@@ -8,22 +8,28 @@ Copy a PNG or record a GIF of a **C** marquee selection.
 2. Keep that selection on screen.
 3. Choose one:
 
-| Key / control | Action |
-| --- | --- |
-| **F8** or **Screenshot** | Copy a **2×** PNG (nearest-neighbor). Paste with **Ctrl+V**. |
-| **F7** | Open the panel. Click **Record GIF** for an animated GIF. |
+| Key / control  | Action                                                         |
+| -------------- | -------------------------------------------------------------- |
+| **F7**         | Open the panel.                                                |
+| **Screenshot** | Copy a **2×** PNG (nearest-neighbor). Paste with **Ctrl+V**.    |
+| **Record GIF** | Record an animated GIF.                                        |
 
 ## Panel
 
-| Field | Range | Default |
-| --- | --- | --- |
-| Frames | 2–120 | 60 |
-| Ticks / frame | 1–30 | 1 |
-| Scale | 1× / 2× / 4× | 2× (nearest) |
+| Field             | Range  | Default |
+| ----------------- | ------ | ------- |
+| Frames            | 2–120  | 60      |
+| Ticks / frame     | 1–30   | 1       |
+| Freeze background | on/off | off     |
+| Greenscreen       | on/off | off     |
 
-**Record GIF** pauses the sim, then steps the ticks you set between frames. The `.gif` downloads. Clipboard copy of GIF is attempted; Chromium often rejects `image/gif`.
+**Freeze background** stops sky and cloud motion for the capture (cinematic sky time speed = 0).
 
-**Screenshot** copies a PNG (same as **F8**).
+**Greenscreen** hides the parallax sky layers and fills empty pixels with `#00FF00` for chroma key.
+
+**Record GIF** pauses the sim on each painted frame, then steps the ticks you set before the next capture. The GIF is **2×** nearest-neighbor, same as the PNG. The `.gif` downloads. Clipboard copy of GIF is attempted; Chromium often rejects `image/gif`.
+
+**Screenshot** copies a PNG.
 
 The dashed **C** marquee is restored after a GIF recording.
 

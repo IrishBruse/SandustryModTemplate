@@ -35,9 +35,9 @@ Copy [`src/hello-toast-example/`](src/hello-toast-example/) to `src/<your-mod>/`
 
 ### Mods
 
-| Folder                                             | Shows                                  |
-| -------------------------------------------------- | -------------------------------------- |
-| [`src/selection-capture/`](src/selection-capture/) | **C** marquee → **F8** PNG, **F7** GIF |
+| Folder                                             | Shows                            |
+| -------------------------------------------------- | -------------------------------- |
+| [`src/selection-capture/`](src/selection-capture/) | **C** marquee → **F7** PNG / GIF |
 
 ### Examples
 

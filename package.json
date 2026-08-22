@@ -27,6 +27,6 @@
     "typescript": "^7.0.2"
   },
   "dependencies": {
-    "gifenc": "^1.0.3"
+    "modern-gif": "^2.1.0"
   }
 }

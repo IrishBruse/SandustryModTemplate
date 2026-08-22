@@ -33,7 +33,7 @@ Logs: Linux `~/.config/sandustry/logs`; Windows `%APPDATA%/sandustry/logs`.
 
 ### `src/`
 
-Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized demos: `hello-toast-example`, `overlay-hotkey-example`, `retro-game-example`, `management-button-example`, `worker-api-example`. Real mod: `selection-capture` (**C** marquee, **F8** PNG, **F7** GIF). Mods cannot import from each other.
+Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized demos: `hello-toast-example`, `overlay-hotkey-example`, `retro-game-example`, `management-button-example`, `worker-api-example`. Real mod: `selection-capture` (**C** marquee, **F7** PNG / GIF). Mods cannot import from each other.
 
 | Path                           | Role                                                                                |
 | ------------------------------ | ----------------------------------------------------------------------------------- |
@@ -100,11 +100,11 @@ Use the free name `sandkit` in mod and modkit code. Do not import `@modkit/sandk
 
 ## Builds
 
-| Command                                    | Debug helpers                  | `debugPatches` | Output                                                         |
-| ------------------------------------------ | ------------------------------ | -------------- | -------------------------------------------------------------- |
-| `npm run build`                            | Stub (`modkit/debug/empty.ts`) | Omitted        | OS mods folder; `dist/<folder>/` links                         |
+| Command                                    | Debug helpers                  | `debugPatches` | Output                                                      |
+| ------------------------------------------ | ------------------------------ | -------------- | ----------------------------------------------------------- |
+| `npm run build`                            | Stub (`modkit/debug/empty.ts`) | Omitted        | OS mods folder; `dist/<folder>/` links                      |
 | `npm run dev`                              | Included                       | Included       | OS mods folder while watching; removed when the watch stops |
-| `npm run sandustry` / `--game` / `--debug` | Included                       | Included       | Game mods folder                                               |
+| `npm run sandustry` / `--game` / `--debug` | Included                       | Included       | Game mods folder                                            |
 
 `--no-debug` forces a release-style bundle. Debug builds emit inline source maps; `--sourcemap` / `--no-sourcemap` override. `--mod <folder>` builds one src folder.
 

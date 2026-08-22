@@ -39,4 +39,4 @@ if (isEnabled(api)) {
   console.warn(`[${MOD_ID}] mod disabled in settings — UI not registered`);
 }
 
-console.log(`[${MOD_ID}] ${reloaded ? "reloaded" : "loaded"} — C then F8 (PNG) or F7 (GIF)`);
+console.log(`[${MOD_ID}] ${reloaded ? "reloaded" : "loaded"} — C then F7 (PNG or GIF)`);

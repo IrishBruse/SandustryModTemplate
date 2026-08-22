@@ -6,21 +6,43 @@ const LOG = `[${MOD_ID}]`;
 /** Sky fill when the WebGL backdrop cannot be sampled. */
 const FALLBACK_SKY = "#3d6b78";
 
+/** Chroma-key fill when **Greenscreen** is on. */
+const GREENSCREEN = "#00ff00";
+
+export type CaptureLook = {
+  freezeBackground: boolean;
+  greenscreen: boolean;
+};
+
 /** Extra screen pixels on each edge so structure outlines are not clipped. */
 const BORDER_PX = 1;
 
+type VisibleNode = { visible?: boolean; parent?: { filters?: unknown[] | null } };
+
+type SessionPixi = {
+  app?: {
+    canvas?: HTMLCanvasElement;
+    view?: HTMLCanvasElement;
+  };
+  dynamic2D?: {
+    context?: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
+  };
+  mountainsSprite?: VisibleNode;
+  treesSmallSprite?: VisibleNode;
+  treesSprite?: VisibleNode;
+  bgL04Sprite?: VisibleNode;
+  bgL04Extension?: VisibleNode;
+  edgeMist?: { sprite?: VisibleNode };
+  toggleSkyFilter?: (enabled: boolean) => void;
+};
+
 type SessionRendering = {
   canvas?: HTMLCanvasElement;
-  pixi?: {
-    app?: {
-      canvas?: HTMLCanvasElement;
-      view?: HTMLCanvasElement;
-    };
-    dynamic2D?: {
-      context?: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
-    };
-  };
+  pixi?: SessionPixi;
 };
+
+type CinematicSky = { timeSpeed?: number };
+type CinematicShape = { sky?: CinematicSky };
 
 type SessionShape = {
   paused?: boolean;
@@ -41,6 +63,79 @@ function getDynamic2DCanvas(): HTMLCanvasElement | OffscreenCanvas | null {
   const context = getSession()?.rendering?.pixi?.dynamic2D?.context;
   const canvas = context?.canvas;
   return canvas ?? null;
+}
+
+function getCinematicSky(): CinematicSky | null {
+  const session = getSession() as (SessionShape & { cinematic?: CinematicShape }) | null;
+  const cinematic = session?.cinematic;
+  if (!cinematic) return null;
+  cinematic.sky ??= {};
+  return cinematic.sky;
+}
+
+function backgroundNodes(pixi: SessionPixi): VisibleNode[] {
+  const nodes: VisibleNode[] = [];
+  for (const node of [
+    pixi.mountainsSprite,
+    pixi.treesSmallSprite,
+    pixi.treesSprite,
+    pixi.bgL04Sprite,
+    pixi.bgL04Extension,
+    pixi.edgeMist?.sprite,
+  ]) {
+    if (node) nodes.push(node);
+  }
+  return nodes;
+}
+
+/**
+ * Freeze sky/cloud time and/or hide parallax + sky shader for a chroma-key fill.
+ * Call the returned function to restore.
+ */
+export function applyCaptureLook(look: CaptureLook): () => void {
+  const restores: Array<() => void> = [];
+
+  if (look.freezeBackground) {
+    const sky = getCinematicSky();
+    if (sky) {
+      const previous = sky.timeSpeed ?? 1;
+      sky.timeSpeed = 0;
+      restores.push(() => {
+        sky.timeSpeed = previous;
+      });
+    }
+  }
+
+  if (look.greenscreen) {
+    const pixi = getSession()?.rendering?.pixi;
+    const previousBody = document.body.style.backgroundColor;
+    if (pixi) {
+      const nodes = backgroundNodes(pixi);
+      const visibility = nodes.map((node) => node.visible !== false);
+      const layer = pixi.mountainsSprite?.parent;
+      const previousFilters = layer?.filters ?? null;
+      for (const node of nodes) node.visible = false;
+      pixi.toggleSkyFilter?.(false);
+      restores.push(() => {
+        nodes.forEach((node, i) => {
+          node.visible = visibility[i];
+        });
+        if (layer) layer.filters = previousFilters;
+        else pixi.toggleSkyFilter?.(previousFilters != null && previousFilters.length > 0);
+      });
+    }
+    document.body.style.backgroundColor = GREENSCREEN;
+    restores.push(() => {
+      document.body.style.backgroundColor = previousBody;
+    });
+  }
+
+  let restored = false;
+  return () => {
+    if (restored) return;
+    restored = true;
+    for (let i = restores.length - 1; i >= 0; i--) restores[i]();
+  };
 }
 
 type ScreenRect = { x: number; y: number; width: number; height: number };
@@ -80,27 +175,48 @@ function clipRectToCanvas(rect: ScreenRect, canvasW: number, canvasH: number): S
   return { x: x0, y: y0, width, height };
 }
 
+let cropScratch: HTMLCanvasElement | null = null;
+let scaleScratch: HTMLCanvasElement | null = null;
+
+function scratchCanvas(slot: "crop" | "scale", width: number, height: number): HTMLCanvasElement {
+  const previous = slot === "crop" ? cropScratch : scaleScratch;
+  const canvas = previous ?? document.createElement("canvas");
+  if (slot === "crop") cropScratch = canvas;
+  else scaleScratch = canvas;
+  if (canvas.width !== width || canvas.height !== height) {
+    canvas.width = width;
+    canvas.height = height;
+  }
+  return canvas;
+}
+
 /**
  * Copy pixels on the first microtask after `frame:render`.
  * That event fires just before `texture.update` + Pixi render — a sync read is
  * still the sky clear. Waiting an extra `await` hop is too late (WebGL buffer gone).
+ *
+ * `onPaint` runs in the render listener (before the copy) so the sim can pause
+ * while a large crop is still on the main thread.
  */
 export function rasterizeOnPaint(
   api: SandkitApi,
   bounds: CellBounds,
   scale: number,
+  onPaint?: () => void,
+  look?: CaptureLook,
 ): Promise<HTMLCanvasElement | null> {
   return new Promise((resolve, reject) => {
     let settled = false;
     let timeoutId = 0;
     const unsubscribe = api.events.on("frame:render", () => {
       unsubscribe();
+      onPaint?.();
       queueMicrotask(() => {
         if (settled) return;
         settled = true;
         clearTimeout(timeoutId);
         try {
-          resolve(rasterizeSelection(api, bounds, scale));
+          resolve(rasterizeSelection(api, bounds, scale, look));
         } catch (error) {
           reject(error);
         }
@@ -115,6 +231,21 @@ export function rasterizeOnPaint(
   });
 }
 
+/** 1× crop pixels after paint. Does not upscale — GIF encode scales later. */
+export function snapshotOnPaint(
+  api: SandkitApi,
+  bounds: CellBounds,
+  onPaint?: () => void,
+  look?: CaptureLook,
+): Promise<ImageData | null> {
+  return rasterizeOnPaint(api, bounds, 1, onPaint, look).then((canvas) => {
+    if (!canvas) return null;
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx) return null;
+    return ctx.getImageData(0, 0, canvas.width, canvas.height);
+  });
+}
+
 /**
  * Crop the selection from the live game canvases, then nearest-neighbor upscale.
  */
@@ -122,6 +253,7 @@ export function rasterizeSelection(
   api: SandkitApi,
   bounds: CellBounds,
   scale: number,
+  look?: CaptureLook,
 ): HTMLCanvasElement | null {
   const screenRect = getSelectionScreenRect(api, bounds);
   if (!screenRect) {
@@ -141,14 +273,12 @@ export function rasterizeSelection(
     return null;
   }
 
-  const out = document.createElement("canvas");
-  out.width = clip.width;
-  out.height = clip.height;
+  const out = scratchCanvas("crop", clip.width, clip.height);
   const ctx = out.getContext("2d", { willReadFrequently: true });
   if (!ctx) return null;
   ctx.imageSmoothingEnabled = false;
 
-  ctx.fillStyle = FALLBACK_SKY;
+  ctx.fillStyle = look?.greenscreen ? GREENSCREEN : FALLBACK_SKY;
   ctx.fillRect(0, 0, out.width, out.height);
   const gameCanvas = getGameCanvas();
   if (gameCanvas && gameCanvas.width > 0 && gameCanvas.height > 0) {
@@ -189,9 +319,7 @@ export function rasterizeSelection(
   const pixelScale = Math.max(1, Math.round(scale));
   if (pixelScale === 1) return out;
 
-  const scaled = document.createElement("canvas");
-  scaled.width = out.width * pixelScale;
-  scaled.height = out.height * pixelScale;
+  const scaled = scratchCanvas("scale", out.width * pixelScale, out.height * pixelScale);
   const scaledCtx = scaled.getContext("2d");
   if (!scaledCtx) return out;
   scaledCtx.imageSmoothingEnabled = false;

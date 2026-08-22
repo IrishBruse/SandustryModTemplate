@@ -8,7 +8,7 @@ export const modinfo = defineModInfo({
   apiVersion: 1,
   entry: "main.js",
   author: "Your Name",
-  description: "C-cursor marquee: F8 copies a PNG. F7 records a GIF of that area.",
+  description: "C-cursor marquee: F7 opens the panel to copy a PNG or record a GIF.",
   dependencies: [],
   loadOrder: 0,
   configSchema: {

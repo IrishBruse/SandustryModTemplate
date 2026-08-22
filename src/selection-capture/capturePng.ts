@@ -1,10 +1,10 @@
-import { rasterizeOnPaint } from "./captureFrame";
+import { applyCaptureLook, rasterizeOnPaint, type CaptureLook } from "./captureFrame";
 import { MOD_ID } from "./globals";
 import { getSelectionCellBounds } from "./selectionBounds";
 
 const LOG = `[${MOD_ID}]`;
 
-/** Same nearest-neighbor scale as the old F8 screenshot. */
+/** Same nearest-neighbor scale as the PNG screenshot. */
 const PNG_SCALE = 2;
 
 function canvasToPngBlob(canvas: HTMLCanvasElement): Promise<Blob | null> {
@@ -36,22 +36,36 @@ async function copyPngToClipboard(canvas: HTMLCanvasElement): Promise<boolean> {
 export type CapturePngResult = "ok" | "no-selection" | "out-of-view" | "failed";
 
 /** Crop the C marquee after the next paint, then copy a PNG to the clipboard. */
-export async function captureSelectionPng(api: SandkitApi): Promise<CapturePngResult> {
+export async function captureSelectionPng(
+  api: SandkitApi,
+  look: CaptureLook = { freezeBackground: false, greenscreen: false },
+): Promise<CapturePngResult> {
   const bounds = getSelectionCellBounds(api);
   if (!bounds) {
     console.warn(`${LOG} no selection bounds`);
     return "no-selection";
   }
 
+  const restoreLook = applyCaptureLook(look);
   let raster: HTMLCanvasElement | null = null;
   try {
-    raster = await rasterizeOnPaint(api, bounds, PNG_SCALE);
+    raster = await rasterizeOnPaint(api, bounds, PNG_SCALE, undefined, look);
   } catch (error) {
     console.warn(`${LOG} PNG paint wait failed:`, error);
     return "failed";
+  } finally {
+    restoreLook();
   }
   if (!raster) return "out-of-view";
 
-  const ok = await copyPngToClipboard(raster);
+  const copy = document.createElement("canvas");
+  copy.width = raster.width;
+  copy.height = raster.height;
+  const ctx = copy.getContext("2d");
+  if (!ctx) return "failed";
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(raster, 0, 0);
+
+  const ok = await copyPngToClipboard(copy);
   return ok ? "ok" : "failed";
 }

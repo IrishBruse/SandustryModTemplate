@@ -35,9 +35,9 @@ Copy [`src/hello-toast-example/`](../src/hello-toast-example/) to `src/<your-mod
 
 ### Mods
 
-| Folder                                                | Shows                                  |
-| ----------------------------------------------------- | -------------------------------------- |
-| [`src/selection-capture/`](../src/selection-capture/) | **C** marquee → **F8** PNG, **F7** GIF |
+| Folder                                                | Shows                            |
+| ----------------------------------------------------- | -------------------------------- |
+| [`src/selection-capture/`](../src/selection-capture/) | **C** marquee → **F7** PNG / GIF |
 
 ### Examples
 
@@ -57,12 +57,12 @@ In game, **Alt+E** opens the overlay from `overlay-hotkey-example`. More: [docs 
 
 ## Commands
 
-| Command             | Effect                                                                 |
-| ------------------- | ---------------------------------------------------------------------- |
+| Command             | Effect                                                       |
+| ------------------- | ------------------------------------------------------------ |
 | `npm run dev`       | Watch OS mods folder; remove owned mods when the watch stops |
-| `npm run build`     | Release bundle (no debug helpers)                                      |
-| `npm run typecheck` | TypeScript check                                                       |
-| `npm run sandustry` | Debug build and launch                                                 |
+| `npm run build`     | Release bundle (no debug helpers)                            |
+| `npm run typecheck` | TypeScript check                                             |
+| `npm run sandustry` | Debug build and launch                                       |
 
 ## Troubleshooting
 

@@ -12,16 +12,7 @@ import { MOD_ID } from "../globals";
 import { recordSelectionGif } from "../recordGif";
 
 const TOGGLE_CODE = "F7";
-const SCREENSHOT_CODE = "F8";
 const DEFAULT_FRAMES = 60;
-
-/** Survives hot reload so F8 always calls the latest screenshot handler. */
-type CaptureUi = { screenshot: () => void };
-export const captureUi = ((
-  globalThis as unknown as { __selectionCaptureUi?: CaptureUi }
-).__selectionCaptureUi ??= {
-  screenshot: () => undefined,
-});
 
 function parsePositiveInt(raw: string, fallback: number): number {
   const n = Number(raw);
@@ -32,7 +23,8 @@ export function Overlay() {
   const [open, setOpen] = useState(false);
   const [frames, setFrames] = useState(DEFAULT_FRAMES);
   const [ticksPerFrame, setTicksPerFrame] = useState(1);
-  const [scale, setScale] = useState(2);
+  const [freezeBackground, setFreezeBackground] = useState(false);
+  const [greenscreen, setGreenscreen] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const toggle = useCallback(() => {
@@ -44,7 +36,7 @@ export function Overlay() {
     const api = sandkit.api;
     void (async () => {
       try {
-        const result = await captureSelectionPng(api);
+        const result = await captureSelectionPng(api, { freezeBackground, greenscreen });
         switch (result) {
           case "ok":
             api.ui.toast("Copied — paste with Ctrl+V", {});
@@ -64,26 +56,15 @@ export function Overlay() {
         api.ui.toast("Clipboard copy failed", {});
       }
     })();
-  }, [busy]);
-
-  useEffect(() => {
-    captureUi.screenshot = screenshot;
-  }, [screenshot]);
+  }, [busy, freezeBackground, greenscreen]);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if (event.repeat || event.ctrlKey || event.altKey || event.metaKey) return;
-      if (event.code === TOGGLE_CODE) {
-        event.preventDefault();
-        event.stopPropagation();
-        toggle();
-        return;
-      }
-      if (event.code === SCREENSHOT_CODE) {
-        event.preventDefault();
-        event.stopPropagation();
-        captureUi.screenshot();
-      }
+      if (event.code !== TOGGLE_CODE) return;
+      event.preventDefault();
+      event.stopPropagation();
+      toggle();
     }
     window.addEventListener("keydown", onKeyDown, true);
     return () => window.removeEventListener("keydown", onKeyDown, true);
@@ -97,7 +78,8 @@ export function Overlay() {
       const result = await recordSelectionGif(api, {
         frames,
         ticksPerFrame,
-        scale,
+        freezeBackground,
+        greenscreen,
       });
       switch (result) {
         case "ok":
@@ -137,7 +119,6 @@ export function Overlay() {
             <SectionHeading size="md">Selection Capture</SectionHeading>
             <p className="text-sm opacity-80 mb-3">
               Select with <HotkeyBadge>C</HotkeyBadge>.<br />
-              <HotkeyBadge>F8</HotkeyBadge> copies a PNG. <br />
               Press <HotkeyBadge>F7</HotkeyBadge> to close.
             </p>
             <label className="block text-sm mb-2">
@@ -166,18 +147,23 @@ export function Overlay() {
                 onChange={(event) => setTicksPerFrame(parsePositiveInt(event.target.value, 1))}
               />
             </label>
-            <label className="block text-sm mb-3">
-              Scale
-              <select
-                className={`${fieldClass} mt-1`}
-                value={scale}
+            <label className="flex items-center gap-2 text-sm mb-2">
+              <input
+                type="checkbox"
+                checked={freezeBackground}
                 disabled={busy}
-                onChange={(event) => setScale(parsePositiveInt(event.target.value, 2))}
-              >
-                <option value={1}>1×</option>
-                <option value={2}>2× (nearest)</option>
-                <option value={4}>4× (nearest)</option>
-              </select>
+                onChange={(event) => setFreezeBackground(event.target.checked)}
+              />
+              Freeze background
+            </label>
+            <label className="flex items-center gap-2 text-sm mb-3">
+              <input
+                type="checkbox"
+                checked={greenscreen}
+                disabled={busy}
+                onChange={(event) => setGreenscreen(event.target.checked)}
+              />
+              Greenscreen
             </label>
             <button
               className="w-full text-sm tracking-wider bg-white bg-opacity-15 hover:bg-opacity-25 disabled:opacity-50 py-2 rounded"

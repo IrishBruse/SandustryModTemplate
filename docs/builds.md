@@ -4,11 +4,11 @@ The game runs `main.js` as a script body (`new Function`). `sandkit` is already 
 
 ## Debug vs release
 
-| Command                                    | Debug helpers                  | `debugPatches` | Output                                                         |
-| ------------------------------------------ | ------------------------------ | -------------- | -------------------------------------------------------------- |
-| `npm run build`                            | Stub (`modkit/debug/empty.ts`) | Omitted        | OS mods folder; `dist/<folder>/` links                         |
-| `npm run dev`                              | Included                       | Included       | OS mods folder while watching; removed when the watch stops    |
-| `npm run sandustry` / `--game` / `--debug` | Included                       | Included       | Game mods folder                                               |
+| Command                                    | Debug helpers                  | `debugPatches` | Output                                                      |
+| ------------------------------------------ | ------------------------------ | -------------- | ----------------------------------------------------------- |
+| `npm run build`                            | Stub (`modkit/debug/empty.ts`) | Omitted        | OS mods folder; `dist/<folder>/` links                      |
+| `npm run dev`                              | Included                       | Included       | OS mods folder while watching; removed when the watch stops |
+| `npm run sandustry` / `--game` / `--debug` | Included                       | Included       | Game mods folder                                            |
 
 `--no-debug` forces a release-style bundle even when watch or game flags are set. `--mod <folder>` builds one `src/<name>/` folder. The build discovers every `src/*/mod.ts`.
 

@@ -1,5 +1,5 @@
-import { GIFEncoder, applyPalette, quantize } from "gifenc";
-import { getSession, rasterizeOnPaint } from "./captureFrame";
+import { encode, type UnencodedFrame } from "modern-gif";
+import { applyCaptureLook, getSession, snapshotOnPaint, type CaptureLook } from "./captureFrame";
 import { MOD_ID } from "./globals";
 import {
   getSelectionCellBounds,
@@ -14,7 +14,8 @@ const MIN_FRAMES = 2;
 const MAX_FRAMES = 120;
 const MIN_TICKS = 1;
 const MAX_TICKS = 30;
-const ALLOWED_SCALES = [1, 2, 4] as const;
+/** Same nearest-neighbor scale as the PNG screenshot. */
+const GIF_SCALE = 2;
 
 /**
  * WorkerMessage.SetPaused in the current game bundle (`dist/js/bundle.js`).
@@ -25,7 +26,8 @@ const WORKER_SET_PAUSED = 54;
 export type RecordGifOptions = {
   frames: number;
   ticksPerFrame: number;
-  scale: number;
+  freezeBackground: boolean;
+  greenscreen: boolean;
 };
 
 export type RecordGifResult = "ok" | "downloaded" | "no-selection" | "out-of-view" | "failed";
@@ -41,12 +43,6 @@ type EnvironmentShape = {
 function clampInt(value: number, min: number, max: number): number {
   if (!Number.isFinite(value)) return min;
   return Math.min(max, Math.max(min, Math.round(value)));
-}
-
-function clampScale(value: number): number {
-  const n = Math.round(value);
-  if (ALLOWED_SCALES.includes(n as (typeof ALLOWED_SCALES)[number])) return n;
-  return 2;
 }
 
 function setSimulationPaused(paused: boolean): void {
@@ -87,20 +83,24 @@ function waitTicks(api: SandkitApi, count: number): Promise<void> {
   });
 }
 
-async function capturePaintedFrame(
+async function captureGifFrame(
   api: SandkitApi,
   bounds: CellBounds,
-  scale: number,
-): Promise<HTMLCanvasElement | null> {
-  const wasPaused = getSession()?.paused === true;
-  if (wasPaused) setSimulationPaused(false);
+  look: CaptureLook,
+): Promise<ImageData | null> {
+  if (getSession()?.paused === true) setSimulationPaused(false);
+  const snap = () => snapshotOnPaint(api, bounds, () => setSimulationPaused(true), look);
   try {
-    return await rasterizeOnPaint(api, bounds, scale);
+    return await snap();
   } catch (error) {
-    console.warn(`${LOG} first paint wait failed:`, error);
-    return null;
-  } finally {
-    if (wasPaused) setSimulationPaused(true);
+    console.warn(`${LOG} paint wait failed, retry:`, error);
+    setSimulationPaused(false);
+    try {
+      return await snap();
+    } catch (retryError) {
+      console.warn(`${LOG} paint wait failed:`, retryError);
+      return null;
+    }
   }
 }
 
@@ -115,54 +115,66 @@ function canvasToRgba(canvas: HTMLCanvasElement): {
   return { data: image.data, width: image.width, height: image.height };
 }
 
-function sampleFramesForPalette(frames: HTMLCanvasElement[]): Uint8ClampedArray | null {
-  const chunks: Uint8ClampedArray[] = [];
-  for (const frame of frames) {
-    const rgba = canvasToRgba(frame);
-    if (!rgba) continue;
-    const pixels = rgba.width * rgba.height;
-    const step = Math.max(1, Math.floor(pixels / 4000));
-    const out = new Uint8ClampedArray(Math.ceil(pixels / step) * 4);
-    let o = 0;
-    for (let p = 0; p < pixels; p += step) {
-      const i = p * 4;
-      out[o] = rgba.data[i];
-      out[o + 1] = rgba.data[i + 1];
-      out[o + 2] = rgba.data[i + 2];
-      out[o + 3] = rgba.data[i + 3];
-      o += 4;
-    }
-    chunks.push(out.subarray(0, o));
+let encodeScratch: HTMLCanvasElement | null = null;
+let encodeScaleScratch: HTMLCanvasElement | null = null;
+
+function gifScratch(slot: "src" | "scaled", width: number, height: number): HTMLCanvasElement {
+  const previous = slot === "src" ? encodeScratch : encodeScaleScratch;
+  const canvas = previous ?? document.createElement("canvas");
+  if (slot === "src") encodeScratch = canvas;
+  else encodeScaleScratch = canvas;
+  if (canvas.width !== width || canvas.height !== height) {
+    canvas.width = width;
+    canvas.height = height;
   }
-  if (chunks.length === 0) return null;
-  const combined = new Uint8ClampedArray(chunks.reduce((n, chunk) => n + chunk.length, 0));
-  let offset = 0;
-  for (const chunk of chunks) {
-    combined.set(chunk, offset);
-    offset += chunk.length;
-  }
-  return combined;
+  return canvas;
 }
 
-function encodeGif(frames: HTMLCanvasElement[], delayMs: number): Uint8Array | null {
+function frameToRgba(
+  frame: ImageData,
+): { data: Uint8ClampedArray; width: number; height: number } | null {
+  const src = gifScratch("src", frame.width, frame.height);
+  const srcCtx = src.getContext("2d", { willReadFrequently: true });
+  if (!srcCtx) return null;
+  srcCtx.putImageData(frame, 0, 0);
+
+  const scaled = gifScratch("scaled", frame.width * GIF_SCALE, frame.height * GIF_SCALE);
+  const scaledCtx = scaled.getContext("2d", { willReadFrequently: true });
+  if (!scaledCtx) return null;
+  scaledCtx.imageSmoothingEnabled = false;
+  scaledCtx.drawImage(src, 0, 0, scaled.width, scaled.height);
+  return canvasToRgba(scaled);
+}
+
+async function encodeGif(frames: ImageData[], delayMs: number): Promise<Uint8Array | null> {
   if (frames.length === 0) return null;
-  const sample = sampleFramesForPalette(frames);
-  if (!sample) return null;
-  const palette = quantize(sample, 256);
-  const gif = GIFEncoder();
-  for (let i = 0; i < frames.length; i++) {
-    const rgba = canvasToRgba(frames[i]);
+
+  const prepared: UnencodedFrame[] = [];
+  let width = 0;
+  let height = 0;
+  for (const frame of frames) {
+    const rgba = frameToRgba(frame);
     if (!rgba) return null;
-    const index = applyPalette(rgba.data, palette);
-    gif.writeFrame(index, rgba.width, rgba.height, {
-      palette: i === 0 ? palette : undefined,
+    width = rgba.width;
+    height = rgba.height;
+    // Scratch canvases reuse the same backing store — copy before the next frame.
+    // Cast: TS types Uint8ClampedArray.buffer as ArrayBufferLike; modern-gif wants BufferSource.
+    const data = new Uint8ClampedArray(rgba.data) as UnencodedFrame["data"];
+    prepared.push({
+      data,
       delay: delayMs,
-      repeat: i === 0 ? 0 : undefined,
-      dispose: 1,
+      disposal: 1,
     });
   }
-  gif.finish();
-  return gif.bytes();
+
+  const buffer = await encode({
+    width,
+    height,
+    frames: prepared,
+    maxColors: 255,
+    looped: true,
+  });
+  return new Uint8Array(buffer);
 }
 
 function bytesToGifBlob(bytes: Uint8Array): Blob {
@@ -253,8 +265,11 @@ export async function recordSelectionGif(
 ): Promise<RecordGifResult> {
   const framesWanted = clampInt(options.frames, MIN_FRAMES, MAX_FRAMES);
   const ticksPerFrame = clampInt(options.ticksPerFrame, MIN_TICKS, MAX_TICKS);
-  const scale = clampScale(options.scale);
   const delayMs = Math.max(20, ticksPerFrame * 20);
+  const look: CaptureLook = {
+    freezeBackground: options.freezeBackground,
+    greenscreen: options.greenscreen,
+  };
 
   const bounds = getSelectionCellBounds(api);
   if (!bounds) {
@@ -268,33 +283,32 @@ export async function recordSelectionGif(
     bounds,
     framesWanted,
     ticksPerFrame,
-    scale,
+    freezeBackground: look.freezeBackground,
+    greenscreen: look.greenscreen,
   });
 
-  const frames: HTMLCanvasElement[] = [];
+  const frames: ImageData[] = [];
+  const restoreLook = applyCaptureLook(look);
   try {
-    const first = await capturePaintedFrame(api, bounds, scale);
-    if (!first) return "out-of-view";
-    frames.push(first);
-    setSimulationPaused(true);
+    try {
+      const first = await captureGifFrame(api, bounds, look);
+      if (!first) return "out-of-view";
+      frames.push(first);
 
-    for (let i = 1; i < framesWanted; i++) {
-      await waitTicks(api, ticksPerFrame);
-      let frame: HTMLCanvasElement | null = null;
-      try {
-        frame = await rasterizeOnPaint(api, bounds, scale);
-      } catch (error) {
-        console.warn(`${LOG} paint wait failed on frame ${i + 1}:`, error);
+      for (let i = 1; i < framesWanted; i++) {
+        await waitTicks(api, ticksPerFrame);
+        const frame = await captureGifFrame(api, bounds, look);
+        if (!frame) {
+          console.warn(`${LOG} frame ${i + 1} missing — abort`);
+          return "failed";
+        }
+        frames.push(frame);
+        if (i === 1 || i % 10 === 0) {
+          console.log(`${LOG} captured frame ${i + 1}/${framesWanted}`);
+        }
       }
-      setSimulationPaused(true);
-      if (!frame) {
-        console.warn(`${LOG} frame ${i + 1} missing — skipped`);
-        continue;
-      }
-      frames.push(frame);
-      if (i === 1 || i % 10 === 0) {
-        console.log(`${LOG} captured frame ${i + 1}/${framesWanted}`);
-      }
+    } finally {
+      restoreLook();
     }
 
     if (frames.length < 2) return "failed";
@@ -303,11 +317,14 @@ export async function recordSelectionGif(
     await new Promise<void>((resolve) => {
       setTimeout(resolve, 0);
     });
-    const bytes = encodeGif(frames, delayMs);
+    const bytes = await encodeGif(frames, delayMs);
     if (!bytes) return "failed";
 
     downloadGif(bytes);
-    const copied = await copyGifToClipboard(bytes, frames[0]);
+    if (!frameToRgba(frames[0])) return "failed";
+    const previewCanvas = encodeScaleScratch;
+    if (!previewCanvas) return "failed";
+    const copied = await copyGifToClipboard(bytes, previewCanvas);
     console.log(`${LOG} GIF ready`, {
       frames: frames.length,
       bytes: bytes.byteLength,
