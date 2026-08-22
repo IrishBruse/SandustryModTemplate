@@ -24,7 +24,7 @@ Settings live on the debug mod only (`src/debug/mod.ts` `configSchema`):
 | Setting                   | Key               | Default | Effect                                                                        |
 | ------------------------- | ----------------- | ------- | ----------------------------------------------------------------------------- |
 | **Mod enabled**           | `enabled`         | on      | Master switch for runtime helpers                                             |
-| **Open DevTools on load** | `openDevTools`    | off     | Open Electron DevTools on load. Skipped when `ide-debug.json` is present (F5) |
+| **Open DevTools on load** | `openDevTools`    | off     | Open Electron DevTools on load. Keep off under F5 so the IDE debugger stays attached |
 | **F12 opens DevTools**    | `f12DevTools`     | on      | Capture-phase F12. Can disconnect an IDE debugger session                     |
 | **Skip splash**           | `skipSplash`      | off     | Runtime click poll while splash logos are visible                             |
 | **Auto-boot Continue**    | `autoBoot`        | off     | Click Continue on the main menu after it has been visible                     |
@@ -38,7 +38,7 @@ Turn on **Skip splash**, **Auto-boot Continue**, or **Open DevTools on load** in
 | Feature               | Where                                                            | Setting           | Notes                                                                           |
 | --------------------- | ---------------------------------------------------------------- | ----------------- | ------------------------------------------------------------------------------- |
 | DevTools globals      | [`src/debug/main.ts`](../../src/debug/main.ts)                   | Mod enabled       | `sandkit`, `api`, `enums`, `react` on `globalThis`                              |
-| Open DevTools on load | [`boot-menu.ts`](../../src/debug/boot-menu.ts)                   | Open DevTools     | Retries until the Electron bridge is ready; skipped when CDP `:9222` is up (F5) |
+| Open DevTools on load | [`boot-menu.ts`](../../src/debug/boot-menu.ts)                   | Open DevTools     | Retries until the Electron bridge is ready. Keep off under F5 |
 | F12 opens DevTools    | [`boot-menu.ts`](../../src/debug/boot-menu.ts)                   | F12               | Capture-phase keydown; skipped on hot-reload eval                               |
 | Splash skip           | [`splash.ts`](../../src/debug/splash.ts)                         | Skip splash       | Clicks the splash while logos are visible                                       |
 | Main-menu auto-boot   | `boot-menu.ts` + [`menu.ts`](../../src/debug/menu.ts)            | Auto-boot         | Clicks **Continue** after it has been visible                                   |
@@ -64,8 +64,8 @@ After the mod has loaded, you can paste a runtime API dump script into DevTools.
 
 ## DevTools
 
-- On first load, `openDevToolsOnStartup` calls `window.electron.openDevTools()` immediately and again at 250 ms, 750 ms, 1500 ms, and 3000 ms — **unless** F5 / `sandustry:vscode` wrote `ide-debug.json` into the local mod folders (the renderer has no `process.env`, so spawn env alone cannot signal this). Opening Electron DevTools on top of that attach drops the IDE debugger. The renderer does not fetch `:9222` — that HTTP call can freeze the game while the IDE is attached.
-- **F12** still opens Electron DevTools (force). That can disconnect an IDE CDP session; prefer the IDE debugger panel when you launched with F5.
+- On first load, `openDevToolsOnStartup` calls `window.electron.openDevTools()` immediately and again at 250 ms, 750 ms, 1500 ms, and 3000 ms when **Open DevTools on load** is on. Opening Electron DevTools on top of an IDE attach drops the debugger — keep that setting off under F5. Do not fetch `:9222` from the page — that HTTP call can freeze the game while the IDE is attached.
+- **F12** still opens Electron DevTools. That can disconnect an IDE CDP session; prefer the IDE debugger panel when you launched with F5.
 - The listener uses capture phase so the game does not swallow the key. Preload patches cannot target `preload.js`, so this runs in the renderer.
 
 ## Splash skip
@@ -109,7 +109,7 @@ A monkey-patch or a trigger with no unregister path stays until the game restart
 
 Debug builds use esbuild [`inject`](https://esbuild.github.io/api/#inject) with [`modkit/esbuild/console.ts`](../../modkit/esbuild/console.ts). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code still print in DevTools and also `POST` to `http://127.0.0.1:19147/log` while `npm run dev` is up. Lines append to `logs/<modinfo.id>.log` (workspace `logs/` → OS sandustry logs: `~/.config/sandustry/logs` or `%APPDATA%/sandustry/logs`).
 
-A renderer hot reload (save or **Ctrl+R**) truncates that file via `POST /log/clear` and calls `console.clear()` so the session starts clean. Use `clearLog(modId)` from `@modkit/log` to clear by hand. **F5** skips the HTTP clear (CDP can stall that POST) and still calls `console.clear()`.
+A renderer hot reload (save or **Ctrl+R**) truncates that file via `POST /log/clear` and calls `console.clear()` so the session starts clean. Use `clearLog(modId)` from `@modkit/log` to clear by hand. `clearLog` aborts after 500 ms if F5 / CDP stalls the POST.
 
 ```ts
 console.log("[my-feature]", payload);

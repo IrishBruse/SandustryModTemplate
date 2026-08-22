@@ -68,9 +68,9 @@ npm run ui:previews      # compile preview CSS, then screenshot preview.html
 
 When `npm run dev` stops (Ctrl+C, terminal close, or process exit), it removes the OS mod folders this template owns and the matching `dist/<folder>` links. Use `npm run build` when you want mods to stay installed.
 
-**F5** (VS Code `Sandustry` compound) stops any running game, launches with debug ports, then attaches the debugger to the **renderer** (`:9222`, where mods run) and Electron **main** (`:9230`). It does not rebuild the mod — keep `npm run dev` running for the bundle, hot reload, and file logs. Hot reload polls `GET http://127.0.0.1:19147/hot-reload/last` on the dev watch server (same path as normal dev).
+**F5** (VS Code `Sandustry` compound) stops any running game, launches with `--remote-debugging-port`, waits until CDP `:9222` responds, then attaches the debugger to the **renderer** (where mods run). It does not rebuild the mod — keep `npm run dev` running for the bundle, hot reload, and file logs. Hot reload polls `GET http://127.0.0.1:19147/hot-reload/last` on the dev watch server (same path as normal dev). If attach fails or ports linger, press F5 again (preLaunch stops the old session) or run the **sandustry:stop** task.
 
-Renderer attach loads source maps from scripts named `sandkit-workshop://<modId>/main.js` (and from the OS mods folder / `dist/`). Debug builds rewrite inline maps to `file://` sources, add a sandkit loader line offset, and set matching `sourceURL` so breakpoints in `src/<name>/` bind through `new Function` eval. Do not press **F12** while the IDE debugger is attached — Electron DevTools steals that session.
+Renderer attach loads source maps from scripts named `sandkit-workshop://<modId>/main.js` (and from the OS mods folder / `dist/`). Debug builds rewrite inline maps to `file://` sources, add a sandkit loader line offset, and set matching `sourceURL` so breakpoints in `src/<name>/` bind through `new Function` eval. Do not press **F12** while the IDE debugger is attached — Electron DevTools steals that session. Keep **Open DevTools on load** off under F5 for the same reason.
 
 ## Workshop publish
 

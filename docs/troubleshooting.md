@@ -41,7 +41,9 @@ Default probe includes `%ProgramFiles(x86)%\Steam` and `%ProgramFiles%\Steam`, p
 
 **Duplicate mods in the console** — After a rename, old folders can stay in the OS mods directory. The game loads every folder there, so you get two copies of each sample. The watch build removes leftover game folders this template used to own. Stopping `npm run dev` also removes those owned folders. Restart the game after a rename or after you stop the watch.
 
-**VS Code breakpoints do not bind** — Run `npm run dev`, then select the **Sandustry** compound and press F5. That launches the game, then attaches **Renderer** (`127.0.0.1:9222`, mods) and **Main** (`9230`, Electron). Set breakpoints in `src/<name>/` TypeScript files, not in `dist/` or `main.js`. Do not press **F12** while the IDE debugger is attached — Electron DevTools steals the CDP session. Launch configs must allow `sandkit-workshop://**` in `resolveSourceMapLocations` (the game names mod scripts that way).
+**VS Code breakpoints do not bind** — Run `npm run dev`, then select the **Sandustry** compound and press F5. That launches the game, waits for CDP `:9222`, then attaches **Renderer** (mods). Set breakpoints in `src/<name>/` TypeScript files, not in `dist/` or `main.js`. Do not press **F12** while the IDE debugger is attached — Electron DevTools steals the CDP session. Keep **Open DevTools on load** off under F5. Launch configs must allow `sandkit-workshop://**` in `resolveSourceMapLocations` (the game names mod scripts that way).
+
+**F5 attach fails or the game will not stop** — Press F5 again (preLaunch runs stop first), or run the **sandustry:stop** task / `node scripts/sandustry/sandustry-stop.js`. That kills the recorded session PID and frees `:9222` if it still listens.
 
 **Hot reload does nothing under F5** — Keep `npm run dev` running. F5 does not build. The client polls `GET http://127.0.0.1:19147/hot-reload/last`. Restart the game once after you pull a template change so the new client loads. A toast shows when the mod reloads.
 
