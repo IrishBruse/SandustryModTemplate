@@ -7,7 +7,7 @@ The game runs `main.js` as a script body (`new Function`). `sandkit` is already 
 | Command                                    | Debug helpers                  | `debugPatches` | Output                                                         |
 | ------------------------------------------ | ------------------------------ | -------------- | -------------------------------------------------------------- |
 | `npm run build`                            | Stub (`modkit/debug/empty.ts`) | Omitted        | OS mods folder; `dist/<folder>/` links                         |
-| `npm run dev`                              | Included                       | Included       | OS mods folder (`~/.config/...` or `%APPDATA%/sandustry/mods`) |
+| `npm run dev`                              | Included                       | Included       | OS mods folder while watching; removed when the watch stops    |
 | `npm run sandustry` / `--game` / `--debug` | Included                       | Included       | Game mods folder                                               |
 
 `--no-debug` forces a release-style bundle even when watch or game flags are set. `--mod <folder>` builds one `src/<name>/` folder. The build discovers every `src/*/mod.ts`.
@@ -55,13 +55,15 @@ In game:
 ```bash
 npm run dev              # watch all src/ mods, debug on (required before F5)
 npm run dev -- --mod overlay-hotkey-example
-npm run build            # release all mods
+npm run build            # release all mods (stay in the OS mods folder)
 npm run build -- --mod overlay-hotkey-example
 npm run typecheck
 npm run sandustry        # debug build and launch
 npm run ui:css           # compile docs/ui/canvas preview Tailwind
 npm run ui:previews      # compile preview CSS, then screenshot preview.html
 ```
+
+When `npm run dev` stops (Ctrl+C, terminal close, or process exit), it removes the OS mod folders this template owns and the matching `dist/<folder>` links. Use `npm run build` when you want mods to stay installed.
 
 **F5** (VS Code `Sandustry` compound) stops any running game, launches with debug ports, then attaches the debugger to the **renderer** (`:9222`, where mods run) and Electron **main** (`:9230`). It does not rebuild the mod — keep `npm run dev` running for the bundle, hot reload, and file logs. Hot reload under F5 polls `hot-reload.json` in the mod folder (file URL). It does not use EventSource — the renderer CDP attach can stall that HTTP stream.
 

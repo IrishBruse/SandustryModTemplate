@@ -65,7 +65,33 @@ function removeOwnedGameDir(gameName) {
   const dir = gameModDir(gameName);
   if (!existsSync(dir) || !isOwnedGameDir(dir)) return;
   removePath(dir);
-  console.log(`Removed leftover game mod ${dir}`);
+  console.log(`Removed game mod ${dir}`);
+}
+
+/**
+ * Remove OS mod folders tracked in `dist/.owned-game-names.json` and their
+ * `dist/<folder>` links. Used when `npm run dev` stops.
+ * @param {string} repoRoot
+ */
+export function removeOwnedGameMods(repoRoot) {
+  const distPath = join(repoRoot, REPO_DIST_LINK);
+  const names = readOwnedGameNames(distPath);
+  for (const name of names) {
+    removeOwnedGameDir(name);
+  }
+
+  if (!existsSync(distPath) || !lstatSync(distPath).isDirectory()) return;
+
+  for (const name of readdirSync(distPath)) {
+    const child = join(distPath, name);
+    if (name === OWNED_GAME_NAMES_FILE) {
+      removePath(child);
+      continue;
+    }
+    if (!lstatSync(child).isSymbolicLink()) continue;
+    removePath(child);
+    console.log(`Removed ${REPO_DIST_LINK}/${name}`);
+  }
 }
 
 /** @param {string} gameName `modinfo.name` */
