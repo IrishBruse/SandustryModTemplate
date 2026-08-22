@@ -111,7 +111,7 @@ async function syncModFiles(mod, includeModkitDebug) {
       });
     }
   }
-  for (const name of ["README.md", "CHANGELOG.md"]) {
+  for (const name of ["README.md", "CHANGELOG.md", "preview.png", "workshop.json"]) {
     const from = join(mod.dir, name);
     if (!existsSync(from)) continue;
     cpSync(from, join(mod.outDir, name), { force: true });

@@ -51,7 +51,7 @@ Copy [`src/hello-toast-example/`](../src/hello-toast-example/) to `src/<your-mod
 
 ### Run
 
-Run `npm run dev`, then **F5** in VS Code (or `npm run sandustry`). F5 only stops and launches the game — the watch owns the bundle. See [builds](docs/builds.md).
+Run `npm run dev`, then **F5** in VS Code (or `npm run sandustry`). Neither launches a build — the watch owns the bundle. See [builds](docs/builds.md).
 
 In game, **Alt+E** opens the overlay from `overlay-hotkey-example`. More: [docs site](https://ethanconneely.com/SandustryModTemplate/) · [modkit](docs/modkit/README.md) · [`AGENTS.md`](AGENTS.md)
 
@@ -62,7 +62,7 @@ In game, **Alt+E** opens the overlay from `overlay-hotkey-example`. More: [docs 
 | `npm run dev`       | Watch OS mods folder; remove owned mods when the watch stops |
 | `npm run build`     | Release bundle (no debug helpers)                            |
 | `npm run typecheck` | TypeScript check                                             |
-| `npm run sandustry` | Debug build and launch                                       |
+| `npm run sandustry` | Stop and launch the game (no build)                  |
 
 ## Troubleshooting
 

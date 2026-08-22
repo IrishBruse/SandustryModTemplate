@@ -4,11 +4,11 @@ The game runs `main.js` as a script body (`new Function`). `sandkit` is already 
 
 ## Debug vs release
 
-| Command                                    | Debug helpers                  | `debugPatches` | Output                                                      |
-| ------------------------------------------ | ------------------------------ | -------------- | ----------------------------------------------------------- |
-| `npm run build`                            | Stub (`modkit/debug/empty.ts`) | Omitted        | OS mods folder; `dist/<folder>/` links                      |
-| `npm run dev`                              | Included                       | Included       | OS mods folder while watching; removed when the watch stops |
-| `npm run sandustry` / `--game` / `--debug` | Included                       | Included       | Game mods folder                                            |
+| Command              | Debug helpers                  | `debugPatches` | Output                                                      |
+| -------------------- | ------------------------------ | -------------- | ----------------------------------------------------------- |
+| `npm run build`      | Stub (`modkit/debug/empty.ts`) | Omitted        | OS mods folder; `dist/<folder>/` links                      |
+| `npm run dev`        | Included                       | Included       | OS mods folder while watching; removed when the watch stops |
+| `--game` / `--debug` | Included                       | Included       | Game mods folder                                            |
 
 `--no-debug` forces a release-style bundle even when watch or game flags are set. `--mod <folder>` builds one `src/<name>/` folder. The build discovers every `src/*/mod.ts`.
 
@@ -46,7 +46,7 @@ Static check against an extracted `references/source/dist/js/bundle.js`:
 
 In game:
 
-1. Run `npm run sandustry`.
+1. Run `npm run dev`, then `npm run sandustry` (or **F5**).
 2. Press **Alt+E**. The overlay panel must be 28rem (448px) wide. The help sentence must be underlined.
 3. In DevTools, `document.getElementById("<mod-id>-tailwind")` must exist.
 
@@ -58,7 +58,7 @@ npm run dev -- --mod overlay-hotkey-example
 npm run build            # release all mods (stay in the OS mods folder)
 npm run build -- --mod overlay-hotkey-example
 npm run typecheck
-npm run sandustry        # debug build and launch
+npm run sandustry        # stop + launch (no build; keep npm run dev for the bundle)
 npm run ui:css           # compile docs/ui/canvas preview Tailwind
 npm run ui:previews      # compile preview CSS, then screenshot preview.html
 ```

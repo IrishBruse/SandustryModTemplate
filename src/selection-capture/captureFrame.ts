@@ -10,7 +10,6 @@ const FALLBACK_SKY = "#3d6b78";
 const GREENSCREEN = "#00ff00";
 
 export type CaptureLook = {
-  freezeBackground: boolean;
   greenscreen: boolean;
 };
 
@@ -41,9 +40,6 @@ type SessionRendering = {
   pixi?: SessionPixi;
 };
 
-type CinematicSky = { timeSpeed?: number };
-type CinematicShape = { sky?: CinematicSky };
-
 type SessionShape = {
   paused?: boolean;
   rendering?: SessionRendering;
@@ -65,14 +61,6 @@ function getDynamic2DCanvas(): HTMLCanvasElement | OffscreenCanvas | null {
   return canvas ?? null;
 }
 
-function getCinematicSky(): CinematicSky | null {
-  const session = getSession() as (SessionShape & { cinematic?: CinematicShape }) | null;
-  const cinematic = session?.cinematic;
-  if (!cinematic) return null;
-  cinematic.sky ??= {};
-  return cinematic.sky;
-}
-
 function backgroundNodes(pixi: SessionPixi): VisibleNode[] {
   const nodes: VisibleNode[] = [];
   for (const node of [
@@ -89,22 +77,11 @@ function backgroundNodes(pixi: SessionPixi): VisibleNode[] {
 }
 
 /**
- * Freeze sky/cloud time and/or hide parallax + sky shader for a chroma-key fill.
+ * Hide parallax + sky shader for a chroma-key fill.
  * Call the returned function to restore.
  */
 export function applyCaptureLook(look: CaptureLook): () => void {
   const restores: Array<() => void> = [];
-
-  if (look.freezeBackground) {
-    const sky = getCinematicSky();
-    if (sky) {
-      const previous = sky.timeSpeed ?? 1;
-      sky.timeSpeed = 0;
-      restores.push(() => {
-        sky.timeSpeed = previous;
-      });
-    }
-  }
 
   if (look.greenscreen) {
     const pixi = getSession()?.rendering?.pixi;

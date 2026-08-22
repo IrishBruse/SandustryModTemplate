@@ -29,8 +29,10 @@ Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized dem
 | `src/<name>/ui/`               | React overlays and `tailwind.css` (`@tailwind utilities`)                           |
 | `src/<name>/debug/`            | Mod debug entry: calls `modkit/debug`, re-exports `onDispose` / `isHotReloadEval`   |
 | `src/<name>/patches/README.md` | Points at [patches.md](patches.md)                                                  |
-| `src/<name>/README.md`         | Optional. Copied into the installed mod folder with `CHANGELOG.md`                  |
-| `src/<name>/CHANGELOG.md`      | Optional. Player-facing changelog for that mod                                      |
+| `src/<name>/README.md`         | Optional. Copied into the installed mod folder with `CHANGELOG.md`, `preview.png`, and `workshop.json` |
+| `src/<name>/CHANGELOG.md`      | Optional. Player-facing changelog for that mod                                                         |
+| `src/<name>/preview.png`       | Optional. Workshop preview; copied into the installed mod folder when present                          |
+| `src/<name>/workshop.json`     | Optional. Workshop item id (`publishedFileId`); copied into the installed mod folder when present      |
 | `src/<name>/mod/`              | Optional static files copied into the output folder                                 |
 | `src/<name>/tsconfig.json`     | Isolated TypeScript project (does not see sibling mods)                             |
 
@@ -84,7 +86,7 @@ Use the free name `sandkit` in mod and modkit code. Do not import a `sandkit` va
 | `scripts/build/dev.js`                  | Watch + write to the game mods folder                                                                         |
 | `scripts/sandustry/paths.js`            | OS user-data + Steam binary paths                                                                             |
 | `scripts/sandustry/mod-path.js`         | Game mod dir from `modinfo.name`; `dist/<folder>` links                                                       |
-| `scripts/sandustry/launch-sandustry.js` | Build (debug) and launch the game                                                                             |
+| `scripts/sandustry/launch-sandustry.js` | Stop and launch the game (no build)                                                                   |
 
 ## Output
 

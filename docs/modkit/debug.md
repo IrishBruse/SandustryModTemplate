@@ -82,7 +82,7 @@ Notify paths:
 - **File poll** — the client reads `hot-reload.json` through `api.assets` (a file URL). This is the path **F5** uses. VS Code’s renderer attach can stall HTTP `EventSource`, so SSE is off while `ide-debug.json` is present.
 - **SSE** — when F5 is not attached, the debug bundle also opens `EventSource` to the watch URL for a faster notify.
 
-One-shot builds (`npm run build`, `npm run sandustry`, `--game`) do not write the stamp. They leave the hot-reload URL empty **unless** the watch SSE server is already up. **F5** does not build — run `npm run dev` first so the watch owns `main.js`.
+One-shot builds (`npm run build`, `--game`) do not write the stamp. They leave the hot-reload URL empty **unless** the watch SSE server is already up. **F5** and `npm run sandustry` do not build — run `npm run dev` first so the watch owns `main.js`.
 
 JavaScript cannot be unloaded. The loader only reclaims what you register:
 

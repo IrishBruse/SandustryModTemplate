@@ -8,6 +8,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Changed
 
+- **`npm run sandustry`** only stops and launches the game. It does not build. Keep `npm run dev` (or `npm run build`) for the bundle. See [builds.md](builds.md).
 - **Selection Capture** GIF encode uses **modern-gif** instead of **gifenc** (typed API, same 2× pixel look).
 - **`npm run dev` cleanup:** when the watch stops (Ctrl+C, terminal close, or process exit), it removes OS mod folders this template owns and the matching `dist/<folder>` links. Use `npm run build` to leave mods installed. See [builds.md](builds.md).
 - **Selection Capture** (`src/selection-capture/`): one mod for **C** marquee capture. **F7** opens the panel for PNG and GIF (default **60** frames). This is not an example folder.
@@ -16,6 +17,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 - **Selection Capture** panel **Scale** control. PNG and GIF are always **2×** nearest-neighbor.
 - **Selection Capture** **F8** screenshot hotkey. Copy a PNG with the panel **Screenshot** button.
+- **Selection Capture Freeze background** (cinematic `timeSpeed` stub froze the game). **Greenscreen** stays.
 
 ### Fixed
 
@@ -26,9 +28,10 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Added
 
+- **Workshop files:** if `src/<name>/preview.png` or `src/<name>/workshop.json` exist, the build copies them into the installed mod folder (Steam Workshop preview + published item id).
 - **Hot reload clears logs:** each renderer reload truncates `logs/<mod-id>.log` and clears the DevTools console so the file only holds the current session. `clearLog(modId)` from `@modkit/log` and `POST /log/clear` on the watch server.
 - **Selection Capture** (`src/selection-capture/`): after a **C** marquee, **F7** opens the panel to copy a PNG or record a GIF of stepped sim ticks. The folder has `README.md` and `CHANGELOG.md`; the build copies them into the installed mod.
-- **Selection Capture** panel: **Freeze background** (sky/cloud time = 0) and **Greenscreen** (`#00FF00` behind the world).
+- **Selection Capture** panel: **Greenscreen** (`#00FF00` behind the world).
 - **Sample mod READMEs:** each `src/*-example/` folder has a short `README.md`. The build copies it into the installed mod when present.
 - **Worker API example** (`src/worker-api-example/`): optional `worker.ts` → `worker.js`, probes worker-thread `sandkit.api` against `types/worker-api` (`WorkerSandkitApi`). Build bundles `worker.ts` when present.
 

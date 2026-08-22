@@ -8,7 +8,7 @@ Notable changes to **Selection Capture**. Newest first. The format follows [Keep
 
 - Panel **Screenshot** copies a **2×** nearest-neighbor PNG of the **C** marquee.
 - **F7** opens a panel to record a GIF (frames, ticks per frame).
-- Panel **Freeze background** and **Greenscreen** checkboxes (PNG and GIF).
+- Panel **Greenscreen** checkbox (PNG and GIF).
 - README and this changelog (copied into the installed mod folder).
 
 ### Removed
@@ -16,6 +16,7 @@ Notable changes to **Selection Capture**. Newest first. The format follows [Keep
 - Management-column **Capture** row — open the panel with **F7** only.
 - Panel **Scale** control — PNG and GIF are always **2×** nearest-neighbor.
 - **F8** screenshot hotkey — copy a PNG with the panel **Screenshot** button.
+- Panel **Freeze background** — installing a cinematic stub froze the game loop.
 
 ### Changed
 

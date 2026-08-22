@@ -20,7 +20,7 @@ Patch `code` runs outside the game bundle IIFE. Put shared runtime helpers on `g
 | `debugPatches` in that mod's `mod.ts` (optional) | Extra debug-only patches (dev / `--debug` builds)          |
 | `modkitDebugPatches` in `modkit/patches.ts`      | Framework debug patches (splash skip); merged by the build |
 
-Release builds (`npm run build`) omit framework and mod debug patches. Dev builds (`npm run dev`, `npm run sandustry`, `--game` / `--debug`) include them. Framework `modkitDebugPatches` merge into the **first** src folder (sorted by name) only. Two mods must not both apply `skip-startup-splash` to `js/bundle.js`.
+Release builds (`npm run build`) omit framework and mod debug patches. Dev builds (`npm run dev`, `--game` / `--debug`) include them. Framework `modkitDebugPatches` merge into the **first** src folder (sorted by name) only. Two mods must not both apply `skip-startup-splash` to `js/bundle.js`.
 
 ## Fields
 

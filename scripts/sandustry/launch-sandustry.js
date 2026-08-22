@@ -1,12 +1,10 @@
 #!/usr/bin/env node
 /**
- * Build the mod, stop any running game, launch Sandustry on the left monitor.
+ * Stop any running game and launch Sandustry on the left monitor.
+ * Does not build — run `npm run dev` or `npm run build` first.
  * Usage: npm run sandustry
  */
-import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
 import {
-  sandustryBuildMod,
   sandustryLaunchArgs,
   sandustryLeftMonitor,
   sandustryMaximizeOnLeftMonitor,
@@ -15,10 +13,7 @@ import {
   spawnSandustry,
 } from "./sandustry-common.js";
 
-const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
-
 sandustryRequireBinary();
-sandustryBuildMod(ROOT, { extraArgs: process.argv.slice(2) });
 sandustryStopRunning();
 
 const mon = sandustryLeftMonitor();

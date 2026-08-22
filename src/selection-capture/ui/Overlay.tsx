@@ -23,7 +23,6 @@ export function Overlay() {
   const [open, setOpen] = useState(false);
   const [frames, setFrames] = useState(DEFAULT_FRAMES);
   const [ticksPerFrame, setTicksPerFrame] = useState(1);
-  const [freezeBackground, setFreezeBackground] = useState(false);
   const [greenscreen, setGreenscreen] = useState(false);
   const [busy, setBusy] = useState(false);
 
@@ -36,7 +35,7 @@ export function Overlay() {
     const api = sandkit.api;
     void (async () => {
       try {
-        const result = await captureSelectionPng(api, { freezeBackground, greenscreen });
+        const result = await captureSelectionPng(api, { greenscreen });
         switch (result) {
           case "ok":
             api.ui.toast("Copied — paste with Ctrl+V", {});
@@ -56,7 +55,7 @@ export function Overlay() {
         api.ui.toast("Clipboard copy failed", {});
       }
     })();
-  }, [busy, freezeBackground, greenscreen]);
+  }, [busy, greenscreen]);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -78,12 +77,11 @@ export function Overlay() {
       const result = await recordSelectionGif(api, {
         frames,
         ticksPerFrame,
-        freezeBackground,
         greenscreen,
       });
       switch (result) {
         case "ok":
-          api.ui.toast("GIF saved and copied", {});
+          api.ui.toast("GIF saved", {});
           break;
         case "downloaded":
           api.ui.toast("GIF saved — check your downloads", {});
@@ -146,15 +144,6 @@ export function Overlay() {
                 disabled={busy}
                 onChange={(event) => setTicksPerFrame(parsePositiveInt(event.target.value, 1))}
               />
-            </label>
-            <label className="flex items-center gap-2 text-sm mb-2">
-              <input
-                type="checkbox"
-                checked={freezeBackground}
-                disabled={busy}
-                onChange={(event) => setFreezeBackground(event.target.checked)}
-              />
-              Freeze background
             </label>
             <label className="flex items-center gap-2 text-sm mb-3">
               <input

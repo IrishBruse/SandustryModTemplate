@@ -26,7 +26,6 @@ const WORKER_SET_PAUSED = 54;
 export type RecordGifOptions = {
   frames: number;
   ticksPerFrame: number;
-  freezeBackground: boolean;
   greenscreen: boolean;
 };
 
@@ -267,7 +266,6 @@ export async function recordSelectionGif(
   const ticksPerFrame = clampInt(options.ticksPerFrame, MIN_TICKS, MAX_TICKS);
   const delayMs = Math.max(20, ticksPerFrame * 20);
   const look: CaptureLook = {
-    freezeBackground: options.freezeBackground,
     greenscreen: options.greenscreen,
   };
 
@@ -283,7 +281,6 @@ export async function recordSelectionGif(
     bounds,
     framesWanted,
     ticksPerFrame,
-    freezeBackground: look.freezeBackground,
     greenscreen: look.greenscreen,
   });
 

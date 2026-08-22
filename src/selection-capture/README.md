@@ -16,14 +16,11 @@ Copy a PNG or record a GIF of a **C** marquee selection.
 
 ## Panel
 
-| Field             | Range  | Default |
-| ----------------- | ------ | ------- |
-| Frames            | 2–120  | 60      |
-| Ticks / frame     | 1–30   | 1       |
-| Freeze background | on/off | off     |
-| Greenscreen       | on/off | off     |
-
-**Freeze background** stops sky and cloud motion for the capture (cinematic sky time speed = 0).
+| Field         | Range  | Default |
+| ------------- | ------ | ------- |
+| Frames        | 2–120  | 60      |
+| Ticks / frame | 1–30   | 1       |
+| Greenscreen   | on/off | off     |
 
 **Greenscreen** hides the parallax sky layers and fills empty pixels with `#00FF00` for chroma key.
 
