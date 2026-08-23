@@ -38,7 +38,7 @@ const args = [...sandustryDebugArgs(rendererPort, mon), ...extraArgs];
 const child = spawnSandustry(args, {
   cwd: SANDUSTRY_DIR,
   detached,
-  stdio: "inherit",
+  stdio: "ignore",
 });
 
 if (typeof child.pid === "number") {

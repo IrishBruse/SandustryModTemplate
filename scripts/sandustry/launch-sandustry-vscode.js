@@ -44,7 +44,7 @@ console.log(`Sandustry debug — renderer ${rendererPort}`);
 
 const child = spawnSandustry(args, {
   detached: true,
-  stdio: "inherit",
+  stdio: "ignore",
 });
 
 if (typeof child.pid === "number") {
