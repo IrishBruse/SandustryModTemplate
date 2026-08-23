@@ -1,8 +1,10 @@
 /**
- * Main-thread `sandkit.api` namespaces.
+ * Main-thread `sandkit.api` barrel.
  *
- * This is the public mod API on the main thread. Prefer these methods over
- * {@link sandkit.engine} when both exist.
+ * Re-exports all namespaces available as `sandkit.api.*` on the main thread.
+ * Prefer these methods over {@link sandkit.engine} when both exist.
+ *
+ * @module
  */
 
 export * from "./action"
@@ -60,4 +62,5 @@ export * from "./utils"
 export * from "./workers"
 export * from "./world"
 
+/** Composed type of the main-thread `sandkit.api` object. */
 export type { SandkitApi } from "./sandkit-api"

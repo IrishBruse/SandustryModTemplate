@@ -1,13 +1,14 @@
 /**
  * `sandkit.engine` — state-first engine APIs and Retro Console.
  *
- * Available on both the main thread (`main.js`) and worker thread
- * (`worker.js`). The public `sandkit.api` surface still differs by runtime.
+ * Runtime paths: `sandkit.engine.api.<name>` and `sandkit.engine.state`
+ * (same object as `sandkit.state`). Available on both the main thread
+ * (`main.js`) and worker thread (`worker.js`). The public `sandkit.api`
+ * surface still differs by runtime.
  *
- * **Internal API — use at your own risk.** These declarations are best-effort
- * stubs. There is no guarantee they are complete or correct. Prefer
- * {@link sandkit.api} when a public method exists.
- * At runtime `sandkit.engine.state === sandkit.state`.
+ * **Internal API.** Prefer {@link sandkit.api} when a public method exists.
+ * These declarations are best-effort stubs. There is no guarantee they are
+ * complete or correct.
  *
  * @module engine
  * @internal
@@ -22,8 +23,9 @@ export * from "./state";
 
 /**
  * Composed `sandkit.engine.api` shape.
- * Overlap namespaces are loose; engine-only namespaces are declared under
- * `src/sandkit/engine/api`.
+ *
+ * Overlap namespaces mirror {@link sandkit.api} with state-first signatures.
+ * Engine-only namespaces are declared under `api/`.
  *
  * @internal
  */
@@ -122,9 +124,7 @@ export type SandkitEngineApi = {
 /**
  * Host `sandkit.engine` object (main and worker).
  *
- * **Internal API — use at your own risk.** These declarations are best-effort
- * stubs. There is no guarantee they are complete or correct. Prefer
- * {@link sandkit.api} when a public method exists.
+ * **Internal API.** Prefer {@link sandkit.api} when a public method exists.
  * At runtime `sandkit.engine.state === sandkit.state`.
  *
  * @internal

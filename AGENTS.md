@@ -13,7 +13,7 @@ Detail docs:
 - Patches: [`docs/patches.md`](docs/patches.md)
 - Modkit: [`docs/modkit/README.md`](docs/modkit/README.md)
 - Layout: [`docs/layout.md`](docs/layout.md)
-- API types: [`modkit/types/ATTRIBUTION.md`](modkit/types/ATTRIBUTION.md)
+- API types: [`modkit/types/README.md`](modkit/types/README.md) · [`modkit/types/ATTRIBUTION.md`](modkit/types/ATTRIBUTION.md)
 - Modkit todos: [`docs/todos/README.md`](docs/todos/README.md)
 
 ## Layout

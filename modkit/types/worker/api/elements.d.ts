@@ -3,7 +3,12 @@ import { elements as sharedElements } from "../../shared/api/elements";
 
 /**
  * Worker-thread `sandkit.api.elements` — shared reads plus direct mutations.
- * Main thread uses `*WhenIdle` instead of `createAtCell` / `replaceAtCell` / `removeAtCell`.
+ *
+ * Main thread uses `*WhenIdle` helpers instead of `createAtCell` /
+ * `replaceAtCell` / `removeAtCell`. Built on {@link elements} base shapes.
+ *
+ * @internal Worker extension; not interchangeable with main-thread
+ * `sandkit.api.elements`.
  */
 export namespace elements {
   export import ElementType = sharedElements.ElementType;
@@ -21,7 +26,10 @@ export namespace elements {
   export import getVelocityAtCell = sharedElements.getVelocityAtCell;
   export import getDataFieldAtCell = sharedElements.getDataFieldAtCell;
 
-  /** Direct cell create — worker only. Prefer `createAtCellWhenIdle` on main. */
+  /**
+   * Create an element at a cell immediately on this worker.
+   * Main thread: use `createAtCellWhenIdle` instead.
+   */
   export function createAtCell(
     ...args: [...CellCoordinates, elementType: ElementType, options?: unknown]
   ): void;

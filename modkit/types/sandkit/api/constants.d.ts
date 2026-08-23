@@ -1,7 +1,8 @@
 /**
  * Physics skip modes used with element skip-physics fields.
  *
- * Available as `sandkit.api.constants.physics` (confirmed against Sandustry 0.5.2).
+ * `sandkit.api.constants` — shared numeric constants for mod API use.
+ * Main thread only.
  *
  * @module
  */

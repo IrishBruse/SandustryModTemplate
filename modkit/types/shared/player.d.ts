@@ -1,13 +1,21 @@
+/**
+ * Shared player and coordinate domain shapes.
+ *
+ * @internal Base types reused by main and worker API declarations. Not a
+ * runtime `sandkit` namespace.
+ */
 import { AssetRef } from "./asset";
 
+/** Grid cell position as `[cellX, cellY]`. */
 export type CellCoordinates = [cellX: number, cellY: number]
 
-
+/** 2D vector in world or cell space. */
 export type Vector2 = {
   x: number;
   y: number;
 };
 
+/** Live player state snapshot (read-only shape for mods). */
 export interface Player {
   x: number;
   y: number;
@@ -98,7 +106,7 @@ export interface Player {
   };
 }
 
-
+/** One hotbar or inventory item entry. */
 export interface InventoryItem {
   id: number,
   itemType: number,

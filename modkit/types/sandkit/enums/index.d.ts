@@ -5,6 +5,7 @@
  * versions. Prefer resolving string IDs through the API when possible.
  */
 
+/** Item ability categories (dig, shoot, spray, laser). */
 export enum AbilityType {
   Dig = 1,
   Shoot = 2,
@@ -12,12 +13,14 @@ export enum AbilityType {
   Laser = 4,
 }
 
+/** Phases of a held or repeated player action. */
 export enum ActionState {
   Start = 1,
   Active = 2,
   End = 3,
 }
 
+/** High-level action channel (weapon, building, tool, mod). */
 export enum ActionType {
   Weapon = 1,
   Building = 2,
@@ -25,6 +28,7 @@ export enum ActionType {
   Mod = 4,
 }
 
+/** Zone rules that restrict player abilities. */
 export enum AuthorizationType {
   NoJetpack = 1,
   NoGrab = 2,
@@ -34,11 +38,13 @@ export enum AuthorizationType {
   NoToolExceptFlamethrower = 6,
 }
 
+/** Linear vs rectangular structure placement. */
 export enum BuildMode {
   Linear = 1,
   Rectangular = 2,
 }
 
+/** Result of a build placement check. */
 export enum BuildingClearance {
   Available = 1,
   FullyBlocked = 2,
@@ -46,6 +52,7 @@ export enum BuildingClearance {
   CanBeReplaced = 4,
 }
 
+/** Terrain / special cell kinds in the simulation grid. */
 export enum CellType {
   Empty = 0,
   Element = 1,
@@ -80,6 +87,7 @@ export enum CellType {
   Crackstone = 30,
 }
 
+/** UI component ids for HUD and menu routing. */
 export enum ComponentId {
   Hotbar = 1,
   SoundBoxConfig = 2,
@@ -111,11 +119,13 @@ export enum ComponentId {
   Feedback = 29,
 }
 
+/** Autonomous drone kinds. */
 export enum DroneType {
   Digger = 1,
   Hauler = 2,
 }
 
+/** Built-in element type ids (prefer API string ids when registering mods). */
 export enum ElementType {
   Sand = 1,
   Particle = 2,
@@ -139,6 +149,7 @@ export enum ElementType {
   Basalt = 20,
 }
 
+/** Built-in hotbar item ids. */
 export enum ItemId {
   Shovel = 1,
   Grabber = 2,
@@ -158,6 +169,7 @@ export enum ItemId {
   MegaShotgun = 16,
 }
 
+/** Item category (weapon, tool, consumable, mod). */
 export enum ItemType {
   Weapon = 1,
   Tool = 2,
@@ -165,6 +177,7 @@ export enum ItemType {
   Mod = 4,
 }
 
+/** Named input bindings (settings keys). */
 export enum KeyBinding {
   OpenBuildMenu = "OpenBuildMenu",
   GrapplingHook = "GrapplingHook",
@@ -195,6 +208,7 @@ export enum KeyBinding {
   ToggleGameHud = "ToggleGameHud",
 }
 
+/** Key transition state for input polling. */
 export enum KeyState {
   Up = 1,
   Down = 2,
@@ -203,6 +217,7 @@ export enum KeyState {
   All = 5,
 }
 
+/** Physical behaviour category for elements (mirrors shared API enum). */
 export enum MatterType {
   Solid = 1,
   Liquid = 2,
@@ -214,6 +229,7 @@ export enum MatterType {
   Powder = 8,
 }
 
+/** Projectile kinds spawned by weapons and tools. */
 export enum ProjectileType {
   Bullet = 1,
   Rocket = 2,
@@ -223,12 +239,14 @@ export enum ProjectileType {
   Mod = 6,
 }
 
+/** Weapon reload behaviour. */
 export enum ReloadType {
   Clip = 1,
   Single = 2,
   OverTime = 3,
 }
 
+/** Top-level game scene (menu, intro, deploy, in-game). */
 export enum Scene {
   MainMenu = 1,
   Intro = 2,
@@ -236,6 +254,7 @@ export enum Scene {
   Game = 4,
 }
 
+/** Built-in structure type ids. */
 export enum StructureType {
   ConveyorLeft = 1,
   ConveyorRight = 2,
@@ -266,6 +285,7 @@ export enum StructureType {
   FluxEmanator = 27,
 }
 
+/** Tech tree node ids (mixed numeric and string keys). */
 export enum Tech {
   Shaker = 1,
   Conveyors = 2,
@@ -380,6 +400,7 @@ export enum Tech {
   FluxEmanator = "fluxEmanator",
 }
 
+/** Visibility and research state of a tech node. */
 export enum TechStatus {
   Available = 0,
   Visible = 1,
@@ -388,6 +409,7 @@ export enum TechStatus {
   Hidden = 4,
 }
 
+/** Pickups and interactable world items. */
 export enum WorldItemType {
   Artifact = 1,
   GlyphKey = 2,

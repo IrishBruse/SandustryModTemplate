@@ -1,8 +1,14 @@
 /**
- * `sandkit.state` / `sandkit.engine.state` (same object at runtime).
+ * `sandkit.engine.state` — live game state object.
  *
- * Shapes below are stubs — refine fields as they are confirmed.
+ * Same object as `sandkit.state` at runtime. **Internal API.** Prefer
+ * {@link sandkit.api} when a public method exists. Shapes below are stubs;
+ * refine fields as they are confirmed.
+ *
+ * @internal
  */
+
+/** Live game state exposed on `sandkit.engine.state`. @internal */
 export type SandkitState = {
   environment: {
     context: number;
