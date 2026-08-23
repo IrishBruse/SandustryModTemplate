@@ -18,6 +18,7 @@ Sibling mods (for example `sandustry-doom-mod`) can use a symlink to this folder
 | -------------------- | ---------------------------------- |
 | React and JSX        | [react.md](react.md)               |
 | Utils                | [utils.md](utils.md)               |
+| Mod `configSchema`   | [config-schema.md](config-schema.md) |
 | Debug and hot reload | [debug.md](debug.md)               |
 | UI components        | [../ui/README.md](../ui/README.md) |
 | Bundle patches       | [../patches.md](../patches.md)     |

@@ -12,6 +12,7 @@
   - [React](modkit/react.md)
   - [UI kit](ui/README.md)
   - [Utils](modkit/utils.md)
+  - [configSchema](modkit/config-schema.md)
   - [Debug](modkit/debug.md)
 
 - Reference

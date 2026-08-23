@@ -41,6 +41,7 @@ Copy a folder under `src/` to start a new mod. `hello-world-example` is the smal
 | [`retro-game-example`](../src/retro-game-example/)               | Retro Console demo                                  |
 | [`management-button-example`](../src/management-button-example/) | Management-column row                               |
 | [`worker-api-example`](../src/worker-api-example/)               | Worker-thread `sandkit.api`                         |
+| [`settings-example`](../src/settings-example/)                   | All `configSchema` types (`boolean` / `number` / `choice`) |
 | [`selection-capture`](../src/selection-capture/)                 | Screenshot / GIF recorder (**C**, **F7**)           |
 | [`debug`](../src/debug/)                                         | Dev companion (debug builds only). Do not copy this |
 

@@ -7,6 +7,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Added
 
+- **`settings-example`:** sample mod that shows every game-supported `configSchema` field type (`boolean`, `number`, `choice`) and reacts with `settings.onChange`. See [modkit/config-schema.md](modkit/config-schema.md) and [`src/settings-example/`](../src/settings-example/).
 - **`npm run docs:api`:** generates a Sandkit API Markdown reference under `docs/api/` from vendored `modkit/types/` JSDoc (TypeDoc). `npm run docs` runs this, then serves Docsify. See [modkit/types/README.md](../modkit/types/README.md).
 - **Debug companion:** a bundle patch restores the vanilla **Options → Debug** tab (Hard Mode, Debug Active, Draw Chunks, Cinematic, Debug Console). See [modkit/debug.md](modkit/debug.md).
 - **`npm run test`:** Node test runner on `src/**/*.test.ts` (type stripping on Node 24). Selection Capture tests the 1 MB GIF encode cap. `OptionsPanel`, `OptionsSection`, `OptionsRow`, `OptionsSelect`, `OptionsSlider`, `OptionsSliderRow`, `OptionsSwitch`, `OptionsNumberInput`, and `OptionsButton` — same Tailwind classes as the in-game Options dialog. Import `@modkit/ui/options.css` only for slider thumb/track. See [ui/overview.md](ui/overview.md).
@@ -15,6 +16,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Changed
 
+- **`configSchema` types** in `modkit/modinfo.ts` match the game validator: `boolean`, `number`, and `choice` (with `{ value, labelKey }` options). Removed incorrect `string` and `enum` field types. See [modkit/config-schema.md](modkit/config-schema.md).
 - **`modkit/types/`:** vendored `.d.ts` files from [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types) (MIT). Layout mirrors the live `sandkit` object (`sandkit/api`, `sandkit/engine/api`, `worker/`, …). See [`modkit/types/ATTRIBUTION.md`](../modkit/types/ATTRIBUTION.md). Ambient `sandkit` is in [`modkit/types/global.d.ts`](../modkit/types/global.d.ts); template-only `reloaded` and `WorkerSandkitApi` are in [`modkit/ambient.d.ts`](../modkit/ambient.d.ts).
 - **`npm run publish`:** if SteamCMD is not on PATH, the script downloads Valve's official installer into `.tmp/steamcmd/` and then uploads. It does not add the npm `steamcmd` package (old `request` / `unzip` deps, and that API is game download, not Workshop). See [builds.md](builds.md#workshop-publish).
 - `OptionsPanel` with **`overlay`** and **`surface`** uses a solid `bg-black` fill and the vanilla Debug window edges (`border-gray-700`, `rounded-lg`, `ui-box`, `card-2`). See [ui/options-panel.md](ui/options-panel.md).

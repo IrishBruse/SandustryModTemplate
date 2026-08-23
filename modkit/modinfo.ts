@@ -9,48 +9,63 @@
  *
  * Read mod settings from `configSchema` via `api.settings.get(key)`.
  * Put feature switches in `configSchema` rather than hard-coded flags.
+ *
+ * Game-supported field types (validated in `sandustry/workshop-mods.js`):
+ * `boolean`, `number`, `choice`. See `docs/modkit/config-schema.md`.
  */
 
-export type ConfigSchemaFieldType = "boolean" | "number" | "string" | "enum";
+/** Field types the game accepts in `configSchema`. */
+export type ConfigSchemaFieldType = "boolean" | "number" | "choice";
 
 export interface ConfigSchemaFieldBase {
   type: ConfigSchemaFieldType;
-  default?: unknown;
+  /** Required by the game validator for every field. */
+  default: unknown;
+  /** Localization key or plain label shown in Options → Mods. */
   labelKey: string;
-  descriptionKey: string;
+  /** Optional localization key or plain description under the label. */
+  descriptionKey?: string;
 }
 
 export interface ConfigSchemaBooleanField extends ConfigSchemaFieldBase {
   type: "boolean";
-  default?: boolean;
+  default: boolean;
 }
 
+/**
+ * Number field. Optional `min` / `max` / `step`.
+ * When both `min` and `max` are set, the Options UI also shows a range slider.
+ */
 export interface ConfigSchemaNumberField extends ConfigSchemaFieldBase {
   type: "number";
-  default?: number;
+  default: number;
   min?: number;
   max?: number;
   step?: number;
 }
 
-export interface ConfigSchemaStringField extends ConfigSchemaFieldBase {
-  type: "string";
-  default?: string;
+/** One option in a `choice` field. */
+export interface ConfigSchemaChoiceOption {
+  value: string;
+  labelKey: string;
 }
 
-export interface ConfigSchemaEnumField extends ConfigSchemaFieldBase {
-  type: "enum";
-  default?: string;
-  options: string[];
+/**
+ * Choice (select) field. `default` must match one `options[].value`.
+ * Prefer this over inventing a string free-text type — the game has none.
+ */
+export interface ConfigSchemaChoiceField extends ConfigSchemaFieldBase {
+  type: "choice";
+  default: string;
+  options: ConfigSchemaChoiceOption[];
 }
 
 export type ConfigSchemaField =
   | ConfigSchemaBooleanField
   | ConfigSchemaNumberField
-  | ConfigSchemaStringField
-  | ConfigSchemaEnumField;
+  | ConfigSchemaChoiceField;
 
-/** Settings fields exposed in the in-game mod config UI. */
+/** Settings fields exposed in the in-game Options → Mods UI. Max 64 fields. */
 export type ConfigSchema = Record<string, ConfigSchemaField>;
 
 export interface TextureOverrideSheet {

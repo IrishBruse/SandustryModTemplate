@@ -2,7 +2,7 @@
 
 ## Goal
 
-Add `src/settings-example/`: extend `configSchema` in `mod.ts` beyond the default `enabled` flag (for example a number or enum), read values with `sandkit.api.settings.get`, and react with `settings.onChange`.
+Add `src/settings-example/`: extend `configSchema` in `mod.ts` beyond the default `enabled` flag (for example a number or choice), read values with `sandkit.api.settings.get`, and react with `settings.onChange`.
 
 ## Why
 
@@ -10,12 +10,16 @@ Add `src/settings-example/`: extend `configSchema` in `mod.ts` beyond the defaul
 
 ## Acceptance
 
-- [ ] New folder `src/settings-example/` (`mod.ts`, `main.ts`, `README.md`)
-- [ ] `configSchema` defines at least one non-`enabled` field with label/description keys
-- [ ] `main.ts` reads the value on boot and subscribes to `onChange` with `onDispose` cleanup
-- [ ] User-visible feedback when a setting changes (toast or overlay label)
-- [ ] README explains where to change the setting in the game UI
-- [ ] Listed in [`docs/layout.md`](../layout.md) and [`AGENTS.md`](../../AGENTS.md) sample-mod table
+- [x] New folder `src/settings-example/` (`mod.ts`, `main.ts`, `README.md`)
+- [x] `configSchema` defines at least one non-`enabled` field with label/description keys
+- [x] `main.ts` reads the value on boot and subscribes to `onChange` with `onDispose` cleanup
+- [x] User-visible feedback when a setting changes (toast or overlay label)
+- [x] README explains where to change the setting in the game UI
+- [x] Listed in [`docs/layout.md`](../layout.md) and [`AGENTS.md`](../../AGENTS.md) sample-mod table
+
+## Done
+
+Shipped with every game-supported field type (`boolean`, `number`, `choice`). Reference: [`docs/modkit/config-schema.md`](../modkit/config-schema.md). Game source only accepts those three types (not `string` / `enum`).
 
 ## Origin
 

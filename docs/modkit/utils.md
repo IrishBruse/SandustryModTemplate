@@ -26,6 +26,8 @@ const value = safe(() => api.settings.get("enabled"));
 
 Reads a boolean from `api.settings.get("enabled")`. When the setting is missing or not a boolean, it defaults to `true`.
 
+Define custom fields in `configSchema`. See [config-schema.md](config-schema.md).
+
 The main bundle wraps the entry body so it does not run when the setting is false. Do not put an `enabled` guard in `main.ts`. Import `isEnabled` only for finer checks (for example gating a sub-feature).
 
 Workers do not get the prepend. Call `isEnabled` yourself in `worker.ts` when you need it.

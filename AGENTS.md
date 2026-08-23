@@ -34,7 +34,7 @@ Logs: Linux `~/.config/sandustry/logs`; Windows `%APPDATA%/sandustry/logs`.
 
 ### `src/`
 
-Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized demos: `hello-world-example`, `overlay-hotkey-example`, `retro-game-example`, `management-button-example`, `worker-api-example`. Real mod: `selection-capture` (**Pixel-perfect Screenshot and GIF recorder** — **C** marquee, **F7** PNG / GIF). Debug companion: `debug` (debug builds only). Mods cannot import from each other.
+Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized demos: `hello-world-example`, `overlay-hotkey-example`, `retro-game-example`, `management-button-example`, `worker-api-example`, `settings-example`. Real mod: `selection-capture` (**Pixel-perfect Screenshot and GIF recorder** — **C** marquee, **F7** PNG / GIF). Debug companion: `debug` (debug builds only). Mods cannot import from each other.
 
 | Path                       | Role                                                                                                                                                                                                     |
 | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
