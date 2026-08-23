@@ -7,6 +7,7 @@
     "build:release": "node scripts/build/esbuild.config.mjs --publish-out",
     "dev": "node scripts/dev/dev.js",
     "typecheck": "node scripts/typecheck/typecheck.js",
+    "test": "node scripts/test/test.js",
     "postinstall": "node scripts/mod-install/install-mod-deps.js",
     "lint": "npm run typecheck && oxlint && oxfmt --check",
     "lint:fix": "oxlint --fix && oxfmt",

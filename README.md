@@ -38,6 +38,7 @@ Full steps, copy-a-mod, and sample list: [Quick start](https://ethanconneely.com
 | `npm run build:release` | Release staging to `build/<folder>/` (Workshop assets; not the OS mods folder)                                                                          |
 | `npm run publish`       | Runs `build:release`, then Workshop upload ([SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD) on PATH, or a download into `.tmp/steamcmd/`) |
 | `npm run typecheck`     | TypeScript check                                                                                                                                        |
+| `npm run test`          | Node tests (`src/**/*.test.ts`)                                                                                                                         |
 | `npm run sandustry`     | Stop and launch the game (no build)                                                                                                                     |
 
 ## Troubleshooting

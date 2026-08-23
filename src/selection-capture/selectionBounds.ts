@@ -6,13 +6,15 @@ export type CellBounds = {
   maxY: number;
 };
 
-type CellPoint = { x: number; y: number };
+export type CellPoint = { x: number; y: number };
 
-type SelectedStructure = {
+export type SelectedStructure = {
   x: number;
   y: number;
   originalPos?: CellPoint;
 };
+
+export type MapPixels = { data: ArrayLike<number>; width: number; height?: number };
 
 /** Shape of `session.action.customData` while a marquee selection is active. */
 type MarqueeCustomData = {
@@ -24,7 +26,7 @@ type MarqueeCustomData = {
   mouseOffset?: CellPoint;
 };
 
-function isFinitePoint(point: CellPoint | undefined): point is CellPoint {
+export function isFinitePoint(point: CellPoint | undefined): point is CellPoint {
   return point !== undefined && Number.isFinite(point.x) && Number.isFinite(point.y);
 }
 
@@ -63,7 +65,7 @@ export function clearMarqueeSelection(api: SandkitApi): void {
   api.ui.update(sandkit.enums.ComponentId.ShortcutHelper);
 }
 
-function boundsFromPoints(points: CellPoint[]): CellBounds | null {
+export function boundsFromPoints(points: CellPoint[]): CellBounds | null {
   if (points.length === 0) return null;
   let minX = points[0].x;
   let minY = points[0].y;
@@ -84,7 +86,10 @@ function boundsFromPoints(points: CellPoint[]): CellBounds | null {
  * Prefer this over the marquee rect — the dashed box is often one cell past the content
  * on the right and bottom.
  */
-function boundsFromStructures(structures: SelectedStructure[], snap: number): CellBounds | null {
+export function boundsFromStructures(
+  structures: SelectedStructure[],
+  snap: number,
+): CellBounds | null {
   const points: CellPoint[] = [];
   for (const structure of structures) {
     const origin = structure.originalPos;
@@ -101,7 +106,7 @@ function boundsFromStructures(structures: SelectedStructure[], snap: number): Ce
 /**
  * Marquee `end` is exclusive on the max edges (left/top flush, right/bottom one cell past).
  */
-function boundsFromMarquee(start: CellPoint, end: CellPoint): CellBounds {
+export function boundsFromMarquee(start: CellPoint, end: CellPoint): CellBounds {
   const rawMinX = Math.min(start.x, end.x);
   const rawMinY = Math.min(start.y, end.y);
   const rawMaxX = Math.max(start.x, end.x);
@@ -114,20 +119,16 @@ function boundsFromMarquee(start: CellPoint, end: CellPoint): CellBounds {
   };
 }
 
-function cellIsVisible(r: number, g: number, b: number, a: number): boolean {
+export function cellIsVisible(r: number, g: number, b: number, a: number): boolean {
   if (a >= 8) return true;
   return r > 8 || g > 8 || b > 8;
 }
 
-function tightenBoundsToMapData(bounds: CellBounds): CellBounds {
-  const shared = sandkit.state.shared as
-    | { mapData?: { data: ArrayLike<number>; width: number; height?: number } }
-    | null
-    | undefined;
-  const mapData = shared?.mapData;
-  if (!mapData?.data || !mapData.width) return bounds;
+export function tightenBoundsToMapData(bounds: CellBounds, mapData?: MapPixels | null): CellBounds {
+  const map = mapData ?? readSharedMapData();
+  if (!map?.data || !map.width) return bounds;
 
-  const mapH = mapData.height ?? Math.floor(mapData.data.length / (4 * mapData.width));
+  const mapH = map.height ?? Math.floor(map.data.length / (4 * map.width));
   let minX = Infinity;
   let minY = Infinity;
   let maxX = -Infinity;
@@ -135,12 +136,12 @@ function tightenBoundsToMapData(bounds: CellBounds): CellBounds {
 
   for (let cy = bounds.minY; cy <= bounds.maxY; cy++) {
     for (let cx = bounds.minX; cx <= bounds.maxX; cx++) {
-      if (cx < 0 || cy < 0 || cx >= mapData.width || cy >= mapH) continue;
-      const i = 4 * (cx + cy * mapData.width);
-      const r = Number(mapData.data[i] ?? 0);
-      const g = Number(mapData.data[i + 1] ?? 0);
-      const b = Number(mapData.data[i + 2] ?? 0);
-      const a = Number(mapData.data[i + 3] ?? 0);
+      if (cx < 0 || cy < 0 || cx >= map.width || cy >= mapH) continue;
+      const i = 4 * (cx + cy * map.width);
+      const r = Number(map.data[i] ?? 0);
+      const g = Number(map.data[i + 1] ?? 0);
+      const b = Number(map.data[i + 2] ?? 0);
+      const a = Number(map.data[i + 3] ?? 0);
       if (!cellIsVisible(r, g, b, a)) continue;
       if (cx < minX) minX = cx;
       if (cy < minY) minY = cy;
@@ -151,6 +152,11 @@ function tightenBoundsToMapData(bounds: CellBounds): CellBounds {
 
   if (!Number.isFinite(minX)) return bounds;
   return { minX, minY, maxX, maxY };
+}
+
+function readSharedMapData(): MapPixels | null {
+  const shared = sandkit.state.shared as { mapData?: MapPixels } | null | undefined;
+  return shared?.mapData ?? null;
 }
 
 /**

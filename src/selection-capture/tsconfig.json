@@ -1,4 +1,5 @@
 {
   "extends": "../../tsconfig.mod.json",
-  "include": [".", "../../modkit"]
+  "include": [".", "../../modkit"],
+  "exclude": ["**/*.test.ts"]
 }

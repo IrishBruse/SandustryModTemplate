@@ -1,16 +1,21 @@
-import { Encoder, type UnencodedFrame } from "modern-gif";
+import type { UnencodedFrame } from "modern-gif";
 import gifWorkerSource from "modern-gif/worker";
+import {
+  GIF_1MB,
+  GIF_MIN_FRAMES,
+  encodePreparedGifWithLimit,
+  isAbortError,
+  throwIfAborted,
+} from "./encodeGifLimit";
 import { applyCaptureLook, getSession, snapshotOnPaint, type CaptureLook } from "./captureFrame";
 import { clearMarqueeSelection, getSelectionCellBounds, type CellBounds } from "./selectionBounds";
 
-const MIN_FRAMES = 2;
+const MIN_FRAMES = GIF_MIN_FRAMES;
 const MAX_FRAMES = 120;
 const MIN_TICKS = 1;
 const MAX_TICKS = 30;
 /** Same nearest-neighbor scale as the PNG screenshot. */
 const GIF_SCALE = 2;
-/** Steam Workshop preview / thumbnail cap (1 MiB). */
-const GIF_1MB = 1024 * 1024;
 
 /**
  * WorkerMessage.SetPaused in the current game bundle (`dist/js/bundle.js`).
@@ -64,14 +69,6 @@ function setSimulationPaused(paused: boolean): void {
   } catch (error) {
     console.warn(`SetPaused worker message failed:`, error);
   }
-}
-
-function throwIfAborted(signal: AbortSignal | undefined): void {
-  if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
-}
-
-function isAbortError(error: unknown): boolean {
-  return error instanceof DOMException && error.name === "AbortError";
 }
 
 function waitTicks(api: SandkitApi, count: number, signal: AbortSignal | undefined): Promise<void> {
@@ -195,48 +192,12 @@ function gifEncodeWorkerUrl(): string | undefined {
   }
 }
 
-async function encodeRgbaFrames(
-  prepared: UnencodedFrame[],
-  width: number,
-  height: number,
-  signal: AbortSignal | undefined,
-): Promise<Uint8Array | null> {
-  if (prepared.length === 0) return null;
-  throwIfAborted(signal);
-  const encoder = new Encoder({
-    width,
-    height,
-    maxColors: 255,
-    looped: true,
-    workerUrl: gifEncodeWorkerUrl(),
-  });
-  for (const frame of prepared) {
-    throwIfAborted(signal);
-    const src = frame.data;
-    if (!(src instanceof Uint8ClampedArray)) return null;
-    // Worker encode transfers the buffer — copy so we can trim and encode again.
-    const data = new Uint8ClampedArray(src.length);
-    data.set(src);
-    await encoder.encode({
-      data,
-      delay: frame.delay,
-      disposal: frame.disposal,
-    });
-  }
-  throwIfAborted(signal);
-  const buffer = await encoder.flush();
-  throwIfAborted(signal);
-  return new Uint8Array(buffer);
-}
-
-type EncodedGif = { bytes: Uint8Array; frameCount: number; hitLimit: boolean };
-
 async function encodeGif(
   frames: ImageData[],
   delayMs: number,
   maxBytes: number | undefined,
   signal: AbortSignal | undefined,
-): Promise<EncodedGif | "too-large" | null> {
+) {
   if (frames.length === 0) return null;
 
   const prepared: UnencodedFrame[] = [];
@@ -259,31 +220,14 @@ async function encodeGif(
   }
   frames.length = 0;
 
-  const full = await encodeRgbaFrames(prepared, width, height, signal);
-  if (!full) return null;
-  if (maxBytes === undefined || full.byteLength <= maxBytes) {
-    return { bytes: full, frameCount: prepared.length, hitLimit: false };
-  }
-
-  let lo = MIN_FRAMES;
-  let hi = prepared.length - 1;
-  let best: Uint8Array | null = null;
-  let bestCount = 0;
-  while (lo <= hi) {
-    throwIfAborted(signal);
-    const mid = (lo + hi) >> 1;
-    const attempt = await encodeRgbaFrames(prepared.slice(0, mid), width, height, signal);
-    await yieldToRenderer();
-    if (attempt && attempt.byteLength <= maxBytes) {
-      best = attempt;
-      bestCount = mid;
-      lo = mid + 1;
-    } else {
-      hi = mid - 1;
-    }
-  }
-  if (!best) return "too-large";
-  return { bytes: best, frameCount: bestCount, hitLimit: true };
+  return encodePreparedGifWithLimit(
+    prepared,
+    width,
+    height,
+    maxBytes,
+    signal,
+    gifEncodeWorkerUrl(),
+  );
 }
 
 function bytesToGifBlob(bytes: Uint8Array): Blob {

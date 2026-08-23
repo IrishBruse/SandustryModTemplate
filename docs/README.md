@@ -29,6 +29,7 @@ Full steps: **[Quick start](quick-start.md)**.
 | `npm run build:release` | Release staging to `build/<folder>/` (Workshop assets)                |
 | `npm run publish`       | Runs `build:release`, then SteamCMD upload (PATH or `.tmp/steamcmd/`) |
 | `npm run typecheck`     | TypeScript check                                                      |
+| `npm run test`          | Node tests (`src/**/*.test.ts`)                                       |
 | `npm run sandustry`     | Stop and launch the game (no build)                                   |
 
 Stuck? See [Troubleshooting](troubleshooting.md).

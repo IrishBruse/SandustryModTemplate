@@ -12,7 +12,7 @@ export type CaptureLook = {
 };
 
 /** Extra screen pixels on each edge so structure outlines are not clipped. */
-const BORDER_PX = 1;
+export const BORDER_PX = 1;
 
 type VisibleNode = { visible?: boolean; parent?: { filters?: unknown[] | null } };
 
@@ -134,11 +134,13 @@ export function applyCaptureLook(look: CaptureLook): () => void {
   };
 }
 
-type ScreenRect = { x: number; y: number; width: number; height: number };
+export type ScreenRect = { x: number; y: number; width: number; height: number };
 
-function getSelectionScreenRect(api: SandkitApi, bounds: CellBounds): ScreenRect | null {
-  const topLeft = api.rendering.getDrawPositionAtCell(bounds.minX, bounds.minY);
-  const bottomRight = api.rendering.getDrawPositionAtCell(bounds.maxX + 1, bounds.maxY + 1);
+/** Map inclusive cell AABB corners (in draw pixels) to a crop rect with a 1 px border. */
+export function screenRectFromCellCorners(
+  topLeft: { x: number; y: number },
+  bottomRight: { x: number; y: number },
+): ScreenRect | null {
   if (
     !Number.isFinite(topLeft.x) ||
     !Number.isFinite(topLeft.y) ||
@@ -160,7 +162,18 @@ function getSelectionScreenRect(api: SandkitApi, bounds: CellBounds): ScreenRect
   };
 }
 
-function clipRectToCanvas(rect: ScreenRect, canvasW: number, canvasH: number): ScreenRect | null {
+export function getSelectionScreenRect(api: SandkitApi, bounds: CellBounds): ScreenRect | null {
+  return screenRectFromCellCorners(
+    api.rendering.getDrawPositionAtCell(bounds.minX, bounds.minY),
+    api.rendering.getDrawPositionAtCell(bounds.maxX + 1, bounds.maxY + 1),
+  );
+}
+
+export function clipRectToCanvas(
+  rect: ScreenRect,
+  canvasW: number,
+  canvasH: number,
+): ScreenRect | null {
   const x0 = Math.max(0, rect.x);
   const y0 = Math.max(0, rect.y);
   const x1 = Math.min(canvasW, rect.x + rect.width);

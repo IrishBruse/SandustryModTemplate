@@ -64,6 +64,7 @@ npm run build:release -- --mod selection-capture
 npm run publish          # build:release + SteamCMD Workshop upload
 npm run publish -- --mod selection-capture
 npm run typecheck
+npm run test
 npm run sandustry        # stop + launch (no build; keep npm run dev for the bundle)
 npm run ui:css           # compile docs/ui/canvas preview Tailwind
 npm run ui:previews      # compile preview CSS, then screenshot preview.html
