@@ -5,7 +5,6 @@ import { definePatches } from "@modkit/modinfo";
  *
  * | id | File | Why a patch |
  * | --- | --- | --- |
- * | `options-debug-tab` | `js/bundle.js` | Options UI omits the Debug tab button; content already ships. |
  * | `local-mod-compile-reloaded` | `js/external-mod-runtime.js` | Loader must define free `reloaded` and the active mod id. |
  * | `local-mod-registry` | `js/external-mod-runtime.js` | Publish local mods so the companion can poll them. |
  * | `local-mod-track-inject` | `js/external-mod-runtime.js` | Auto-track `ui.inject` disposers for hot-eval. |
@@ -38,14 +37,6 @@ const INJECT_CODE =
   'return l.set(n,s),i.FH.ui.overlays.register(e,"global",n,function(){return $.createElement(o)}),(function(){var d=()=>{const t=G.get(e);(null==t?void 0:t.get(n))===s&&(t.delete(n),i.FH.ui.overlays.unregister(e,"global",n))};var a=globalThis.__sandkitHotReloadActive__,tr=globalThis.__sandkitTrackInjectDispose;tr&&a&&tr(a,d);return d})()';
 
 export const patches = definePatches([
-  {
-    id: "options-debug-tab",
-    file: "js/bundle.js",
-    find: 'F.length>0&&P.push("mods");const O=',
-    operation: "replace",
-    code: 'F.length>0&&P.push("mods");P.push("debug");const O=',
-    expectedMatches: 1,
-  },
   {
     id: "local-mod-compile-reloaded",
     file: "js/external-mod-runtime.js",
