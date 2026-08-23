@@ -1,6 +1,6 @@
 /**
  * Discover `src/<name>/mod.ts` and `examples/<name>/mod.ts` folders and load each manifest.
- * Optional `--mod <folder>` (or `--mod=<folder>`) selects one.
+ * Optional `--mod <folder>` (repeatable, or `--mod=<folder>`) selects one or more.
  */
 import { existsSync, readdirSync, statSync } from "node:fs";
 import { basename, dirname, isAbsolute, join, normalize, relative, sep } from "node:path";
@@ -188,24 +188,38 @@ export function findModByFolder(folder) {
 
 /**
  * @param {string[]} argv
+ * @returns {string[]}
+ */
+export function parseModFilters(argv) {
+  /** @type {string[]} */
+  const filters = [];
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+    if (arg === "--mod") {
+      const value = argv[i + 1];
+      if (!value || value.startsWith("-")) {
+        throw new Error("--mod requires a folder name (for example --mod hello-world)");
+      }
+      filters.push(value);
+      i += 1;
+      continue;
+    }
+    if (arg.startsWith("--mod=")) {
+      const value = arg.slice("--mod=".length).trim();
+      if (!value) throw new Error("--mod requires a folder name (for example --mod=hello-world)");
+      filters.push(value);
+    }
+  }
+  return filters;
+}
+
+/**
+ * @param {string[]} argv
  * @returns {string | null}
  */
 export function parseModFilter(argv) {
-  const flag = argv.indexOf("--mod");
-  if (flag >= 0) {
-    const value = argv[flag + 1];
-    if (!value || value.startsWith("-")) {
-      throw new Error("--mod requires a folder name (for example --mod hello-world)");
-    }
-    return value;
-  }
-  const eq = argv.find((arg) => arg.startsWith("--mod="));
-  if (eq) {
-    const value = eq.slice("--mod=".length).trim();
-    if (!value) throw new Error("--mod requires a folder name (for example --mod=hello-world)");
-    return value;
-  }
-  return null;
+  const filters = parseModFilters(argv);
+  return filters[0] ?? null;
 }
 
 /**
@@ -237,12 +251,21 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
     throw new Error("No mods found. Add src/<name>/mod.ts or examples/<name>/mod.ts");
   }
 
-  const filter = parseModFilter(argv);
-  let selected = filter ? discovered.filter((mod) => mod.folder === filter) : discovered;
-  if (filter && selected.length === 0) {
-    throw new Error(
-      `Unknown --mod ${JSON.stringify(filter)}. Found: ${discovered.map((m) => m.folder).join(", ")}`,
-    );
+  const filters = parseModFilters(argv);
+  let selected =
+    filters.length > 0 ? discovered.filter((mod) => filters.includes(mod.folder)) : discovered;
+  if (filters.length > 0) {
+    const unknown = filters.filter((folder) => !discovered.some((mod) => mod.folder === folder));
+    if (unknown.length > 0) {
+      throw new Error(
+        `Unknown --mod ${unknown.map((folder) => JSON.stringify(folder)).join(", ")}. Found: ${discovered.map((m) => m.folder).join(", ")}`,
+      );
+    }
+    if (selected.length === 0) {
+      throw new Error(
+        `No mods matched --mod. Found: ${discovered.map((m) => m.folder).join(", ")}`,
+      );
+    }
   }
 
   if (!includeDebugKit) {
@@ -251,8 +274,8 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
       throw new Error("src/debug is omitted from release builds");
     }
   } else if (
-    filter &&
-    filter !== DEBUG_MOD_FOLDER &&
+    filters.length > 0 &&
+    !filters.includes(DEBUG_MOD_FOLDER) &&
     discovered.some((mod) => mod.folder === DEBUG_MOD_FOLDER)
   ) {
     const debugMod = discovered.find((mod) => mod.folder === DEBUG_MOD_FOLDER);

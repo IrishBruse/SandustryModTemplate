@@ -11,7 +11,7 @@ The game runs `main.js` as a script body (`new Function`). `sandkit` is already 
 | `npm run dev`           | Included; install `src/debug`                                     | Included       | OS mods folder while watching; removed when the watch stops  |
 | `--game` / `--debug`    | Included; install `src/debug`                                     | Included       | Game mods folder                                             |
 
-`--no-debug` forces a release-style bundle even when watch or game flags are set. `--mod <folder>` builds one mod folder. Debug builds also install `src/debug` unless `--mod debug`. The build discovers every `src/*/mod.ts` and `examples/*/mod.ts`.
+`--no-debug` forces a release-style bundle even when watch or game flags are set. `--mod <folder>` builds one mod folder (repeat `--mod` for several). Debug builds also install `src/debug` unless `--mod debug`. The build discovers every `src/*/mod.ts` and `examples/*/mod.ts`.
 
 Debug builds emit **inline** source maps on `main.js` (needed for `new Function` eval). Use `--sourcemap` to force maps on a release build, or `--no-sourcemap` to omit them from a debug build.
 
@@ -55,8 +55,9 @@ In game:
 
 ```bash
 npm run setup            # check install, extract sandustry/, link logs/ (one time)
-npm run dev              # watch all src/ mods, debug on (required before F5)
+npm run dev              # watch mods (TTY picker: All or filter + multi-select)
 npm run dev -- --mod overlay-hotkey
+npm run dev -- --mod overlay-hotkey --mod hello-world
 npm run build            # release all mods (stay in the OS mods folder)
 npm run build -- --mod overlay-hotkey
 npm run build:release    # release staging to build/<folder>/ (Workshop assets)
@@ -71,6 +72,8 @@ npm run ui:previews      # compile preview CSS, then screenshot preview.html
 ```
 
 When `npm run dev` stops (Ctrl+C, terminal close, or process exit), it removes the OS mod folders this template owns and the matching `dist/<folder>` links. Use `npm run build` when you want mods to stay installed.
+
+In a TTY, `npm run dev` opens a keyboard picker before the watch starts. **All mods** is the first row. Type to filter the list, **Space** toggles mods, **Enter** confirms (All, checked mods, or the highlighted mod). Pass `--mod` to skip the picker. Non-TTY runs watch all mods.
 
 **F5** (VS Code `Sandustry` launch) stops any running game, launches with `--remote-debugging-port`, waits until CDP `:9222` responds, then attaches the debugger to the **renderer** (where mods run). It does not rebuild the mod — keep `npm run dev` running for the bundle and file logs. The debug companion polls local mod files for hot reload (Workshop mods are ignored). **Restart** in the debugger toolbar kills that Electron process and starts a new one, then the renderer attach reconnects — a page reload does not restart workers or re-apply patches. If attach fails or ports linger, press F5 again or run the **sandustry:stop** task.
 
