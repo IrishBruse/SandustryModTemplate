@@ -16,7 +16,7 @@ New to the template? Start with [Quick start](quick-start.md).
 | `examples/<name>/` | Sample mods to copy into `src/`           |
 | `modkit/`         | Shared kit. Import as `@modkit/*`         |
 | `dist/<name>/`    | Link to that mod's folder in the game     |
-| `build/<name>/`   | Release staging (`npm run build:release`) |
+| `build/<name>/`   | Workshop staging (copied on `npm run build`) |
 | `logs/`           | Link to Sandustry log files               |
 
 The game folder uses the `name` field in `mod.ts`, not the repo folder name.

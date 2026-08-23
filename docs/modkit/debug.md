@@ -45,7 +45,7 @@ Turn on **Auto-load save** or **Open DevTools on load** when you want those help
 | Open DevTools on load | [`boot/boot-menu.ts`](../../src/debug/boot/boot-menu.ts)                                     | Open DevTools    | Retries until the Electron bridge is ready. Keep off under F5                                      |
 | F12 opens DevTools    | [`boot/boot-menu.ts`](../../src/debug/boot/boot-menu.ts)                                     | F12              | Capture-phase keydown; skipped on hot-reload eval                                                  |
 | Auto-load save        | [`boot/boot-menu.ts`](../../src/debug/boot/boot-menu.ts) + [`boot/auto-load-save.ts`](../../src/debug/boot/auto-load-save.ts) | Auto-load + Start save | Reloads with `?db_load=` for the **Start save** pick |
-| Start save picker     | [`boot/start-save-picker.tsx`](../../src/debug/boot/start-save-picker.tsx)           | Start save       | Lists local saves. Writes `api.storage`. In-game: management-column **Start save**. |
+| Start save picker     | [`boot/start-save-picker.tsx`](../../src/debug/boot/start-save-picker.tsx)           | Start save       | Lists local saves on the main menu. Writes `api.storage`. Hidden in-game. |
 | Disable autosave      | [`boot/autosave.ts`](../../src/debug/boot/autosave.ts)                                       | Disable autosave | Sets interval to `0` on load and each hot-reload eval                                              |
 | Renderer hot reload   | [`reload/local-mod-reload.ts`](../../src/debug/reload/local-mod-reload.ts)                       | Watch local mods | Polls local folders; Workshop mods are skipped                                             |
 | F3 debug overlay      | [`f3/F3DebugOverlay.tsx`](../../src/debug/f3/F3DebugOverlay.tsx) | Engine debug     | Minecraft-style text HUD; extensible via `registerF3Section` / `globalThis.debugF3`              |
@@ -124,9 +124,11 @@ When **local** `main.js` bytes change:
 - If the mod registered `onDispose`, or `api.ui.inject` was auto-tracked, the companion disposes and evaluates the new source with that mod's `sandkit`.
 - Otherwise it honours **If hot reload cannot run** (`off` / `toast` / `reload` the page).
 
-When `patches.json`, `modinfo.json`, or a declared worker entry change, the companion always toasts **restart the game**. Patches apply in the Electron main process at process start. `location.reload()` does not re-apply them.
+When `patches.json`, `modinfo.json`, or a declared worker entry change (including this companion’s own `patches.json` / `modinfo.json`), the companion toasts **restart the game**. It stores that message in `sessionStorage` so a DevTools page reload still shows it. Patches apply in the Electron main process at process start. `location.reload()` does not re-apply them.
 
-This companion does not watch its own folder (a hot eval would tear down the poller). Reload the page or restart the game after you change the debug mod.
+This companion does **not** hot-eval its own `main.js` (that would tear down the poller). After you change the debug companion, **restart the game**. A page reload is not enough for patches or workers.
+
+The three loader patches share an **atomic group**. All apply, or none apply. After boot, the companion checks the local-mod registry and `ui.inject` tracking. If a hook is missing, it toasts **restart the game**. Free `reloaded` comes only from the loader patch (not esbuild).
 
 JavaScript cannot be unloaded. The loader only reclaims what you register (or what `api.ui.inject` returns):
 
@@ -142,7 +144,7 @@ onDispose(() => clearInterval(timer));
 | ------------------------------------------------------ | --------------------------------------------------- |
 | Local `main.js` with dispose / tracked inject          | Dispose, then evaluate the new source               |
 | Local `main.js` with no dispose                        | **If hot reload cannot run** (`off` / toast / page) |
-| `patches.json`, `modinfo.json`, declared `workerEntry` | Toast: restart the game                             |
+| `patches.json`, `modinfo.json`, declared `workerEntry` | Toast: restart the game (page reload is not enough) |
 | Workshop mod files                                     | Ignored                                             |
 
 A monkey-patch or a trigger with no unregister path stays until the game restarts.
@@ -172,6 +174,8 @@ The companion rewrites `js/external-mod-runtime.js`. Definitions live in [`src/d
 | `local-mod-compile-reloaded` | `js/external-mod-runtime.js` | Define free `reloaded` and the active mod id in the loader wrapper. |
 | `local-mod-registry` | `js/external-mod-runtime.js` | Publish local mods on `globalThis.__sandkitLocalModRegistry__`. |
 | `local-mod-track-inject` | `js/external-mod-runtime.js` | Auto-track `ui.inject` unregister functions for hot-eval. |
+
+These three patches use the same `atomicGroup` (`local-mod-loader`).
 
 Workshop mods are not added to the registry. See [patches.md](../patches.md) for the patch format.
 

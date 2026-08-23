@@ -128,22 +128,28 @@ export function tuiSelect(opts) {
 }
 
 /**
- * Filterable multi-select combobox for mod folders.
+ * Filterable multi-select combobox for mod folders, grouped under section headers.
  * @param {object} opts
  * @param {string} opts.title
- * @param {{ folder: string, hint?: string }[]} opts.mods
+ * @param {{ label: string, mods: { folder: string, hint?: string }[] }[]} opts.groups
+ * @param {string[]} [opts.initialSelected] Pre-checked mod folders.
+ * @param {"all" | string} [opts.initialFocus] Highlight **All mods** or a folder row.
  * @returns {Promise<string[] | null>} `null` = all mods; otherwise selected folder names.
  */
 export function tuiModCombobox(opts) {
-  if (opts.mods.length === 0) {
+  const allMods = opts.groups.flatMap((group) => group.mods);
+  if (allMods.length === 0) {
     return Promise.reject(new Error("No selectable mods."));
   }
 
   return new Promise((resolve, reject) => {
     /** @type {Set<string>} */
     const selected = new Set();
+    for (const folder of opts.initialSelected ?? []) {
+      if (allMods.some((mod) => mod.folder === folder)) selected.add(folder);
+    }
     let filter = "";
-    /** 0 = All mods row; 1+ = index in visibleMods */
+    /** Index into {@link buildLayout} for the highlighted row. */
     let cursor = 0;
     let drawn = 0;
 
@@ -159,19 +165,41 @@ export function tuiModCombobox(opts) {
       process.stdout.write(SHOW);
     }
 
-    function visibleMods() {
+    function buildLayout() {
+      /** @type {({ kind: "all" } | { kind: "header", label: string } | { kind: "mod", mod: { folder: string, hint?: string } })[]} */
+      const layout = [{ kind: "all" }];
       const query = filter.trim().toLowerCase();
-      if (!query) return opts.mods;
-      return opts.mods.filter((mod) => {
-        const hay = `${mod.folder} ${mod.hint ?? ""}`.toLowerCase();
-        return hay.includes(query);
-      });
+
+      for (const group of opts.groups) {
+        const mods = group.mods.filter((mod) => {
+          if (!query) return true;
+          const hay = `${mod.folder} ${mod.hint ?? ""} ${group.label}`.toLowerCase();
+          return hay.includes(query);
+        });
+        if (mods.length === 0) continue;
+        layout.push({ kind: "header", label: group.label });
+        for (const mod of mods) layout.push({ kind: "mod", mod });
+      }
+
+      return layout;
+    }
+
+    function selectableIndices(layout) {
+      return layout.flatMap((row, index) =>
+        row.kind === "all" || row.kind === "mod" ? [index] : [],
+      );
     }
 
     function clampCursor() {
-      const count = visibleMods().length;
-      if (cursor < 0) cursor = 0;
-      if (cursor > count) cursor = count;
+      const layout = buildLayout();
+      const selectable = selectableIndices(layout);
+      if (selectable.length === 0) {
+        cursor = 0;
+        return;
+      }
+      if (!selectable.includes(cursor)) {
+        cursor = selectable[0];
+      }
     }
 
     function selectedSummary() {
@@ -181,27 +209,33 @@ export function tuiModCombobox(opts) {
     }
 
     function render() {
+      const layout = buildLayout();
       const rows = [`${BOLD}${opts.title}${RESET}`];
-      const allActive = cursor === 0;
-      const allMark = allActive ? `${CYAN}${BOLD}❯${RESET}` : " ";
-      const allLabel = allActive ? `${CYAN}${BOLD}All mods${RESET}` : "All mods";
-      rows.push(`  ${allMark} ${allLabel}`);
-      rows.push(`  ${DIM}${"─".repeat(24)}${RESET}`);
 
-      const visible = visibleMods();
-      if (visible.length === 0) {
-        rows.push(`  ${DIM}(no matches)${RESET}`);
-      } else {
-        for (let i = 0; i < visible.length; i++) {
-          const mod = visible[i];
-          const row = i + 1;
-          const active = cursor === row;
+      for (let i = 0; i < layout.length; i++) {
+        const row = layout[i];
+        if (row.kind === "all") {
+          const active = cursor === i;
           const mark = active ? `${CYAN}${BOLD}❯${RESET}` : " ";
-          const box = selected.has(mod.folder) ? `${GREEN}[x]${RESET}` : "[ ]";
-          const name = active ? `${CYAN}${BOLD}${mod.folder}${RESET}` : mod.folder;
-          const hint = mod.hint ? ` ${DIM}${mod.hint}${RESET}` : "";
-          rows.push(`  ${mark} ${box} ${name}${hint}`);
+          const label = active ? `${CYAN}${BOLD}All mods${RESET}` : "All mods";
+          rows.push(`  ${mark} ${label}`);
+          rows.push(`  ${DIM}${"─".repeat(24)}${RESET}`);
+          continue;
         }
+        if (row.kind === "header") {
+          rows.push(`  ${DIM}${row.label}${RESET}`);
+          continue;
+        }
+        const active = cursor === i;
+        const mark = active ? `${CYAN}${BOLD}❯${RESET}` : " ";
+        const box = selected.has(row.mod.folder) ? `${GREEN}[x]${RESET}` : "[ ]";
+        const name = active ? `${CYAN}${BOLD}${row.mod.folder}${RESET}` : row.mod.folder;
+        const hint = row.mod.hint ? ` ${DIM}${row.mod.hint}${RESET}` : "";
+        rows.push(`  ${mark} ${box} ${name}${hint}`);
+      }
+
+      if (layout.length === 1) {
+        rows.push(`  ${DIM}(no matches)${RESET}`);
       }
 
       rows.push("");
@@ -229,22 +263,30 @@ export function tuiModCombobox(opts) {
     }
 
     function move(delta) {
-      const max = visibleMods().length;
-      cursor = Math.max(0, Math.min(max, cursor + delta));
+      const layout = buildLayout();
+      const selectable = selectableIndices(layout);
+      if (selectable.length === 0) return;
+      const pos = selectable.indexOf(cursor);
+      const next = pos < 0 ? 0 : (pos + delta + selectable.length) % selectable.length;
+      cursor = selectable[next];
       draw();
     }
 
+    function rowAtCursor() {
+      return buildLayout()[cursor];
+    }
+
     function toggleAtCursor() {
-      if (cursor === 0) return;
-      const mod = visibleMods()[cursor - 1];
-      if (!mod) return;
-      if (selected.has(mod.folder)) selected.delete(mod.folder);
-      else selected.add(mod.folder);
+      const row = rowAtCursor();
+      if (!row || row.kind !== "mod") return;
+      if (selected.has(row.mod.folder)) selected.delete(row.mod.folder);
+      else selected.add(row.mod.folder);
       draw();
     }
 
     function confirm() {
-      if (cursor === 0) {
+      const row = rowAtCursor();
+      if (row?.kind === "all") {
         finish(`  ${CYAN}${BOLD}❯${RESET} All mods`);
         resolve(null);
         return;
@@ -255,10 +297,10 @@ export function tuiModCombobox(opts) {
         resolve(folders);
         return;
       }
-      const mod = visibleMods()[cursor - 1];
-      if (!mod) return;
-      finish(`  ${CYAN}${BOLD}❯${RESET} ${mod.folder}`);
-      resolve([mod.folder]);
+      if (row?.kind === "mod") {
+        finish(`  ${CYAN}${BOLD}❯${RESET} ${row.mod.folder}`);
+        resolve([row.mod.folder]);
+      }
     }
 
     function onKey(str, key) {
@@ -306,12 +348,29 @@ export function tuiModCombobox(opts) {
       }
       if (str && !key.ctrl && !key.meta && str.length === 1 && str >= " ") {
         filter += str;
-        cursor = cursor === 0 ? 1 : cursor;
+        const layout = buildLayout();
+        const selectable = selectableIndices(layout);
+        if (selectable.length > 0 && !selectable.includes(cursor)) {
+          cursor = selectable[0];
+        }
         draw();
       }
     }
 
+    function initCursor() {
+      if (opts.initialFocus === "all") {
+        cursor = 0;
+        return;
+      }
+      const focus = opts.initialFocus ?? opts.initialSelected?.[0];
+      if (typeof focus !== "string") return;
+      const layout = buildLayout();
+      const index = layout.findIndex((row) => row.kind === "mod" && row.mod.folder === focus);
+      if (index >= 0) cursor = index;
+    }
+
     process.stdin.on("keypress", onKey);
+    initCursor();
     draw();
   });
 }

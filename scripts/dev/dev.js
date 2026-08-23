@@ -5,7 +5,7 @@
  *  Windows: %APPDATA%/sandustry/mods/<modinfo.name>).
  * On stop (Ctrl+C, terminal close, or child exit), remove those owned mods.
  * Usage: npm run dev [-- --mod hello-world]
- * In a TTY with no --mod, shows a keyboard mod picker (All mods or a filtered multi-select).
+ * In a TTY with no --mod, shows a keyboard mod picker (last choice pre-selected).
  */
 import { spawn } from "node:child_process";
 import { dirname, join } from "node:path";

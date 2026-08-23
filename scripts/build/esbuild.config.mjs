@@ -22,7 +22,7 @@ import {
   MODKIT_OPTIONS_CSS_ENTRY,
   readModkitOptionsCss,
 } from "../lib/compile-tailwind.js";
-import { loadMods, modIsolationPlugin, prepareModOutputs, PUBLISH_OUT_ROOT } from "../lib/mods.js";
+import { loadMods, modIsolationPlugin, prepareModOutputs, syncModToPublishStaging } from "../lib/mods.js";
 import { copyWorkshopInstallFiles, removeWorkshopPublishFiles } from "../lib/workshop-files.js";
 import { startLogServer } from "../dev/log-server.js";
 import { modkitAliasPlugin } from "../lib/modkit-alias.js";
@@ -37,17 +37,10 @@ const debugFlag = args.includes("--debug");
 const noDebugFlag = args.includes("--no-debug");
 const sourcemapFlag = args.includes("--sourcemap");
 const noSourcemapFlag = args.includes("--no-sourcemap");
-const publishOut = args.includes("--publish-out");
-
-if (publishOut && (watch || debugFlag || game)) {
-  throw new Error(
-    "--publish-out is a release staging build. Do not pass --watch, --debug, or --game.",
-  );
-}
 
 /** @returns {boolean} */
 function resolveModDebug() {
-  if (publishOut || noDebugFlag) return false;
+  if (noDebugFlag) return false;
   if (debugFlag) return true;
   return watch || game;
 }
@@ -69,22 +62,21 @@ const sourcemap = resolveSourcemap();
 
 const mods = await loadMods(args, {
   includeDebugKit: modDebug,
-  outRoot: publishOut ? PUBLISH_OUT_ROOT : undefined,
 });
-if (publishOut) {
-  for (const mod of mods) {
-    rmSync(mod.outDir, { recursive: true, force: true });
-    mkdirSync(mod.outDir, { recursive: true });
-  }
-} else {
-  prepareModOutputs(ROOT, mods, { includeDebugKit: modDebug });
-}
+prepareModOutputs(ROOT, mods, { includeDebugKit: modDebug });
 
 console.log(
   kv("mods", mods.map((mod) => styleText("bold", mod.folder)).join(styleText("dim", ", "))),
 );
 console.log(kv("mod debug", modDebug ? styleText("green", "on") : styleText("dim", "off")));
-console.log(kv("output", publishOut ? "build/<folder>" : "OS mods folder"));
+console.log(
+  kv(
+    "output",
+    watch || modDebug
+      ? "OS mods folder"
+      : "OS mods folder + build/<folder>",
+  ),
+);
 console.log(kv("sourcemap", sourcemap ?? styleText("dim", "off")));
 
 /**
@@ -462,9 +454,8 @@ function extraWatchDirs(mod) {
 
 /**
  * Main entry only (workers skip this):
- * - Skip the entry body when `api.settings.get("enabled")` is false (`isEnabled`)
- * - Keep free `reloaded` in the graph via `void reloaded` on debug
- *   builds even when a mod never reads that binding (loader patch defines it)
+ * Skip the entry body when `api.settings.get("enabled")` is false (`isEnabled`).
+ * Free `reloaded` comes from the debug loader patch, not from esbuild.
  *
  * Uses an `if` wrap (not top-level `return`) because entries with `import` are
  * ESM and reject top-level return.
@@ -484,7 +475,6 @@ function mainEntryBootstrapPlugin(mod) {
           contents: [
             imports,
             `import { isEnabled } from "@modkit/utils";`,
-            ...(modDebug ? [`void reloaded;`] : []),
             `if (isEnabled(sandkit.api)) {`,
             body,
             `}`,
@@ -647,5 +637,6 @@ if (watch) {
 } else {
   for (const mod of mods) {
     await buildOne(mod);
+    if (!modDebug) syncModToPublishStaging(mod);
   }
 }

@@ -2,7 +2,7 @@
  * Discover `src/<name>/mod.ts` and `examples/<name>/mod.ts` folders and load each manifest.
  * Optional `--mod <folder>` (repeatable, or `--mod=<folder>`) selects one or more.
  */
-import { existsSync, readdirSync, statSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readdirSync, rmSync, statSync } from "node:fs";
 import { basename, dirname, isAbsolute, join, normalize, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { bundleAndImport } from "./build-patches.js";
@@ -16,12 +16,23 @@ export const MOD_ROOTS = ["src", "examples"];
 /** Companion mod folder. Debug builds install it; release builds omit it. */
 export const DEBUG_MOD_FOLDER = "debug";
 
-/** Staging root for `npm run build:release` / `npm run publish` — not `dist/` or the OS mods folder. */
+/** Workshop staging root (`npm run publish`). Copied from the OS mods folder on release `npm run build`. */
 export const PUBLISH_OUT_ROOT = join(ROOT, "build");
 
 /** @param {string} folder Mod folder name (under `src/` or `examples/`) */
 export function publishStagingDir(folder) {
   return join(PUBLISH_OUT_ROOT, folder);
+}
+
+/**
+ * Copy a release build from the OS mods folder into `build/<folder>/`.
+ * @param {LoadedMod} mod
+ */
+export function syncModToPublishStaging(mod) {
+  const staging = publishStagingDir(mod.folder);
+  rmSync(staging, { recursive: true, force: true });
+  mkdirSync(staging, { recursive: true });
+  cpSync(mod.outDir, staging, { recursive: true });
 }
 
 const SKIP_DIR_NAMES = new Set(["node_modules", ".git"]);
@@ -239,13 +250,11 @@ export function parseModFilter(argv) {
 
 /**
  * @param {string[]} [argv]
- * @param {{ includeDebugKit?: boolean; outRoot?: string }} [options]
+ * @param {{ includeDebugKit?: boolean }} [options]
  * @returns {Promise<LoadedMod[]>}
  */
 export async function loadMods(argv = process.argv.slice(2), options = {}) {
   const includeDebugKit = options.includeDebugKit === true;
-  const outRoot =
-    typeof options.outRoot === "string" && options.outRoot.trim() ? options.outRoot : null;
   const discovered = discoverMods();
   if (discovered.length === 0) {
     throw new Error("No mods found. Add src/<name>/mod.ts or examples/<name>/mod.ts");
@@ -320,7 +329,7 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
       tsconfig,
       manifest,
       gameName,
-      outDir: outRoot ? join(outRoot, folder) : gameModDir(gameName),
+      outDir: gameModDir(gameName),
     });
   }
   return mods;

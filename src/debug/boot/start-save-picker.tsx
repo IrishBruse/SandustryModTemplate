@@ -1,6 +1,5 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import { onDispose } from "@modkit/debug";
-import { registerManagementMenuButton } from "@modkit/ui";
 import { inGame } from "@modkit/utils";
 import {
   AUTO_LOAD_FROM_STORAGE,
@@ -14,9 +13,6 @@ import {
 } from "./auto-load-save";
 
 const api = sandkit.api;
-const TOGGLE_EVENT = "irishbruse.debug:toggle-start-save";
-const SAVE_ICON =
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="20" height="20" fill="currentColor"><path d="M160-160v-640h480l160 160v480H160Zm80-80h480v-354L594-720H240v480Zm0 0v-480 480Zm80-80h80v-240H320v240Zm160 0h80v-80h-80v80Zm0-160h80v-80h-80v80Z"/></svg>';
 
 const panelStyle: CSSProperties = {
   position: "fixed",
@@ -54,32 +50,17 @@ function pickerValue(): string {
 }
 
 function StartSavePickerOverlay() {
-  const [open, setOpen] = useState(() => !inGame());
   const [playing, setPlaying] = useState(() => inGame());
   const [saves, setSaves] = useState<SaveFileInfo[]>([]);
   const [value, setValue] = useState(pickerValue);
 
   useEffect(() => {
-    function onToggle(): void {
-      setOpen((current) => !current);
-    }
-    window.addEventListener(TOGGLE_EVENT, onToggle);
-    return () => window.removeEventListener(TOGGLE_EVENT, onToggle);
-  }, []);
-
-  useEffect(() => {
-    const id = window.setInterval(() => {
-      const now = inGame();
-      setPlaying(now);
-      if (!now) setOpen(true);
-    }, 400);
+    const id = window.setInterval(() => setPlaying(inGame()), 400);
     return () => window.clearInterval(id);
   }, []);
 
-  const visible = !playing || open;
-
   useEffect(() => {
-    if (!visible) return;
+    if (playing) return;
     let cancelled = false;
     void listSaveFiles().then((files) => {
       if (!cancelled) setSaves(files);
@@ -90,9 +71,9 @@ function StartSavePickerOverlay() {
       cancelled = true;
       stop?.();
     };
-  }, [visible]);
+  }, [playing]);
 
-  if (!visible) return null;
+  if (playing) return null;
 
   const extra =
     value !== AUTO_LOAD_LAST_PLAYED && !saves.some((file) => file.id === value)
@@ -128,7 +109,7 @@ function StartSavePickerOverlay() {
   );
 }
 
-/** Overlay + management-column row. Writes `api.storage` (settings cannot list live saves). */
+/** Menu overlay. Writes `api.storage` (settings cannot list live saves). Hidden in-game. */
 export function installStartSavePicker(modId: string): void {
   const dispose = api.ui.inject(`${modId}:start-save`, () => <StartSavePickerOverlay />);
   if (!dispose) {
@@ -136,13 +117,4 @@ export function installStartSavePicker(modId: string): void {
     return;
   }
   onDispose(dispose);
-
-  const stopRow = registerManagementMenuButton({
-    id: `${modId}:start-save`,
-    icon: SAVE_ICON,
-    label: "Start save",
-    hotkey: "",
-    onClick: () => window.dispatchEvent(new Event(TOGGLE_EVENT)),
-  });
-  onDispose(stopRow);
 }

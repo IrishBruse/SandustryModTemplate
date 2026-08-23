@@ -34,7 +34,12 @@ const INJECT_FIND =
 
 /** Same unregister function, also passed to `__sandkitTrackInjectDispose`. */
 const INJECT_CODE =
-  'return l.set(n,s),i.FH.ui.overlays.register(e,"global",n,function(){return $.createElement(o)}),(function(){var d=()=>{const t=G.get(e);(null==t?void 0:t.get(n))===s&&(t.delete(n),i.FH.ui.overlays.unregister(e,"global",n))};var a=globalThis.__sandkitHotReloadActive__,tr=globalThis.__sandkitTrackInjectDispose;tr&&a&&tr(a,d);return d})()';
+  'return l.set(n,s),i.FH.ui.overlays.register(e,"global",n,function(){return $.createElement(o)}),(function(){globalThis.__sandkitInjectDisposePatched__=true;var d=()=>{const t=G.get(e);(null==t?void 0:t.get(n))===s&&(t.delete(n),i.FH.ui.overlays.unregister(e,"global",n))};var a=globalThis.__sandkitHotReloadActive__,tr=globalThis.__sandkitTrackInjectDispose;tr&&a&&tr(a,d);return d})()';
+
+const LOADER_GROUP = "local-mod-loader";
+
+/** Exact `find` strings for tests against extracted game JS. */
+export const LOADER_PATCH_FINDS = [COMPILE_FIND, EXECUTE_FIND, INJECT_FIND] as const;
 
 export const patches = definePatches([
   {
@@ -44,6 +49,7 @@ export const patches = definePatches([
     operation: "replace",
     code: COMPILE_CODE,
     expectedMatches: 1,
+    atomicGroup: LOADER_GROUP,
   },
   {
     id: "local-mod-registry",
@@ -52,6 +58,7 @@ export const patches = definePatches([
     operation: "replace",
     code: EXECUTE_CODE,
     expectedMatches: 1,
+    atomicGroup: LOADER_GROUP,
   },
   {
     id: "local-mod-track-inject",
@@ -60,5 +67,6 @@ export const patches = definePatches([
     operation: "replace",
     code: INJECT_CODE,
     expectedMatches: 1,
+    atomicGroup: LOADER_GROUP,
   },
 ]);

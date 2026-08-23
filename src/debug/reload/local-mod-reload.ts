@@ -9,6 +9,7 @@ import {
 } from "./hot-eval";
 import { settingOn, hotReloadFallback } from "../boot/settings";
 import { modinfo } from "../mod";
+import { noteRestartNeeded, probeLoaderPatches, remindRestartIfNeeded } from "./loader-health";
 
 const POLL_MS = 400;
 const RESTART_FILES = ["patches.json", "modinfo.json"] as const;
@@ -99,6 +100,9 @@ async function hotEvalMain(api: SandkitApi, record: LocalModRecord, source: stri
 export function startLocalModReload(api: SandkitApi): void {
   const tracked = new Map<string, Tracked>();
   let busy = false;
+  let probed = false;
+
+  remindRestartIfNeeded(api);
 
   const timer = globalThis.setInterval(() => {
     void tick();
@@ -119,11 +123,15 @@ export function startLocalModReload(api: SandkitApi): void {
 
   async function pollAll(): Promise<void> {
     const records = registry();
+    if (!probed && records[modinfo.id]) {
+      probed = true;
+      probeLoaderPatches(api);
+    }
     for (const id of Object.keys(records)) {
-      if (id === modinfo.id) continue;
       const record = records[id];
       if (!record?.rootUrl || !record.sandkit) continue;
-      bindHostSandkit(id, api, record.sandkit, record.entry || "main.js");
+      const self = id === modinfo.id;
+      if (!self) bindHostSandkit(id, api, record.sandkit, record.entry || "main.js");
 
       const next = await snapshot(record);
       if (next == null) {
@@ -140,11 +148,13 @@ export function startLocalModReload(api: SandkitApi): void {
       for (const file of Object.keys(next.files)) {
         if (file === entry) continue;
         if (prev.files[file] !== undefined && next.files[file] !== prev.files[file]) {
-          toast(api, `${file} changed. Restart the game to apply it.`);
-          console.warn(`[${id}] ${file} changed — restart the game`);
+          noteRestartNeeded(
+            api,
+            `${file} changed. Restart the game to apply it (page reload is not enough).`,
+          );
         }
       }
-      if (next.files[entry] !== prev.files[entry]) {
+      if (!self && next.files[entry] !== prev.files[entry]) {
         if (hasDisposers(id)) await hotEvalMain(api, record, next.files[entry]);
         else applyMainFallback(api, record);
       }

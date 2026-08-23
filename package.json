@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "setup": "node scripts/setup/setup.js",
     "build": "node scripts/build/esbuild.config.mjs",
-    "build:release": "node scripts/build/esbuild.config.mjs --publish-out",
     "dev": "node scripts/dev/dev.js",
     "typecheck": "node scripts/typecheck/typecheck.js",
     "test": "node scripts/test/test.js",
@@ -13,7 +13,6 @@
     "lint:fix": "oxlint --fix && oxfmt",
     "docs": "npm run docs:api && docsify serve docs",
     "docs:api": "node scripts/docs/generate-api-docs.mjs",
-    "setup": "node scripts/setup/setup.js",
     "ui:css": "node scripts/ui/compile-preview-css.mjs",
     "ui:previews": "node scripts/ui/generate-previews.mjs",
     "sandustry": "node scripts/sandustry/launch-sandustry.js",

@@ -14,7 +14,7 @@ export const modinfo = defineModInfo({
   description:
     "Dev companion: DevTools, auto-load save, disable autosave, local-mod hot reload. Installed on debug builds only.",
   dependencies: [],
-  loadOrder: -1000,
+  loadOrder: -2147483648,
   configSchema: {
     enabled: {
       type: "boolean",
@@ -73,7 +73,8 @@ export const modinfo = defineModInfo({
       type: "choice",
       default: "toast",
       labelKey: "If hot reload cannot run",
-      descriptionKey: "If a mod cannot hot-reload: do nothing, toast, or reload the page.",
+      descriptionKey:
+        "If a mod cannot hot-reload: do nothing, toast, or reload the page. Page reload does not re-apply patches.json.",
       options: [
         { value: "off", labelKey: "Do nothing" },
         { value: "toast", labelKey: "Toast" },

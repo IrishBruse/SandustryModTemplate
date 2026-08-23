@@ -634,8 +634,8 @@ if (!confirmed) {
   process.exit(0);
 }
 
-console.log("Release build to build/…");
-const build = spawnSync("npm", ["run", "build:release", "--", "--mod", selected.folder], {
+console.log("Release build…");
+const build = spawnSync("npm", ["run", "build", "--", "--mod", selected.folder], {
   stdio: "inherit",
   cwd: ROOT,
   shell: true,
