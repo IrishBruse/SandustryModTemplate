@@ -110,13 +110,14 @@ Free **`reloaded`** is true when this script body is running because a reload ev
 
 ## File logging (`console`)
 
-Debug builds use esbuild [`inject`](https://esbuild.github.io/api/#inject) with [`modkit/esbuild/console.ts`](../../modkit/esbuild/console.ts). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code print in DevTools with a `[modinfo.id]` prefix and also `POST` to `http://127.0.0.1:19147/log` while `npm run dev` is up. Lines append to `logs/<modinfo.id>.log` (workspace `logs/` → OS sandustry logs: `~/.config/sandustry/logs` or `%APPDATA%/sandustry/logs`). Do not add the mod id in the message — the inject adds it.
+Debug builds use esbuild [`inject`](https://esbuild.github.io/api/#inject) with [`modkit/esbuild/console.ts`](../../modkit/esbuild/console.ts). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code also `POST` to `http://127.0.0.1:19147/log` while `npm run dev` is up. Lines append to `logs/<modinfo.id>.log` (workspace `logs/` → OS sandustry logs: `~/.config/sandustry/logs` or `%APPDATA%/sandustry/logs`). Tag messages yourself or use `createLogger` from `@modkit/log` when you want a bracket prefix.
 
 A renderer hot reload (save or **Ctrl+R**) truncates that file via `POST /log/clear` and calls `console.clear()` so the session starts clean. Use `clearLog(modId)` from `@modkit/log` to clear by hand. `clearLog` aborts after 500 ms if F5 / CDP stalls the POST.
 
 ```ts
 console.log("my-feature", payload);
-// DevTools: [author.hello-world-example] my-feature {…}
+// DevTools: my-feature {…}
+// logs/author.hello-world-example.log: [log] my-feature {…}
 ```
 
 Release builds skip the inject. The shim uses `globalThis.console` so it does not recurse. `__MOD_ID__` is defined from that mod's `mod.ts` at build time.

@@ -148,7 +148,7 @@ npm run sandustry        # stop + launch (no build)
 
 The renderer does not write `console.log` into `logs/main.log` (that file is the Electron main process).
 
-In **debug** builds, esbuild injects [`modkit/esbuild/console.ts`](modkit/esbuild/console.ts) so bare `console.log` / `info` / `warn` / `error` / `debug` print with a `[modinfo.id]` prefix in DevTools and also append to `logs/<modinfo.id>.log` (link: `logs/` → OS sandustry logs) when `npm run dev` is running.
+In **debug** builds, esbuild injects [`modkit/esbuild/console.ts`](modkit/esbuild/console.ts) so bare `console.log` / `info` / `warn` / `error` / `debug` in DevTools also append to `logs/<modinfo.id>.log` (link: `logs/` → OS sandustry logs) when `npm run dev` is running.
 
 ```ts
 console.log("my-feature", { width, collapsed });
