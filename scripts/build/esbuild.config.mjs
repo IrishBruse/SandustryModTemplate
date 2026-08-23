@@ -234,6 +234,7 @@ function modkitCssTextPlugin(getTailwindCss) {
 
 const SOURCE_MAP_DATA_MARKER = "//# sourceMappingURL=data:application/json;base64,";
 const SOURCE_URL_RE = /\n\/\/# sourceURL=.*$/;
+const CONSOLE_INJECT_SOURCE_SUFFIX = "modkit/internal/esbuild/console.ts";
 
 /**
  * Sandkit loads `main.js` via `new Function("__sandkit", body)` where `body` is:
@@ -254,6 +255,27 @@ function toSourceMapFileUrl(source, outDir) {
   if (source.startsWith("file:")) return source;
   const abs = isAbsolute(source) ? normalize(source) : normalize(join(outDir, source));
   return pathToFileURL(abs).href;
+}
+
+/**
+ * Mark the esbuild `inject` console shim as ignore-listed. Debuggers and DevTools
+ * then skip it when resolving console output and breakpoints to mod source.
+ * @param {{ sources?: string[]; ignoreList?: number[] }} map
+ */
+function markConsoleInjectIgnored(map) {
+  const sources = map.sources ?? [];
+  if (sources.length === 0) return;
+
+  const ignored = new Set(map.ignoreList ?? []);
+  for (let i = 0; i < sources.length; i++) {
+    const source = sources[i];
+    if (typeof source === "string" && source.replace(/\\/g, "/").endsWith(CONSOLE_INJECT_SOURCE_SUFFIX)) {
+      ignored.add(i);
+    }
+  }
+  if (ignored.size > 0) {
+    map.ignoreList = [...ignored].sort((a, b) => a - b);
+  }
 }
 
 /**
@@ -280,7 +302,7 @@ function rewriteMainJsDebugMaps(filePath, modId) {
   const mapLineEnd = lineEnd === -1 ? code.length : lineEnd;
   const b64 = code.slice(mapIdx + SOURCE_MAP_DATA_MARKER.length, mapLineEnd).trim();
 
-  /** @type {{ version?: number; sources?: string[]; sourceRoot?: string; mappings?: string; names?: string[]; sourcesContent?: string[] }} */
+  /** @type {{ version?: number; sources?: string[]; sourceRoot?: string; mappings?: string; names?: string[]; sourcesContent?: string[]; ignoreList?: number[] }} */
   let map;
   try {
     map = JSON.parse(Buffer.from(b64, "base64").toString("utf8"));
@@ -292,6 +314,7 @@ function rewriteMainJsDebugMaps(filePath, modId) {
   const outDir = dirname(filePath);
   map.sources = (map.sources ?? []).map((source) => toSourceMapFileUrl(source, outDir));
   delete map.sourceRoot;
+  markConsoleInjectIgnored(map);
 
   /** @type {{ version: number; sections: { offset: { line: number; column: number }; map: typeof map }[] }} */
   const indexed = {
@@ -313,6 +336,51 @@ function maybeRewriteDebugMaps(mod) {
   const outMain = join(mod.outDir, "main.js");
   if (!sourcemap || !existsSync(outMain)) return;
   rewriteMainJsDebugMaps(outMain, manifestModId(mod));
+}
+
+/**
+ * @param {import("../lib/mods.js").LoadedMod} mod
+ */
+function maybePatchWorkerSourceMap(mod) {
+  if (!sourcemap || !mod.worker) return;
+  const workerEntry =
+    typeof mod.manifest.workerEntry === "string" && mod.manifest.workerEntry.length > 0
+      ? mod.manifest.workerEntry
+      : "worker.js";
+  patchInlineSourceMap(join(mod.outDir, workerEntry));
+}
+
+/**
+ * Patch a plain inline source map (worker bundles): `file://` sources and ignore-list console inject.
+ * @param {string} filePath
+ */
+function patchInlineSourceMap(filePath) {
+  if (!existsSync(filePath)) return;
+
+  let code = readFileSync(filePath, "utf8");
+  const mapIdx = code.lastIndexOf(SOURCE_MAP_DATA_MARKER);
+  if (mapIdx < 0) return;
+
+  const lineEnd = code.indexOf("\n", mapIdx);
+  const mapLineEnd = lineEnd === -1 ? code.length : lineEnd;
+  const b64 = code.slice(mapIdx + SOURCE_MAP_DATA_MARKER.length, mapLineEnd).trim();
+
+  /** @type {{ version?: number; sources?: string[]; sourceRoot?: string; mappings?: string; names?: string[]; sourcesContent?: string[]; ignoreList?: number[] }} */
+  let map;
+  try {
+    map = JSON.parse(Buffer.from(b64, "base64").toString("utf8"));
+  } catch {
+    console.warn(`invalid inline source map in ${filePath}`);
+    return;
+  }
+
+  const outDir = dirname(filePath);
+  map.sources = (map.sources ?? []).map((source) => toSourceMapFileUrl(source, outDir));
+  delete map.sourceRoot;
+  markConsoleInjectIgnored(map);
+
+  const nextB64 = Buffer.from(JSON.stringify(map)).toString("base64");
+  writeFileSync(filePath, `${code.slice(0, mapIdx)}${SOURCE_MAP_DATA_MARKER}${nextB64}\n`);
 }
 
 /**
@@ -564,6 +632,7 @@ async function buildOne(mod) {
       ...workerBundleOptions(mod),
       plugins: basePlugins(mod),
     });
+    maybePatchWorkerSourceMap(mod);
     logBuildResult(mod, workerResult);
   }
 }
@@ -636,6 +705,7 @@ async function watchOne(mod) {
           setup(build) {
             build.onEnd(async (result) => {
               if (result.errors.length > 0) return;
+              maybePatchWorkerSourceMap(mod);
               await syncModFiles(mod);
               logBuildResult(mod, result);
             });

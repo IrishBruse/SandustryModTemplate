@@ -153,7 +153,7 @@ Free **`reloaded`** is true when this script body is running because a reload ev
 
 ## File logging (`console`)
 
-All builds inject [`modkit/internal/esbuild/console.ts`](../../modkit/internal/esbuild/console.ts) via esbuild [`inject`](https://esbuild.github.io/api/#inject). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code get a `[modId]` prefix in DevTools. `__MOD_ID__` comes from that mod's `mod.ts` at build time.
+All builds inject [`modkit/internal/esbuild/console.ts`](../../modkit/internal/esbuild/console.ts) via esbuild [`inject`](https://esbuild.github.io/api/#inject). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code get a `[modId]` prefix in DevTools. `__MOD_ID__` comes from that mod's `mod.ts` at build time. Debug builds add `console.ts` to the source map `ignoreList` so DevTools and VS Code skip the shim when linking console output and breakpoints to your mod files.
 
 Debug builds also `POST` those lines to `http://127.0.0.1:19147/log` while `npm run dev` is up ([`scripts/dev/log-server.js`](../../scripts/dev/log-server.js)). Lines append to `logs/<modinfo.id>.log` (workspace `logs/` → OS sandustry logs: `~/.config/sandustry/logs` or `%APPDATA%/sandustry/logs`). Use `createLogger` from `@modkit/log` when you want a custom bracket tag.
 

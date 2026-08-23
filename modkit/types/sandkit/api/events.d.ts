@@ -16,6 +16,24 @@ export namespace events {
    */
   export function emit<K extends string>(eventId: K, payload: EventPayload<K>): void;
 
-  /** Event payload type for a given event id (not yet typed in declarations). */
-  export type EventPayload<K> = unknown
+  /**
+   * Mutable payload for `player:collision:prepare`.
+   * Listeners may change `maxStepCells` (clamped 1–8) and phasing flags.
+   */
+  export interface PlayerCollisionPreparePayload {
+    /** When true, terrain collision is skipped this sub-step. */
+    phaseThroughTerrain: boolean;
+    /** When true, structure collision is skipped this sub-step. */
+    phaseThroughStructures: boolean;
+    /** Max cells the player can step up when blocked horizontally (1–8). */
+    maxStepCells: number;
+  }
+
+  /** Known event payloads. Unlisted ids still use `unknown`. */
+  export interface EventPayloadMap {
+    "player:collision:prepare": PlayerCollisionPreparePayload;
+  }
+
+  /** Event payload type for a given event id. */
+  export type EventPayload<K> = K extends keyof EventPayloadMap ? EventPayloadMap[K] : unknown;
 }

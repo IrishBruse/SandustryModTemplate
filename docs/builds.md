@@ -76,7 +76,7 @@ In a TTY, `npm run dev` always opens a keyboard picker before the watch starts. 
 
 The watch rebuilds when you save a file in the bundle graph (mod sources and imported `modkit/` files), `mod.ts`, or static files under `mod/`. A Tailwind CSS change queues a second rebuild after the current one finishes, so the next save is not dropped. The debug companion polls the written `main.js` (and related files). The watch does not notify the game.
 
-Renderer attach loads source maps from scripts named `sandkit-workshop://<modId>/main.js` (and from the OS mods folder / `dist/`). Debug builds rewrite inline maps to `file://` sources, add a sandkit loader line offset, and set matching `sourceURL` so breakpoints in mod source bind through `new Function` eval. Do not press **F12** while the IDE debugger is attached — Electron DevTools steals that session. Keep **Open DevTools on load** off under F5 for the same reason.
+Renderer attach loads source maps from scripts named `sandkit-workshop://<modId>/main.js` (and from the OS mods folder / `dist/`). Debug builds rewrite inline maps to `file://` sources, add a sandkit loader line offset, set matching `sourceURL`, and mark injected `console.ts` as ignore-listed so console output and breakpoints resolve to mod source instead of the console shim. Do not press **F12** while the IDE debugger is attached — Electron DevTools steals that session. Keep **Open DevTools on load** off under F5 for the same reason.
 
 ## Workshop publish
 
