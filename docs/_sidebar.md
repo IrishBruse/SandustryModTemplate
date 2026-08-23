@@ -18,4 +18,3 @@
 - Reference
   - [Patches](patches.md)
   - [Sandkit API](api/README.md)
-  - [Modkit todos](todos/README.md)

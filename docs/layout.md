@@ -46,6 +46,7 @@ Copy a folder under `src/` to start a new mod. `hello-world-example` is the smal
 | [`input-binding-example`](../src/input-binding-example/)         | `api.input.registerBinding` + bound-key UI          |
 | [`events-example`](../src/events-example/)                       | `api.events.on` subscribe and dispose               |
 | [`mod-assets-example`](../src/mod-assets-example/)               | Static `mod/` files + `assets.getUrl`               |
+| [`content-machine-example`](../src/content-machine-example/)     | Elements + structure + processor loop               |
 | [`selection-capture`](../src/selection-capture/)                 | Screenshot / GIF recorder (**C**, **F7**)           |
 | [`debug`](../src/debug/)                                         | Dev companion (debug builds only). Do not copy this |
 
