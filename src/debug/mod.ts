@@ -14,8 +14,7 @@ export const modinfo = defineModInfo({
   description:
     "Dev companion: DevTools, auto-load save, disable autosave, local-mod hot reload. Installed on debug builds only.",
   dependencies: [],
-  /** Lower `loadOrder` runs first. 32-bit minimum so this companion starts before other local mods. */
-  loadOrder: -2147483643,
+  loadOrder: -1000,
   configSchema: {
     enabled: {
       type: "boolean",
