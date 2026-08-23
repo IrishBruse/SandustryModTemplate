@@ -32,6 +32,11 @@ export namespace events {
   /** Known event payloads. Unlisted ids still use `unknown`. */
   export interface EventPayloadMap {
     "player:collision:prepare": PlayerCollisionPreparePayload;
+    "player:moved": {
+      /** Simulation step duration in seconds. */
+      dt?: number;
+      state?: unknown;
+    };
   }
 
   /** Event payload type for a given event id. */

@@ -6,7 +6,7 @@ The game runs `main.js` as a script body (`new Function`). `sandkit` is already 
 
 | Command              | Debug helpers                                                     | `debugPatches` | Output                                                        |
 | -------------------- | ----------------------------------------------------------------- | -------------- | ------------------------------------------------------------- |
-| `npm run build`      | Stub (`modkit/internal/esbuild/debug.empty.ts`); omit `src/debug` | Omitted        | `build/<folder>/` only (no OS mods folder, no `dist/` links) |
+| `npm run build`      | Real `onDispose` registry; omit `src/debug`                       | Omitted        | `build/<folder>/` only (no OS mods folder, no `dist/` links) |
 | `npm run dev`        | Included; install `src/debug`                                     | Included       | OS mods folder while watching; removed when the watch stops   |
 | `--game` / `--debug` | Included; install `src/debug`                                     | Included       | Game mods folder                                              |
 

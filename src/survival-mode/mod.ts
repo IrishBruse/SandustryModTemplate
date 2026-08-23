@@ -9,7 +9,7 @@ export const modinfo = defineModInfo({
   entry: "main.js",
   author: "IrishBruse",
   description:
-    "Survival rules: health on the resource HUD, no hover flight, and step-up on small inclines.",
+    "Survival rules: health HUD, jump and run, stronger gravity, and step-up climbing.",
   dependencies: [],
   loadOrder: 0,
   configSchema: {
@@ -21,12 +21,12 @@ export const modinfo = defineModInfo({
     },
     maxStepCells: {
       type: "number",
-      default: 2,
+      default: 3,
       min: 1,
       max: 8,
       step: 1,
       labelKey: "Max step cells",
-      descriptionKey: "How many cells the player can step up when walking (1–8).",
+      descriptionKey: "How many cells the player can step up when walking (1–8). Default 3.",
     },
   },
 });

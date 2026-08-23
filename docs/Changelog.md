@@ -6,6 +6,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Changed
 
+- **`@modkit/debug`:** Release builds no longer stub `onDispose` to a no-op. Hot reload can run disposers from release `main.js` when the debug companion is installed. See [modkit/debug.md](modkit/debug.md).
 - **Debug companion:** **Auto-load save** runs once per browser session on initial boot only. Exit to the main menu no longer forces you back into the save. Hot reload still skips auto-load. See [modkit/debug.md](modkit/debug.md).
 - **Sandkit API types:** `modkit/types/` is described as normal template types, not vendored copies from sandustry-modding-types. `npm run setup` checks for `modkit/types/` declarations without upstream wording.
 - **`dist/`:** `npm run setup` links `dist/` to the OS Sandustry mods folder. Debug builds no longer create per-mod `dist/<folder>/` links on each rebuild. `npm run dev` still removes template-built mod folders when the watch stops; the `dist/` link stays. See [layout.md](layout.md) and [builds.md](builds.md).

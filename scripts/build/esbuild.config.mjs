@@ -103,7 +103,10 @@ console.log(kv("sourcemap", sourcemap ?? styleText("dim", "off")));
  */
 function writeModinfo(mod) {
   const manifest = structuredClone(mod.manifest);
-  writeFileSync(join(mod.outDir, "modinfo.json"), `${JSON.stringify(manifest, null, 2)}\n`);
+  const dest = join(mod.outDir, "modinfo.json");
+  const next = `${JSON.stringify(manifest, null, 2)}\n`;
+  if (existsSync(dest) && readFileSync(dest, "utf8") === next) return;
+  writeFileSync(dest, next);
 }
 
 /**
@@ -161,20 +164,9 @@ function browserPatchesStubPlugin() {
 }
 
 /**
- * Stub `@modkit/debug` to empty when release builds omit debug helpers.
- * Must run before `modkitAliasPlugin` so the stub wins.
+ * `@modkit/debug` `onDispose` is always bundled so local hot reload can run disposers
+ * even from release `main.js` when the debug companion is installed.
  */
-function releaseDebugStubPlugin() {
-  return {
-    name: "release-debug-stub",
-    setup(build) {
-      if (modDebug) return;
-      build.onResolve({ filter: /^@modkit\/debug$/ }, () => ({
-        path: join(INTERNAL_ESBUILD, "debug.empty.ts"),
-      }));
-    },
-  };
-}
 
 const MODKIT_CSS_NAMESPACE = "modkit-css";
 
@@ -472,7 +464,6 @@ function basePlugins(mod) {
   return [
     modIsolationPlugin(ROOT),
     browserPatchesStubPlugin(),
-    releaseDebugStubPlugin(),
     modkitCssResolvePlugin(),
     modkitAliasPluginForBuild(),
     mainEntryBootstrapPlugin(mod),

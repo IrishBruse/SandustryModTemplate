@@ -148,10 +148,7 @@ export function startLocalModReload(api: SandkitApi): void {
       for (const file of Object.keys(next.files)) {
         if (file === entry) continue;
         if (prev.files[file] !== undefined && next.files[file] !== prev.files[file]) {
-          noteRestartNeeded(
-            api,
-            `${file} changed. Restart the game to apply it (page reload is not enough).`,
-          );
+          noteRestartNeeded(api, `${file} changed. Restart the game to apply it.`);
         }
       }
       if (!self && next.files[entry] !== prev.files[entry]) {

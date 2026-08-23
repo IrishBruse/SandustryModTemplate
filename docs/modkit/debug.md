@@ -2,7 +2,7 @@
 
 Session debug helpers live in the **debug** companion mod ([`src/debug/`](../../src/debug/)). The game folder name is **debug** (`mods/debug`). Debug builds install it. Release builds omit it and remove a leftover `mods/debug`. Manifest **`loadOrder`** is `-2147483648` so this companion runs before other local mods.
 
-The **debug** companion patches the game loader so local mods can hot-reload without esbuild inject. The loader wrapper defines free **`reloaded`** and sets the active mod id. Import `onDispose` from [`@modkit/debug`](../../modkit/internal/debug/) when you need cleanup. Release builds omit the companion, define **`reloaded`** as `false`, and stub `@modkit/debug` to [`modkit/internal/esbuild/debug.empty.ts`](../../modkit/internal/esbuild/debug.empty.ts).
+The **debug** companion patches the game loader so local mods can hot-reload without esbuild inject. The loader wrapper defines free **`reloaded`** and sets the active mod id. Import `onDispose` from [`@modkit/debug`](../../modkit/internal/debug/) when you need cleanup. Release builds omit the companion and define **`reloaded`** as `false`, but still bundle real `onDispose` so hot reload can dispose when the companion is installed.
 
 The same main-entry rewrite also skips the entry body when **`enabled`** is false (`isEnabled`). Do not add that guard in `main.ts`. See [utils.md](utils.md).
 
@@ -10,7 +10,7 @@ The same main-entry rewrite also skips the entry body when **`enabled`** is fals
 
 | Build   | Command                                       | `src/debug` mod            | `@modkit/debug`                                 | `debugPatches` |
 | ------- | --------------------------------------------- | -------------------------- | ----------------------------------------------- | -------------- |
-| Release | `npm run build`                               | Omitted (leftover removed) | Stub (`modkit/internal/esbuild/debug.empty.ts`) | Omitted        |
+| Release | `npm run build`                               | Omitted (leftover removed) | Bundled (`onDispose` registry)                  | Omitted        |
 | Dev     | `npm run dev`, `--watch`, `--game`, `--debug` | Installed (`mods/debug`)   | Bundled (companion watches local mods)          | Included       |
 
 `--mod hello-world` on a debug build still installs **debug**. `--mod debug` builds only that folder. `npm run publish` never lists the companion.
@@ -191,8 +191,8 @@ Workshop mods are not added to the registry. See [patches.md](../patches.md) for
 | [`src/debug/boot/`](../../src/debug/boot/)     | Auto-load, Start save picker, DevTools boot, autosave, settings helpers         |
 | [`src/debug/reload/`](../../src/debug/reload/) | Local-mod poll, hot-eval, loader health (`loader-health.ts`)                    |
 | [`src/debug/f3/`](../../src/debug/f3/)         | F3 overlay, engine debug sync, built-in sections                                |
-| `modkit/internal/debug/index.ts`               | `onDispose` only                                                                |
-| `modkit/internal/esbuild/debug.empty.ts`       | Release stub: no-op `onDispose`                                                 |
+| `modkit/internal/debug/index.ts`               | `onDispose` only (bundled in all builds)                                        |
+| `modkit/internal/esbuild/debug.empty.ts`       | Unused legacy stub (release builds no longer alias `@modkit/debug` here)        |
 | `modkit/internal/esbuild/console.ts`           | esbuild inject: `[modId]` prefix on `console.*`; file POST in debug builds only |
 
 ## Wiring
@@ -210,4 +210,4 @@ onDispose(() => {
 });
 ```
 
-The debug companion owns file watching. Release builds define `reloaded` as `false`. They still resolve `@modkit/debug` to `modkit/internal/esbuild/debug.empty.ts` when a mod imports `onDispose`.
+The debug companion owns file watching. Release builds define `reloaded` as `false`. All builds bundle real `onDispose` from `@modkit/debug`.

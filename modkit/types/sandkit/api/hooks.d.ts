@@ -19,9 +19,28 @@ export namespace hooks {
   export function modify<K extends keyof ModifierHookMap>(hookId: K, callback: (args: ModifierHookMap[K]) => void, options?: HookOptions): () => void;
 
   /** Map of intercept hook ids to argument shapes (not yet typed in declarations). */
-  export type InterceptHookMap = unknown
-  /** Context passed to intercept hook callbacks (not yet typed in declarations). */
-  export type HookContext = unknown
+  export interface InterceptHookMap {
+    "input:boost-down": Record<string, never>;
+    "input:descend-down": Record<string, never>;
+    "input:keydown": {
+      key?: string;
+      code?: string;
+      event?: Event;
+    };
+    "input:keyup": {
+      key?: string;
+      code?: string;
+      event?: Event;
+    };
+    "input:escape": Record<string, never>;
+    "input:scroll": Record<string, unknown>;
+  }
+
+  /** Context passed to intercept hook callbacks. */
+  export interface HookContext {
+    /** When called, the intercepted action is skipped. */
+    cancel(): void;
+  }
   /** Map of modifier hook ids to argument shapes (not yet typed in declarations). */
   export type ModifierHookMap = unknown
   /** Options for hook registration. */
