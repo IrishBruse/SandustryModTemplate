@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Generate Docsify Markdown API reference from vendored modkit/types declarations.
+ * Generate Docsify Markdown API reference from modkit/types declarations.
  * Usage: npm run docs:api
  *
  * TypeDoc runs from scripts/docs/ with TypeScript 5.9 (TypeDoc does not support TS 7 yet).

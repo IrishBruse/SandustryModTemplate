@@ -24,7 +24,7 @@ npm run dev
 **TypeScript:**
 Split each mod across files in `src/<mod-name>/`.
 esbuild bundles them to one `main.js`.
-Sandkit API types are vendored in `modkit/types/` from [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types).
+Sandkit API types live in `modkit/types/`.
 
 **React HUD:**
 Write JSX overlays with the UI kit.

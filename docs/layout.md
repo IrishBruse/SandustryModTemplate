@@ -15,12 +15,12 @@ New to the template? Start with [Quick start](quick-start.md).
 | `src/<name>/`      | Your mod (`mod.ts` + `main.ts`)              |
 | `examples/<name>/` | Sample mods to copy into `src/`              |
 | `modkit/`          | Shared kit. Import as `@modkit/*`            |
-| `dist/<name>/`     | Link to that mod's folder in the game        |
+| `dist/`            | Link to the Sandustry mods folder on disk    |
 | `build/<name>/`    | Workshop staging (copied on `npm run build`) |
 | `logs/`            | Link to Sandustry log files                  |
 
 The game folder uses the `name` field in `mod.ts`, not the repo folder name.
-`dist/<folder>/` points at that game folder.
+`dist/` points at the OS mods folder. Each built mod lives at `dist/<modinfo.name>/`.
 
 You do not copy files into the game folder by hand. `npm run dev` and `npm run build` write them.
 
@@ -91,6 +91,6 @@ Import `@modkit/*` and files in your own folder only.
 | `@modkit/ui`                                  | Shared React UI components                                                 |
 | `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix                      |
 
-Types are vendored under `modkit/types/` from [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types). See [`modkit/types/ATTRIBUTION.md`](../modkit/types/ATTRIBUTION.md). Layout mirrors the live object (`sandkit/api`, `sandkit/engine/api`, …). Ambient `sandkit` is in [`modkit/types/global.d.ts`](../modkit/types/global.d.ts); `reloaded` and `WorkerSandkitApi` are in [`modkit/ambient.d.ts`](../modkit/ambient.d.ts).
+Sandkit API types live in `modkit/types/`. Layout mirrors the live object (`sandkit/api`, `sandkit/engine/api`, …). Ambient `sandkit` is in [`modkit/types/global.d.ts`](../modkit/types/global.d.ts); `reloaded` and `WorkerSandkitApi` are in [`modkit/ambient.d.ts`](../modkit/ambient.d.ts).
 
 Commands and build output: [Builds](builds.md).

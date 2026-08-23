@@ -64,7 +64,7 @@ a value binding. DevTools also gets `api`, `enums`, and `react` on `globalThis`.
 - `enums`
 - `react`
 
-After the mod has loaded, you can paste a runtime API dump script into DevTools. See the [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types) repo for dump tooling.
+After the mod has loaded, inspect `sandkit` in DevTools or compare runtime keys against [`modkit/types/`](../modkit/types/README.md) and the [Sandkit API reference](../api/README.md).
 
 ## DevTools
 

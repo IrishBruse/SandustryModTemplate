@@ -19,7 +19,7 @@ npm run setup
 
 Root `npm install` sets up the template. It also runs `npm install` in each mod folder that has a `package.json` (`src/` or `examples/`). Put mod-only packages there — not in the repo root.
 
-`npm run setup` checks the machine (Node version, root and mod npm installs, vendored types in `modkit/types/`, Sandustry binary, game asar, Steam **[mods]** beta, and `sandkit` in the bundle). It then extracts game source to `sandustry/` and links `logs/`. Run it again after a Sandustry update if you need a fresh extract.
+`npm run setup` checks the machine (Node version, root and mod npm installs, `modkit/types/`, Sandustry binary, game asar, Steam **[mods]** beta, and `sandkit` in the bundle). It then extracts game source to `sandustry/`, links `dist/` to the OS mods folder, and links `logs/`. Run it again after a Sandustry update if you need a fresh extract.
 
 ## 2. Run the watch, then the game
 
@@ -66,7 +66,7 @@ Rules:
 
 | Command             | Effect                                                           |
 | ------------------- | ---------------------------------------------------------------- |
-| `npm run setup`     | Check install, extract game source to `sandustry/`, link `logs/` |
+| `npm run setup`     | Check install, extract game source to `sandustry/`, link `dist/` and `logs/` |
 | `npm run dev`       | Watch all mods; remove owned folders when the watch stops        |
 | `npm run build`     | Release bundle (no debug helpers); leaves mods installed         |
 | `npm run sandustry` | Stop and launch the game (no build)                              |

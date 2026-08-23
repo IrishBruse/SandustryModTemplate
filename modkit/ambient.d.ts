@@ -1,7 +1,7 @@
 import "./types/global";
 
 /**
- * Template-only ambient bindings (not in sandustry-modding-types).
+ * Template-only ambient bindings (not part of the Sandkit API types).
  */
 declare global {
   /**

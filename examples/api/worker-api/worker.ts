@@ -74,7 +74,7 @@ if (index === 0) {
 
   if (missing.length > 0) {
     console.warn(
-      `${missing.length} typed path(s) missing at runtime — update vendored modkit/types/worker or the probe list`,
+      `${missing.length} typed path(s) missing at runtime — update modkit/types/worker or the probe list`,
     );
   }
 

@@ -2,7 +2,7 @@
  * Local dev setup: check the machine, extract Sandustry game source, link logs.
  * Usage: npm run setup
  *
- * Checks: Node major, root npm packages, vendored types, per-mod node_modules,
+ * Checks: Node major, root npm packages, modkit/types, per-mod node_modules,
  * Sandustry binary, app.asar, Steam [mods] beta, sandkit in the extracted bundle.
  *
  * Layout:
@@ -108,14 +108,12 @@ function checkRootInstall() {
   fail("Root node_modules is incomplete. Run npm install in the repo root.");
 }
 
-function checkVendoredTypes() {
+function checkTypes() {
   if (existsSync(TYPES_SENTINEL)) {
-    ok("modkit/types/ vendored declarations (sandustry-modding-types)");
+    ok("modkit/types/ Sandkit API declarations");
     return;
   }
-  fail(
-    "modkit/types/ is missing. Pull the latest template — declarations are vendored from sandustry-modding-types.",
-  );
+  fail("modkit/types/ is missing. Pull the latest template.");
 }
 
 function checkModPackageInstalls() {
@@ -304,7 +302,7 @@ console.log("");
 
 checkNode();
 checkRootInstall();
-checkVendoredTypes();
+checkTypes();
 checkModPackageInstalls();
 
 const haveBinary = checkGameBinary();

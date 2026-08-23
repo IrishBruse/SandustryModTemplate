@@ -1,6 +1,6 @@
 # Sandkit API types
 
-Vendored TypeScript declarations for the live `sandkit` object injected into mod bundles. Folder layout mirrors runtime shape so you can jump from code to the matching `.d.ts` path.
+TypeScript declarations for the live `sandkit` object injected into mod bundles. Folder layout mirrors runtime shape so you can jump from code to the matching `.d.ts` path.
 
 ## Runtime map
 
@@ -33,14 +33,9 @@ Declaration files use `export namespace` because it is the usual `.d.ts` pattern
 - **Worker mod (`worker.js`):** type `sandkit.api` as `WorkerSandkitApi`. Worker and main APIs overlap but are not interchangeable.
 - **Shared folder:** not a runtime namespace. It holds domain shapes and API bases that main and worker modules extend.
 
-## Upstream
+## Maintaining types
 
-Types are copied from the upstream repo. For license, vendored commit, and refresh steps, see [ATTRIBUTION.md](api/_media/ATTRIBUTION.md).
-
-- **Upstream repo:** https://github.com/flamableassassin/sandustry-modding-types
-- **API reference:** https://flamableassassin.github.io/sandustry-modding-types/
-
-To change API shapes, open an issue or pull request upstream, then refresh this folder from upstream `src/**/*.d.ts` and update `SOURCE.json`.
+Edit `.d.ts` files here. Regenerate the Docsify API reference after JSDoc changes.
 
 ## Docs site
 
