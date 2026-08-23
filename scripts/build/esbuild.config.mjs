@@ -353,7 +353,7 @@ function bundleOptions(mod) {
 }
 
 /**
- * Worker bundle — same IIFE + free `sandkit`, no React / hot-reload inject.
+ * Worker bundle — same IIFE + free `sandkit`, no React inject.
  * Debug builds still inject `console.ts` so logs get the `[modId]` prefix.
  * @param {import("./mods.js").LoadedMod} mod
  */
@@ -420,14 +420,12 @@ function gifWorkerAsTextPlugin() {
 }
 
 /**
- * esbuild `watchDirs` is not recursive. List every folder so `mod.ts`, new
- * files, and kit edits still trigger a rebuild.
+ * esbuild `watchDirs` is not recursive. Walk a folder so nested static files
+ * still trigger `syncModFiles`.
  * @param {string} root
- * @param {string[]} [skipNames]
  * @returns {string[]}
  */
-function collectWatchDirs(root, skipNames = []) {
-  const skip = new Set(["node_modules", ".git", ...skipNames]);
+function collectWatchDirs(root) {
   /** @type {string[]} */
   const dirs = [];
   const walk = (dir) => {
@@ -439,7 +437,7 @@ function collectWatchDirs(root, skipNames = []) {
       return;
     }
     for (const name of names) {
-      if (skip.has(name)) continue;
+      if (name === "node_modules" || name === ".git") continue;
       const next = join(dir, name);
       try {
         if (statSync(next).isDirectory()) walk(next);
@@ -450,6 +448,16 @@ function collectWatchDirs(root, skipNames = []) {
   };
   if (existsSync(root)) walk(root);
   return dirs;
+}
+
+/**
+ * Watch roots outside the module graph. Imported `modkit/` files are already
+ * watched. `mod.ts` is in `watchFiles`. Static copies live under `mod/`.
+ * @param {import("./mods.js").LoadedMod} mod
+ * @returns {string[]}
+ */
+function extraWatchDirs(mod) {
+  return collectWatchDirs(join(mod.dir, "mod"));
 }
 
 /**
@@ -485,7 +493,7 @@ function mainEntryBootstrapPlugin(mod) {
             .join("\n"),
           loader,
           watchFiles: [args.path, mod.modTs],
-          watchDirs: [...collectWatchDirs(mod.dir), ...collectWatchDirs(MODKIT_DIR, ["types"])],
+          watchDirs: extraWatchDirs(mod),
         };
       });
     },

@@ -33,6 +33,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Changed
 
+- Watch extra `watchDirs` cover only static `mod/` copies. Imported `modkit/` files are already in the esbuild graph. The watch writes bundles; the debug companion polls those files for hot reload. See [builds.md](builds.md).
 - **Debug companion:** source layout — `mod.ts`, `main.ts`, and `patches.ts` at `src/debug/`; other files under `boot/`, `reload/`, and `f3/`. See [modkit/debug.md](modkit/debug.md).
 - **Debug companion:** game-file patches live in [`src/debug/patches.ts`](../src/debug/patches.ts) (re-exported from `mod.ts`). See [modkit/debug.md](modkit/debug.md).
 - **`@modkit/debug`** exports `onDispose` only. Re-eval and file poll live in `src/debug/reload/`. Loader rewrites live in `src/debug/patches.ts`. See [modkit/debug.md](modkit/debug.md).
