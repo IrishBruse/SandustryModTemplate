@@ -1,6 +1,5 @@
 import { onDispose } from "@modkit/debug";
 import { registerManagementMenuButton } from "@modkit/ui";
-import { safe } from "@modkit/utils";
 import { modinfo } from "./mod";
 
 const api = sandkit.api;
@@ -19,8 +18,6 @@ function registerExampleRow() {
   onDispose(stop);
 }
 
-safe(() => {
-  registerExampleRow();
-});
+registerExampleRow();
 
 console.log(`${reloaded ? "reloaded" : "loaded"} — Example row under Upgrades`);

@@ -1,4 +1,4 @@
-import { registerRetroGame, safe } from "@modkit/utils";
+import { registerRetroGame } from "@modkit/utils";
 
 const WIDTH = 160;
 const HEIGHT = 100;
@@ -47,8 +47,6 @@ function registerNoiseTest() {
   console.log(`Noise test registered at ${WIDTH}x${HEIGHT}`);
 }
 
-safe(() => {
-  registerNoiseTest();
-});
+registerNoiseTest();
 
 console.log(`${reloaded ? "reloaded" : "loaded"} — open Retro Console for Noise Test`);

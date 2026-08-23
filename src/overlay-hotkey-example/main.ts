@@ -1,5 +1,4 @@
 import { onDispose } from "@modkit/debug";
-import { safe } from "@modkit/utils";
 import { modinfo } from "./mod";
 import { Overlay } from "./ui/Overlay";
 import tailwindCss from "@modkit/ui/tailwind.css";
@@ -27,9 +26,7 @@ function registerUi() {
   onDispose(dispose);
 }
 
-safe(() => {
-  installTailwind();
-  registerUi();
-});
+installTailwind();
+registerUi();
 
 console.log(`${reloaded ? "reloaded" : "loaded"} — Alt+E toggles the overlay`);
