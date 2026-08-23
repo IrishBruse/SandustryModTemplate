@@ -17,6 +17,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Added
 
+- **Survival Mode** (`src/survival-mode/`): health on the resource HUD, hover flight locked, and step-up on small inclines (`maxStepCells`). See [`src/survival-mode/`](../src/survival-mode/).
 - **`npm run dev` mod picker:** In a TTY, choose **All mods** or filter and multi-select folders before the watch starts. Repeat `--mod` on the CLI for several mods without the picker.
 - **`custom-element`:** register a powder element, paint at the mouse cell with **P**, and unlock it in the codex. See [`examples/custom-element/`](../examples/custom-element/).
 - **`input-binding`:** `registerBinding`, `getDisplayKey`, and a small overlay that reflects rebinding in settings. See [`examples/input-binding/`](../examples/input-binding/).
