@@ -1,6 +1,5 @@
 # Changelog
 
-Notable changes to this template. Newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 The template has no release tags yet. Dated sections match the day the change landed on `main`.
 
@@ -15,10 +14,10 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Changed
 
+- **`modkit/types/`:** vendored `.d.ts` files from [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types) (MIT). Layout mirrors the live `sandkit` object (`sandkit/api`, `sandkit/engine/api`, `worker/`, …). See [`modkit/types/ATTRIBUTION.md`](../modkit/types/ATTRIBUTION.md). Ambient `sandkit` is in [`modkit/types/global.d.ts`](../modkit/types/global.d.ts); template-only `reloaded` and `WorkerSandkitApi` are in [`modkit/ambient.d.ts`](../modkit/ambient.d.ts).
 - **`npm run publish`:** if SteamCMD is not on PATH, the script downloads Valve's official installer into `.tmp/steamcmd/` and then uploads. It does not add the npm `steamcmd` package (old `request` / `unzip` deps, and that API is game download, not Workshop). See [builds.md](builds.md#workshop-publish).
 - `OptionsPanel` with **`overlay`** and **`surface`** uses a solid `bg-black` fill and the vanilla Debug window edges (`border-gray-700`, `rounded-lg`, `ui-box`, `card-2`). See [ui/options-panel.md](ui/options-panel.md).
 - Main bundles skip the entry body when the mod **`enabled`** setting is false. Do not put an `enabled` guard in `main.ts`. See [modkit/utils.md](modkit/utils.md).
-- Ambient `sandkit` / `SandkitApi` / `WorkerSandkitApi` are composed in [`modkit/sandkit-global.d.ts`](../modkit/sandkit-global.d.ts) from the types submodule namespaces (types package stays on master; no shipped global).
 - `defineModInfo` returns the manifest only. Export `modinfo` and use `modinfo.id` (no separate `MOD_ID`). See [layout.md](layout.md).
 - Debug `console.*` inject prefixes DevTools output with `[modinfo.id]`. Do not add that tag in call sites. See [modkit/debug.md](modkit/debug.md).
 
@@ -38,6 +37,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Removed
 
+- **Types git submodule** — `modkit/types/` is now vendored declarations only (no `git submodule update`). Credit and upstream link: [`modkit/types/ATTRIBUTION.md`](../modkit/types/ATTRIBUTION.md). Removed [`modkit/sandkit-global.d.ts`](../modkit/sandkit-global.d.ts).
 - Per-mod `globals.ts` and `debug.ts` are gone. `defineModInfo` returns the manifest as `modinfo`; use `modinfo.id`. Import hot reload from `@modkit/debug` (release stubs that package). See [modkit/debug.md](modkit/debug.md) and [layout.md](layout.md).
 - F5 no longer attaches Electron **main** (`:9230`) or launches with `--inspect`. The **Sandustry** compound attaches the **renderer** only (`:9222`).
 - Per-mod `ide-debug.json` and `SANDUSTRY_IDE_DEBUG` are gone. Keep **Open DevTools on load** off under F5 so Electron DevTools does not steal the IDE session.
@@ -49,7 +49,7 @@ The template has no release tags yet. Dated sections match the day the change la
 - **Debug companion:** **F3** toggles a top-left companion **Debug** panel (helper status). Vanilla Debug / Stats buttons stay for engine tools; the old custom management **Debug** row is gone. See [modkit/debug.md](modkit/debug.md).
 - Shared Tailwind entry is [`modkit/ui/tailwind.css`](../modkit/ui/tailwind.css). Overlay mods import `@modkit/ui/tailwind.css` instead of a per-mod `ui/tailwind.css` / `ui/css.d.ts`.
 - Mods no longer ship empty `patches` exports or `patches/` folders. Add `patches` in `mod.ts` when you need them. See [patches.md](patches.md).
-- Dropped `types/api`, `types/worker-api`, `types/sandkit`, and `types/engine` path aliases. Use ambient `sandkit` / `SandkitApi` / `WorkerSandkitApi`, or `@modkit/utils` for Retro Console types. Engine declarations live under `modkit/types/src/shared/engine/`.
+- Dropped `types/api`, `types/worker-api`, `types/sandkit`, and `types/engine` path aliases. Use ambient `sandkit` / `SandkitApi` / `WorkerSandkitApi`, or `@modkit/utils` for Retro Console types. Engine declarations live under `modkit/types/sandkit/engine/`.
 
 ### Added
 

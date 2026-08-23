@@ -13,7 +13,7 @@ Detail docs:
 - Patches: [`docs/patches.md`](docs/patches.md)
 - Modkit: [`docs/modkit/README.md`](docs/modkit/README.md)
 - Layout: [`docs/layout.md`](docs/layout.md)
-- API types: [`modkit/types/readme.md`](modkit/types/readme.md)
+- API types: [`modkit/types/ATTRIBUTION.md`](modkit/types/ATTRIBUTION.md)
 - Modkit todos: [`docs/todos/README.md`](docs/todos/README.md)
 
 ## Layout
@@ -21,7 +21,7 @@ Detail docs:
 ```
 src/<name>/             One game mod per folder (`mod.ts` + `main.ts`)
 modkit/                 Shared kit (utils, react, debug, patches, modinfo)
-modkit/types/           Sandkit API types (submodule: sandustry-modding-types)
+modkit/types/           Vendored Sandkit API `.d.ts` (from sandustry-modding-types)
 sandustry/              Extracted game source from app.asar (`npm run setup`; gitignored)
 scripts/                npm command folders + `lib/` (see Scripts below)
 dist/<name>/            Link to OS mods folder for that src folder (symlink / Windows junction)
@@ -59,22 +59,21 @@ Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized dem
 | `modkit/utils/`            | `safe`, `isEnabled`, `inGame`, `registerRetroGame`                                                                   |
 | `modkit/internal/debug/`   | Hot reload helpers (`onDispose`; inject calls `installHotReload` / `isHotReloadEval`)                                |
 | `modkit/log.ts`            | File-log helper used with the hot-reload watch server                                                                |
-| `modkit/types/`            | Sandkit API types submodule ([sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types)) |
+| `modkit/types/`            | Vendored Sandkit API declarations ([sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types); see [`ATTRIBUTION.md`](modkit/types/ATTRIBUTION.md)) |
 
 Hot reload boots via esbuild inject on **debug** builds only. Use free `reloaded`. Import `onDispose` from `@modkit/debug` when needed. Release defines `reloaded` as `false` and stubs `@modkit/debug` to `modkit/internal/esbuild/debug.empty.ts`.
 
 ### `modkit/types/`
 
-Git submodule: [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types). Main API lives under `modkit/types/src/main/`; worker under `modkit/types/src/worker/`; engine under `modkit/types/src/shared/engine/`. Ambient `sandkit` is [`modkit/sandkit-global.d.ts`](modkit/sandkit-global.d.ts) (composed from those namespaces).
+Vendored `.d.ts` files from [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types) (MIT). See [`modkit/types/ATTRIBUTION.md`](modkit/types/ATTRIBUTION.md) and [`SOURCE.json`](modkit/types/SOURCE.json). Layout mirrors the live `sandkit` object (`sandkit/api`, `sandkit/engine/api`, `worker/`, …). Ambient `sandkit` lives in [`modkit/types/global.d.ts`](modkit/types/global.d.ts); template-only `reloaded` and `WorkerSandkitApi` are in [`modkit/ambient.d.ts`](modkit/ambient.d.ts).
 
-| Path                              | Role                                                               |
-| --------------------------------- | ------------------------------------------------------------------ |
-| `modkit/types/src/main/`          | Main-thread `sandkit.api`                                          |
-| `modkit/types/src/worker/`        | Worker-thread `sandkit.api`                                        |
-| `modkit/types/src/shared/engine/` | `sandkit.engine` (+ Retro Console)                                 |
-| `modkit/types/src/shared/`        | Shared main/worker API pieces                                      |
-| `modkit/types/src/common-types/`  | Shared domain shapes                                               |
-| `modkit/sandkit-global.d.ts`      | Ambient `sandkit` / `SandkitApi` / `WorkerSandkitApi` / `reloaded` |
+| Path                              | Role                                      |
+| --------------------------------- | ----------------------------------------- |
+| `modkit/types/sandkit/api/`       | Main-thread `sandkit.api`                 |
+| `modkit/types/sandkit/engine/`    | `sandkit.engine` (+ Retro Console)        |
+| `modkit/types/worker/`            | Worker-thread `sandkit.api` typing entry  |
+| `modkit/types/shared/`            | Shared domain shapes and base API declarations |
+| `modkit/ambient.d.ts`             | `reloaded` and `WorkerSandkitApi`         |
 
 Path aliases: `@modkit/*` → `./modkit/*` (`@modkit/debug` → `modkit/internal/debug`). Use ambient `sandkit`, `SandkitApi`, and `WorkerSandkitApi` — do not import them with a `types/` prefix. Retro Console types come from `@modkit/utils`.
 

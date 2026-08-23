@@ -1,6 +1,6 @@
 # Troubleshooting
 
-**`npm run setup` fails** — Fix each `FAIL` line, then run `npm run setup` again. Common checks: Node 24, root `npm install`, `git submodule update --init --recursive`, Sandustry binary / `SANDUSTRY`, Steam **[mods]** beta, and `sandkit` in the game asar.
+**`npm run setup` fails** — Fix each `FAIL` line, then run `npm run setup` again. Common checks: Node 24, root `npm install`, vendored types in `modkit/types/`, Sandustry binary / `SANDUSTRY`, Steam **[mods]** beta, and `sandkit` in the game asar.
 
 **Mods do not load** — Opt into the Steam beta: Library → Sandustry → Properties → Betas → select `mods`. Run `npm run setup` to confirm the asar has `sandkit`.
 
@@ -57,4 +57,4 @@ Default probe includes `%ProgramFiles(x86)%\Steam` and `%ProgramFiles%\Steam`, p
 
 **`npm run publish` fails with "No cached credentials"** — SteamCMD does not use the Steam client login. On a TTY, publish prompts for password / Steam Guard once, then retries. Without a TTY, run `steamcmd +login <account>` once (use the item owner), then publish again.
 
-**Types missing** — Run `git submodule update --init --recursive`. Types live in `modkit/types/` ([sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types)).
+**Types missing** — Pull the latest template. Declarations are vendored in `modkit/types/` from [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types). See [`modkit/types/ATTRIBUTION.md`](../modkit/types/ATTRIBUTION.md). Report type fixes upstream, then refresh the vendored copy.

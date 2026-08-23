@@ -11,7 +11,7 @@ Get a sample mod running in Sandustry, then make your own folder.
 ## 1. Clone and install
 
 ```bash
-git clone --recursive https://github.com/IrishBruse/SandustryModTemplate.git <my-folder>
+git clone https://github.com/IrishBruse/SandustryModTemplate.git <my-folder>
 cd <my-folder>
 npm install
 npm run setup
@@ -19,7 +19,7 @@ npm run setup
 
 Root `npm install` sets up the template. It also runs `npm install` in each `src/<name>/` that has a `package.json`. Put mod-only packages there — not in the repo root.
 
-`npm run setup` checks the machine (Node version, root and mod npm installs, types submodule, Sandustry binary, game asar, Steam **[mods]** beta, and `sandkit` in the bundle). It then extracts game source to `sandustry/` and links `logs/`. Run it again after a Sandustry update if you need a fresh extract.
+`npm run setup` checks the machine (Node version, root and mod npm installs, vendored types in `modkit/types/`, Sandustry binary, game asar, Steam **[mods]** beta, and `sandkit` in the bundle). It then extracts game source to `sandustry/` and links `logs/`. Run it again after a Sandustry update if you need a fresh extract.
 
 ## 2. Run the watch, then the game
 

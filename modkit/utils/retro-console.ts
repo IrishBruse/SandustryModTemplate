@@ -1,4 +1,4 @@
-import type { RetroConsoleGame } from "../types/src/shared/engine";
+import type { RetroConsoleGame } from "../types/sandkit/engine";
 
 export type {
   RetroConsoleApi,
@@ -7,7 +7,7 @@ export type {
   RetroConsoleGameOptions,
   RetroConsoleInput,
   RetroConsolePixel,
-} from "../types/src/shared/engine";
+} from "../types/sandkit/engine";
 
 /**
  * Register a game on the in-world Retro Console.

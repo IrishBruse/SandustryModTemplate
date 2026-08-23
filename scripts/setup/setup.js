@@ -2,7 +2,7 @@
  * Local dev setup: check the machine, extract Sandustry game source, link logs.
  * Usage: npm run setup
  *
- * Checks: Node major, root npm packages, types submodule, per-mod node_modules,
+ * Checks: Node major, root npm packages, vendored types, per-mod node_modules,
  * Sandustry binary, app.asar, Steam [mods] beta, sandkit in the extracted bundle.
  *
  * Layout:
@@ -39,7 +39,7 @@ const SOURCE_DEST = join(ROOT, "sandustry");
 const LOGS_SRC = sandustryLogsDir();
 const LOGS_DEST = join(ROOT, "logs");
 const MODS_DIR = sandustryModsDir();
-const TYPES_SENTINEL = join(ROOT, "modkit/types/src/main/index.d.ts");
+const TYPES_SENTINEL = join(ROOT, "modkit/types/global.d.ts");
 const SANDUSTRY_APP_ID = "2764460";
 const BUNDLE_RELS = ["dist/js/bundle.js", "js/bundle.js"];
 /** Previous references/ folder (source extract, logs link, workshop copies). */
@@ -107,13 +107,13 @@ function checkRootInstall() {
   fail("Root node_modules is incomplete. Run npm install in the repo root.");
 }
 
-function checkTypesSubmodule() {
+function checkVendoredTypes() {
   if (existsSync(TYPES_SENTINEL)) {
-    ok("modkit/types/ submodule (sandustry-modding-types)");
+    ok("modkit/types/ vendored declarations (sandustry-modding-types)");
     return;
   }
   fail(
-    "modkit/types/ is empty. Clone with --recursive, or run: git submodule update --init --recursive",
+    "modkit/types/ is missing. Pull the latest template — declarations are vendored from sandustry-modding-types.",
   );
 }
 
@@ -303,7 +303,7 @@ console.log("");
 
 checkNode();
 checkRootInstall();
-checkTypesSubmodule();
+checkVendoredTypes();
 checkModPackageInstalls();
 
 const haveBinary = checkGameBinary();

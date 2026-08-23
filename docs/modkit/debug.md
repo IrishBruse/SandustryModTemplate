@@ -55,7 +55,7 @@ Hot-reload eval skips DevTools shortcut, splash polling, and auto-boot so those 
 
 The debug mod copies the live Sandkit objects onto `globalThis` for the browser
 console and dump scripts. In TypeScript, `sandkit` is already an ambient free
-variable (see [`modkit/sandkit-global.d.ts`](../../modkit/sandkit-global.d.ts)). Use that name in mod code — do not import
+variable (see [`modkit/types/global.d.ts`](../../modkit/types/global.d.ts) and [`modkit/ambient.d.ts`](../../modkit/ambient.d.ts)). Use that name in mod code — do not import
 a value binding. DevTools also gets `api`, `enums`, and `react` on `globalThis`.
 
 - `sandkit`

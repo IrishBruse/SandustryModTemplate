@@ -9,7 +9,7 @@ TypeScript template for Sandustry mods (Steam **[mods]** branch).
 Node 24 installed. Full guide: https://ethanconneely.com/SandustryModTemplate/#/quick-start
 
 ```
-git clone --recursive https://github.com/IrishBruse/SandustryModTemplate.git <project-name>
+git clone https://github.com/IrishBruse/SandustryModTemplate.git <project-name>
 cd <project-name>
 npm install
 npm run setup # one time only
@@ -24,7 +24,7 @@ npm run dev
 **TypeScript:**
 Split each mod across files in `src/<mod-name>/`.
 esbuild bundles them to one `main.js`.
-Sandkit API types come from the `modkit/types/` submodule.
+Sandkit API types are vendored in `modkit/types/` from [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types).
 
 **React HUD:**
 Write JSX overlays with the UI kit.

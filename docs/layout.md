@@ -78,6 +78,6 @@ Import `@modkit/*` and files in your own folder only.
 | `@modkit/ui`                                  | Shared React UI components                                |
 | `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix     |
 
-Types submodule: [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types) under `modkit/types/`. Ambient names live in [`modkit/sandkit-global.d.ts`](../modkit/sandkit-global.d.ts).
+Types are vendored under `modkit/types/` from [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types). See [`modkit/types/ATTRIBUTION.md`](../modkit/types/ATTRIBUTION.md). Layout mirrors the live object (`sandkit/api`, `sandkit/engine/api`, …). Ambient `sandkit` is in [`modkit/types/global.d.ts`](../modkit/types/global.d.ts); `reloaded` and `WorkerSandkitApi` are in [`modkit/ambient.d.ts`](../modkit/ambient.d.ts).
 
 Commands and build output: [Builds](builds.md).
