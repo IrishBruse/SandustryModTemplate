@@ -1,4 +1,4 @@
-import { effects as sharedEffects } from "../../shared/api/effects";
+import { shared } from "../../shared";
 
 /**
  * `sandkit.api.effects` — visual effects, particles, lights, and lasers at world positions.
@@ -7,25 +7,39 @@ import { effects as sharedEffects } from "../../shared/api/effects";
 declare namespace effects {
   // Shared functions
   /** Creates a short-lived light at world coordinates. */
-  export import createLightAtWorld = sharedEffects.createLightAtWorld
+  export import createLightAtWorld = shared.api.effects.createLightAtWorld
   /** Spawns particles at world coordinates. */
-  export import createParticlesAtWorld = sharedEffects.createParticlesAtWorld
+  export import createParticlesAtWorld = shared.api.effects.createParticlesAtWorld
   /** Creates a named screen effect at world coordinates. */
-  export import createEffectAtWorld = sharedEffects.createEffectAtWorld
+  export import createEffectAtWorld = shared.api.effects.createEffectAtWorld
   // Shared types
   /** Options for generic screen effects. */
-  export import EffectOptions = sharedEffects.EffectOptions
+  export import EffectOptions = shared.api.effects.EffectOptions
   /** Options for temporary lights. */
-  export import TemporaryLightOptions = sharedEffects.TemporaryLightOptions
+  export import TemporaryLightOptions = shared.api.effects.TemporaryLightOptions
   /** Options for particle effects. */
-  export import ParticleEffectOptions = sharedEffects.ParticleEffectOptions
+  export import ParticleEffectOptions = shared.api.effects.ParticleEffectOptions
 
-
-  /** Creates a distortion wave effect at world coordinates. */
+  /**
+   * Creates a distortion wave effect at world coordinates.
+   * @param worldX - World X coordinate in pixels.
+   * @param worldY - World Y coordinate in pixels.
+   * @param options - Style, duration, radius, intensity, and color.
+   */
   export function createDistortionWaveAtWorld(worldX: number, worldY: number, options?: DistortionEffectOptions): void;
-  /** Creates a laser beam between two world points. Returns a handle to destroy it. */
+  /**
+   * Creates a laser beam between two world points. Returns a handle to destroy it.
+   * @param startWorldX - Beam start world X in pixels.
+   * @param startWorldY - Beam start world Y in pixels.
+   * @param endWorldX - Beam end world X in pixels.
+   * @param endWorldY - Beam end world Y in pixels.
+   * @param options - Width, brightness, color, and glow options.
+   */
   export function createLaserAtWorld(startWorldX: number, startWorldY: number, endWorldX: number, endWorldY: number, options?: LaserEffectOptions): LaserEffectHandle;
-  /** Removes a temporary light by its id. */
+  /**
+   * Removes a temporary light by its id.
+   * @param lightId - Light index from {@link createLightAtWorld}.
+   */
   export function removeLightById(lightId: number): void;
 
   /** Options for laser beam effects. */

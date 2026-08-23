@@ -6,24 +6,47 @@
  */
 import { AssetRef } from "./asset";
 
-/** Grid cell position as `[cellX, cellY]`. */
+/**
+ * Grid cell position as `[cellX, cellY]`.
+ *
+ * Cell coordinates match `sandkit.api.*AtCell` helpers: column first, then row.
+ */
 export type CellCoordinates = [cellX: number, cellY: number]
 
-/** 2D vector in world or cell space. */
+/**
+ * 2D vector in world or cell space.
+ *
+ * World positions use pixels. Cell helpers may return pixel or cell units
+ * depending on the API.
+ */
 export type Vector2 = {
+  /** Horizontal component. */
   x: number;
+  /** Vertical component. */
   y: number;
 };
 
-/** Live player state snapshot (read-only shape for mods). */
+/**
+ * Live player state snapshot (read-only shape for mods).
+ *
+ * Reflects `sandkit.engine.state` / store player fields exposed to mods.
+ */
 export interface Player {
+  /** Player hitbox left edge in world pixels. */
   x: number;
+  /** Player hitbox top edge in world pixels. */
   y: number;
+  /** Player hitbox width in world pixels. */
   width: number;
+  /** Player hitbox height in world pixels. */
   height: number;
+  /** Current movement velocity in pixels per second. */
   velocity: Vector2
+  /** Movement threshold accumulator used by physics. */
   threshold: Vector2;
+  /** True when the player is standing on ground this tick. */
   onGround: boolean;
+  /** Temporary speed-cap bonuses applied on each axis. */
   speedCapOverdrive: {
     x: {
       dir: null;
@@ -40,8 +63,11 @@ export interface Player {
       releaseBonus: number;
     };
   };
+  /** Items currently held in the player inventory. */
   inventory: InventoryItem[];
+  /** Structure type ids the player has unlocked for building. */
   buildings: number[];
+  /** Tech tree nodes and their unlock metadata. */
   tech: {
     [key: string | number]: {
       x: number,
@@ -71,14 +97,19 @@ export interface Player {
       threshold?: number;
     };
   };
+  /** Tech ids explicitly locked for this save. */
   lockedTechs: { [key: string]: boolean },
+  /** Active world action, or null when idle. */
   action: null;
+  /** Hotbar slots, active indices, and item sprites. */
   hotbar: {
     activeSlotIndex: number;
     hotbarIndex: number;
     bars: AssetRef[][];
   };
+  /** True when the grappling hook is equipped or active. */
   grapplingHook: boolean;
+  /** Cooldown timestamps for movement particles and slowdown. */
   cooldowns: {
     boostParticle: {
       time: number;
@@ -92,7 +123,9 @@ export interface Player {
       last: number;
     };
   };
+  /** True when hover movement mode is active. */
   isHovering: boolean;
+  /** Per-weapon runtime metadata. */
   weaponsMeta: {
     rocketLauncher: {
       ammo: {

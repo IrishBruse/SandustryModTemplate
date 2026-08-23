@@ -25,8 +25,8 @@ Avoid:
 `docs/api/` is **generated** from `modkit/types/` by `npm run docs:api`. Do not edit those Markdown files by hand.
 
 - Change JSDoc in `modkit/types/**/*.d.ts`, then run `npm run docs:api`.
-- Sidebar links live in [`_sidebar.md`](_sidebar.md) under **API**.
-- Output is gitignored; run the generator before `npm run docs` or publishing the docs site.
+- Main docs sidebar links to **Sandkit API** only (`api/README.md`). The API tree uses [`api/_sidebar.md`](api/_sidebar.md), generated with the reference (commit this file so the API sidebar works before a full regen).
+- Other files under `docs/api/` are generated; run `npm run docs:api` before `npm run docs` or publishing the docs site.
 
 ## Sample mod READMEs (`src/*-example/README.md`)
 

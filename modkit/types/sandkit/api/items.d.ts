@@ -12,17 +12,34 @@ export namespace items {
     [key: string]: unknown;
   }
 
-  /** Registers a new item definition. */
+  /**
+   * Registers a new item definition.
+   * @param definition - Item id, handlers, and display metadata.
+   */
   export function register(definition: ItemDefinition): void;
-  /** Updates fields on an existing item definition. */
+  /**
+   * Updates fields on an existing item definition.
+   * @param itemId - Registered item id.
+   * @param partial - Fields to merge into the definition.
+   */
   export function updateDefinition(itemId: string, partial: Partial<ItemDefinition>): void;
-  /** Returns the item definition for an id, or undefined. */
+  /**
+   * Returns the item definition for an id, or undefined.
+   * @param itemId - Registered item id.
+   */
   export function getDefinitionById(itemId: string): ItemDefinition | undefined;
-  /** Creates a runtime item instance from an id. */
+  /**
+   * Creates a runtime item instance from an id.
+   * @param itemId - Registered item id.
+   */
   export function createFromId(itemId: string): ModItem;
   /** Returns the item definition for the active hotbar slot. */
   export function getActive(): ItemDefinition | undefined;
-  /** Returns true when the given item is the active hotbar item. */
+  /**
+   * Returns true when the given item is the active hotbar item.
+   * @param itemId - Item id or numeric type to compare.
+   * @param itemType - Optional item type discriminator.
+   */
   export function isActiveById(itemId: string | number, itemType?: ItemType): boolean;
 
   /** Runtime item instance (not yet typed in declarations). */

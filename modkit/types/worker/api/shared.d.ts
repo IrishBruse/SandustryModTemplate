@@ -1,10 +1,12 @@
-import { shared as sharedShared } from "../../shared/api/shared";
+import { shared } from "../../shared";
 
 /**
- * Worker-thread `sandkit.api.shared` — shared memory buffers for workers.
+ * Worker thread only.
  *
- * Workers can **require** buffers (create or attach). Main thread only **gets**
- * existing buffers. See {@link shared} for the shared base declarations.
+ * `sandkit.api.shared` — shared memory buffers for workers.
+ *
+ * Workers **require** buffers created on the main thread. Main thread only
+ * **gets** existing buffers. See {@link shared} for the shared base declarations.
  *
  * @internal Worker extension of {@link shared}; not interchangeable with
  * main-thread `sandkit.api.shared`.
@@ -13,16 +15,23 @@ export namespace shared {
   /** Named shared memory buffers for worker threads. */
   export namespace buffers {
     /**
-     * Get or create a named shared buffer on this worker.
-     * @param key Buffer name shared across threads.
-     * @param config Array type and length when the buffer is first created.
+     * Attach to a named shared buffer on this worker.
+     *
+     * The buffer must already exist on the main thread with the same
+     * {@link SharedArrayType} and length as `config`.
+     *
+     * @param key - Buffer name shared across threads.
+     * @param config - Expected array type and length for validation.
      */
     export function require(key: string, config: { type: SharedArrayType; length: number; }): SharedArray;
-    /** Read an existing buffer without creating one. */
-    export import get = sharedShared.buffers.get
+    /**
+     * Read an existing buffer without validating type or length.
+     * @param key - Buffer name shared across threads.
+     */
+    export import get = shared.api.shared.buffers.get
   }
-  /** Opaque shared array backing store (typed at runtime). */
-  export import SharedArray = sharedShared.SharedArray
+  /** Typed array backing store for a shared buffer. */
+  export import SharedArray = shared.api.shared.SharedArray
   /** Discriminator for the underlying typed array kind. */
-  export import SharedArrayType = sharedShared.SharedArrayType
+  export import SharedArrayType = shared.api.shared.SharedArrayType
 }

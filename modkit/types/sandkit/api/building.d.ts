@@ -62,12 +62,30 @@ export namespace building {
     /** Gloom emitter structure. */
     GloomEmitter = 27,
   }
-  /** Returns the snapped world position for placement at the cell. */
+
+  /**
+   * Return the snapped world position for placement at the cell.
+   * @param cellX - Grid column of the target cell.
+   * @param cellY - Grid row of the target cell.
+   * @returns Snapped world position in pixels.
+   */
   export function getSnappedPositionAtCell(...args: CellCoordinates): Vector2;
-  /** Returns true when placement is blocked at the cell. */
+
+  /**
+   * Return true when placement is blocked at the cell.
+   * @param cellX - Grid column of the target cell.
+   * @param cellY - Grid row of the target cell.
+   * @returns True when a structure cannot be placed at the cell.
+   */
   export function isBlockedAtCell(...args: CellCoordinates): boolean;
-  /** Cancels the current structure placement preview. */
+
+  /** Cancel the current structure placement preview. */
   export function cancelPlacement(): void;
-  /** Selects a structure for placement by type or id. Returns the resolved selection. */
+
+  /**
+   * Select a structure for placement by type or id.
+   * @param structureTypeOrId - Built-in {@link StructureType} value or registered structure id.
+   * @returns Resolved selection, or null when the type or id is invalid.
+   */
   export function selectStructure(structureTypeOrId: string | StructureType): string | StructureType | null;
 }

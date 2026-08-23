@@ -8,7 +8,11 @@
 export namespace signals {
   /** Signal target registration for structure types. */
   export namespace targets {
-    /** Register a handler when a signal targets a structure type. */
+    /**
+     * Register a handler when a signal targets a structure type.
+     * @param structureTypeOrId - Structure type id or enum value.
+     * @param apply - Called when a signal reaches a matching structure.
+     */
     export function register(structureTypeOrId: string | StructureType, apply: (structure: Structure, payload: SignalTargetPayloadV1) => void): void;
   }
 

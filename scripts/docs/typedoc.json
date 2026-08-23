@@ -3,6 +3,10 @@
   "name": "Sandkit API",
   "entryPoints": [
     "../../modkit/types/global.d.ts",
+    "../../modkit/types/shared/asset.d.ts",
+    "../../modkit/types/shared/engine.d.ts",
+    "../../modkit/types/shared/jsonvalue.d.ts",
+    "../../modkit/types/shared/player.d.ts",
     "../../modkit/types/sandkit/index.d.ts",
     "../../modkit/types/sandkit/api/index.d.ts",
     "../../modkit/types/sandkit/enums/index.d.ts",
@@ -23,6 +27,10 @@
   "entryFileName": "README.md",
   "sort": ["source-order"],
   "categorizeByGroup": true,
+  "membersWithOwnFile": ["Class", "Enum"],
+  "expandParameters": true,
+  "indexFormat": "table",
+  "gitRevision": "main",
   "validation": {
     "notDocumented": false,
     "invalidLink": false

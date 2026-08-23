@@ -484,6 +484,25 @@ body:has(.sidebar.show) .sidebar-toggle .smt-sidebar-toggle-icon {
   height: auto;
 }
 
+/* TypeDoc API signatures (blockquote → ```ts fences in docs:api output). */
+.markdown-section :is(h3, h4, h5, h6) + pre:has(> code.language-ts) {
+  margin-top: 0.35rem;
+  margin-bottom: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  background: var(--blockquote-bg, var(--code-inline-bg));
+  border-left: 3px solid var(--theme-color);
+  border-radius: 0 4px 4px 0;
+  overflow-x: auto;
+}
+
+.markdown-section :is(h3, h4, h5, h6) + pre:has(> code.language-ts) code {
+  background: transparent;
+  padding: 0;
+  font-size: 0.9em;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 /* Shell blocks: terminal-style gbc CLI colors (see assets/prism-gbc-cli.js). */
 .markdown-section pre[data-lang="bash"] code .token.smt-cli,
 .markdown-section pre.language-bash code .token.smt-cli {

@@ -6,10 +6,26 @@ import type { CellCoordinates, Vector2 } from "../../shared/player";
  * @internal Base namespace reused by main and worker declarations.
  */
 export namespace player {
-  /** Player center position in world pixels. */
+  /**
+   * Return the player center position in world pixels.
+   * @returns World position as `{ x, y }` in pixels.
+   */
   export function getWorldPosition(): Vector2;
-  /** True when the player hitbox overlaps the cell. */
+
+  /**
+   * Return true when the player hitbox overlaps the cell.
+   * @param cellX - Grid column of the cell.
+   * @param cellY - Grid row of the cell.
+   * @returns True when the player overlaps the cell.
+   */
   export function isCollidingWithCell(...args: CellCoordinates): boolean;
-  /** True when the player is within `radius` cells of the point. */
+
+  /**
+   * Return true when the player is within `radius` cells of the point.
+   * @param cellX - Grid column of the reference cell.
+   * @param cellY - Grid row of the reference cell.
+   * @param radius - Maximum distance in cells (inclusive).
+   * @returns True when the player is inside the radius.
+   */
   export function isWithinRadiusOfCell(...args: [...CellCoordinates, radius: number]): boolean;
 }

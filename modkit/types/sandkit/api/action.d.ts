@@ -8,10 +8,21 @@ export declare namespace action {
   /** Hotbar action asset reference. */
   export type Action = AssetRef;
 
-  /** Returns the action slot the player is using. */
+  /**
+   * Return the action slot the player is using.
+   * @returns Active hotbar action reference.
+   */
   export function getActive(): Action;
-  /** Returns the action slot selected in the hotbar. */
+
+  /**
+   * Return the action slot selected in the hotbar.
+   * @returns Selected hotbar action reference.
+   */
   export function getSelected(): Action;
-  /** Stores custom data on the active action handler. */
+
+  /**
+   * Store custom data on the active action handler.
+   * @param data - Serializable payload attached to the active action.
+   */
   export function setCustomData<Input>(data: Input): void;
 }

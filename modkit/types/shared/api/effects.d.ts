@@ -8,11 +8,27 @@ import type { Vector2 } from "../../shared/player";
  * @internal Base namespace reused by main and worker declarations.
  */
 export namespace effects {
-  /** Spawn a temporary light at world coordinates; returns light index or null. */
+  /**
+   * Spawn a temporary light at world coordinates.
+   * @param worldX - World x position in pixels.
+   * @param worldY - World y position in pixels.
+   * @param options - Brightness, colour, and lifetime settings.
+   */
   export function createLightAtWorld(worldX: number, worldY: number, options?: TemporaryLightOptions): { index: number | null; };
-  /** Emit particles at world coordinates. */
+  /**
+   * Emit particles at world coordinates.
+   * @param worldX - World x position in pixels.
+   * @param worldY - World y position in pixels.
+   * @param options - Count, velocity, colour, and lifetime settings.
+   */
   export function createParticlesAtWorld(worldX: number, worldY: number, options?: ParticleEffectOptions): void;
-  /** Spawn a named screen-space or world effect (e.g. heat wave). */
+  /**
+   * Spawn a named screen-space or world effect.
+   * @param effectId - Registered effect id (for example `heatWave`).
+   * @param worldX - World x position in pixels.
+   * @param worldY - World y position in pixels.
+   * @param options - Duration, radius, and intensity settings.
+   */
   export function createEffectAtWorld(effectId: "heatWave", worldX: number, worldY: number, options?: EffectOptions): void;
 
   /** Generic duration and radius options for world effects. */
@@ -28,12 +44,14 @@ export namespace effects {
     durationMs?: number,
     size?: number,
     color?: [number, number, number, number],
+    /** Light decay rate after spawn. */
     decay: number,
     unclamped?: boolean,
     skipDedup?: boolean,
     useLightZones?: boolean,
     noopIfFull?: boolean,
     priority?: number,
+    /** Dedupe key when the light pool is full or dedup is enabled. */
     dedupKey: string,
   }
   /** Options for {@link createParticlesAtWorld}. */

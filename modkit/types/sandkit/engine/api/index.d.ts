@@ -2,8 +2,9 @@
  * `sandkit.engine.api` — composed engine API namespaces.
  *
  * **Internal API.** Prefer {@link sandkit.api} when a public method exists.
- * Engine methods usually take game state as the first argument and use shorter
- * names. Engine-only members below are stubs until confirmed.
+ * Engine methods usually take **game state as the first argument** (`args[0]`);
+ * remaining `args` entries are method-specific. Names are shorter than the
+ * public `sandkit.api` surface. Engine-only members below are stubs until confirmed.
  *
  * @internal
  */

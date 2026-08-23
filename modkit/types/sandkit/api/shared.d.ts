@@ -5,18 +5,22 @@
  *
  * @module
  */
-import { shared as sharedShared } from "../../shared/api/shared";
+import { shared } from "../../shared";
 
 export namespace shared {
   /** Shared buffer create and lookup. */
   export namespace buffers {
-    /** Create a named shared buffer with type and length. */
+    /**
+     * Create a named shared buffer with type and length.
+     * @param key - Buffer name shared across threads.
+     * @param config - Typed array kind and element count.
+     */
     export function create(key: string, config: { type: SharedArrayType; length: number; }): SharedArray;
     /** Look up a named shared buffer without creating it. */
-    export import get = sharedShared.buffers.get
+    export import get = shared.api.shared.buffers.get
   }
   /** Opaque shared array backing store. */
-  export import SharedArray = sharedShared.SharedArray
+  export import SharedArray = shared.api.shared.SharedArray
   /** Discriminator for the underlying typed array kind. */
-  export import SharedArrayType = sharedShared.SharedArrayType
+  export import SharedArrayType = shared.api.shared.SharedArrayType
 }

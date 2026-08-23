@@ -6,8 +6,16 @@
  * @module
  */
 export namespace random {
-  /** Return a random integer in the inclusive range. */
+  /**
+   * Return a random integer in the inclusive range.
+   * @param min - Minimum value (inclusive).
+   * @param max - Maximum value (inclusive).
+   */
   export function int(min: number, max: number): number;
-  /** Return a random float in the inclusive range. */
+  /**
+   * Return a random float in the inclusive range.
+   * @param min - Minimum value (inclusive).
+   * @param max - Maximum value (inclusive).
+   */
   export function float(min: number, max: number): number;
 }

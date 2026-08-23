@@ -2,8 +2,14 @@
  * Composed worker-thread `sandkit.api` object.
  *
  * Namespace members are documented under {@link worker}. Use this type in
- * `worker.js` / `worker.ts`. Do not use {@link sandkit.SandkitApi} here —
- * main and worker surfaces overlap but are not interchangeable.
+ * `worker.js` / `worker.ts`:
+ *
+ * ```ts
+ * const api = sandkit.api as unknown as WorkerSandkitApi;
+ * ```
+ *
+ * Main and worker surfaces overlap but are not interchangeable. Do not use
+ * {@link sandkit.SandkitApi} on worker threads.
  */
 export type WorkerSandkitApi = {
   collector: typeof import("../sandkit/api/collector").collector;

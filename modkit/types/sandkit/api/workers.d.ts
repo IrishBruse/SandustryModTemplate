@@ -6,6 +6,9 @@
  * @module
  */
 export namespace workers {
-  /** Enable or disable worker post-update callbacks. */
+  /**
+   * Enable or disable worker post-update callbacks.
+   * @param enabled - When true, workers run post-update hooks each tick.
+   */
   export function setPostUpdateEnabled(enabled: boolean): void;
 }
