@@ -7,11 +7,10 @@ import {
   readdirSync,
   rmSync,
   statSync,
-  writeFileSync,
 } from "node:fs";
 import { dirname, isAbsolute, join, normalize } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { buildPatches } from "../lib/build-patches.js";
+import { buildPatches, bundleAndImport } from "../lib/build-patches.js";
 import { kv, styleText } from "../lib/cli-style.js";
 import {
   bundledContentFiles,
@@ -33,6 +32,7 @@ import {
 import { copyWorkshopInstallFiles, removeWorkshopPublishFiles } from "../lib/workshop-files.js";
 import { startLogServer } from "../dev/log-server.js";
 import { modkitAliasPlugin } from "../lib/modkit-alias.js";
+import { writeJsonIfChanged, writeTextIfChanged } from "../lib/write-if-changed.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const MODKIT_DIR = join(ROOT, "modkit");
@@ -99,14 +99,11 @@ console.log(kv("sourcemap", sourcemap ?? styleText("dim", "off")));
 
 /**
  * Write modinfo.json from that mod's `mod.ts`.
- * @param {import("./mods.js").LoadedMod} mod
+ * @param {import("../lib/mods.js").LoadedMod} mod
+ * @param {import("../lib/mods.js").LoadedMod["manifest"]} manifest
  */
-function writeModinfo(mod) {
-  const manifest = structuredClone(mod.manifest);
-  const dest = join(mod.outDir, "modinfo.json");
-  const next = `${JSON.stringify(manifest, null, 2)}\n`;
-  if (existsSync(dest) && readFileSync(dest, "utf8") === next) return;
-  writeFileSync(dest, next);
+function writeModinfo(mod, manifest) {
+  writeJsonIfChanged(join(mod.outDir, "modinfo.json"), structuredClone(manifest));
 }
 
 /**
@@ -115,13 +112,14 @@ function writeModinfo(mod) {
  */
 async function syncModFiles(mod) {
   mkdirSync(mod.outDir, { recursive: true });
-  writeModinfo(mod);
+  const loaded = await bundleAndImport(mod.modTs, `${mod.folder}-sync.mjs`);
+  writeModinfo(mod, loaded.modinfo);
   copyWorkshopInstallFiles(mod.dir, mod.outDir);
   removeWorkshopPublishFiles(mod.outDir);
   const staticDir = join(mod.dir, "mod");
   if (existsSync(staticDir)) {
     for (const name of readdirSync(staticDir)) {
-      if (name === "patches.json") continue;
+      if (name === "patches.json" || name === "modinfo.json") continue;
       cpSync(join(staticDir, name), join(mod.outDir, name), {
         recursive: true,
         force: true,
@@ -133,6 +131,7 @@ async function syncModFiles(mod) {
     modTs: mod.modTs,
     cachePrefix: mod.folder,
     label: `${mod.repoPath}/mod.ts`,
+    loaded,
   });
 }
 
@@ -286,7 +285,7 @@ function rewriteMainJsDebugMaps(filePath, modId) {
   const mapIdx = code.lastIndexOf(SOURCE_MAP_DATA_MARKER);
   if (mapIdx < 0) {
     console.warn(`no inline source map in ${filePath}`);
-    writeFileSync(filePath, `${code}\n//# sourceURL=${sourceURL}\n`);
+    writeTextIfChanged(filePath, `${code}\n//# sourceURL=${sourceURL}\n`);
     return;
   }
 
@@ -315,7 +314,7 @@ function rewriteMainJsDebugMaps(filePath, modId) {
   };
 
   const nextB64 = Buffer.from(JSON.stringify(indexed)).toString("base64");
-  writeFileSync(
+  writeTextIfChanged(
     filePath,
     `${code.slice(0, mapIdx)}${SOURCE_MAP_DATA_MARKER}${nextB64}\n//# sourceURL=${sourceURL}\n`,
   );
@@ -372,7 +371,7 @@ function patchInlineSourceMap(filePath) {
   markConsoleInjectIgnored(map);
 
   const nextB64 = Buffer.from(JSON.stringify(map)).toString("base64");
-  writeFileSync(filePath, `${code.slice(0, mapIdx)}${SOURCE_MAP_DATA_MARKER}${nextB64}\n`);
+  writeTextIfChanged(filePath, `${code.slice(0, mapIdx)}${SOURCE_MAP_DATA_MARKER}${nextB64}\n`);
 }
 
 /**
