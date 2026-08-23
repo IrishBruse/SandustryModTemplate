@@ -30,6 +30,8 @@ export type RecordGifOptions = {
   showMouse: boolean;
   /** Stop the file at 1 MiB (Steam Workshop thumbnails). */
   limit1Mb: boolean;
+  /** Extra structure blocks around the core selection. `0` is tight; `1` is the default. */
+  blockPadding?: number;
   signal?: AbortSignal;
   /** Called after capture, before encode. */
   onEncodeStart?: () => void;
@@ -263,7 +265,7 @@ export async function recordSelectionGif(
     showMouse: options.showMouse,
   };
 
-  const bounds = getSelectionCellBounds(api);
+  const bounds = getSelectionCellBounds(api, { blockPadding: options.blockPadding });
   if (!bounds) {
     console.warn(`no selection bounds`);
     return "no-selection";

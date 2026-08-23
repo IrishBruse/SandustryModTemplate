@@ -7,12 +7,21 @@ import {
   screenRectFromCellCorners,
 } from "./captureFrame.ts";
 
-test("BORDER_PX is 1", () => {
-  assert.equal(BORDER_PX, 1);
+test("BORDER_PX defaults to 0 for exact cell crops", () => {
+  assert.equal(BORDER_PX, 0);
 });
 
-test("screenRectFromCellCorners adds a 1 px border", () => {
+test("screenRectFromCellCorners maps exclusive bottom-right corners to inclusive pixels", () => {
   assert.deepEqual(screenRectFromCellCorners({ x: 10, y: 20 }, { x: 40, y: 50 }), {
+    x: 10,
+    y: 20,
+    width: 30,
+    height: 30,
+  });
+});
+
+test("screenRectFromCellCorners can add an optional border", () => {
+  assert.deepEqual(screenRectFromCellCorners({ x: 10, y: 20 }, { x: 40, y: 50 }, 1), {
     x: 9,
     y: 19,
     width: 32,
@@ -41,6 +50,21 @@ test("clipRectToCanvas clips a rect that hangs off the left and top", () => {
   });
 });
 
+test("screenRectFromCellCorners uses floor and ceil so crops stay on whole pixels", () => {
+  assert.deepEqual(screenRectFromCellCorners({ x: 10.2, y: 20.7 }, { x: 40.8, y: 50.1 }), {
+    x: 10,
+    y: 20,
+    width: 30,
+    height: 30,
+  });
+  assert.deepEqual(screenRectFromCellCorners({ x: 10.2, y: 20.7 }, { x: 40.8, y: 50.1 }, 1), {
+    x: 9,
+    y: 19,
+    width: 32,
+    height: 32,
+  });
+});
+
 test("getSelectionScreenRect maps inclusive cells through getDrawPositionAtCell", () => {
   const api = {
     rendering: {
@@ -50,10 +74,10 @@ test("getSelectionScreenRect maps inclusive cells through getDrawPositionAtCell"
   assert.deepEqual(
     getSelectionScreenRect(api as SandkitApi, { minX: 1, minY: 2, maxX: 3, maxY: 4 }),
     {
-      x: 8 - 1,
-      y: 16 - 1,
-      width: 24 + 2,
-      height: 24 + 2,
+      x: 8,
+      y: 16,
+      width: 24,
+      height: 24,
     },
   );
 });

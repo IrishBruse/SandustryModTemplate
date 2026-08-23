@@ -11,8 +11,8 @@ export type CaptureLook = {
   showMouse: boolean;
 };
 
-/** Extra screen pixels on each edge so structure outlines are not clipped. */
-export const BORDER_PX = 1;
+/** Kept for optional extra crop margin; default capture uses exact cell pixels. */
+export const BORDER_PX = 0;
 
 type VisibleNode = { visible?: boolean; parent?: { filters?: unknown[] | null } };
 
@@ -136,36 +136,45 @@ export function applyCaptureLook(look: CaptureLook): () => void {
 
 export type ScreenRect = { x: number; y: number; width: number; height: number };
 
-/** Map inclusive cell AABB corners (in draw pixels) to a crop rect with a 1 px border. */
+/** Map inclusive cell AABB corners (in draw pixels) to a screen rect. */
 export function screenRectFromCellCorners(
   topLeft: { x: number; y: number },
-  bottomRight: { x: number; y: number },
+  bottomRightExclusive: { x: number; y: number },
+  borderPx: number = BORDER_PX,
 ): ScreenRect | null {
   if (
     !Number.isFinite(topLeft.x) ||
     !Number.isFinite(topLeft.y) ||
-    !Number.isFinite(bottomRight.x) ||
-    !Number.isFinite(bottomRight.y)
+    !Number.isFinite(bottomRightExclusive.x) ||
+    !Number.isFinite(bottomRightExclusive.y)
   ) {
     return null;
   }
-  const x = Math.round(topLeft.x);
-  const y = Math.round(topLeft.y);
-  const width = Math.round(bottomRight.x - topLeft.x);
-  const height = Math.round(bottomRight.y - topLeft.y);
+  let x = Math.floor(topLeft.x);
+  let y = Math.floor(topLeft.y);
+  const right = Math.floor(bottomRightExclusive.x) - 1;
+  const bottom = Math.floor(bottomRightExclusive.y) - 1;
+  let width = right - x + 1;
+  let height = bottom - y + 1;
   if (width <= 0 || height <= 0) return null;
-  return {
-    x: x - BORDER_PX,
-    y: y - BORDER_PX,
-    width: width + BORDER_PX * 2,
-    height: height + BORDER_PX * 2,
-  };
+  if (borderPx > 0) {
+    x -= borderPx;
+    y -= borderPx;
+    width += borderPx * 2;
+    height += borderPx * 2;
+  }
+  return { x, y, width, height };
 }
 
-export function getSelectionScreenRect(api: SandkitApi, bounds: CellBounds): ScreenRect | null {
+export function getSelectionScreenRect(
+  api: SandkitApi,
+  bounds: CellBounds,
+  borderPx: number = BORDER_PX,
+): ScreenRect | null {
   return screenRectFromCellCorners(
     api.rendering.getDrawPositionAtCell(bounds.minX, bounds.minY),
     api.rendering.getDrawPositionAtCell(bounds.maxX + 1, bounds.maxY + 1),
+    borderPx,
   );
 }
 

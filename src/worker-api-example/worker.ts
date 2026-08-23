@@ -8,7 +8,7 @@
  * The game loads this script on every simulation worker. Probe once on
  * worker 0 — the API bag is the same on each index.
  */
-const api = sandkit.api as unknown as WorkerSandkitApi;
+const workerApi = sandkit.api as unknown as WorkerSandkitApi;
 
 type Probe = { path: string; kind: string };
 
@@ -25,8 +25,8 @@ function probe(path: string, value: unknown): Probe {
 let index = -1;
 let count = -1;
 try {
-  index = api.worker.getIndex();
-  count = api.worker.getCount();
+  index = workerApi.worker.getIndex();
+  count = workerApi.worker.getCount();
 } catch (error) {
   console.error(`worker.getIndex/getCount failed`, error);
 }
@@ -35,18 +35,18 @@ try {
 if (index === 0) {
   /** Paths the worker types declare — extend when aligning new namespaces. */
   const probes: Probe[] = [
-    probe("worker.getIndex", api.worker?.getIndex),
-    probe("worker.getCount", api.worker?.getCount),
-    probe("main.emitEvent", api.main?.emitEvent),
-    probe("elements.getTypeFromId", api.elements?.getTypeFromId),
-    probe("elements.getInfoAtCell", api.elements?.getInfoAtCell),
-    probe("elements.createAtCell", (api.elements as { createAtCell?: unknown }).createAtCell),
-    probe("world.isCellEmptyAtCell", api.world?.isCellEmptyAtCell),
-    probe("hooks.intercept", api.hooks?.intercept),
-    probe("hooks.modify", api.hooks?.modify),
-    probe("terrains.createAtCell", api.terrains?.createAtCell),
-    probe("structures.getAtCell", api.structures?.getAtCell),
-    probe("utils", api.utils),
+    probe("worker.getIndex", workerApi.worker?.getIndex),
+    probe("worker.getCount", workerApi.worker?.getCount),
+    probe("main.emitEvent", workerApi.main?.emitEvent),
+    probe("elements.getTypeFromId", workerApi.elements?.getTypeFromId),
+    probe("elements.getInfoAtCell", workerApi.elements?.getInfoAtCell),
+    probe("elements.createAtCell", (workerApi.elements as { createAtCell?: unknown }).createAtCell),
+    probe("world.isCellEmptyAtCell", workerApi.world?.isCellEmptyAtCell),
+    probe("hooks.intercept", workerApi.hooks?.intercept),
+    probe("hooks.modify", workerApi.hooks?.modify),
+    probe("terrains.createAtCell", workerApi.terrains?.createAtCell),
+    probe("structures.getAtCell", workerApi.structures?.getAtCell),
+    probe("utils", workerApi.utils),
   ];
 
   const engine = (sandkit as { engine?: { api?: unknown; state?: unknown } }).engine;

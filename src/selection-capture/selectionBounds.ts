@@ -16,6 +16,29 @@ export type SelectedStructure = {
 
 export type MapPixels = { data: ArrayLike<number>; width: number; height?: number };
 
+export const MIN_BLOCK_PADDING = 0;
+export const MAX_BLOCK_PADDING = 32;
+export const DEFAULT_BLOCK_PADDING = 1;
+
+/** The dashed C marquee is one cell past the visible content on every side. */
+const MARQUEE_CONTENT_INSET_CELLS = 1;
+
+export type SelectionBoundsOptions = {
+  /** Extra structure blocks around the core selection. `0` is tight; `1` is the default. */
+  blockPadding?: number;
+};
+
+export function clampBlockPadding(value: number): number {
+  return Math.min(MAX_BLOCK_PADDING, Math.max(MIN_BLOCK_PADDING, Math.round(value)));
+}
+
+/** One block-padding step in world cells (one structure footprint width). */
+export function blockPaddingToCells(blockPadding: number, snap: number): number {
+  const blocks = clampBlockPadding(blockPadding);
+  const step = Math.max(1, Math.round(snap));
+  return blocks * step;
+}
+
 /** Shape of `session.action.customData` while a marquee selection is active. */
 type MarqueeCustomData = {
   marqueeSelected?: boolean;
@@ -106,6 +129,35 @@ export function boundsFromStructures(
 /**
  * Marquee `end` is exclusive on the max edges (left/top flush, right/bottom one cell past).
  */
+export function unionBounds(a: CellBounds, b: CellBounds): CellBounds {
+  return {
+    minX: Math.min(a.minX, b.minX),
+    minY: Math.min(a.minY, b.minY),
+    maxX: Math.max(a.maxX, b.maxX),
+    maxY: Math.max(a.maxY, b.maxY),
+  };
+}
+
+export function expandBounds(bounds: CellBounds, margin: number): CellBounds {
+  return {
+    minX: bounds.minX - margin,
+    minY: bounds.minY - margin,
+    maxX: bounds.maxX + margin,
+    maxY: bounds.maxY + margin,
+  };
+}
+
+/** Shrink an inclusive cell AABB by `cells` on every side. */
+export function insetBounds(bounds: CellBounds, cells: number): CellBounds {
+  if (cells <= 0) return bounds;
+  const minX = bounds.minX + cells;
+  const minY = bounds.minY + cells;
+  const maxX = bounds.maxX - cells;
+  const maxY = bounds.maxY - cells;
+  if (maxX < minX || maxY < minY) return bounds;
+  return { minX, minY, maxX, maxY };
+}
+
 export function boundsFromMarquee(start: CellPoint, end: CellPoint): CellBounds {
   const rawMinX = Math.min(start.x, end.x);
   const rawMinY = Math.min(start.y, end.y);
@@ -161,9 +213,15 @@ function readSharedMapData(): MapPixels | null {
 
 /**
  * Read the active selection cell AABB from engine state.
- * Prefer structure footprints; fall back to marquee start/end (exclusive max).
+ * Core bounds come from the marquee and/or structure footprints, then block padding
+ * is added on every side. mapData has terrain/structure pixels only — skip tighten
+ * when structures are selected so light halos (rendered outside mapData) are kept.
  */
-export function getSelectionCellBounds(api?: SandkitApi): CellBounds | null {
+export function getSelectionCellBounds(
+  api?: SandkitApi,
+  options?: SelectionBoundsOptions,
+): CellBounds | null {
+  const blockPadding = clampBlockPadding(options?.blockPadding ?? DEFAULT_BLOCK_PADDING);
   const data = getMarqueeCustomData();
   if (!data?.marqueeSelected) return null;
 
@@ -172,16 +230,27 @@ export function getSelectionCellBounds(api?: SandkitApi): CellBounds | null {
     sandkit.api.rendering.getGridMetrics().snapGridCellSize ||
     4;
 
-  let bounds: CellBounds | null = null;
+  const structureBounds = data.selectedStructures?.length
+    ? boundsFromStructures(data.selectedStructures, snap)
+    : null;
+  const marqueeBounds =
+    isFinitePoint(data.start) && isFinitePoint(data.end)
+      ? boundsFromMarquee(data.start, data.end)
+      : null;
 
-  if (data.selectedStructures?.length) {
-    bounds = boundsFromStructures(data.selectedStructures, snap);
+  let core: CellBounds | null = null;
+  if (structureBounds) {
+    // Structure footprints are symmetric; the dashed marquee is often larger on the right/bottom.
+    core = structureBounds;
+  } else if (marqueeBounds) {
+    core = insetBounds(marqueeBounds, MARQUEE_CONTENT_INSET_CELLS);
   }
 
-  if (!bounds && isFinitePoint(data.start) && isFinitePoint(data.end)) {
-    bounds = boundsFromMarquee(data.start, data.end);
+  if (!core) return null;
+  if (!structureBounds) {
+    core = tightenBoundsToMapData(core);
   }
-
-  if (!bounds) return null;
-  return tightenBoundsToMapData(bounds);
+  const paddingCells = blockPaddingToCells(blockPadding, snap);
+  if (paddingCells <= 0) return core;
+  return expandBounds(core, paddingCells);
 }

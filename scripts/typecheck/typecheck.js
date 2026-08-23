@@ -35,4 +35,9 @@ for (const folder of folders) {
     process.exit(1);
   }
   typecheck(project);
+
+  const workerProject = join("src", folder, "tsconfig.worker.json");
+  if (existsSync(join(ROOT, workerProject))) {
+    typecheck(workerProject);
+  }
 }

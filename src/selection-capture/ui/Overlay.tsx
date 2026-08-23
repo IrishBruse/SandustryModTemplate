@@ -12,8 +12,25 @@ import {
   OverlayRoot,
 } from "@modkit/ui";
 import { captureSelectionPng } from "../capturePng";
+import { installCaptureAreaPreview } from "../capturePreview";
+import {
+  loadCaptureSettings,
+  MAX_FRAMES,
+  MAX_TICKS,
+  MIN_FRAMES,
+  MIN_TICKS,
+  saveCaptureSettings,
+  type CaptureSettings,
+} from "../captureSettings";
 import { modinfo } from "../mod";
 import { recordSelectionGif } from "../recordGif";
+import {
+  clampBlockPadding,
+  getSelectionCellBounds,
+  MAX_BLOCK_PADDING,
+  MIN_BLOCK_PADDING,
+  type CellBounds,
+} from "../selectionBounds";
 
 /** Game `registerBinding` forwards `displayNameKey`, not `displayName`. */
 const BINDINGS = {
@@ -21,8 +38,6 @@ const BINDINGS = {
   screenshot: `${modinfo.id}.screenshot`,
   recordGif: `${modinfo.id}.recordGif`,
 } as const;
-
-const DEFAULT_FRAMES = 60;
 
 type OverlayLive = {
   bindingsInstalled: boolean;
@@ -93,13 +108,20 @@ function installBindings() {
 
 export function Overlay() {
   const [open, setOpen] = useState(() => live.open);
-  const [frames, setFrames] = useState(DEFAULT_FRAMES);
-  const [ticksPerFrame, setTicksPerFrame] = useState(1);
-  const [greenscreen, setGreenscreen] = useState(false);
-  const [showMouse, setShowMouse] = useState(false);
-  const [limit1Mb, setLimit1Mb] = useState(false);
+  const [settings, setSettings] = useState<CaptureSettings>(loadCaptureSettings);
+  const { frames, ticksPerFrame, blockPadding, greenscreen, showMouse, limit1Mb } = settings;
   const [phase, setPhase] = useState<"idle" | "recording" | "encoding">("idle");
+  const [frozenBounds, setFrozenBounds] = useState<CellBounds | null>(null);
   const busy = phase !== "idle";
+  const recording = phase === "recording" || phase === "encoding";
+
+  function patchSettings(patch: Partial<CaptureSettings>) {
+    setSettings((current) => ({ ...current, ...patch }));
+  }
+
+  useEffect(() => {
+    saveCaptureSettings(settings);
+  }, [settings]);
 
   live.toggle = () => {
     live.open = !live.open;
@@ -111,7 +133,7 @@ export function Overlay() {
     const api = sandkit.api;
     void (async () => {
       try {
-        const result = await captureSelectionPng(api, { greenscreen, showMouse });
+        const result = await captureSelectionPng(api, { greenscreen, showMouse }, { blockPadding });
         switch (result) {
           case "ok":
             api.ui.toast("Copied — paste with Ctrl+V", {});
@@ -140,8 +162,10 @@ export function Overlay() {
     }
     const abort = new AbortController();
     live.abortRecord = abort;
-    setPhase("recording");
     const api = sandkit.api;
+    const snapshot = getSelectionCellBounds(api, { blockPadding });
+    setFrozenBounds(snapshot);
+    setPhase("recording");
     void (async () => {
       try {
         const result = await recordSelectionGif(api, {
@@ -150,6 +174,7 @@ export function Overlay() {
           greenscreen,
           showMouse,
           limit1Mb,
+          blockPadding,
           signal: abort.signal,
           onEncodeStart: () => setPhase("encoding"),
         });
@@ -181,6 +206,7 @@ export function Overlay() {
         api.ui.toast("GIF record failed", {});
       } finally {
         if (live.abortRecord === abort) live.abortRecord = null;
+        setFrozenBounds(null);
         setPhase("idle");
       }
     })();
@@ -200,6 +226,15 @@ export function Overlay() {
     window.addEventListener("keydown", onKeyDown, true);
     return () => window.removeEventListener("keydown", onKeyDown, true);
   }, []);
+
+  useEffect(() => {
+    if (!open && !recording) return;
+    return installCaptureAreaPreview(() => ({
+      blockPadding,
+      recording,
+      frozenBounds,
+    }));
+  }, [open, blockPadding, recording, frozenBounds]);
 
   if (!open) return null;
 
@@ -223,31 +258,60 @@ export function Overlay() {
               <OptionsRow label="Frames">
                 <OptionsNumberInput
                   value={frames}
-                  min={2}
-                  max={120}
+                  min={MIN_FRAMES}
+                  max={MAX_FRAMES}
                   disabled={busy}
                   aria-label="Frames"
-                  onChange={(value) => setFrames(clampInt(value, 2, 120))}
+                  onChange={(value) =>
+                    patchSettings({ frames: clampInt(value, MIN_FRAMES, MAX_FRAMES) })
+                  }
                 />
               </OptionsRow>
               <OptionsRow label="Ticks / frame">
                 <OptionsNumberInput
                   value={ticksPerFrame}
-                  min={1}
-                  max={30}
+                  min={MIN_TICKS}
+                  max={MAX_TICKS}
                   disabled={busy}
                   aria-label="Ticks per frame"
-                  onChange={(value) => setTicksPerFrame(clampInt(value, 1, 30))}
+                  onChange={(value) =>
+                    patchSettings({ ticksPerFrame: clampInt(value, MIN_TICKS, MAX_TICKS) })
+                  }
+                />
+              </OptionsRow>
+              <OptionsRow
+                label="Block padding"
+                description="Extra structure blocks around the selection."
+              >
+                <OptionsNumberInput
+                  value={blockPadding}
+                  min={MIN_BLOCK_PADDING}
+                  max={MAX_BLOCK_PADDING}
+                  disabled={busy}
+                  aria-label="Block padding"
+                  onChange={(value) => patchSettings({ blockPadding: clampBlockPadding(value) })}
                 />
               </OptionsRow>
               <OptionsRow label="Greenscreen">
-                <OptionsSwitch checked={greenscreen} disabled={busy} onChange={setGreenscreen} />
+                <OptionsSwitch
+                  checked={greenscreen}
+                  disabled={busy}
+                  onChange={(checked) => patchSettings({ greenscreen: checked })}
+                />
               </OptionsRow>
               <OptionsRow label="Show mouse">
-                <OptionsSwitch checked={showMouse} disabled={busy} onChange={setShowMouse} />
+                <OptionsSwitch
+                  checked={showMouse}
+                  disabled={busy}
+                  onChange={(checked) => patchSettings({ showMouse: checked })}
+                />
               </OptionsRow>
               <OptionsRow label="1 MB limit" description="Warning takes a while.">
-                <OptionsSwitch checked={limit1Mb} disabled={busy} onChange={setLimit1Mb} />
+                <OptionsSwitch
+                  checked={limit1Mb}
+                  disabled={busy}
+                  onChange={(checked) => patchSettings({ limit1Mb: checked })}
+                />
               </OptionsRow>
             </OptionsSection>
             <OptionsSection title="Actions">

@@ -1,8 +1,10 @@
 import { applyCaptureLook, rasterizeOnPaint, type CaptureLook } from "./captureFrame";
-import { getSelectionCellBounds } from "./selectionBounds";
+import { getSelectionCellBounds, type SelectionBoundsOptions } from "./selectionBounds";
 
 /** Same nearest-neighbor scale as the PNG screenshot. */
 const PNG_SCALE = 2;
+
+export type CapturePngOptions = SelectionBoundsOptions;
 
 function canvasToPngBlob(canvas: HTMLCanvasElement): Promise<Blob | null> {
   return new Promise((resolve) => {
@@ -36,8 +38,9 @@ export type CapturePngResult = "ok" | "no-selection" | "out-of-view" | "failed";
 export async function captureSelectionPng(
   api: SandkitApi,
   look: CaptureLook = { greenscreen: false, showMouse: false },
+  options: CapturePngOptions = {},
 ): Promise<CapturePngResult> {
-  const bounds = getSelectionCellBounds(api);
+  const bounds = getSelectionCellBounds(api, options);
   if (!bounds) {
     console.warn(`no selection bounds`);
     return "no-selection";

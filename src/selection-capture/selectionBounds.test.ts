@@ -6,8 +6,13 @@ import {
   boundsFromStructures,
   cellIsVisible,
   clearMarqueeSelection,
+  DEFAULT_BLOCK_PADDING,
+  blockPaddingToCells,
+  expandBounds,
   getSelectionCellBounds,
+  insetBounds,
   tightenBoundsToMapData,
+  unionBounds,
 } from "./selectionBounds.ts";
 
 const previousSandkit = globalThis.sandkit;
@@ -16,12 +21,14 @@ afterEach(() => {
   globalThis.sandkit = previousSandkit;
 });
 
+const SNAP = 4;
+
 function installSandkit(session: object, shared: object = {}) {
   globalThis.sandkit = {
     state: { session, shared },
     api: {
       rendering: {
-        getGridMetrics: () => ({ snapGridCellSize: 4 }),
+        getGridMetrics: () => ({ snapGridCellSize: SNAP, cellSize: 4 }),
       },
     },
     enums: { ComponentId: { ShortcutHelper: 1 } },
@@ -116,7 +123,31 @@ test("getSelectionCellBounds returns null when the marquee is off", () => {
   assert.equal(getSelectionCellBounds(), null);
 });
 
-test("getSelectionCellBounds uses the marquee start and end", () => {
+test("unionBounds and expandBounds combine inclusive AABBs", () => {
+  assert.deepEqual(
+    unionBounds({ minX: 0, minY: 0, maxX: 2, maxY: 2 }, { minX: 1, minY: 1, maxX: 4, maxY: 3 }),
+    {
+      minX: 0,
+      minY: 0,
+      maxX: 4,
+      maxY: 3,
+    },
+  );
+  assert.deepEqual(expandBounds({ minX: 2, minY: 3, maxX: 5, maxY: 7 }, 2), {
+    minX: 0,
+    minY: 1,
+    maxX: 7,
+    maxY: 9,
+  });
+});
+
+test("blockPaddingToCells scales by the structure snap grid", () => {
+  assert.equal(blockPaddingToCells(0, SNAP), 0);
+  assert.equal(blockPaddingToCells(1, SNAP), SNAP);
+  assert.equal(blockPaddingToCells(2, SNAP), SNAP * 2);
+});
+
+test("getSelectionCellBounds uses the marquee start and end with default block padding", () => {
   installSandkit({
     action: {
       customData: {
@@ -126,7 +157,72 @@ test("getSelectionCellBounds uses the marquee start and end", () => {
       },
     },
   });
-  assert.deepEqual(getSelectionCellBounds(), { minX: 0, minY: 0, maxX: 4, maxY: 1 });
+  const paddingCells = blockPaddingToCells(DEFAULT_BLOCK_PADDING, SNAP);
+  assert.deepEqual(getSelectionCellBounds(), {
+    minX: 0 - paddingCells,
+    minY: 0 - paddingCells,
+    maxX: 4 + paddingCells,
+    maxY: 1 + paddingCells,
+  });
+});
+
+test("getSelectionCellBounds can remove block padding", () => {
+  installSandkit({
+    action: {
+      customData: {
+        marqueeSelected: true,
+        start: { x: 0, y: 0 },
+        end: { x: 5, y: 2 },
+      },
+    },
+  });
+  assert.deepEqual(getSelectionCellBounds(undefined, { blockPadding: 0 }), {
+    minX: 0,
+    minY: 0,
+    maxX: 4,
+    maxY: 1,
+  });
+});
+
+test("insetBounds shrinks an inclusive AABB on every side", () => {
+  assert.deepEqual(insetBounds({ minX: 0, minY: 0, maxX: 5, maxY: 5 }, 1), {
+    minX: 1,
+    minY: 1,
+    maxX: 4,
+    maxY: 4,
+  });
+});
+
+test("getSelectionCellBounds pads structure footprints and skips map tighten", () => {
+  const width = 20;
+  const height = 20;
+  const data = new Uint8ClampedArray(width * height * 4);
+  const set = (x: number, y: number) => {
+    const i = 4 * (x + y * width);
+    data[i] = 255;
+    data[i + 3] = 255;
+  };
+  set(2, 2);
+  set(3, 2);
+  const structureBounds = { minX: 2, minY: 2, maxX: 5, maxY: 5 };
+  installSandkit(
+    {
+      action: {
+        customData: {
+          marqueeSelected: true,
+          start: { x: 0, y: 0 },
+          end: { x: 6, y: 6 },
+          selectedStructures: [{ x: 0, y: 0, originalPos: { x: 2, y: 2 } }],
+        },
+      },
+    },
+    { mapData: { data, width, height } },
+  );
+  assert.deepEqual(getSelectionCellBounds(undefined, { blockPadding: 0 }), structureBounds);
+  assert.deepEqual(
+    getSelectionCellBounds(),
+    expandBounds(structureBounds, blockPaddingToCells(DEFAULT_BLOCK_PADDING, SNAP)),
+  );
 });
 
 test("clearMarqueeSelection clears the C marquee on the action and construction", () => {
