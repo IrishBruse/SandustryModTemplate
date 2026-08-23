@@ -92,8 +92,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 - Quick start flows (root README, docs home, [Quick start](quick-start.md), [Builds](builds.md)) include **`npm run setup`** after `npm install`. Docs describe its checks (Node, npm installs, types submodule, game binary, asar, **[mods]** beta, `sandkit`) plus extract and `logs/` link. See [troubleshooting](troubleshooting.md).
 - **Debug companion defaults:** **Open DevTools on load**, **Skip splash**, and **Auto-boot Continue** default to **off**. Turn them on in the debug mod settings when you want them. See [modkit/debug.md](modkit/debug.md).
-- **`modkit/internal/`** — debug hot reload (`internal/debug`) and esbuild inject/stub (`internal/esbuild`). Mods import `@modkit/debug`; do not import `modkit/internal/*` paths directly.
-- **`modkit/esbuild/`** holds React/JSX aliases and the `patches.empty.ts` stub.
+- **`modkit/internal/`** — debug hot reload (`internal/debug`) and esbuild wiring (`internal/esbuild`: React/JSX aliases, patches stub, debug inject). Mods import `@modkit/debug` and `react`; do not import `modkit/internal/*` paths directly.
 - **Scripts folders** match `npm run` commands (`scripts/build`, `dev`, `typecheck`, `setup`, `publish`, `sandustry`, `ui`). Shared helpers live in `scripts/lib/`. Root `postinstall` runs `scripts/mod-install/install-mod-deps.js` for per-mod `package.json` folders.
 - **Types submodule** lives at [`modkit/types/`](../modkit/types/) (was top-level `types/`). Import aliases (`types/api`, `types/worker-api`, `types/engine`) are unchanged.
 - **[Folder layout](layout.md)** rewritten for new authors: repo folders as a table (not a code block), required vs optional files, sample copy targets, and where the game stores mods. Tooling (`docs/`, `scripts/`, `sandustry/`) stays off that page.

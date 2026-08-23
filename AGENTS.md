@@ -41,7 +41,7 @@ Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized dem
 | `src/<name>/mod.ts`        | Manifest (+ optional `patches` / `debugPatches`) → `modinfo.json` / `patches.json` at build. `export const modinfo = defineModInfo(...)`. Use `modinfo.id` for the mod id.                               |
 | `src/<name>/main.ts`       | Mod entry. Build gates on **`enabled`** and boots hot reload (`reloaded` ambient). Import `onDispose` from `@modkit/debug` when needed.                                                                  |
 | `src/<name>/worker.ts`     | Optional worker entry → `worker.js` when present (`workerEntry` in modinfo)                                                                                                                              |
-| `src/<name>/ui/`           | React overlays (import `react`, resolved to `modkit/esbuild/react.ts`)                                                                                                                                   |
+| `src/<name>/ui/`           | React overlays (import `react`, resolved to `modkit/internal/esbuild/react.ts`)                                                                                                                                   |
 | `src/<name>/README.md`     | Optional. Repo docs only (not copied into builds). Example mods: lists only — no tables ([`docs/AGENTS.md`](docs/AGENTS.md)).                                                                            |
 | `src/<name>/CHANGELOG.md`  | Optional. Repo docs; publish reads the version `##` section for Steam change notes (file stays in the repo).                                                                                             |
 | `src/<name>/workshop/`     | Optional. `workshop.json`, `preview.gif` (preferred), `preview.png`, `workshop.txt`, `screenshots/`. Build copies `workshop.json` and previews to the mod root. Screenshots stay under `workshop/` only. |
@@ -54,9 +54,8 @@ Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized dem
 | Path                       | Role                                                                                                                 |
 | -------------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | `modkit/modinfo.ts`        | `defineModInfo` / `definePatches` plus manifest and patch types                                                      |
-| `modkit/patches.ts`        | Empty shared patch list (browser stub via `esbuild/patches.empty.ts`)                                                |
-| `modkit/esbuild/`          | React/JSX aliases and `patches.empty.ts` stub                                                                        |
-| `modkit/internal/esbuild/` | Debug esbuild inject (`console`, hot-reload) and release `@modkit/debug` stub                                        |
+| `modkit/patches.ts`        | Empty shared patch list (browser stub via `internal/esbuild/patches.empty.ts`)                                                |
+| `modkit/internal/esbuild/` | esbuild wiring: React/JSX aliases, `patches.empty.ts` stub, debug inject, release `@modkit/debug` stub                        |
 | `modkit/utils/`            | `safe`, `isEnabled`, `inGame`, `registerRetroGame`                                                                   |
 | `modkit/internal/debug/`   | Hot reload helpers (`onDispose`; inject calls `installHotReload` / `isHotReloadEval`)                                |
 | `modkit/log.ts`            | File-log helper used with the hot-reload watch server                                                                |

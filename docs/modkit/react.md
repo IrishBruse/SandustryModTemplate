@@ -1,10 +1,10 @@
 # React runtime
 
-Sandustry exposes React on `sandkit.react`. The template does not bundle a separate React copy. TypeScript and esbuild resolve `react` imports to thin shims in `modkit/esbuild/`.
+Sandustry exposes React on `sandkit.react`. The template does not bundle a separate React copy. TypeScript and esbuild resolve `react` imports to thin shims in `modkit/internal/esbuild/`.
 
 ## Runtime source
 
-`modkit/esbuild/react.ts` reads the live runtime:
+`modkit/internal/esbuild/react.ts` reads the live runtime:
 
 ```ts
 const runtime = sandkit.react;
@@ -21,7 +21,7 @@ import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
 ```
 
-At build time, esbuild maps `react` → `modkit/esbuild/react.ts`.
+At build time, esbuild maps `react` → `modkit/internal/esbuild/react.ts`.
 
 ## JSX
 
@@ -40,21 +40,21 @@ esbuild (`scripts/build/esbuild.config.mjs`):
 
 ```js
 alias: {
-  react: join(ROOT, "modkit/esbuild/react.ts"),
-  "react/jsx-runtime": join(ROOT, "modkit/esbuild/jsx-runtime.ts"),
-  "react/jsx-dev-runtime": join(ROOT, "modkit/esbuild/jsx-dev-runtime.ts"),
+  react: join(ROOT, "modkit/internal/esbuild/react.ts"),
+  "react/jsx-runtime": join(ROOT, "modkit/internal/esbuild/jsx-runtime.ts"),
+  "react/jsx-dev-runtime": join(ROOT, "modkit/internal/esbuild/jsx-dev-runtime.ts"),
 },
 jsx: "automatic",
 jsxImportSource: "react",
 ```
 
-### `modkit/esbuild/jsx-runtime.ts`
+### `modkit/internal/esbuild/jsx-runtime.ts`
 
 Automatic JSX runtime backed by `sandkit.react`. Exports `Fragment`, `jsx`, and `jsxs`.
 
 When `runtime.jsx` / `runtime.jsxs` exist on `sandkit.react`, those are used. Otherwise the shim falls back to `createElement`.
 
-### `modkit/esbuild/jsx-dev-runtime.ts`
+### `modkit/internal/esbuild/jsx-dev-runtime.ts`
 
 Dev runtime exports `jsxDEV`. When `sandkit.react.jsxDEV` is missing, it falls back to production `jsx` from `jsx-runtime.ts`.
 

@@ -147,7 +147,7 @@ function browserPatchesStubPlugin() {
     name: "browser-patches-stub",
     setup(build) {
       build.onResolve({ filter: /^@modkit\/patches$/ }, () => ({
-        path: join(MODKIT_DIR, "esbuild/patches.empty.ts"),
+        path: join(INTERNAL_ESBUILD, "patches.empty.ts"),
       }));
     },
   };
@@ -341,9 +341,9 @@ function bundleOptions(mod) {
       ? [join(INTERNAL_ESBUILD, "hot-reload.inject.ts"), join(INTERNAL_ESBUILD, "console.ts")]
       : [],
     alias: {
-      react: join(ROOT, "modkit/esbuild/react.ts"),
-      "react/jsx-runtime": join(ROOT, "modkit/esbuild/jsx-runtime.ts"),
-      "react/jsx-dev-runtime": join(ROOT, "modkit/esbuild/jsx-dev-runtime.ts"),
+      react: join(INTERNAL_ESBUILD, "react.ts"),
+      "react/jsx-runtime": join(INTERNAL_ESBUILD, "jsx-runtime.ts"),
+      "react/jsx-dev-runtime": join(INTERNAL_ESBUILD, "jsx-dev-runtime.ts"),
     },
     jsx: "automatic",
     jsxImportSource: "react",
