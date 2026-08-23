@@ -1,4 +1,16 @@
-import { defineModInfo } from "@modkit/modinfo";
+import { defineModInfo, definePatches } from "@modkit/modinfo";
+
+/** Re-add the vanilla Options → Debug tab (content ships in bundle; tab button was omitted). */
+export const patches = definePatches([
+  {
+    id: "options-debug-tab",
+    file: "js/bundle.js",
+    find: 'F.length>0&&P.push("mods");const O=',
+    operation: "replace",
+    code: 'F.length>0&&P.push("mods");P.push("debug");const O=',
+    expectedMatches: 1,
+  },
+]);
 
 export const modinfo = defineModInfo({
   manifestVersion: 1,
@@ -9,7 +21,7 @@ export const modinfo = defineModInfo({
   entry: "main.js",
   author: "Your Name",
   description:
-    "Dev companion: DevTools, splash skip, main-menu auto-boot, disable autosave, and F3 Debug panel. Installed on debug builds only.",
+    "Dev companion: DevTools, splash skip, main-menu auto-boot, disable autosave, Options Debug tab, and F3 Debug panel. Installed on debug builds only.",
   dependencies: [],
   loadOrder: -100,
   configSchema: {
@@ -49,7 +61,7 @@ export const modinfo = defineModInfo({
       default: true,
       labelKey: "Debug panel (F3)",
       descriptionKey:
-        "Turns engine debug.active on so vanilla Debug / Stats appear. F3 toggles the companion Debug panel (top left).",
+        "Turns engine debug.active on so vanilla Debug / Stats appear. Also under Options → Debug. F3 toggles the companion panel (top left).",
     },
     disableAutosave: {
       type: "boolean",

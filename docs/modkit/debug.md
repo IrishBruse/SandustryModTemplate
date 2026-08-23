@@ -30,7 +30,7 @@ Settings live on the debug mod only (`src/debug/mod.ts` `configSchema`):
 | **F12 opens DevTools**    | `f12DevTools`     | on      | Capture-phase F12. Can disconnect an IDE debugger session                            |
 | **Skip splash**           | `skipSplash`      | off     | Runtime click poll while splash logos are visible                                    |
 | **Auto-boot Continue**    | `autoBoot`        | off     | Click Continue on the main menu after it has been visible                            |
-| **Debug panel (F3)**      | `engineDebug`     | on      | Force `debug.active` (vanilla Debug / Stats); F3 toggles companion panel (top left)  |
+| **Debug panel (F3)**      | `engineDebug`     | on      | Force `debug.active` (vanilla Debug / Stats); F3 toggles companion panel (top left). Also restores **Options → Debug** tab (Hard Mode, Debug Active, Draw Chunks, Cinematic, Debug Console) |
 | **Disable autosave**      | `disableAutosave` | on      | Sets `session.settings.autosaveInterval` to `0`. Manual saves still work             |
 
 Turn on **Skip splash**, **Auto-boot Continue**, or **Open DevTools on load** in the debug mod settings when you want those helpers.
@@ -47,6 +47,7 @@ Turn on **Skip splash**, **Auto-boot Continue**, or **Open DevTools on load** in
 | Disable autosave      | [`autosave.ts`](../../src/debug/autosave.ts)                     | Disable autosave | Sets interval to `0` on load and each hot-reload eval                 |
 | Renderer hot reload   | [`modkit/debug/hot-reload.ts`](../../modkit/debug/hot-reload.ts) | `npm run dev`    | Polls `GET /hot-reload/last` on the dev watch server                  |
 | F3 debug panel        | [`src/debug/toggle/`](../../src/debug/toggle/)                   | Debug panel (F3) | Top-left companion panel; vanilla Debug / Stats stay for engine tools |
+| Options Debug tab     | [`src/debug/mod.ts`](../../src/debug/mod.ts) `patches`           | Mod installed    | Bundle patch adds the hidden **Debug** tab to Options (Debug Active, Draw Chunks, Cinematic, etc.) |
 
 Hot-reload eval skips DevTools shortcut, splash polling, and auto-boot so those do not stack on every save. Autosave disable runs again on each hot-reload eval.
 
