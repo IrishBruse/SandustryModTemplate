@@ -6,6 +6,14 @@
 
 - Panel **1 MB limit** — Record GIF drops frames from the end until the file is at most 1 MiB (Steam Workshop thumbnail size).
 - **Cancel** on the Record button (or the Record GIF key) stops a capture or encode in progress.
+- **Block padding** — extra structure blocks around the crop (`0` = tight, default `1`). Use a higher value when light halos clip.
+- **Capture preview** — blue outline while the **F7** panel is open; red while a GIF records or encodes.
+- Panel settings persist in **localStorage** (frames, ticks, block padding, greenscreen, show mouse, 1 MB limit).
+
+### Changed
+
+- Structure captures use the structure footprint plus block padding instead of the dashed **C** marquee, so the crop stays centered.
+- PNG and GIF crops align to whole cell pixels (no extra 1 px border).
 
 ## 0.3.0
 
