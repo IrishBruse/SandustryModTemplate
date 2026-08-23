@@ -1,4 +1,3 @@
-import { safe } from "@modkit/utils";
 import { modinfo } from "../mod";
 
 const RESTART_STORAGE_KEY = "irishbruse.debug:restartNeeded";
@@ -11,7 +10,7 @@ type HealthGlobals = {
 };
 
 function toast(api: SandkitApi, message: string): void {
-  safe(() => api.ui.toast(message, {}));
+  api.ui.toast(message, {});
 }
 
 function readRestartMessage(): string | null {

@@ -16,7 +16,7 @@ Debug builds emit **inline** source maps on `main.js` (needed for `new Function`
 
 Session debug helpers (DevTools, auto-load last save, disable autosave, F3) live on the **debug** companion. Settings are on that mod only. See [modkit/debug.md](modkit/debug.md).
 
-`__MOD_DEBUG__` is `true` in dev builds and `false` in release.
+`__MOD_DEBUG__` is `true` in dev builds and `false` in release. All builds inject `console.ts` so bare `console.*` calls get a `[modId]` prefix. File logging to `logs/<mod-id>.log` runs in debug builds only.
 
 See [modkit/debug.md](modkit/debug.md) for what debug helpers do at runtime.
 

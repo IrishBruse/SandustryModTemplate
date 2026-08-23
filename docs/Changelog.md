@@ -7,6 +7,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Changed
 
+- **Console inject:** All builds prefix bare `console.*` with `[modId]`. POST to the watch log server (`logs/<mod-id>.log`) stays debug-only. See [builds.md](builds.md) and [modkit/debug.md](modkit/debug.md).
 - **`npm run build`:** Writes the OS mods folder and copies each mod to `build/<folder>/` for Workshop staging. `npm run build:release` is removed; `npm run publish` runs `npm run build`. See [builds.md](builds.md).
 - **Sample mods** moved from `src/*-example/` to [`examples/`](examples/README.md) without the `-example` suffix (`hello-world`, `overlay-hotkey`, …). `src/` keeps shipped mods (`selection-capture`, `debug`). Copy an example into `src/<your-mod>/` to start a new mod. See [layout.md](layout.md).
 - **Debug companion:** loader patches on `js/external-mod-runtime.js` share an atomic group. A miss toasts after boot. `patches.json` / `modinfo.json` / worker changes toast **restart the game** and keep that toast across a page reload. `loadOrder` is `-2147483648`. Free `reloaded` comes from the loader patch only (no esbuild `void reloaded`). See [modkit/debug.md](modkit/debug.md).

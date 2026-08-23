@@ -31,7 +31,13 @@ export function collectF3Blocks(): F3Block[] {
   const blocks: F3Block[] = [];
 
   for (const section of sections) {
-    const lines = section.lines();
+    let lines: F3Line[] | null;
+    try {
+      lines = section.lines();
+    } catch (error) {
+      console.warn(`[F3] section "${section.id}" failed:`, error);
+      continue;
+    }
     if (!lines || lines.length === 0) continue;
 
     if (section.title) blocks.push({ kind: "title", text: section.title });

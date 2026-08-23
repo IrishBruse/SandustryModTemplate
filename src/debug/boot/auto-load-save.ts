@@ -1,5 +1,3 @@
-import { safe } from "@modkit/utils";
-
 /** Sentinel: resolve to the game's last played save at boot time. */
 export const AUTO_LOAD_LAST_PLAYED = "__last__";
 
@@ -41,7 +39,7 @@ function saveExists(id: string): boolean {
 
 /** `startSave` from Options → Mods → debug (default: mod storage). */
 export function getStartSaveSetting(api: SandkitApi): string {
-  const value = safe(() => api.settings.get("startSave"));
+  const value = api.settings.get("startSave");
   if (typeof value === "string" && value) return value;
   return AUTO_LOAD_FROM_STORAGE;
 }
@@ -69,12 +67,12 @@ export async function listSaveFiles(): Promise<SaveFileInfo[]> {
 
 /** Write or clear the companion storage key that **Mod storage** reads. */
 export function setStorageSaveId(api: SandkitApi, saveId: string | null): void {
-  safe(() => api.storage.ensure(DEBUG_MOD_ID));
+  api.storage.ensure(DEBUG_MOD_ID);
   if (!saveId) {
-    safe(() => api.storage.remove(DEBUG_MOD_ID, START_SAVE_STORAGE_KEY));
+    api.storage.remove(DEBUG_MOD_ID, START_SAVE_STORAGE_KEY);
     return;
   }
-  safe(() => api.storage.set(DEBUG_MOD_ID, START_SAVE_STORAGE_KEY, saveId));
+  api.storage.set(DEBUG_MOD_ID, START_SAVE_STORAGE_KEY, saveId);
 }
 
 /**
@@ -109,8 +107,8 @@ export function getLastPlayedSaveId(): string | null {
  * `api.storage.set("irishbruse.debug", "startSave", saveId)`.
  */
 export function getStorageSaveId(api: SandkitApi): string | null {
-  safe(() => api.storage.ensure(DEBUG_MOD_ID));
-  const value = safe(() => api.storage.get(DEBUG_MOD_ID, START_SAVE_STORAGE_KEY));
+  api.storage.ensure(DEBUG_MOD_ID);
+  const value = api.storage.get(DEBUG_MOD_ID, START_SAVE_STORAGE_KEY);
   if (typeof value !== "string" || !value) return null;
   if (value === AUTO_LOAD_LAST_PLAYED || value === AUTO_LOAD_FROM_STORAGE) return null;
   if (!saveExists(value)) return null;

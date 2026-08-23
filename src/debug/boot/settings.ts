@@ -1,4 +1,4 @@
-import { isEnabled, safe } from "@modkit/utils";
+import { isEnabled } from "@modkit/utils";
 
 /**
  * Defaults when `api.settings.get` has no boolean yet.
@@ -18,7 +18,7 @@ export type HotReloadFallback = "off" | "toast" | "reload";
 const FALLBACK_DEFAULT: HotReloadFallback = "toast";
 
 function boolSetting(api: SandkitApi, key: string): boolean {
-  const value = safe(() => api.settings.get(key));
+  const value = api.settings.get(key);
   if (typeof value === "boolean") return value;
   return SETTING_DEFAULTS[key] ?? false;
 }
@@ -34,9 +34,9 @@ export function settingOn(api: SandkitApi, key: string): boolean {
  */
 export function autoLoadOn(api: SandkitApi): boolean {
   if (!isEnabled(api)) return false;
-  const autoLoad = safe(() => api.settings.get("autoLoad"));
+  const autoLoad = api.settings.get("autoLoad");
   if (typeof autoLoad === "boolean") return autoLoad;
-  const legacy = safe(() => api.settings.get("autoBoot"));
+  const legacy = api.settings.get("autoBoot");
   if (typeof legacy === "boolean") return legacy;
   return SETTING_DEFAULTS.autoLoad;
 }
@@ -44,7 +44,7 @@ export function autoLoadOn(api: SandkitApi): boolean {
 /** When `main.js` changed but hot eval is not safe. */
 export function hotReloadFallback(api: SandkitApi): HotReloadFallback {
   if (!isEnabled(api)) return FALLBACK_DEFAULT;
-  const value = safe(() => api.settings.get("hotReloadFallback"));
+  const value = api.settings.get("hotReloadFallback");
   if (value === "off" || value === "toast" || value === "reload") return value;
   return FALLBACK_DEFAULT;
 }

@@ -1,5 +1,4 @@
 import { onDispose } from "@modkit/debug";
-import { safe } from "@modkit/utils";
 import {
   beginHotEval,
   bindHostSandkit,
@@ -52,7 +51,7 @@ function displayName(record: LocalModRecord): string {
 }
 
 function toast(api: SandkitApi, message: string): void {
-  safe(() => api.ui.toast(message, {}));
+  api.ui.toast(message, {});
 }
 
 function applyMainFallback(api: SandkitApi, record: LocalModRecord): void {

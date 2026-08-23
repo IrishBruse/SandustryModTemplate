@@ -1,5 +1,4 @@
 import { clearLog } from "@modkit/log";
-import { safe } from "@modkit/utils";
 
 /**
  * Re-eval `main.js` for a local mod. JavaScript cannot unload.
@@ -66,7 +65,7 @@ function ensureHost(modId: string, toastApi?: SandkitApi): Host {
 }
 
 function toast(api: SandkitApi, message: string): void {
-  safe(() => api.ui.toast(message, {}));
+  api.ui.toast(message, {});
 }
 
 function cacheBust(url: string): string {

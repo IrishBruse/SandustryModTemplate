@@ -1,18 +1,23 @@
 /**
- * esbuild `inject` target (debug builds). Bare `console.*` in the mod bundle
- * call through here so DevTools and `logs/<mod-id>.log` both see the line.
- * Do not add a mod-id prefix here — call sites and `@modkit/log` tag their lines.
+ * esbuild `inject` target. Bare `console.*` in the mod bundle call through here
+ * so every line gets a `[modId]` prefix. Debug builds also POST to the watch
+ * log server (`scripts/dev/log-server.js`).
  *
  * Use `globalThis.console` only — never the exported name — or inject recurses.
  */
 declare const __MOD_ID__: string;
+declare const __MOD_DEBUG__: boolean;
 
 const native = globalThis.console;
 const LOG_URL = "http://127.0.0.1:19147/log";
 const MIRROR_LEVELS = new Set(["log", "info", "warn", "error", "debug"]);
 
-function modId(): string {
-  return typeof __MOD_ID__ === "string" && __MOD_ID__.length > 0 ? __MOD_ID__ : "mod";
+function prefixArgs(args: unknown[]): unknown[] {
+  if (args.length === 0) return [`[${__MOD_ID__}]`];
+  if (typeof args[0] === "string") {
+    return [`[${__MOD_ID__}] ${args[0]}`, ...args.slice(1)];
+  }
+  return [`[${__MOD_ID__}]`, ...args];
 }
 
 function formatArgs(args: unknown[]): string {
@@ -29,13 +34,12 @@ function formatArgs(args: unknown[]): string {
     .join(" ");
 }
 
-function mirror(level: string, args: unknown[]): void {
-  const line = `[${level}] ${formatArgs(args)}`;
+function mirror(line: string): void {
   void fetch(LOG_URL, {
     method: "POST",
     mode: "cors",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ modId: modId(), line }),
+    body: JSON.stringify({ modId: __MOD_ID__, line }),
   }).catch(() => {
     /* `npm run dev` log server not running */
   });
@@ -43,8 +47,11 @@ function mirror(level: string, args: unknown[]): void {
 
 function wrap(level: "log" | "info" | "warn" | "error" | "debug") {
   return (...args: unknown[]) => {
-    native[level](...args);
-    mirror(level, args);
+    const prefixed = prefixArgs(args);
+    native[level](...prefixed);
+    if (__MOD_DEBUG__) {
+      mirror(formatArgs(prefixed));
+    }
   };
 }
 

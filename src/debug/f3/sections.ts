@@ -1,4 +1,4 @@
-import { inGame, safe } from "@modkit/utils";
+import { inGame } from "@modkit/utils";
 import { registerF3Section } from "./registry";
 
 const api = sandkit.api;
@@ -8,7 +8,7 @@ function fmt(value: number, digits = 1): string {
 }
 
 function cellSize(): number {
-  return safe(() => api.rendering.getGridMetrics())?.cellSize ?? 4;
+  return api.rendering.getGridMetrics().cellSize ?? 4;
 }
 
 function worldToCell(x: number, y: number): { x: number; y: number } {
@@ -25,7 +25,7 @@ export function registerBuiltinF3Sections(): () => void {
       lines: () => {
         if (!inGame()) return null;
 
-        const pos = safe(() => api.player.getWorldPosition());
+        const pos = api.player.getWorldPosition();
         if (!pos) return null;
 
         const cell = worldToCell(pos.x, pos.y);
@@ -41,7 +41,7 @@ export function registerBuiltinF3Sections(): () => void {
       lines: () => {
         if (!inGame()) return null;
 
-        const cell = safe(() => api.input.getMouseCellPosition());
+        const cell = api.input.getMouseCellPosition();
         if (!cell) return null;
 
         const size = cellSize();

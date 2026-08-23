@@ -1,6 +1,5 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import { OverlayRoot } from "@modkit/ui";
-import { safe } from "@modkit/utils";
 import { settingOn } from "../boot/settings";
 import { hideManagementColumn } from "./management-column";
 import { collectF3Blocks, type F3Block } from "./registry";
@@ -57,8 +56,8 @@ export function F3DebugOverlay() {
     }
 
     refreshSettings();
-    const stop = safe(() => api.settings.onChange(() => refreshSettings()));
-    return () => stop?.();
+    const stop = api.settings.onChange(() => refreshSettings());
+    return () => stop();
   }, []);
 
   useEffect(() => {

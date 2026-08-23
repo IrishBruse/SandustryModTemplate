@@ -1,5 +1,3 @@
-import { safe } from "@modkit/utils";
-
 type SessionWithAutosave = {
   settings?: { autosaveInterval?: number };
 };
@@ -9,9 +7,7 @@ type SessionWithAutosave = {
  * Game treats `0` as off (`if (!autosaveInterval) return`).
  */
 export function disableSessionAutosave(): void {
-  safe(() => {
-    const session = sandkit.state.session as SessionWithAutosave | undefined;
-    if (!session?.settings) return;
-    session.settings.autosaveInterval = 0;
-  });
+  const session = sandkit.state.session as SessionWithAutosave | undefined;
+  if (!session?.settings) return;
+  session.settings.autosaveInterval = 0;
 }

@@ -153,17 +153,19 @@ Free **`reloaded`** is true when this script body is running because a reload ev
 
 ## File logging (`console`)
 
-Debug builds use esbuild [`inject`](https://esbuild.github.io/api/#inject) with [`modkit/internal/esbuild/console.ts`](../../modkit/internal/esbuild/console.ts). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code also `POST` to `http://127.0.0.1:19147/log` while `npm run dev` is up ([`scripts/dev/log-server.js`](../../scripts/dev/log-server.js)). Lines append to `logs/<modinfo.id>.log` (workspace `logs/` → OS sandustry logs: `~/.config/sandustry/logs` or `%APPDATA%/sandustry/logs`). Tag messages yourself or use `createLogger` from `@modkit/log` when you want a bracket prefix.
+All builds inject [`modkit/internal/esbuild/console.ts`](../../modkit/internal/esbuild/console.ts) via esbuild [`inject`](https://esbuild.github.io/api/#inject). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code get a `[modId]` prefix in DevTools. `__MOD_ID__` comes from that mod's `mod.ts` at build time.
+
+Debug builds also `POST` those lines to `http://127.0.0.1:19147/log` while `npm run dev` is up ([`scripts/dev/log-server.js`](../../scripts/dev/log-server.js)). Lines append to `logs/<modinfo.id>.log` (workspace `logs/` → OS sandustry logs: `~/.config/sandustry/logs` or `%APPDATA%/sandustry/logs`). Use `createLogger` from `@modkit/log` when you want a custom bracket tag.
 
 A renderer hot reload truncates that file via `POST /log/clear` and calls `console.clear()` so the session starts clean. Use `clearLog(modId)` from `@modkit/log` to clear by hand. `clearLog` aborts after 500 ms if F5 / CDP stalls the POST.
 
 ```ts
 console.log("my-feature", payload);
-// DevTools: my-feature {…}
-// logs/author.hello-world-example.log: [log] my-feature {…}
+// DevTools: [author.hello-world-example] my-feature {…}
+// logs/author.hello-world-example.log (debug only): [author.hello-world-example] my-feature {…}
 ```
 
-Release builds skip the inject. The shim uses `globalThis.console` so it does not recurse. `__MOD_ID__` is defined from that mod's `mod.ts` at build time.
+The shim uses `globalThis.console` internally so it does not recurse.
 
 ## Debug patches
 
@@ -189,7 +191,7 @@ Workshop mods are not added to the registry. See [patches.md](../patches.md) for
 | [`src/debug/f3/`](../../src/debug/f3/)         | F3 overlay, engine debug sync, built-in sections                           |
 | `modkit/internal/debug/index.ts`               | `onDispose` only                                                           |
 | `modkit/internal/esbuild/debug.empty.ts`       | Release stub: no-op `onDispose`                                            |
-| `modkit/internal/esbuild/console.ts`           | esbuild inject: mirror `console.*` to the watch log server (debug builds) |
+| `modkit/internal/esbuild/console.ts`           | esbuild inject: `[modId]` prefix on `console.*`; file POST in debug builds only |
 
 ## Wiring
 

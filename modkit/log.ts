@@ -1,5 +1,5 @@
 /**
- * File logging for the renderer while `npm run dev` is running.
+ * File logging for the renderer while `npm run dev` is running (debug builds only).
  *
  * The watch log server accepts POST `/log` (append) and POST `/log/clear`
  * (truncate) for `~/.config/sandustry/logs/<modId>.log` on Linux or
@@ -9,6 +9,8 @@
  *
  * Port/path must match `scripts/dev/log-server.js`.
  */
+
+declare const __MOD_DEBUG__: boolean;
 
 const LOG_URL = "http://127.0.0.1:19147/log";
 const LOG_CLEAR_URL = "http://127.0.0.1:19147/log/clear";
@@ -64,8 +66,9 @@ export function createLogger(modId: string, options?: CreateLoggerOptions): ModL
  * Append one line to `logs/<modId>.log`. Prefer {@link createLogger} at call sites.
  */
 export function appendLog(modId: string, line: string, options?: { console?: boolean }): void {
-  // Bypass the console inject — the line already carries its tag, and we POST below.
+  // Bypass the console inject — the line already carries its tag.
   if (options?.console !== false) globalThis.console.log(line);
+  if (!__MOD_DEBUG__) return;
   void fetch(LOG_URL, {
     method: "POST",
     mode: "cors",
@@ -82,6 +85,7 @@ export function appendLog(modId: string, line: string, options?: { console?: boo
  * or when F5 / CDP stalls the POST (abort after 500 ms).
  */
 export function clearLog(modId: string): Promise<void> {
+  if (!__MOD_DEBUG__) return Promise.resolve();
   const controller = new AbortController();
   const timer = globalThis.setTimeout(() => controller.abort(), 500);
   return fetch(LOG_CLEAR_URL, {

@@ -30,6 +30,7 @@ import { modkitAliasPlugin } from "../lib/modkit-alias.js";
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const MODKIT_DIR = join(ROOT, "modkit");
 const INTERNAL_ESBUILD = join(MODKIT_DIR, "internal/esbuild");
+const CONSOLE_INJECT = join(INTERNAL_ESBUILD, "console.ts");
 const args = process.argv.slice(2);
 const watch = args.includes("--watch");
 const game = args.includes("--game");
@@ -325,7 +326,7 @@ function bundleOptions(mod) {
       __MOD_ID__: JSON.stringify(manifestModId(mod)),
       ...(modDebug ? {} : { reloaded: "false" }),
     },
-    inject: modDebug ? [join(INTERNAL_ESBUILD, "console.ts")] : [],
+    inject: [CONSOLE_INJECT],
     alias: {
       react: join(INTERNAL_ESBUILD, "react.ts"),
       "react/jsx-runtime": join(INTERNAL_ESBUILD, "jsx-runtime.ts"),
@@ -346,7 +347,7 @@ function bundleOptions(mod) {
 
 /**
  * Worker bundle — same IIFE + free `sandkit`, no React inject.
- * Debug builds still inject `console.ts` so logs get the `[modId]` prefix.
+ * Console inject prefixes every `console.*` line with `[modId]`.
  * @param {import("./mods.js").LoadedMod} mod
  */
 function workerBundleOptions(mod) {
@@ -367,7 +368,7 @@ function workerBundleOptions(mod) {
       __MOD_ID__: JSON.stringify(manifestModId(mod)),
       reloaded: "false",
     },
-    inject: modDebug ? [join(INTERNAL_ESBUILD, "console.ts")] : [],
+    inject: [CONSOLE_INJECT],
     banner: {
       js: [
         `// Generated — edit ${mod.repoPath}/worker.ts and run npm run dev.`,
