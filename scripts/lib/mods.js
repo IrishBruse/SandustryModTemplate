@@ -280,7 +280,7 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
   if (!includeDebugKit) {
     selected = selected.filter((mod) => mod.folder !== DEBUG_MOD_FOLDER);
     if (selected.length === 0) {
-      throw new Error("src/debug is omitted from release builds");
+      throw new Error("src/debug is omitted from release builds. Pass --debug or use npm run dev.");
     }
   } else if (
     filters.length > 0 &&
@@ -309,7 +309,9 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
     const manifest = structuredClone(loaded.modinfo);
     const name = manifest?.name;
     if (typeof name !== "string" || !name.trim()) {
-      throw new Error(`${repoPath}/mod.ts modinfo.name must be a non-empty string (mods folder name)`);
+      throw new Error(
+        `${repoPath}/mod.ts modinfo.name must be a non-empty string (mods folder name)`,
+      );
     }
 
     const worker = existsSync(workerTs) ? workerTs : null;

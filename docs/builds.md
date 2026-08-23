@@ -4,13 +4,13 @@ The game runs `main.js` as a script body (`new Function`). `sandkit` is already 
 
 ## Debug vs release
 
-| Command          | Debug helpers                                                     | `debugPatches` | Output                                                       |
-| ---------------- | ----------------------------------------------------------------- | -------------- | ------------------------------------------------------------ |
-| `npm run build`  | Stub (`modkit/internal/esbuild/debug.empty.ts`); omit `src/debug` | Omitted        | OS mods folder, `dist/<folder>/` links, and `build/<folder>/` |
-| `npm run dev`    | Included; install `src/debug`                                     | Included       | OS mods folder while watching; removed when the watch stops  |
-| `--game` / `--debug` | Included; install `src/debug`                                 | Included       | Game mods folder                                             |
+| Command              | Debug helpers                                                     | `debugPatches` | Output                                                        |
+| -------------------- | ----------------------------------------------------------------- | -------------- | ------------------------------------------------------------- |
+| `npm run build`      | Stub (`modkit/internal/esbuild/debug.empty.ts`); omit `src/debug` | Omitted        | OS mods folder, `dist/<folder>/` links, and `build/<folder>/` |
+| `npm run dev`        | Included; install `src/debug`                                     | Included       | OS mods folder while watching; removed when the watch stops   |
+| `--game` / `--debug` | Included; install `src/debug`                                     | Included       | Game mods folder                                              |
 
-`--no-debug` forces a release-style bundle even when watch or game flags are set. `--mod <folder>` builds one mod folder (repeat `--mod` for several). Debug builds also install `src/debug` unless `--mod debug`. The build discovers every `src/*/mod.ts` and `examples/*/mod.ts`.
+`--no-debug` forces a release-style bundle even when watch or game flags are set. `--mod <folder>` builds one mod folder (repeat `--mod` for several). `--mod debug` turns on the debug kit even on `npm run build`. Debug builds also install `src/debug` unless you pass only `--mod debug`. The build discovers every `src/*/mod.ts` and `examples/*/mod.ts`.
 
 Debug builds emit **inline** source maps on `main.js` (needed for `new Function` eval). Use `--sourcemap` to force maps on a release build, or `--no-sourcemap` to omit them from a debug build.
 

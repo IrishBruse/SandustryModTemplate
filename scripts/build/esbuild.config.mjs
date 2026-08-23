@@ -22,7 +22,14 @@ import {
   MODKIT_OPTIONS_CSS_ENTRY,
   readModkitOptionsCss,
 } from "../lib/compile-tailwind.js";
-import { loadMods, modIsolationPlugin, prepareModOutputs, syncModToPublishStaging } from "../lib/mods.js";
+import {
+  loadMods,
+  modIsolationPlugin,
+  prepareModOutputs,
+  syncModToPublishStaging,
+  parseModFilters,
+  DEBUG_MOD_FOLDER,
+} from "../lib/mods.js";
 import { copyWorkshopInstallFiles, removeWorkshopPublishFiles } from "../lib/workshop-files.js";
 import { startLogServer } from "../dev/log-server.js";
 import { modkitAliasPlugin } from "../lib/modkit-alias.js";
@@ -43,6 +50,7 @@ const noSourcemapFlag = args.includes("--no-sourcemap");
 function resolveModDebug() {
   if (noDebugFlag) return false;
   if (debugFlag) return true;
+  if (parseModFilters(args).includes(DEBUG_MOD_FOLDER)) return true;
   return watch || game;
 }
 
@@ -70,14 +78,7 @@ console.log(
   kv("mods", mods.map((mod) => styleText("bold", mod.folder)).join(styleText("dim", ", "))),
 );
 console.log(kv("mod debug", modDebug ? styleText("green", "on") : styleText("dim", "off")));
-console.log(
-  kv(
-    "output",
-    watch || modDebug
-      ? "OS mods folder"
-      : "OS mods folder + build/<folder>",
-  ),
-);
+console.log(kv("output", watch || modDebug ? "OS mods folder" : "OS mods folder + build/<folder>"));
 console.log(kv("sourcemap", sourcemap ?? styleText("dim", "off")));
 
 /**
