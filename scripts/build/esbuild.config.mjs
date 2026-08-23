@@ -26,7 +26,7 @@ import {
   loadMods,
   modIsolationPlugin,
   prepareModOutputs,
-  syncModToPublishStaging,
+  publishStagingDir,
   parseModFilters,
   DEBUG_MOD_FOLDER,
 } from "../lib/mods.js";
@@ -47,14 +47,24 @@ const sourcemapFlag = args.includes("--sourcemap");
 const noSourcemapFlag = args.includes("--no-sourcemap");
 
 /** @returns {boolean} */
-function resolveModDebug() {
+function resolveIncludeDebugKit() {
   if (noDebugFlag) return false;
   if (debugFlag) return true;
   if (parseModFilters(args).includes(DEBUG_MOD_FOLDER)) return true;
   return watch || game;
 }
 
+/** @returns {boolean} */
+function resolveModDebug() {
+  if (noDebugFlag) return false;
+  if (debugFlag) return true;
+  return watch || game;
+}
+
+const includeDebugKit = resolveIncludeDebugKit();
 const modDebug = resolveModDebug();
+/** Release `npm run build` — write to `build/<folder>/` only; no OS mods folder or `dist/` links. */
+const releaseBuild = !watch && !modDebug;
 
 /**
  * Inline maps for `new Function` eval (external `.map` links do not resolve).
@@ -70,15 +80,21 @@ function resolveSourcemap() {
 const sourcemap = resolveSourcemap();
 
 const mods = await loadMods(args, {
-  includeDebugKit: modDebug,
+  includeDebugKit,
 });
-prepareModOutputs(ROOT, mods, { includeDebugKit: modDebug });
+if (releaseBuild) {
+  for (const mod of mods) {
+    mod.outDir = publishStagingDir(mod.folder);
+    mkdirSync(mod.outDir, { recursive: true });
+  }
+} else {
+  prepareModOutputs(ROOT, mods, { includeDebugKit });
+}
 
 console.log(
   kv("mods", mods.map((mod) => styleText("bold", mod.folder)).join(styleText("dim", ", "))),
 );
 console.log(kv("mod debug", modDebug ? styleText("green", "on") : styleText("dim", "off")));
-console.log(kv("output", watch || modDebug ? "OS mods folder" : "OS mods folder + build/<folder>"));
 console.log(kv("sourcemap", sourcemap ?? styleText("dim", "off")));
 
 /**
@@ -639,6 +655,5 @@ if (watch) {
 } else {
   for (const mod of mods) {
     await buildOne(mod);
-    if (!modDebug) syncModToPublishStaging(mod);
   }
 }

@@ -6,11 +6,11 @@ The game runs `main.js` as a script body (`new Function`). `sandkit` is already 
 
 | Command              | Debug helpers                                                     | `debugPatches` | Output                                                        |
 | -------------------- | ----------------------------------------------------------------- | -------------- | ------------------------------------------------------------- |
-| `npm run build`      | Stub (`modkit/internal/esbuild/debug.empty.ts`); omit `src/debug` | Omitted        | OS mods folder, `dist/<folder>/` links, and `build/<folder>/` |
+| `npm run build`      | Stub (`modkit/internal/esbuild/debug.empty.ts`); omit `src/debug` | Omitted        | `build/<folder>/` only (no OS mods folder, no `dist/` links) |
 | `npm run dev`        | Included; install `src/debug`                                     | Included       | OS mods folder while watching; removed when the watch stops   |
 | `--game` / `--debug` | Included; install `src/debug`                                     | Included       | Game mods folder                                              |
 
-`--no-debug` forces a release-style bundle even when watch or game flags are set. `--mod <folder>` builds one mod folder (repeat `--mod` for several). `--mod debug` turns on the debug kit even on `npm run build`. Debug builds also install `src/debug` unless you pass only `--mod debug`. The build discovers every `src/*/mod.ts` and `examples/*/mod.ts`.
+`--no-debug` forces a release-style bundle even when watch or game flags are set. `--mod <folder>` builds one mod folder (repeat `--mod` for several). `--mod debug` includes the debug companion on `npm run build` (release bundle in `build/debug/`). Debug builds (`npm run dev`, `--game`, `--debug`) install to the OS mods folder with `dist/<folder>/` links unless you pass only `--mod debug`. The build discovers every `src/*/mod.ts` and `examples/*/mod.ts`.
 
 Debug builds emit **inline** source maps on `main.js` (needed for `new Function` eval). Use `--sourcemap` to force maps on a release build, or `--no-sourcemap` to omit them from a debug build.
 
@@ -57,7 +57,7 @@ npm run setup            # check install, extract sandustry/, link logs/ (one ti
 npm run dev              # watch mods (TTY picker; last choice pre-selected)
 npm run dev -- --mod overlay-hotkey
 npm run dev -- --mod overlay-hotkey --mod hello-world
-npm run build            # release all mods (OS mods folder + build/<folder>/)
+npm run build            # release all mods to build/<folder>/
 npm run build -- --mod overlay-hotkey
 npm run publish          # npm run build + SteamCMD Workshop upload
 npm run publish -- --mod selection-capture
@@ -92,6 +92,6 @@ npm run publish -- --mod selection-capture
 npm run publish -- --mod selection-capture --yes
 ```
 
-The command runs `npm run build` for that folder. The bundle lands in the OS mods folder and a copy under `build/<folder>/` (so `npm run dev` cannot overwrite Workshop staging). Staging gets the release bundle plus `workshop.json` and preview images only. `README.md`, `CHANGELOG.md`, and `workshop/screenshots/` stay in the repo. SteamCMD uploads from `build/<folder>/`. `workshop.txt` supplies the Steam description (it stays under `src/<name>/workshop/`). `npm run build` and `npm run dev` also copy only `workshop.json` and preview images, and remove leftover `README.md`, `CHANGELOG.md`, and `screenshots/` from the game folder.
+The command runs `npm run build` for that folder. The bundle lands in `build/<folder>/` (Workshop staging). Staging gets the release bundle plus `workshop.json` and preview images only. `README.md`, `CHANGELOG.md`, and `workshop/screenshots/` stay in the repo. SteamCMD uploads from `build/<folder>/`. `workshop.txt` supplies the Steam description (it stays under `src/<name>/workshop/`). `npm run build` and `npm run dev` also copy only `workshop.json` and preview images, and remove leftover `README.md`, `CHANGELOG.md`, and `screenshots/` from the game folder.
 
 Steam **change notes** come from that mod's `CHANGELOG.md` (Keep a Changelog). `npm run publish` uses the `##` section that matches `modinfo.version` (for example `## 0.2.0` or `## [0.2.0] - 2026-08-22`). If that heading is missing, it uses `## Unreleased` and warns you to rename the heading to the version. If there is no changelog, it sends the version string. The confirm step prints the full Steam change-notes text before Upload / Cancel.

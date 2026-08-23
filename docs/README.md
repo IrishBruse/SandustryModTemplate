@@ -25,7 +25,7 @@ Full steps: **[Quick start](quick-start.md)**.
 | ------------------- | --------------------------------------------------------------------- |
 | `npm run setup`     | Check install, extract game source to `sandustry/`, link `logs/`      |
 | `npm run dev`       | Watch OS mods folder; remove owned mods when the watch stops          |
-| `npm run build`     | Release to OS mods folder and `build/<folder>/` (Workshop staging)    |
+| `npm run build`     | Release to `build/<folder>/` (Workshop staging)                       |
 | `npm run publish`   | Runs `npm run build`, then SteamCMD upload (PATH or `.tmp/steamcmd/`) |
 | `npm run typecheck` | TypeScript check                                                      |
 | `npm run test`      | Node tests (`src/**/*.test.ts`)                                       |

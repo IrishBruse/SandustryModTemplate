@@ -2,7 +2,7 @@
  * Discover `src/<name>/mod.ts` and `examples/<name>/mod.ts` folders and load each manifest.
  * Optional `--mod <folder>` (repeatable, or `--mod=<folder>`) selects one or more.
  */
-import { cpSync, existsSync, mkdirSync, readdirSync, rmSync, statSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, statSync } from "node:fs";
 import { basename, dirname, isAbsolute, join, normalize, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { bundleAndImport } from "./build-patches.js";
@@ -16,23 +16,12 @@ export const MOD_ROOTS = ["src", "examples"];
 /** Companion mod folder. Debug builds install it; release builds omit it. */
 export const DEBUG_MOD_FOLDER = "debug";
 
-/** Workshop staging root (`npm run publish`). Copied from the OS mods folder on release `npm run build`. */
+/** Workshop staging root (`npm run build` / `npm run publish`). */
 export const PUBLISH_OUT_ROOT = join(ROOT, "build");
 
 /** @param {string} folder Mod folder name (under `src/` or `examples/`) */
 export function publishStagingDir(folder) {
   return join(PUBLISH_OUT_ROOT, folder);
-}
-
-/**
- * Copy a release build from the OS mods folder into `build/<folder>/`.
- * @param {LoadedMod} mod
- */
-export function syncModToPublishStaging(mod) {
-  const staging = publishStagingDir(mod.folder);
-  rmSync(staging, { recursive: true, force: true });
-  mkdirSync(staging, { recursive: true });
-  cpSync(mod.outDir, staging, { recursive: true });
 }
 
 const SKIP_DIR_NAMES = new Set(["node_modules", ".git"]);
