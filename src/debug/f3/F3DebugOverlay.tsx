@@ -1,9 +1,9 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import { OverlayRoot } from "@modkit/ui";
 import { safe } from "@modkit/utils";
-import { collectF3Blocks, type F3Block } from "../f3/registry";
-import { hideManagementColumn } from "../f3/management-column";
-import { settingOn } from "../settings";
+import { settingOn } from "../boot/settings";
+import { hideManagementColumn } from "./management-column";
+import { collectF3Blocks, type F3Block } from "./registry";
 
 const api = sandkit.api;
 const TOGGLE_CODE = "F3";

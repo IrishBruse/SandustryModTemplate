@@ -1,6 +1,6 @@
 # Patch definitions
 
-Define patches in that mod's `mod.ts` with `definePatches`. The build writes `patches.json` into that mod's output folder. The game loader applies those patches to Sandustry JavaScript files (for example `js/bundle.js`).
+Define patches with `definePatches` and export them from that mod's `mod.ts`. You can keep the list in `patches.ts` and re-export it. The build writes `patches.json` into that mod's output folder. The game loader applies those patches to Sandustry JavaScript files (for example `js/bundle.js`).
 
 Patch shapes live in [`modkit/modinfo.ts`](../modkit/modinfo.ts).
 
@@ -20,6 +20,8 @@ Patch `code` runs outside the game bundle IIFE. Put shared runtime helpers on `g
 | `debugPatches` in that mod's `mod.ts` (optional) | Extra debug-only patches (dev / `--debug` builds) |
 
 Release builds (`npm run build`) omit `debugPatches`. Dev builds (`npm run dev`, `--game` / `--debug`) include them. Auto-load last save is a settings-gated runtime helper on the debug companion ([`src/debug/`](../src/debug/)), not a game-file patch.
+
+The debug companion keeps its patches in [`src/debug/patches.ts`](../src/debug/patches.ts) and re-exports them from `mod.ts`. Other mods may keep patches in `mod.ts`.
 
 ## Fields
 
@@ -74,7 +76,7 @@ Auto-load last save is runtime-only on the debug companion. The browser bundle s
 
 ## Build output
 
-Do not edit `dist/<folder>/patches.json` by hand. Change that mod's `mod.ts` and rebuild:
+Do not edit `dist/<folder>/patches.json` by hand. Change the `patches` export and rebuild:
 
 ```bash
 npm run build          # release — no debugPatches

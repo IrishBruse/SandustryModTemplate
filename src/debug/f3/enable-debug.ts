@@ -1,5 +1,5 @@
 import { safe } from "@modkit/utils";
-import { settingOn } from "../settings";
+import { settingOn } from "../boot/settings";
 
 type DebugConfigRoot = {
   debug: Record<string, unknown>;

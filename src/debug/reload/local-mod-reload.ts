@@ -7,8 +7,8 @@ import {
   readRemoteText,
   reloadRenderer,
 } from "./hot-eval";
-import { modinfo } from "./mod";
-import { hotReloadFallback, settingOn } from "./settings";
+import { settingOn, hotReloadFallback } from "../boot/settings";
+import { modinfo } from "../mod";
 
 const POLL_MS = 400;
 const RESTART_FILES = ["patches.json", "modinfo.json"] as const;

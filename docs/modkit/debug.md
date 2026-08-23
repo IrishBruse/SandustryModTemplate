@@ -13,7 +13,7 @@ The same main-entry rewrite also skips the entry body when **`enabled`** is fals
 | Release | `npm run build`                               | Omitted (leftover removed) | Stub (`modkit/internal/esbuild/debug.empty.ts`) | Omitted        |
 | Dev     | `npm run dev`, `--watch`, `--game`, `--debug` | Installed (`mods/debug`)   | Bundled (companion watches local mods)          | Included       |
 
-`--mod hello-world-example` on a debug build still installs **debug**. `--mod debug` builds only that folder. `npm run publish` never lists the companion.
+`--mod hello-world` on a debug build still installs **debug**. `--mod debug` builds only that folder. `npm run publish` never lists the companion.
 
 `__MOD_DEBUG__` is `true` in dev builds and `false` in release.
 
@@ -29,7 +29,7 @@ Settings live on the debug mod only (`src/debug/mod.ts` `configSchema`). Open **
 | **Open DevTools on load** | `openDevTools`    | off     | Open Electron DevTools on load. Keep off under F5 so the IDE debugger stays attached                                                                                                        |
 | **F12 opens DevTools**    | `f12DevTools`     | on      | Capture-phase F12. Can disconnect an IDE debugger session                                                                                                                                   |
 | **Auto-load save**        | `autoLoad`        | on      | On load, `location.assign` with `?db_load=<saveId>`. Skips splash and main menu. Legacy `autoBoot` prefs still count until you set `autoLoad`                                               |
-| **Start save**            | `startSave`       | Last played | Which save to load. Dropdown lists local saves via a bundle patch (`electron.getSaveFiles`). Stored in mod settings |
+| **Start save**            | `startSave`       | Mod storage | **Last played** or **Mod storage**. **Mod storage** reads `api.storage` (`startSave`). Pick a world in the Start save panel. |
 | **Engine debug**          | `engineDebug`     | on      | Force `debug.active` (vanilla Debug / Stats). F3 toggles companion debug overlay                                                                                                            |
 | **Disable autosave**      | `disableAutosave` | on      | Sets `session.settings.autosaveInterval` to `0`. Manual saves still work                                                                                                                    |
 | **Watch local mods**      | `watchLocalMods`  | on      | Poll local mod folders for `main.js` / `patches.json` / `modinfo.json` / worker entry. Workshop mods are ignored                                                                            |
@@ -42,14 +42,14 @@ Turn on **Auto-load save** or **Open DevTools on load** when you want those help
 | Feature               | Where                                                                              | Setting          | Notes                                                                                              |
 | --------------------- | ---------------------------------------------------------------------------------- | ---------------- | -------------------------------------------------------------------------------------------------- |
 | DevTools globals      | [`src/debug/main.ts`](../../src/debug/main.ts)                                     | Mod enabled      | `sandkit`, `api`, `enums`, `react` on `globalThis`                                                 |
-| Open DevTools on load | [`boot-menu.ts`](../../src/debug/boot-menu.ts)                                     | Open DevTools    | Retries until the Electron bridge is ready. Keep off under F5                                      |
-| F12 opens DevTools    | [`boot-menu.ts`](../../src/debug/boot-menu.ts)                                     | F12              | Capture-phase keydown; skipped on hot-reload eval                                                  |
-| Auto-load save        | [`boot-menu.ts`](../../src/debug/boot-menu.ts) + [`auto-load-save.ts`](../../src/debug/auto-load-save.ts) | Auto-load + Start save | Reloads with `?db_load=` for the **Start save** pick |
-| Start save picker     | [`src/debug/mod.ts`](../../src/debug/mod.ts) `patches`                             | Start save       | Bundle patch fills the mod-settings dropdown from `electron.getSaveFiles`                          |
-| Disable autosave      | [`autosave.ts`](../../src/debug/autosave.ts)                                       | Disable autosave | Sets interval to `0` on load and each hot-reload eval                                              |
-| Renderer hot reload   | [`local-mod-reload.ts`](../../src/debug/local-mod-reload.ts)                       | Watch local mods | Polls local folders; Workshop mods are skipped                                             |
-| Options Debug tab     | [`src/debug/mod.ts`](../../src/debug/mod.ts) `patches`                             | Mod installed    | Bundle patch adds the hidden **Debug** tab to Options (Debug Active, Draw Chunks, Cinematic, etc.) |
-| F3 debug overlay      | [`src/debug/toggle/F3DebugOverlay.tsx`](../../src/debug/toggle/F3DebugOverlay.tsx) | Engine debug     | Minecraft-style text HUD; extensible via `registerF3Section` / `globalThis.debugF3`              |
+| Open DevTools on load | [`boot/boot-menu.ts`](../../src/debug/boot/boot-menu.ts)                                     | Open DevTools    | Retries until the Electron bridge is ready. Keep off under F5                                      |
+| F12 opens DevTools    | [`boot/boot-menu.ts`](../../src/debug/boot/boot-menu.ts)                                     | F12              | Capture-phase keydown; skipped on hot-reload eval                                                  |
+| Auto-load save        | [`boot/boot-menu.ts`](../../src/debug/boot/boot-menu.ts) + [`boot/auto-load-save.ts`](../../src/debug/boot/auto-load-save.ts) | Auto-load + Start save | Reloads with `?db_load=` for the **Start save** pick |
+| Start save picker     | [`boot/start-save-picker.tsx`](../../src/debug/boot/start-save-picker.tsx)           | Start save       | Lists local saves. Writes `api.storage`. In-game: management-column **Start save**. |
+| Disable autosave      | [`boot/autosave.ts`](../../src/debug/boot/autosave.ts)                                       | Disable autosave | Sets interval to `0` on load and each hot-reload eval                                              |
+| Renderer hot reload   | [`reload/local-mod-reload.ts`](../../src/debug/reload/local-mod-reload.ts)                       | Watch local mods | Polls local folders; Workshop mods are skipped                                             |
+| Options Debug tab     | [`src/debug/patches.ts`](../../src/debug/patches.ts) `options-debug-tab`            | Mod installed    | Adds the hidden **Debug** tab to Options (Debug Active, Draw Chunks, Cinematic, etc.) |
+| F3 debug overlay      | [`f3/F3DebugOverlay.tsx`](../../src/debug/f3/F3DebugOverlay.tsx) | Engine debug     | Minecraft-style text HUD; extensible via `registerF3Section` / `globalThis.debugF3`              |
 
 Hot-reload eval skips DevTools shortcut and auto-load so those do not stack on every save. Autosave disable runs again on each hot-reload eval.
 
@@ -84,7 +84,13 @@ url.searchParams.set("db_load", saveId);
 location.assign(url.toString());
 ```
 
-**Start save** is a normal mod setting (`startSave`). The dropdown lists local saves through bundle patches on the Options → Mods renderer. **Last played** uses the same source as Continue (`getLastPlayedGameSync` / `localStorage.lastPlayedGame`).
+**Start save** is a normal mod setting (`startSave`): **Last played** or **Mod storage**. `api.settings` is read-only and choice options are fixed in `configSchema`, so the live save list cannot live in Options. The companion overlay lists local saves (`electron.getSaveFiles`) and writes this companion's `api.storage` key `startSave`. Set **Start save** to **Mod storage** (the default) to use that pick. **Last played** uses the same source as Continue (`getLastPlayedGameSync` / `localStorage.lastPlayedGame`). Another mod can set storage:
+
+```ts
+api.storage.set("irishbruse.debug", "startSave", saveId);
+```
+
+If that value is missing or the save is gone, auto-load falls back to last played.
 
 It does nothing when:
 
@@ -153,23 +159,32 @@ A renderer hot reload truncates that file via `POST /log/clear` and calls `conso
 ```ts
 console.log("my-feature", payload);
 // DevTools: my-feature {…}
-// logs/author.hello-world-example.log: [log] my-feature {…}
+// logs/author.hello-world.log: [log] my-feature {…}
 ```
 
 Release builds skip the inject. The shim uses `globalThis.console` so it does not recurse. `__MOD_ID__` is defined from that mod's `mod.ts` at build time.
 
 ## Debug patches
 
-The debug mod ships production patches in `patches` (Options Debug tab, dynamic **Start save** dropdown, local-mod loader hooks). See [patches.md](../patches.md).
+The companion rewrites two game files. Definitions live in [`src/debug/patches.ts`](../../src/debug/patches.ts) and are re-exported from `mod.ts`.
+
+| id | File | Role |
+| --- | --- | --- |
+| `options-debug-tab` | `js/bundle.js` | Show the Options **Debug** tab (content already in the bundle). |
+| `local-mod-compile-reloaded` | `js/external-mod-runtime.js` | Define free `reloaded` and the active mod id in the loader wrapper. |
+| `local-mod-registry` | `js/external-mod-runtime.js` | Publish local mods on `globalThis.__sandkitLocalModRegistry__`. |
+| `local-mod-track-inject` | `js/external-mod-runtime.js` | Auto-track `ui.inject` unregister functions for hot-eval. |
+
+Workshop mods are not added to the registry. See [patches.md](../patches.md) for the patch format.
 
 ## Files
 
 | Path                                           | Role                                                                       |
 | ---------------------------------------------- | -------------------------------------------------------------------------- |
-| [`src/debug/`](../../src/debug/)               | Companion mod: DevTools, auto-load, settings, bundle patches, local watch  |
-| [`src/debug/local-mod-reload.ts`](../../src/debug/local-mod-reload.ts) | Poll local mod files; hot-eval or fallback                             |
-| [`src/debug/hot-eval.ts`](../../src/debug/hot-eval.ts) | Dispose run and re-eval wrapper                                            |
-| [`src/debug/loader-patches.ts`](../../src/debug/loader-patches.ts) | Find/replace strings for `js/external-mod-runtime.js`               |
+| [`src/debug/`](../../src/debug/)               | Companion: `mod.ts`, `main.ts`, `patches.ts` at the root                   |
+| [`src/debug/boot/`](../../src/debug/boot/)     | Auto-load, Start save picker, DevTools boot, autosave, settings helpers |
+| [`src/debug/reload/`](../../src/debug/reload/) | Local-mod poll and hot-eval                                                |
+| [`src/debug/f3/`](../../src/debug/f3/)         | F3 overlay, engine debug sync, built-in sections                           |
 | `modkit/internal/debug/index.ts`               | `onDispose` only                                                           |
 | `modkit/internal/esbuild/debug.empty.ts`       | Release stub: no-op `onDispose`                                            |
 | `modkit/internal/esbuild/console.ts`           | esbuild inject: mirror `console.*` to the watch log server (debug builds) |
@@ -177,7 +192,7 @@ The debug mod ships production patches in `patches` (Options Debug tab, dynamic 
 ## Wiring
 
 ```ts
-// src/hello-world-example/main.ts — loader patch sets `reloaded`
+// examples/hello-world/main.ts — loader patch sets `reloaded`
 import { onDispose } from "@modkit/debug"; // only when you need cleanup
 
 const api = sandkit.api;

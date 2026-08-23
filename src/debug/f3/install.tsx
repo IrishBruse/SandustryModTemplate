@@ -1,7 +1,7 @@
 import { onDispose } from "@modkit/debug";
 import { safe } from "@modkit/utils";
-import { registerBuiltinF3Sections } from "../f3/sections";
-import { registerF3Section } from "../f3/registry";
+import { registerF3Section } from "./registry";
+import { registerBuiltinF3Sections } from "./sections";
 import { syncEngineDebug } from "./enable-debug";
 import { F3DebugOverlay } from "./F3DebugOverlay";
 
