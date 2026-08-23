@@ -96,6 +96,8 @@ It does nothing when:
 - The URL already has a boot query (`db_load`, `new_game`, `load`, …)
 - The session is already in-game
 - There is no resolvable save
+- Auto-load already ran this browser session (for example after you exit to the main menu and the page reloads)
+- The mod body is running from hot reload (`reloaded` is true)
 
 ## F3 debug overlay
 

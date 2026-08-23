@@ -2,6 +2,9 @@ import { inGame } from "@modkit/utils";
 import { resolveAutoLoadSaveId } from "./auto-load-save";
 import { autoLoadOn, settingOn } from "./settings";
 
+/** Once per browser session — skip auto-load after exit to main menu (page reload). */
+const AUTO_LOAD_SESSION_KEY = "irishbruse.debug:autoLoadDone";
+
 /** Query keys that already start a game boot (same list as the game bundle). */
 const BOOT_QUERY_KEYS = [
   "new_game",
@@ -57,16 +60,38 @@ function isBootQueryActive(): boolean {
   return BOOT_QUERY_KEYS.some((key) => params.has(key));
 }
 
+function autoLoadSessionDone(): boolean {
+  try {
+    return sessionStorage.getItem(AUTO_LOAD_SESSION_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function markAutoLoadSessionDone(): void {
+  try {
+    sessionStorage.setItem(AUTO_LOAD_SESSION_KEY, "1");
+  } catch {
+    /* sessionStorage can throw in some embeds */
+  }
+}
+
 /**
  * Reload with `?db_load=<saveId>` (same navigation the game uses for Continue).
  * Returns true when navigation started (the page will unload).
+ * Only runs on the first mod eval in a session (`initialBoot`); not after exit to menu or hot reload.
  */
-function tryAutoLoadSave(api: SandkitApi): boolean {
-  if (inGame() || isBootQueryActive()) return false;
+function tryAutoLoadSave(api: SandkitApi, initialBoot: boolean): boolean {
+  if (inGame() || isBootQueryActive()) {
+    markAutoLoadSessionDone();
+    return false;
+  }
+  if (!initialBoot || autoLoadSessionDone()) return false;
 
   const saveId = resolveAutoLoadSaveId(api);
   if (!saveId) return false;
 
+  markAutoLoadSessionDone();
   const url = new URL(window.location.href);
   url.search = "";
   url.searchParams.set("db_load", saveId);
@@ -75,10 +100,10 @@ function tryAutoLoadSave(api: SandkitApi): boolean {
 }
 
 /**
- * Optionally auto-load the chosen save, then open DevTools on first load.
- * Safe to call again after hot reload (DevTools open only when `firstLoad`).
+ * Optionally auto-load the chosen save on initial boot, then open DevTools on first load.
+ * Safe to call again after hot reload (auto-load and DevTools open only when `firstLoad`).
  */
 export function scheduleMainMenuBoot(api: SandkitApi, firstLoad = true): void {
-  if (autoLoadOn(api) && tryAutoLoadSave(api)) return;
+  if (firstLoad && autoLoadOn(api) && tryAutoLoadSave(api, true)) return;
   if (firstLoad && settingOn(api, "openDevTools")) openDevToolsOnStartup();
 }

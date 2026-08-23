@@ -6,6 +6,8 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Changed
 
+- **Debug companion:** **Auto-load save** runs once per browser session on initial boot only. Exit to the main menu no longer forces you back into the save. Hot reload still skips auto-load. See [modkit/debug.md](modkit/debug.md).
+
 - **Sandkit API types:** `modkit/types/` is described as normal template types, not vendored copies from sandustry-modding-types. `npm run setup` checks for `modkit/types/` declarations without upstream wording.
 - **Console inject:** All builds prefix bare `console.*` with `[modId]`. POST to the watch log server (`logs/<mod-id>.log`) stays debug-only. See [builds.md](builds.md) and [modkit/debug.md](modkit/debug.md).
 - **`npm run build`:** Writes the OS mods folder and copies each mod to `build/<folder>/` for Workshop staging. `npm run build:release` is removed; `npm run publish` runs `npm run build`. See [builds.md](builds.md).
