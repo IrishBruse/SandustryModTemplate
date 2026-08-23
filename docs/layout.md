@@ -43,6 +43,7 @@ Copy a folder under `src/` to start a new mod. `hello-world-example` is the smal
 | [`worker-api-example`](../src/worker-api-example/)               | Worker-thread `sandkit.api`                         |
 | [`settings-example`](../src/settings-example/)                   | All `configSchema` types (`boolean` / `number` / `choice`) |
 | [`custom-element-example`](../src/custom-element-example/)       | Register an element and paint at the mouse cell     |
+| [`input-binding-example`](../src/input-binding-example/)         | `api.input.registerBinding` + bound-key UI          |
 | [`selection-capture`](../src/selection-capture/)                 | Screenshot / GIF recorder (**C**, **F7**)           |
 | [`debug`](../src/debug/)                                         | Dev companion (debug builds only). Do not copy this |
 
