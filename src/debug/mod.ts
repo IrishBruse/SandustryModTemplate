@@ -1,4 +1,12 @@
 import { defineModInfo, definePatches } from "@modkit/modinfo";
+import {
+  COMPILE_CODE,
+  COMPILE_FIND,
+  EXECUTE_CODE,
+  EXECUTE_FIND,
+  INJECT_CODE,
+  INJECT_FIND,
+} from "./loader-patches";
 
 /**
  * Inserted into the minified assignment chain (`...,Q_=...`).
@@ -34,6 +42,30 @@ export const patches = definePatches([
     code: 'if("choice"===i.type)return"startSave"===n&&"irishbruse.debug"===t.id?(0,wv.jsx)(sv_,{value:"string"==typeof l?l:i.default,field:i,label:c,description:d,onChange:u,className:"min-w-40"},n):(0,wv.jsx)(J_,Object.assign({label:c,description:d},{children:(0,wv.jsx)(z_,{value:"string"==typeof l?l:i.default,options:i.options.map(e=>({value:e.value,label:(0,Ho.t)(e.labelKey)})),onChange:u,className:"min-w-40"})}),n);',
     expectedMatches: 1,
   },
+  {
+    id: "local-mod-compile-reloaded",
+    file: "js/external-mod-runtime.js",
+    find: COMPILE_FIND,
+    operation: "replace",
+    code: COMPILE_CODE,
+    expectedMatches: 1,
+  },
+  {
+    id: "local-mod-registry",
+    file: "js/external-mod-runtime.js",
+    find: EXECUTE_FIND,
+    operation: "replace",
+    code: EXECUTE_CODE,
+    expectedMatches: 1,
+  },
+  {
+    id: "local-mod-track-inject",
+    file: "js/external-mod-runtime.js",
+    find: INJECT_FIND,
+    operation: "replace",
+    code: INJECT_CODE,
+    expectedMatches: 1,
+  },
 ]);
 
 export const modinfo = defineModInfo({
@@ -45,9 +77,10 @@ export const modinfo = defineModInfo({
   entry: "main.js",
   author: "IrishBruse",
   description:
-    "Dev companion: DevTools, auto-load save, disable autosave, Options Debug tab. Installed on debug builds only.",
+    "Dev companion: DevTools, auto-load save, disable autosave, Options Debug tab, local-mod hot reload. Installed on debug builds only.",
   dependencies: [],
-  loadOrder: -100,
+  /** Lower `loadOrder` runs first. 32-bit minimum so this companion starts before other local mods. */
+  loadOrder: -2147483648,
   configSchema: {
     enabled: {
       type: "boolean",
@@ -95,6 +128,24 @@ export const modinfo = defineModInfo({
       labelKey: "Disable autosave",
       descriptionKey:
         "Set the session autosave interval to 0. Manual saves still work. Turn off to test autosave.",
+    },
+    watchLocalMods: {
+      type: "boolean",
+      default: true,
+      labelKey: "Watch local mods",
+      descriptionKey: "Poll local mod folders for file changes. Workshop mods are never watched.",
+    },
+    hotReloadFallback: {
+      type: "choice",
+      default: "toast",
+      labelKey: "If hot reload cannot run",
+      descriptionKey:
+        "When a local main.js changed but the mod has no dispose path: do nothing, toast, or reload the page. Reloading the page does not re-apply patches.json. Restart the game for patches.",
+      options: [
+        { value: "off", labelKey: "Do nothing" },
+        { value: "toast", labelKey: "Toast" },
+        { value: "reload", labelKey: "Reload page" },
+      ],
     },
   },
 });

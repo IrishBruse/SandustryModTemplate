@@ -1,4 +1,4 @@
-/// <reference path="./types/global.d.ts" />
+import "./types/global";
 
 /**
  * Template-only ambient bindings (not in sandustry-modding-types).
@@ -6,7 +6,7 @@
 declare global {
   /**
    * True when this `main.js` eval is a hot-reload pass.
-   * Debug builds set it via esbuild inject (`modkit/internal/esbuild/hot-reload.inject.ts`).
+   * Debug builds set it via the debug companion loader patch.
    * Release builds define it as `false`.
    */
   const reloaded: boolean;

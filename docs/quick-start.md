@@ -34,7 +34,7 @@ Then launch Sandustry:
 - **F5** in VS Code, or
 - `npm run sandustry`
 
-`npm run sandustry` only starts the game. It does not build. The watch owns the bundle and hot reload.
+`npm run sandustry` only starts the game. It does not build. The watch owns the bundle. The **debug** companion hot-reloads local mods.
 
 With the **debug** companion installed (debug builds), turn on **Auto-load last save** to boot straight into your last played world. See [Debug](modkit/debug.md).
 
@@ -60,7 +60,7 @@ Rules:
 - Each `src/<name>/` with a `mod.ts` is a separate game mod.
 - The OS mods folder uses `modinfo.name`.
 - Import `@modkit/*` and files in your own folder only. Do not import another `src/<name>/` tree.
-- Import hot reload from `@modkit/debug`. Release builds stub that package.
+- Import `onDispose` from `@modkit/debug` when a registration needs cleanup. Release builds stub that package. The debug companion watches local mods.
 
 ## Useful commands
 

@@ -24,7 +24,7 @@ import {
 } from "../lib/compile-tailwind.js";
 import { loadMods, modIsolationPlugin, prepareModOutputs, PUBLISH_OUT_ROOT } from "../lib/mods.js";
 import { copyWorkshopInstallFiles, removeWorkshopPublishFiles } from "../lib/workshop-files.js";
-import { devWatchUrl, notifyHotReload, startHotReloadServer } from "../dev/hot-reload-server.js";
+import { startLogServer } from "../dev/log-server.js";
 import { modkitAliasPlugin } from "../lib/modkit-alias.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
@@ -66,9 +66,6 @@ function resolveSourcemap() {
 }
 
 const sourcemap = resolveSourcemap();
-
-// Watch embeds the dev watch base URL for hot-reload GET polling.
-const embedDevWatchUrl = watch;
 
 const mods = await loadMods(args, {
   includeDebugKit: modDebug,
@@ -232,7 +229,7 @@ const SOURCE_URL_RE = /\n\/\/# sourceURL=.*$/;
  * Sandkit loads `main.js` via `new Function("__sandkit", body)` where `body` is:
  *   "use strict";\nconst sandkit = __sandkit;\nreturn (async () => {\n<source>\n})();\n
  * The Function header is two lines, then three body lines — five lines before `<source>`.
- * Hot reload in `modkit/internal/debug/hot-reload.ts` must use the same wrapper.
+ * Hot eval in `src/debug/hot-eval.ts` must use the same wrapper.
  */
 const SANDKIT_LOADER_LINE_OFFSET = 5;
 
@@ -334,12 +331,9 @@ function bundleOptions(mod) {
     define: {
       __MOD_DEBUG__: modDebug ? "true" : "false",
       __MOD_ID__: JSON.stringify(manifestModId(mod)),
-      __DEV_WATCH_URL__: embedDevWatchUrl ? JSON.stringify(devWatchUrl()) : '""',
       ...(modDebug ? {} : { reloaded: "false" }),
     },
-    inject: modDebug
-      ? [join(INTERNAL_ESBUILD, "hot-reload.inject.ts"), join(INTERNAL_ESBUILD, "console.ts")]
-      : [],
+    inject: modDebug ? [join(INTERNAL_ESBUILD, "console.ts")] : [],
     alias: {
       react: join(INTERNAL_ESBUILD, "react.ts"),
       "react/jsx-runtime": join(INTERNAL_ESBUILD, "jsx-runtime.ts"),
@@ -379,7 +373,6 @@ function workerBundleOptions(mod) {
     define: {
       __MOD_DEBUG__: modDebug ? "true" : "false",
       __MOD_ID__: JSON.stringify(manifestModId(mod)),
-      __DEV_WATCH_URL__: '""',
       reloaded: "false",
     },
     inject: modDebug ? [join(INTERNAL_ESBUILD, "console.ts")] : [],
@@ -462,8 +455,8 @@ function collectWatchDirs(root, skipNames = []) {
 /**
  * Main entry only (workers skip this):
  * - Skip the entry body when `api.settings.get("enabled")` is false (`isEnabled`)
- * - Keep the hot-reload inject in the graph via `void reloaded` on debug
- *   builds even when a mod never reads that binding
+ * - Keep free `reloaded` in the graph via `void reloaded` on debug
+ *   builds even when a mod never reads that binding (loader patch defines it)
  *
  * Uses an `if` wrap (not top-level `return`) because entries with `import` are
  * ESM and reject top-level return.
@@ -565,7 +558,6 @@ async function buildOne(mod) {
 async function watchOne(mod) {
   await syncModFiles(mod);
   let tailwindCss = await compileFromBundleGraph(mod);
-  const modId = manifestModId(mod);
   /** @type {ReturnType<typeof setTimeout> | null} */
   let cssRebuildTimer = null;
 
@@ -609,7 +601,6 @@ async function watchOne(mod) {
             maybeRewriteDebugMaps(mod);
             removeStrayMainCss(mod);
             await syncModFiles(mod);
-            notifyHotReload({ changed: ["main.js"], modIds: [modId] });
             logBuildResult(mod, result);
           });
         },
@@ -620,10 +611,6 @@ async function watchOne(mod) {
   await mainCtx.watch({ delay: 10 });
 
   if (mod.worker) {
-    const workerOut =
-      typeof mod.manifest.workerEntry === "string" && mod.manifest.workerEntry.length > 0
-        ? mod.manifest.workerEntry
-        : "worker.js";
     const workerCtx = await esbuild.context({
       ...workerBundleOptions(mod),
       plugins: [
@@ -634,8 +621,6 @@ async function watchOne(mod) {
             build.onEnd(async (result) => {
               if (result.errors.length > 0) return;
               await syncModFiles(mod);
-              // Worker scripts do not hot-reload — toast asks for a game restart.
-              notifyHotReload({ changed: [workerOut], modIds: [modId] });
               logBuildResult(mod, result);
             });
           },
@@ -647,7 +632,7 @@ async function watchOne(mod) {
 }
 
 if (watch) {
-  startHotReloadServer();
+  startLogServer();
   for (const mod of mods) {
     await watchOne(mod);
   }

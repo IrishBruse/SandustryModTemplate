@@ -1,6 +1,6 @@
 /**
  * OS-specific Sandustry user-data and Steam install paths.
- * Used by mod-path / setup / hot-reload — not by launch spawn code.
+ * Used by mod-path / setup / the watch log server — not by launch spawn code.
  *
  * User data:
  *   Linux:   ~/.config/sandustry

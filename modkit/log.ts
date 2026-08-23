@@ -1,13 +1,13 @@
 /**
  * File logging for the renderer while `npm run dev` is running.
  *
- * The watch server accepts POST `/log` (append) and POST `/log/clear`
+ * The watch log server accepts POST `/log` (append) and POST `/log/clear`
  * (truncate) for `~/.config/sandustry/logs/<modId>.log` on Linux or
  * `%APPDATA%/sandustry/logs/<modId>.log` on Windows (repo `logs/` link).
  * Electron `logs/main.log` only gets the main process — not `console.log`
  * from the game UI — so use this for in-game UI debugging.
  *
- * Port/path must match `scripts/dev/hot-reload-server.js`.
+ * Port/path must match `scripts/dev/log-server.js`.
  */
 
 const LOG_URL = "http://127.0.0.1:19147/log";
@@ -28,7 +28,7 @@ export type ModLogger = {
 };
 
 /**
- * Bind a mod id and return a logger. Safe when the watch server is down
+ * Bind a mod id and return a logger. Safe when the log server is down
  * (fetch errors are ignored).
  *
  * ```ts
@@ -78,7 +78,7 @@ export function appendLog(modId: string, line: string, options?: { console?: boo
 
 /**
  * Truncate `logs/<modId>.log`. Hot reload awaits this before re-eval so the file
- * only holds lines from the current session. Safe when the watch server is down
+ * only holds lines from the current session. Safe when the log server is down
  * or when F5 / CDP stalls the POST (abort after 500 ms).
  */
 export function clearLog(modId: string): Promise<void> {

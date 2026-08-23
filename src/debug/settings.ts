@@ -10,7 +10,12 @@ const SETTING_DEFAULTS: Record<string, boolean> = {
   autoLoad: true,
   engineDebug: true,
   disableAutosave: true,
+  watchLocalMods: true,
 };
+
+export type HotReloadFallback = "off" | "toast" | "reload";
+
+const FALLBACK_DEFAULT: HotReloadFallback = "toast";
 
 function boolSetting(api: SandkitApi, key: string): boolean {
   const value = safe(() => api.settings.get(key));
@@ -34,4 +39,12 @@ export function autoLoadOn(api: SandkitApi): boolean {
   const legacy = safe(() => api.settings.get("autoBoot"));
   if (typeof legacy === "boolean") return legacy;
   return SETTING_DEFAULTS.autoLoad;
+}
+
+/** When `main.js` changed but hot eval is not safe. */
+export function hotReloadFallback(api: SandkitApi): HotReloadFallback {
+  if (!isEnabled(api)) return FALLBACK_DEFAULT;
+  const value = safe(() => api.settings.get("hotReloadFallback"));
+  if (value === "off" || value === "toast" || value === "reload") return value;
+  return FALLBACK_DEFAULT;
 }

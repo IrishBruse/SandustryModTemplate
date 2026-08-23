@@ -7,7 +7,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Added
 
-- **Debug companion:** Minecraft-style **F3** overlay (player + mouse position; extensible via `registerF3Section`). See [modkit/debug.md](modkit/debug.md).
+- **Debug companion:** watches **local** mods (not Workshop) and hot-evals `main.js` when the mod has `onDispose` or auto-tracked `api.ui.inject`. Settings: **Watch local mods**, **If hot reload cannot run** (off / toast / reload page). Loader patches on `js/external-mod-runtime.js` define `reloaded` and publish a local-mod registry. `patches.json` / `modinfo.json` / worker still require a game restart. See [modkit/debug.md](modkit/debug.md).
 - **Debug companion:** **Start save** in Options → Mods lists local saves (bundle patch) and chooses which world auto-load boots with `?db_load=`. See [modkit/debug.md](modkit/debug.md).
 - **`settings-example`:** sample mod that shows every game-supported `configSchema` field type (`boolean`, `number`, `choice`) and reacts with `settings.onChange`. See [modkit/config-schema.md](modkit/config-schema.md) and [`src/settings-example/`](../src/settings-example/).
 - **`npm run docs:api`:** generates a Sandkit API Markdown reference under `docs/api/` from vendored `modkit/types/` JSDoc (TypeDoc). `npm run docs` runs this, then serves Docsify. See [modkit/types/README.md](../modkit/types/README.md).
@@ -16,8 +16,15 @@ The template has no release tags yet. Dated sections match the day the change la
 - **`npm run build:release`:** release-builds mods into `build/<folder>/` (gitignored), separate from `dist/` and the OS mods folder. Staging is the release bundle plus `workshop.json` / previews only (no `README.md`, `CHANGELOG.md`, or `screenshots/`). `npm run publish` runs this, then uploads with SteamCMD. See [builds.md](builds.md#workshop-publish).
 - **Pixel-perfect Screenshot and GIF recorder:** panel **Show mouse** toggle draws the in-game cursor into PNG/GIF captures; **Greenscreen** / **Show mouse** use pill toggles; **Frames** / **Ticks / frame** use number boxes with a white up/down strip; **Record GIF** / **Screenshot** show bound keys when set. **Record GIF** clears the **C** marquee when recording starts so you can keep playing. GIF encode runs on a worker after capture so the game does not hitch. **0.4.0** adds panel **1 MB limit** so a GIF stays at or under 1 MiB for Steam Workshop thumbnails.
 
+### Removed
+
+- Watch HTTP hot-reload notify (`GET /hot-reload/last` and **Ctrl+R** in the `npm run dev` TTY). The debug companion polls local files instead. `npm run dev` still starts `scripts/dev/log-server.js` for `POST /log`. See [modkit/debug.md](modkit/debug.md).
+
 ### Changed
 
+- **`@modkit/debug`** exports `onDispose` only. Re-eval, file poll, and loader patches live in `src/debug/`. See [modkit/debug.md](modkit/debug.md).
+- **Debug companion:** `loadOrder` is `-2147483648` so the companion runs before other local mods. See [modkit/debug.md](modkit/debug.md).
+- **Debug companion:** local-mod hot reload no longer needs esbuild inject in each bundle. Subscribe to the companion on the Workshop (this template still installs a local copy on debug builds). It watches **local** folders only, not other Workshop items. See [modkit/debug.md](modkit/debug.md).
 - **Debug companion:** **Auto-load save** (default on) replaces splash skip and main-menu Continue clicking. **Start save** in Options → Mods picks the world (dynamic list via bundle patch). Legacy `autoBoot` prefs still apply until you set `autoLoad`. See [modkit/debug.md](modkit/debug.md).
 - **`configSchema` types** in `modkit/modinfo.ts` match the game validator: `boolean`, `number`, and `choice` (with `{ value, labelKey }` options). Removed incorrect `string` and `enum` field types. See [modkit/config-schema.md](modkit/config-schema.md).
 - **`modkit/types/`:** vendored `.d.ts` files from [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types) (MIT). Layout mirrors the live `sandkit` object (`sandkit/api`, `sandkit/engine/api`, `worker/`, …). See [`modkit/types/ATTRIBUTION.md`](../modkit/types/ATTRIBUTION.md). Ambient `sandkit` is in [`modkit/types/global.d.ts`](../modkit/types/global.d.ts); template-only `reloaded` and `WorkerSandkitApi` are in [`modkit/ambient.d.ts`](../modkit/ambient.d.ts).
@@ -29,7 +36,6 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Fixed
 
-- Release `main.js` does not inject hot-reload boot (`installHotReload` / `isHotReloadEval`). Debug builds still inject. Release defines **`reloaded`** as `false`. See [modkit/debug.md](modkit/debug.md).
 - Options UI components load from `modkit/ui/options/index.ts`. A `./options` import resolved to `options.css`, so `OptionsPanel` was missing and the capture panel did not render. See [ui/overview.md](ui/overview.md).
 - VS Code **Sandustry** F5 is a Node launch of the game process (renderer attach starts when CDP is ready). Debugger **Restart** kills Electron and starts a new process, then the renderer reconnects. A Chrome page reload does not reload workers or patches. See [builds.md](builds.md).
 - `@modkit/ui/options.css` is inlined into `main.js` at build time (same as Tailwind). Mod folders no longer get a stray `main.css` that Sandkit does not load. The resolve plugin prevents an empty `{}` options import.
@@ -39,7 +45,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Changed
 
-- Main bundles inject hot reload boot: free **`reloaded`**, no `installHotReload` / `isHotReloadEval` in `main.ts`. Import `onDispose` only when you need cleanup. See [modkit/debug.md](modkit/debug.md).
+- Free **`reloaded`** comes from the debug companion loader patch. Do not call `installHotReload` in `main.ts`. Import `onDispose` only when you need cleanup. See [modkit/debug.md](modkit/debug.md).
 
 ### Removed
 

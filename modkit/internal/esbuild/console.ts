@@ -37,7 +37,7 @@ function mirror(level: string, args: unknown[]): void {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ modId: modId(), line }),
   }).catch(() => {
-    /* `npm run dev` watch server not running */
+    /* `npm run dev` log server not running */
   });
 }
 

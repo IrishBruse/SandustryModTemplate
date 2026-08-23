@@ -39,7 +39,7 @@ Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized dem
 | Path                       | Role                                                                                                                                                                                                     |
 | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `src/<name>/mod.ts`        | Manifest (+ optional `patches` / `debugPatches`) → `modinfo.json` / `patches.json` at build. `export const modinfo = defineModInfo(...)`. Use `modinfo.id` for the mod id.                               |
-| `src/<name>/main.ts`       | Mod entry. Build gates on **`enabled`** and boots hot reload (`reloaded` ambient). Import `onDispose` from `@modkit/debug` when needed.                                                                  |
+| `src/<name>/main.ts`       | Mod entry. Build gates on **`enabled`**. Free `reloaded` comes from the debug companion. Import `onDispose` from `@modkit/debug` when needed.                                                           |
 | `src/<name>/worker.ts`     | Optional worker entry → `worker.js` when present (`workerEntry` in modinfo)                                                                                                                              |
 | `src/<name>/ui/`           | React overlays (import `react`, resolved to `modkit/internal/esbuild/react.ts`)                                                                                                                                   |
 | `src/<name>/README.md`     | Optional. Repo docs only (not copied into builds). Example mods: lists only — no tables ([`docs/AGENTS.md`](docs/AGENTS.md)).                                                                            |
@@ -57,11 +57,11 @@ Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized dem
 | `modkit/patches.ts`        | Empty shared patch list (browser stub via `internal/esbuild/patches.empty.ts`)                                                |
 | `modkit/internal/esbuild/` | esbuild wiring: React/JSX aliases, `patches.empty.ts` stub, debug inject, release `@modkit/debug` stub                        |
 | `modkit/utils/`            | `safe`, `isEnabled`, `inGame`, `registerRetroGame`                                                                   |
-| `modkit/internal/debug/`   | Hot reload helpers (`onDispose`; inject calls `installHotReload` / `isHotReloadEval`)                                |
-| `modkit/log.ts`            | File-log helper used with the hot-reload watch server                                                                |
+| `modkit/internal/debug/`   | `onDispose` only. Hot eval lives in `src/debug/`                                     |
+| `modkit/log.ts`            | File-log helper used with the watch log server                                                                   |
 | `modkit/types/`            | Vendored Sandkit API declarations ([sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types); see [`ATTRIBUTION.md`](modkit/types/ATTRIBUTION.md)) |
 
-Hot reload boots via esbuild inject on **debug** builds only. Use free `reloaded`. Import `onDispose` from `@modkit/debug` when needed. Release defines `reloaded` as `false` and stubs `@modkit/debug` to `modkit/internal/esbuild/debug.empty.ts`.
+Hot eval lives in the **debug** companion (`src/debug/`: loader patch, file poll, re-eval). Use free `reloaded`. Import `onDispose` from `@modkit/debug` when a registration needs cleanup. Release defines `reloaded` as `false` and stubs `@modkit/debug` to `modkit/internal/esbuild/debug.empty.ts`.
 
 ### `modkit/types/`
 
@@ -87,7 +87,7 @@ Folders match `npm run` commands. Shared helpers live in `scripts/lib/`.
 | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `scripts/build/esbuild.config.mjs`        | `npm run build` / `build:release` — bundle each `src/<name>/main.ts` → `main.js` (and `worker.ts` → `worker.js`), write `modinfo.json` + `patches.json` |
 | `scripts/dev/dev.js`                      | `npm run dev` — watch + write to the game mods folder                                                                                                   |
-| `scripts/dev/hot-reload-server.js`        | Hot-reload HTTP server (`/hot-reload`, `/log`)                                                                                                          |
+| `scripts/dev/log-server.js`               | File-log HTTP server (`POST /log`, `/log/clear`) while watching                                                                                         |
 | `scripts/typecheck/typecheck.js`          | `npm run typecheck` — root kit + per-mod `tsc --noEmit`                                                                                                 |
 | `scripts/test/test.js`                    | `npm run test` — Node test runner on `src/**/*.test.ts`                                                                                                 |
 | `scripts/mod-install/install-mod-deps.js` | Root `postinstall` — `npm install` in each `src/<name>/` with `package.json`                                                                            |
@@ -155,4 +155,4 @@ console.log("my-feature", { width, collapsed });
 // DevTools + logs/author.hello-world-example.log
 ```
 
-Release builds do not inject the shim. Restart `npm run dev` after changing `scripts/dev/hot-reload-server.js` (the POST `/log` and `/log/clear` routes live there). Hot reload clears `logs/<modinfo.id>.log` before re-eval.
+Release builds do not inject the shim. Restart `npm run dev` after changing `scripts/dev/log-server.js` (the POST `/log` and `/log/clear` routes live there). Hot reload clears `logs/<modinfo.id>.log` before re-eval.
