@@ -119,7 +119,7 @@ async function syncModFiles(mod) {
     modDebug,
     modTs: mod.modTs,
     cachePrefix: mod.folder,
-    label: `src/${mod.folder}/mod.ts`,
+    label: `${mod.root}/${mod.folder}/mod.ts`,
   });
 }
 
@@ -229,7 +229,7 @@ const SOURCE_URL_RE = /\n\/\/# sourceURL=.*$/;
  * Sandkit loads `main.js` via `new Function("__sandkit", body)` where `body` is:
  *   "use strict";\nconst sandkit = __sandkit;\nreturn (async () => {\n<source>\n})();\n
  * The Function header is two lines, then three body lines — five lines before `<source>`.
- * Hot eval in `src/debug/hot-eval.ts` must use the same wrapper.
+ * Hot eval in `src/debug/reload/hot-eval.ts` and `COMPILE_CODE` in `src/debug/patches.ts` must use the same wrapper.
  */
 const SANDKIT_LOADER_LINE_OFFSET = 5;
 
@@ -343,7 +343,7 @@ function bundleOptions(mod) {
     jsxImportSource: "react",
     banner: {
       js: [
-        `// Generated — edit src/${mod.folder}/ and run npm run dev.`,
+        `// Generated — edit ${mod.root}/${mod.folder}/ and run npm run dev.`,
         "// Runs as a plain script via new Function(...). No import/export.",
         "// sandkit is already in scope.",
       ].join("\n"),
@@ -378,7 +378,7 @@ function workerBundleOptions(mod) {
     inject: modDebug ? [join(INTERNAL_ESBUILD, "console.ts")] : [],
     banner: {
       js: [
-        `// Generated — edit src/${mod.folder}/worker.ts and run npm run dev.`,
+        `// Generated — edit ${mod.root}/${mod.folder}/worker.ts and run npm run dev.`,
         "// Worker entry via new Function(...). No import/export.",
         "// sandkit is already in scope (worker-thread api).",
       ].join("\n"),

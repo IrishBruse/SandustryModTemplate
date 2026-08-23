@@ -31,6 +31,7 @@ import {
   sandustryModsDir,
   steamLibraryRoots,
 } from "../lib/paths.js";
+import { discoverMods, MOD_ROOTS } from "../lib/mods.js";
 import { SANDUSTRY, SANDUSTRY_DIR } from "../lib/sandustry-common.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
@@ -118,25 +119,25 @@ function checkVendoredTypes() {
 }
 
 function checkModPackageInstalls() {
-  const src = join(ROOT, "src");
-  if (!existsSync(src)) {
-    fail("src/ folder is missing.");
-    return;
+  for (const root of MOD_ROOTS) {
+    if (!existsSync(join(ROOT, root))) {
+      fail(`${root}/ folder is missing.`);
+      return;
+    }
   }
 
   /** @type {string[]} */
   const missing = [];
-  for (const name of readdirSync(src)) {
-    const folder = join(src, name);
-    if (!existsSync(join(folder, "package.json"))) continue;
-    if (!existsSync(join(folder, "node_modules"))) missing.push(name);
+  for (const { folder, root, dir } of discoverMods()) {
+    if (!existsSync(join(dir, "package.json"))) continue;
+    if (!existsSync(join(dir, "node_modules"))) missing.push(`${root}/${folder}`);
   }
 
   if (missing.length === 0) {
-    ok("Mod npm packages (src/<name>/package.json)");
+    ok("Mod npm packages (package.json in src/ or examples/)");
     return;
   }
-  fail(`Missing node_modules in src/${missing.join(", src/")}. Run npm install.`);
+  fail(`Missing node_modules in ${missing.join(", ")}. Run npm install.`);
 }
 
 function checkGameBinary() {

@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
- * Typecheck the kit, then each `src/<name>/` mod in its own project
+ * Typecheck the kit, then each mod in its own project
  * so sibling mods cannot see each other's files.
  */
 import { existsSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { discoverModFolders } from "../lib/mods.js";
+import { discoverMods } from "../lib/mods.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const TSC = join(ROOT, "node_modules/typescript/bin/tsc");
@@ -22,21 +22,21 @@ function typecheck(project) {
 
 typecheck("tsconfig.json");
 
-const folders = discoverModFolders();
-if (folders.length === 0) {
-  console.error("No mods found. Add src/<name>/mod.ts");
+const mods = discoverMods();
+if (mods.length === 0) {
+  console.error("No mods found. Add src/<name>/mod.ts or examples/<name>/mod.ts");
   process.exit(1);
 }
 
-for (const folder of folders) {
-  const project = join("src", folder, "tsconfig.json");
+for (const { folder, root } of mods) {
+  const project = join(root, folder, "tsconfig.json");
   if (!existsSync(join(ROOT, project))) {
-    console.error(`src/${folder}/mod.ts has no tsconfig.json`);
+    console.error(`${root}/${folder}/mod.ts has no tsconfig.json`);
     process.exit(1);
   }
   typecheck(project);
 
-  const workerProject = join("src", folder, "tsconfig.worker.json");
+  const workerProject = join(root, folder, "tsconfig.worker.json");
   if (existsSync(join(ROOT, workerProject))) {
     typecheck(workerProject);
   }
