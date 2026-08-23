@@ -18,4 +18,4 @@ No template mod shows the event subscribe / dispose pattern. Real mods (`selecti
 
 ## Origin
 
-Event usage in `src/selection-capture/captureFrame.ts` and `src/debug/boot-menu.ts` with no dedicated sample.
+Event usage in `src/selection-capture/captureFrame.ts` with no dedicated sample.

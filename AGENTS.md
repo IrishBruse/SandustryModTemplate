@@ -109,11 +109,11 @@ Folders match `npm run` commands. Shared helpers live in `scripts/lib/`.
 
 `--no-debug` forces a release-style bundle. Debug builds emit inline source maps; `--sourcemap` / `--no-sourcemap` override. `--mod <folder>` builds one src folder. Debug builds also install `src/debug` unless `--mod debug`.
 
-Session debug helpers (DevTools, splash skip, auto-boot, disable autosave, F3) live on the **debug** companion mod. Settings are on that mod only. See [`docs/modkit/debug.md`](docs/modkit/debug.md).
+Session debug helpers (DevTools, auto-load last save, disable autosave, F3) live on the **debug** companion mod. Settings are on that mod only. See [`docs/modkit/debug.md`](docs/modkit/debug.md).
 
 ## Patches
 
-Define patches in that mod's `mod.ts` with `definePatches`. Production list is `patches`. Optional mod-only debug list is `debugPatches`. Splash skip is a settings-gated runtime helper on `src/debug` (installed on debug builds only).
+Define patches in that mod's `mod.ts` with `definePatches`. Production list is `patches`. Optional mod-only debug list is `debugPatches`. Auto-load last save is a settings-gated runtime helper on `src/debug` (installed on debug builds only).
 
 ```ts
 // src/<name>/mod.ts

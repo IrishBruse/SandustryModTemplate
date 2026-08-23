@@ -36,7 +36,7 @@ Then launch Sandustry:
 
 `npm run sandustry` only starts the game. It does not build. The watch owns the bundle and hot reload.
 
-With the **debug** companion installed (debug builds), the game can skip the splash and continue your last save. See [Debug](modkit/debug.md).
+With the **debug** companion installed (debug builds), turn on **Auto-load last save** to boot straight into your last played world. See [Debug](modkit/debug.md).
 
 ## 3. Try a sample
 

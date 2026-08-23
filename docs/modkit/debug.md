@@ -21,19 +21,19 @@ Do not call `installHotReload` or `isHotReloadEval` in `main.ts` — inject does
 
 ## Companion settings
 
-Settings live on the debug mod only (`src/debug/mod.ts` `configSchema`):
+Settings live on the debug mod only (`src/debug/mod.ts` `configSchema`). Open **Options → Mods → debug**.
 
 | Setting                   | Key               | Default | Effect                                                                                                                                                                                      |
 | ------------------------- | ----------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Mod enabled**           | `enabled`         | on      | Master switch for runtime helpers                                                                                                                                                           |
 | **Open DevTools on load** | `openDevTools`    | off     | Open Electron DevTools on load. Keep off under F5 so the IDE debugger stays attached                                                                                                        |
 | **F12 opens DevTools**    | `f12DevTools`     | on      | Capture-phase F12. Can disconnect an IDE debugger session                                                                                                                                   |
-| **Skip splash**           | `skipSplash`      | off     | Runtime click poll while splash logos are visible                                                                                                                                           |
-| **Auto-boot Continue**    | `autoBoot`        | off     | Click Continue on the main menu after it has been visible                                                                                                                                   |
-| **Debug panel (F3)**      | `engineDebug`     | on      | Force `debug.active` (vanilla Debug / Stats); F3 toggles companion panel (top left). Also restores **Options → Debug** tab (Hard Mode, Debug Active, Draw Chunks, Cinematic, Debug Console) |
+| **Auto-load save**        | `autoLoad`        | on      | On load, `location.assign` with `?db_load=<saveId>`. Skips splash and main menu. Legacy `autoBoot` prefs still count until you set `autoLoad`                                               |
+| **Start save**            | `startSave`       | Last played | Which save to load. Dropdown lists local saves via a bundle patch (`electron.getSaveFiles`). Stored in mod settings |
+| **Engine debug**          | `engineDebug`     | on      | Force `debug.active` (vanilla Debug / Stats). F3 toggles companion debug overlay                                                                                                            |
 | **Disable autosave**      | `disableAutosave` | on      | Sets `session.settings.autosaveInterval` to `0`. Manual saves still work                                                                                                                    |
 
-Turn on **Skip splash**, **Auto-boot Continue**, or **Open DevTools on load** in the debug mod settings when you want those helpers.
+Turn on **Auto-load save** or **Open DevTools on load** when you want those helpers.
 
 ## Features
 
@@ -42,14 +42,14 @@ Turn on **Skip splash**, **Auto-boot Continue**, or **Open DevTools on load** in
 | DevTools globals      | [`src/debug/main.ts`](../../src/debug/main.ts)                                     | Mod enabled      | `sandkit`, `api`, `enums`, `react` on `globalThis`                                                 |
 | Open DevTools on load | [`boot-menu.ts`](../../src/debug/boot-menu.ts)                                     | Open DevTools    | Retries until the Electron bridge is ready. Keep off under F5                                      |
 | F12 opens DevTools    | [`boot-menu.ts`](../../src/debug/boot-menu.ts)                                     | F12              | Capture-phase keydown; skipped on hot-reload eval                                                  |
-| Splash skip           | [`splash.ts`](../../src/debug/splash.ts)                                           | Skip splash      | Clicks the splash while logos are visible                                                          |
-| Main-menu auto-boot   | `boot-menu.ts` + [`menu.ts`](../../src/debug/menu.ts)                              | Auto-boot        | Clicks **Continue** after it has been visible                                                      |
+| Auto-load save        | [`boot-menu.ts`](../../src/debug/boot-menu.ts) + [`auto-load-save.ts`](../../src/debug/auto-load-save.ts) | Auto-load + Start save | Reloads with `?db_load=` for the **Start save** pick |
+| Start save picker     | [`src/debug/mod.ts`](../../src/debug/mod.ts) `patches`                             | Start save       | Bundle patch fills the mod-settings dropdown from `electron.getSaveFiles`                          |
 | Disable autosave      | [`autosave.ts`](../../src/debug/autosave.ts)                                       | Disable autosave | Sets interval to `0` on load and each hot-reload eval                                              |
 | Renderer hot reload   | [`modkit/internal/debug/hot-reload.ts`](../../modkit/internal/debug/hot-reload.ts) | `npm run dev`    | Polls `GET /hot-reload/last` on the dev watch server                                               |
-| F3 debug panel        | [`src/debug/toggle/`](../../src/debug/toggle/)                                     | Debug panel (F3) | Top-left companion panel; vanilla Debug / Stats stay for engine tools                              |
 | Options Debug tab     | [`src/debug/mod.ts`](../../src/debug/mod.ts) `patches`                             | Mod installed    | Bundle patch adds the hidden **Debug** tab to Options (Debug Active, Draw Chunks, Cinematic, etc.) |
+| F3 debug overlay      | [`src/debug/toggle/F3DebugOverlay.tsx`](../../src/debug/toggle/F3DebugOverlay.tsx) | Engine debug     | Minecraft-style text HUD; extensible via `registerF3Section` / `globalThis.debugF3`              |
 
-Hot-reload eval skips DevTools shortcut, splash polling, and auto-boot so those do not stack on every save. Autosave disable runs again on each hot-reload eval.
+Hot-reload eval skips DevTools shortcut and auto-load so those do not stack on every save. Autosave disable runs again on each hot-reload eval.
 
 ## DevTools globals
 
@@ -71,17 +71,42 @@ After the mod has loaded, you can paste a runtime API dump script into DevTools.
 - **F12** still opens Electron DevTools. That can disconnect an IDE CDP session; prefer the IDE debugger panel when you launched with F5.
 - The listener uses capture phase so the game does not swallow the key. Preload patches cannot target `preload.js`, so this runs in the renderer.
 
-## Splash skip
+## Auto-load save
 
-When **Skip splash** is on, `startSplashSkipPolling` clicks `document` every 100 ms while `#splash-logo-1` / `#splash-logo-2` / `#splash-logo-3` or `#splash-screen` is visible, until `sessionStorage.splashShown` is set. There is no game-file patch; the setting gates runtime only.
+When **Auto-load save** is on, the companion resolves a save id from **Start save** and navigates like the game **Continue** path:
 
-## Main-menu auto-boot
+```ts
+const url = new URL(window.location.href);
+url.search = "";
+url.searchParams.set("db_load", saveId);
+location.assign(url.toString());
+```
 
-When **Auto-boot Continue** is on, the helper waits until a **Continue** control is visible for 400 ms, then clicks it and opens DevTools (if that setting is on).
+**Start save** is a normal mod setting (`startSave`). The dropdown lists local saves through bundle patches on the Options → Mods renderer. **Last played** uses the same source as Continue (`getLastPlayedGameSync` / `localStorage.lastPlayedGame`).
 
-- Find is by visible label (`continue` or a label that ends with ` continue`), not by a DOM id.
-- Polling uses `setInterval` (250 ms), `api.triggers.register("${modId}:main-menu-boot")`, `game:ready`, and a 1 s fallback.
-- After a successful click, polling stops. Triggers have no unregister path, so a hot reload does not register them again (`isHotReloadEval`).
+It does nothing when:
+
+- The URL already has a boot query (`db_load`, `new_game`, `load`, …)
+- The session is already in-game
+- There is no resolvable save
+
+## F3 debug overlay
+
+When **Engine debug** is on, **F3** toggles a Minecraft-style text overlay (monospace, white with shadow). Built-in sections show **Player** world/cell position and **Mouse** cell/world position while in-game.
+
+Add sections from the debug mod:
+
+```ts
+import { registerF3Section } from "./f3/registry";
+
+registerF3Section({
+  id: "my-stats",
+  title: "My mod",
+  lines: () => [{ left: "Foo", right: "42" }],
+});
+```
+
+After boot, `globalThis.debugF3.registerSection` is the same API for DevTools experiments.
 
 ## Hot reload
 
@@ -107,7 +132,7 @@ onDispose(() => clearInterval(timer));
 
 A monkey-patch or a trigger with no unregister path stays until the game restarts.
 
-Free **`reloaded`** is true when this script body is running because a reload evaluated a new `main.js`. Use it to skip one-shot boot work (toasts, DevTools, splash skip).
+Free **`reloaded`** is true when this script body is running because a reload evaluated a new `main.js`. Use it to skip one-shot boot work (toasts, DevTools, auto-load).
 
 ## File logging (`console`)
 
@@ -125,13 +150,13 @@ Release builds skip the inject. The shim uses `globalThis.console` so it does no
 
 ## Debug patches
 
-Optional extra debug-only patches can still be exported from a mod's `mod.ts` as `debugPatches`. Splash skip is a settings-gated runtime helper on the debug companion (no bundle patch). See [patches.md](../patches.md).
+The debug mod ships production patches in `patches` (Options Debug tab, dynamic **Start save** dropdown). See [patches.md](../patches.md).
 
 ## Files
 
 | Path                                           | Role                                                                       |
 | ---------------------------------------------- | -------------------------------------------------------------------------- |
-| [`src/debug/`](../../src/debug/)               | Companion mod: DevTools, splash, auto-boot, F3, settings                   |
+| [`src/debug/`](../../src/debug/)               | Companion mod: DevTools, auto-load, settings, bundle patches               |
 | `modkit/internal/debug/index.ts`               | Re-exports `installHotReload`, `onDispose`, `isHotReloadEval`              |
 | `modkit/internal/debug/hot-reload.ts`          | Poll `GET /hot-reload/last`, `onDispose`, `isHotReloadEval`                |
 | `modkit/internal/esbuild/debug.empty.ts`       | Release stub: no-op `installHotReload`, `onDispose`, `isHotReloadEval`     |

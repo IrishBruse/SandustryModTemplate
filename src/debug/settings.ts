@@ -7,8 +7,7 @@ import { isEnabled, safe } from "@modkit/utils";
 const SETTING_DEFAULTS: Record<string, boolean> = {
   openDevTools: false,
   f12DevTools: true,
-  skipSplash: false,
-  autoBoot: false,
+  autoLoad: true,
   engineDebug: true,
   disableAutosave: true,
 };
@@ -22,4 +21,17 @@ function boolSetting(api: SandkitApi, key: string): boolean {
 /** True when the master switch and this key are on. */
 export function settingOn(api: SandkitApi, key: string): boolean {
   return isEnabled(api) && boolSetting(api, key);
+}
+
+/**
+ * Auto-load last save. Honours legacy `autoBoot` when `autoLoad` is not stored yet
+ * (prefs from before splash/Continue helpers were replaced).
+ */
+export function autoLoadOn(api: SandkitApi): boolean {
+  if (!isEnabled(api)) return false;
+  const autoLoad = safe(() => api.settings.get("autoLoad"));
+  if (typeof autoLoad === "boolean") return autoLoad;
+  const legacy = safe(() => api.settings.get("autoBoot"));
+  if (typeof legacy === "boolean") return legacy;
+  return SETTING_DEFAULTS.autoLoad;
 }

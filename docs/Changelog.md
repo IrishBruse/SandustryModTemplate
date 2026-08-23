@@ -7,6 +7,8 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Added
 
+- **Debug companion:** Minecraft-style **F3** overlay (player + mouse position; extensible via `registerF3Section`). See [modkit/debug.md](modkit/debug.md).
+- **Debug companion:** **Start save** in Options → Mods lists local saves (bundle patch) and chooses which world auto-load boots with `?db_load=`. See [modkit/debug.md](modkit/debug.md).
 - **`settings-example`:** sample mod that shows every game-supported `configSchema` field type (`boolean`, `number`, `choice`) and reacts with `settings.onChange`. See [modkit/config-schema.md](modkit/config-schema.md) and [`src/settings-example/`](../src/settings-example/).
 - **`npm run docs:api`:** generates a Sandkit API Markdown reference under `docs/api/` from vendored `modkit/types/` JSDoc (TypeDoc). `npm run docs` runs this, then serves Docsify. See [modkit/types/README.md](../modkit/types/README.md).
 - **Debug companion:** a bundle patch restores the vanilla **Options → Debug** tab (Hard Mode, Debug Active, Draw Chunks, Cinematic, Debug Console). See [modkit/debug.md](modkit/debug.md).
@@ -16,6 +18,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Changed
 
+- **Debug companion:** **Auto-load save** (default on) replaces splash skip and main-menu Continue clicking. **Start save** in Options → Mods picks the world (dynamic list via bundle patch). Legacy `autoBoot` prefs still apply until you set `autoLoad`. See [modkit/debug.md](modkit/debug.md).
 - **`configSchema` types** in `modkit/modinfo.ts` match the game validator: `boolean`, `number`, and `choice` (with `{ value, labelKey }` options). Removed incorrect `string` and `enum` field types. See [modkit/config-schema.md](modkit/config-schema.md).
 - **`modkit/types/`:** vendored `.d.ts` files from [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types) (MIT). Layout mirrors the live `sandkit` object (`sandkit/api`, `sandkit/engine/api`, `worker/`, …). See [`modkit/types/ATTRIBUTION.md`](../modkit/types/ATTRIBUTION.md). Ambient `sandkit` is in [`modkit/types/global.d.ts`](../modkit/types/global.d.ts); template-only `reloaded` and `WorkerSandkitApi` are in [`modkit/ambient.d.ts`](../modkit/ambient.d.ts).
 - **`npm run publish`:** if SteamCMD is not on PATH, the script downloads Valve's official installer into `.tmp/steamcmd/` and then uploads. It does not add the npm `steamcmd` package (old `request` / `unzip` deps, and that API is game download, not Workshop). See [builds.md](builds.md#workshop-publish).
@@ -40,6 +43,8 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Removed
 
+- Debug companion splash click poll (`splash.ts`) and main-menu Continue click helpers (`menu.ts`). Use **Auto-load save** + **Start save** in Options → Mods instead.
+- F3 Debug companion panel (`DebugPanel.tsx`). **Start save** moved to Options → Mods via bundle patch.
 - **Types git submodule** — `modkit/types/` is now vendored declarations only (no `git submodule update`). Credit and upstream link: [`modkit/types/ATTRIBUTION.md`](../modkit/types/ATTRIBUTION.md). Removed [`modkit/sandkit-global.d.ts`](../modkit/sandkit-global.d.ts).
 - Per-mod `globals.ts` and `debug.ts` are gone. `defineModInfo` returns the manifest as `modinfo`; use `modinfo.id`. Import hot reload from `@modkit/debug` (release stubs that package). See [modkit/debug.md](modkit/debug.md) and [layout.md](layout.md).
 - F5 no longer attaches Electron **main** (`:9230`) or launches with `--inspect`. The **Sandustry** compound attaches the **renderer** only (`:9222`).

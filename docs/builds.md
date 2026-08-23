@@ -15,7 +15,7 @@ The game runs `main.js` as a script body (`new Function`). `sandkit` is already 
 
 Debug builds emit **inline** source maps on `main.js` (needed for `new Function` eval). Use `--sourcemap` to force maps on a release build, or `--no-sourcemap` to omit them from a debug build.
 
-Session debug helpers (DevTools, splash skip, auto-boot, disable autosave, F3) live on the **debug** companion. Settings are on that mod only. See [modkit/debug.md](modkit/debug.md).
+Session debug helpers (DevTools, auto-load last save, disable autosave, F3) live on the **debug** companion. Settings are on that mod only. See [modkit/debug.md](modkit/debug.md).
 
 `__MOD_DEBUG__` is `true` in dev builds and `false` in release.
 

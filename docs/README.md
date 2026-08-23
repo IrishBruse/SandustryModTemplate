@@ -8,7 +8,7 @@ TypeScript template for [Sandustry](https://store.steampowered.com/app/2764460/S
 - **[TypeScript](https://github.com/flamableassassin/sandustry-modding-types ":target=_blank")** — Sandkit API types vendored in `modkit/types/` from `flamableassassin/sandustry-modding-types`.
 - **[React HUD](modkit/react.md)** — JSX via `sandkit.react`, plus the [UI kit gallery](ui/README.md).
 - **[Hot reload](builds.md)** — `npm run dev` reloads without a game restart.
-- **[Debug helpers](modkit/debug.md)** — companion mod: F12 DevTools, splash skip, main-menu boot, F3.
+- **[Debug helpers](modkit/debug.md)** — companion mod: F12 DevTools, auto-load last save, F3.
 - **[Typed `mod.ts`](layout.md)** — Manifest and [patches](patches.md) in one file per mod.
 
 ## Get started

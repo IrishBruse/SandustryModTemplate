@@ -1,5 +1,13 @@
 import { defineModInfo, definePatches } from "@modkit/modinfo";
 
+/**
+ * Inserted into the minified assignment chain (`...,Q_=...`).
+ * Must be a bare assignment (no `const`/`let`) so it stays a valid comma expression.
+ * Name `sv_` must not already exist in `js/bundle.js`.
+ */
+const START_SAVE_SELECT =
+  'sv_=({value:e,field:t,label:n,description:a,onChange:r,className:o})=>{const[s,i]=(0,Rc.useState)(()=>t.options.map(e=>({value:e.value,label:(0,Ho.t)(e.labelKey)})));(0,Rc.useEffect)(()=>{const e=window.electron;if(!e||!e.getSaveFiles)return;let t=!1;e.getSaveFiles().then(e=>{if(t)return;const n=[...e].sort((e,t)=>Date.parse(t.timestamp||"")-Date.parse(e.timestamp||""));i([{value:"__last__",label:"Last played"},...n.map(e=>{const t=(e.name||"").trim()||e.id,n=(e.worldName||"").trim();return{value:e.id,label:n&&n!==t?t+" ("+n+")":t}})])}).catch(()=>{});return()=>{t=!0}});return(0,wv.jsx)(J_,Object.assign({label:n,description:a},{children:(0,wv.jsx)(z_,{value:e,options:s,onChange:r,className:o})}))},';
+
 /** Re-add the vanilla Options → Debug tab (content ships in bundle; tab button was omitted). */
 export const patches = definePatches([
   {
@@ -10,18 +18,34 @@ export const patches = definePatches([
     code: 'F.length>0&&P.push("mods");P.push("debug");const O=',
     expectedMatches: 1,
   },
+  {
+    id: "mod-settings-start-save-select",
+    file: "js/bundle.js",
+    find: "Q_=({state:e,manifests:t})=>",
+    operation: "insertBefore",
+    code: START_SAVE_SELECT,
+    expectedMatches: 1,
+  },
+  {
+    id: "mod-settings-start-save-choice",
+    file: "js/bundle.js",
+    find: 'if("choice"===i.type)return(0,wv.jsx)(J_,Object.assign({label:c,description:d},{children:(0,wv.jsx)(z_,{value:"string"==typeof l?l:i.default,options:i.options.map(e=>({value:e.value,label:(0,Ho.t)(e.labelKey)})),onChange:u,className:"min-w-40"})}),n);',
+    operation: "replace",
+    code: 'if("choice"===i.type)return"startSave"===n&&"irishbruse.debug"===t.id?(0,wv.jsx)(sv_,{value:"string"==typeof l?l:i.default,field:i,label:c,description:d,onChange:u,className:"min-w-40"},n):(0,wv.jsx)(J_,Object.assign({label:c,description:d},{children:(0,wv.jsx)(z_,{value:"string"==typeof l?l:i.default,options:i.options.map(e=>({value:e.value,label:(0,Ho.t)(e.labelKey)})),onChange:u,className:"min-w-40"})}),n);',
+    expectedMatches: 1,
+  },
 ]);
 
 export const modinfo = defineModInfo({
   manifestVersion: 1,
-  id: "author.debug",
+  id: "irishbruse.debug",
   name: "debug",
   version: "0.0.1",
   apiVersion: 1,
   entry: "main.js",
-  author: "Your Name",
+  author: "IrishBruse",
   description:
-    "Dev companion: DevTools, splash skip, main-menu auto-boot, disable autosave, Options Debug tab, and F3 Debug panel. Installed on debug builds only.",
+    "Dev companion: DevTools, auto-load save, disable autosave, Options Debug tab. Installed on debug builds only.",
   dependencies: [],
   loadOrder: -100,
   configSchema: {
@@ -44,24 +68,26 @@ export const modinfo = defineModInfo({
       labelKey: "F12 opens DevTools",
       descriptionKey: "F12 opens Electron DevTools. That can disconnect an IDE debugger session.",
     },
-    skipSplash: {
+    autoLoad: {
       type: "boolean",
-      default: false,
-      labelKey: "Skip splash",
-      descriptionKey: "Click through the startup splash while logos are visible.",
+      default: true,
+      labelKey: "Auto-load save",
+      descriptionKey:
+        "On load, reload with ?db_load= for the save chosen below. Skips the splash and main menu.",
     },
-    autoBoot: {
-      type: "boolean",
-      default: false,
-      labelKey: "Auto-boot Continue",
-      descriptionKey: "Click Continue on the main menu after it has been visible.",
+    startSave: {
+      type: "choice",
+      default: "__last__",
+      labelKey: "Start save",
+      descriptionKey: "Used when Auto-load save is on. Applies on the next main-menu boot.",
+      options: [{ value: "__last__", labelKey: "Last played" }],
     },
     engineDebug: {
       type: "boolean",
       default: true,
-      labelKey: "Debug panel (F3)",
+      labelKey: "Engine debug",
       descriptionKey:
-        "Turns engine debug.active on so vanilla Debug / Stats appear. Also under Options → Debug. F3 toggles the companion panel (top left).",
+        "Turns engine debug.active on so vanilla Debug / Stats appear. F3 toggles the companion debug overlay. Also under Options → Debug.",
     },
     disableAutosave: {
       type: "boolean",

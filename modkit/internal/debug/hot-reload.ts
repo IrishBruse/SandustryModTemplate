@@ -182,7 +182,7 @@ async function fetchNotify(): Promise<(NotifyPayload & { n: number }) | null> {
 
 /**
  * True when this script body is running because a hot reload evaluated a new
- * `main.js`. Use this to skip one-shot boot work (DevTools, splash skip).
+ * `main.js`. Use this to skip one-shot boot work (DevTools, auto-load).
  */
 export function isHotReloadEval(modId: string): boolean {
   return getHost(modId)?.installed === true;

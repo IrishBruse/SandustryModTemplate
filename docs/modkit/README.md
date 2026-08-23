@@ -5,7 +5,7 @@ Shared kit for Sandustry mods. It includes:
 - **React runtime** — `sandkit.react` wired through `modkit/internal/esbuild/react.ts` and JSX runtimes
 - **Utils** — small helpers (`safe`, settings, scene checks, retro console registration)
 - **UI** — shared React components under `modkit/ui/`. Live canvases and PNGs live under `docs/ui/canvas/` (`npm run ui:css` / `ui:previews`).
-- **Debug / hot reload** — companion mod `src/debug` (DevTools, splash skip, auto-boot, F3) plus injected hot reload (`reloaded`) and `console` → file log inject
+- **Debug / hot reload** — companion mod `src/debug` (DevTools, auto-load last save, F3) plus injected hot reload (`reloaded`) and `console` → file log inject
 - **Modinfo helpers** — `defineModInfo` / `definePatches` with colocated manifest and patch types
 
 Mods import this folder through the `@modkit/*` path alias. The game still loads a single bundled `main.js` (esbuild IIFE). Do not emit `import` / `export` in the output.

@@ -19,5 +19,4 @@ One markdown file per todo. Name files `NNN-short-slug.md` (zero-padded). Keep e
 | [006-input-binding-example.md](006-input-binding-example.md)     | `api.input.registerBinding` minimal demo            |
 | [007-events-example.md](007-events-example.md)                   | `api.events.on` subscribe and dispose               |
 | [008-mod-assets-example.md](008-mod-assets-example.md)           | `mod/` static files + `assets.getUrl`               |
-| ~~[009-settings-example.md](009-settings-example.md)~~           | Done — `settings-example` + [config-schema.md](../modkit/config-schema.md) |
 | [010-content-machine-example.md](010-content-machine-example.md) | Elements + structure + machine processing loop      |
