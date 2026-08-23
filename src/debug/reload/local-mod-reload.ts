@@ -95,7 +95,8 @@ async function hotEvalMain(api: SandkitApi, record: LocalModRecord, source: stri
 
 /**
  * Poll local-mod folders published by the loader patch. Workshop mods are not
- * in that registry. Does not watch this companion (avoids tearing down the poller).
+ * in that registry. Watches this companion's `patches.json` / `modinfo.json`
+ * (and worker entry) for restart toasts only — never hot-evals its own `main.js`.
  */
 export function startLocalModReload(api: SandkitApi): void {
   const tracked = new Map<string, Tracked>();

@@ -185,7 +185,7 @@ Workshop mods are not added to the registry. See [patches.md](../patches.md) for
 | ---------------------------------------------- | -------------------------------------------------------------------------- |
 | [`src/debug/`](../../src/debug/)               | Companion: `mod.ts`, `main.ts`, `patches.ts` at the root                   |
 | [`src/debug/boot/`](../../src/debug/boot/)     | Auto-load, Start save picker, DevTools boot, autosave, settings helpers |
-| [`src/debug/reload/`](../../src/debug/reload/) | Local-mod poll and hot-eval                                                |
+| [`src/debug/reload/`](../../src/debug/reload/) | Local-mod poll, hot-eval, loader health (`loader-health.ts`)               |
 | [`src/debug/f3/`](../../src/debug/f3/)         | F3 overlay, engine debug sync, built-in sections                           |
 | `modkit/internal/debug/index.ts`               | `onDispose` only                                                           |
 | `modkit/internal/esbuild/debug.empty.ts`       | Release stub: no-op `onDispose`                                            |
