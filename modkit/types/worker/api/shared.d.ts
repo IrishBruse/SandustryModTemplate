@@ -10,6 +10,7 @@ import { shared as sharedShared } from "../../shared/api/shared";
  * main-thread `sandkit.api.shared`.
  */
 export namespace shared {
+  /** Named shared memory buffers for worker threads. */
   export namespace buffers {
     /**
      * Get or create a named shared buffer on this worker.
@@ -20,6 +21,8 @@ export namespace shared {
     /** Read an existing buffer without creating one. */
     export import get = sharedShared.buffers.get
   }
+  /** Opaque shared array backing store (typed at runtime). */
   export import SharedArray = sharedShared.SharedArray
+  /** Discriminator for the underlying typed array kind. */
   export import SharedArrayType = sharedShared.SharedArrayType
 }

@@ -16,6 +16,17 @@ Vendored TypeScript declarations for the live `sandkit` object injected into mod
 | `worker/` | Worker-thread `sandkit.api` (see `WorkerSandkitApi`) |
 | `shared/` | Internal base shapes reused by main and worker declarations |
 
+## Runtime shape vs `export namespace`
+
+At runtime, every API bag is a **plain object** with function properties — not a TypeScript `namespace`. MCP checks on a live game session show:
+
+- `sandkit.api`, `sandkit.api.ui`, `sandkit.api.ui.overlays`, and `sandkit.engine.api.game` are all `typeof "object"` with `Object.prototype`
+- Nested keys hold functions or further plain objects
+
+Declaration files use `export namespace` because it is the usual `.d.ts` pattern for nested object APIs. It matches how you call the API (`sandkit.api.ui.update`) and supports `export import` when main and worker share base shapes under `shared/`.
+
+`interface` or `type` object literals would also work for runtime shape, but they do not support the `export import` re-export style used across main, worker, and shared modules.
+
 ## Usage
 
 - **Main mod (`main.js`):** use the ambient free name `sandkit`. Type aliases such as `SandkitApi` are global; do not import a value binding.

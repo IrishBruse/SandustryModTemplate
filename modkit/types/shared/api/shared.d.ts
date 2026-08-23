@@ -7,6 +7,7 @@
  * @internal Base namespace reused by main and worker declarations.
  */
 export namespace shared {
+  /** Named shared memory buffers (`create` / `get` on main; `require` on workers). */
   export namespace buffers {
     /** Look up a named shared buffer without creating it. */
     export function get(key: string): SharedArray | undefined;

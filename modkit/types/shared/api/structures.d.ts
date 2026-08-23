@@ -33,6 +33,7 @@ export namespace structures {
   /** Merge partial data onto a structure (optionally propagate to workers). */
   export function setData(structure: Structure, partial: any, options?: { propagateToWorkers?: boolean; }): void;
 
+  /** Structure processing enablement checks. */
   export namespace processing {
     /** True when processing is enabled at the cell. */
     export function isEnabledAt(...args: CellCoordinates): boolean;
