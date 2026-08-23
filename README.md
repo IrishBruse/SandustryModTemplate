@@ -4,12 +4,12 @@ TypeScript template for [Sandustry](https://store.steampowered.com/app/2764460/S
 
 ## Features
 
-- **Multi-mod** — One repo, many mods. Each `src/<name>/` folder with a `mod.ts` builds to its own game folder. Mods cannot import from each other. [Folder layout](https://ethanconneely.com/SandustryModTemplate/#/layout)
-- **Multi-file TypeScript** — Split each mod across `src/<name>/`; [esbuild](https://esbuild.github.io/) bundles it to one `main.js`. Types vendored from [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types) under `modkit/types/`. [Builds](https://ethanconneely.com/SandustryModTemplate/#/builds) · [layout](https://ethanconneely.com/SandustryModTemplate/#/layout)
+- **Multi-mod** — One repo, many mods. Each `src/<name>/` or `examples/<name>/` folder with a `mod.ts` builds to its own game folder. Mods cannot import from each other. [Folder layout](https://ethanconneely.com/SandustryModTemplate/#/layout)
+- **Multi-file TypeScript** — Split each mod across its folder; [esbuild](https://esbuild.github.io/) bundles it to one `main.js`. Types vendored from [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types) under `modkit/types/`. [Builds](https://ethanconneely.com/SandustryModTemplate/#/builds) · [layout](https://ethanconneely.com/SandustryModTemplate/#/layout)
 - **React HUD** — JSX via `sandkit.react` (no extra React package). [React](https://ethanconneely.com/SandustryModTemplate/#/modkit/react) · [UI kit](https://ethanconneely.com/SandustryModTemplate/#/ui/)
 - **Modkit utils** — `safe`, settings, scene checks, retro console. [Utils](https://ethanconneely.com/SandustryModTemplate/#/modkit/utils)
 - **Hot reload** — `npm run dev` reloads the mod without a game restart. [Builds](https://ethanconneely.com/SandustryModTemplate/#/builds) · [debug](https://ethanconneely.com/SandustryModTemplate/#/modkit/debug)
-- **Debug helpers** — companion mod `src/debug` (F12 DevTools, auto-load save, Start save picker in Options → Mods). [Debug](https://ethanconneely.com/SandustryModTemplate/#/modkit/debug)
+- **Debug helpers** — companion mod `src/debug` (F12 DevTools, auto-load save, Start save panel). [Debug](https://ethanconneely.com/SandustryModTemplate/#/modkit/debug)
 - **Typed `mod.ts`** — one file per mod for the modinfo and [patches](https://ethanconneely.com/SandustryModTemplate/#/patches). [Folder layout](https://ethanconneely.com/SandustryModTemplate/#/layout)
 
 ## Quick start

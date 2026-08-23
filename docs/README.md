@@ -4,7 +4,7 @@ TypeScript template for [Sandustry](https://store.steampowered.com/app/2764460/S
 
 ## Features
 
-- **[Multi-mod](layout.md)** — One repo, many mods. Each `src/<name>/` with a `mod.ts` builds to its own game folder.
+- **[Multi-mod](layout.md)** — One repo, many mods. Each `src/<name>/` or `examples/<name>/` with a `mod.ts` builds to its own game folder.
 - **[TypeScript](https://github.com/flamableassassin/sandustry-modding-types ":target=_blank")** — Sandkit API types vendored in `modkit/types/` from `flamableassassin/sandustry-modding-types`.
 - **[React HUD](modkit/react.md)** — JSX via `sandkit.react`, plus the [UI kit gallery](ui/README.md).
 - **[Hot reload](builds.md)** — `npm run dev` reloads without a game restart.

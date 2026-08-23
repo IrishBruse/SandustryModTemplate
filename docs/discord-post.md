@@ -17,7 +17,7 @@ npm run dev
 ```
 
 1. Press **F5** in VS Code, or run `npm run sandustry`.
-2. Copy `src/hello-world-example/` to `src/<your-mod>/` and set `id`, `name`, `author`, and `description` in `mod.ts`.
+2. Copy `examples/hello-world/` to `src/<your-mod>/` and set `id`, `name`, `author`, and `description` in `mod.ts`.
 
 # Features
 
@@ -38,7 +38,7 @@ Run `npm run dev`. Save a file. The mod reloads in game with no restart.
 It also notifies of any changes that cant be hotreloaded with a notification at the top of the screen.
 
 **Debug helpers:**
-Debug builds install the **debug** companion (`src/debug`). It adds F12 DevTools, auto-load save, Start save picker in Options → Mods, and console globals. `npm run build` omits that mod.
+Debug builds install the **debug** companion (`src/debug`). It adds F12 DevTools, auto-load save, a Start save panel, and console globals. `npm run build` omits that mod.
 
 **Typed `mod.ts`:**
 One file per mod for the manifest and patches. Each `src/<mod-name>/` folder with a `mod.ts` is a separate game mod.

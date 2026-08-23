@@ -11,7 +11,7 @@ The game runs `main.js` as a script body (`new Function`). `sandkit` is already 
 | `npm run dev`           | Included; install `src/debug`                                     | Included       | OS mods folder while watching; removed when the watch stops  |
 | `--game` / `--debug`    | Included; install `src/debug`                                     | Included       | Game mods folder                                             |
 
-`--no-debug` forces a release-style bundle even when watch or game flags are set. `--mod <folder>` builds one `src/<name>/` folder. Debug builds also install `src/debug` unless `--mod debug`. The build discovers every `src/*/mod.ts`.
+`--no-debug` forces a release-style bundle even when watch or game flags are set. `--mod <folder>` builds one mod folder. Debug builds also install `src/debug` unless `--mod debug`. The build discovers every `src/*/mod.ts` and `examples/*/mod.ts`.
 
 Debug builds emit **inline** source maps on `main.js` (needed for `new Function` eval). Use `--sourcemap` to force maps on a release build, or `--no-sourcemap` to omit them from a debug build.
 
@@ -27,7 +27,7 @@ The game ships Tailwind **v3.4.19** inside `bundle.js`. That stylesheet is purge
 
 Sandkit loads `main.js` only. There is no CSS file in the mod manifest. The build still has to insert a `<style>` tag. Import shared `@modkit/ui/tailwind.css` from the mod entry. Import `@modkit/ui/options.css` only when you use `OptionsSlider` / `OptionsSliderRow`. The kit re-exports those React components from `modkit/ui/options/index.ts` so esbuild does not pick `options.css` instead. The build inlines CSS as text (no `main.css` in the mod folder). The compiled Tailwind sheet is **only the utilities this bundle uses**: esbuild lists the source files it packed, then Tailwind scans those files. Unused `modkit/ui` components do not add CSS. Mods that never import those files skip the compile.
 
-The insert lives in [src/overlay-hotkey-example/main.ts](../src/overlay-hotkey-example/main.ts) (`style#<mod-id>-tailwind`). Hot reload removes that tag before it inserts a new one.
+The insert lives in [examples/overlay-hotkey/main.ts](../examples/overlay-hotkey/main.ts) (`style#<mod-id>-tailwind`). Hot reload removes that tag before it inserts a new one.
 
 Do not enable Tailwind preflight. The game already resets `*, ::before, ::after`. A second preflight can change the HUD.
 
@@ -56,9 +56,9 @@ In game:
 ```bash
 npm run setup            # check install, extract sandustry/, link logs/ (one time)
 npm run dev              # watch all src/ mods, debug on (required before F5)
-npm run dev -- --mod overlay-hotkey-example
+npm run dev -- --mod overlay-hotkey
 npm run build            # release all mods (stay in the OS mods folder)
-npm run build -- --mod overlay-hotkey-example
+npm run build -- --mod overlay-hotkey
 npm run build:release    # release staging to build/<folder>/ (Workshop assets)
 npm run build:release -- --mod selection-capture
 npm run publish          # build:release + SteamCMD Workshop upload
@@ -74,9 +74,9 @@ When `npm run dev` stops (Ctrl+C, terminal close, or process exit), it removes t
 
 **F5** (VS Code `Sandustry` launch) stops any running game, launches with `--remote-debugging-port`, waits until CDP `:9222` responds, then attaches the debugger to the **renderer** (where mods run). It does not rebuild the mod — keep `npm run dev` running for the bundle and file logs. The debug companion polls local mod files for hot reload (Workshop mods are ignored). **Restart** in the debugger toolbar kills that Electron process and starts a new one, then the renderer attach reconnects — a page reload does not restart workers or re-apply patches. If attach fails or ports linger, press F5 again or run the **sandustry:stop** task.
 
-The watch rebuilds when you save files under that mod's `src/<name>/` folder (including `mod.ts` and new files) or under `modkit/` (except `types/`). A Tailwind CSS change queues a second rebuild after the current one finishes, so the next save is not dropped.
+The watch rebuilds when you save files under that mod's folder (`src/<name>/` or `examples/<name>/`, including `mod.ts` and new files) or under `modkit/` (except `types/`). A Tailwind CSS change queues a second rebuild after the current one finishes, so the next save is not dropped.
 
-Renderer attach loads source maps from scripts named `sandkit-workshop://<modId>/main.js` (and from the OS mods folder / `dist/`). Debug builds rewrite inline maps to `file://` sources, add a sandkit loader line offset, and set matching `sourceURL` so breakpoints in `src/<name>/` bind through `new Function` eval. Do not press **F12** while the IDE debugger is attached — Electron DevTools steals that session. Keep **Open DevTools on load** off under F5 for the same reason.
+Renderer attach loads source maps from scripts named `sandkit-workshop://<modId>/main.js` (and from the OS mods folder / `dist/`). Debug builds rewrite inline maps to `file://` sources, add a sandkit loader line offset, and set matching `sourceURL` so breakpoints in mod source bind through `new Function` eval. Do not press **F12** while the IDE debugger is attached — Electron DevTools steals that session. Keep **Open DevTools on load** off under F5 for the same reason.
 
 ## Workshop publish
 

@@ -28,7 +28,7 @@ Avoid:
 - Main docs sidebar links to **Sandkit API** only (`api/README.md`). The API tree uses [`api/_sidebar.md`](api/_sidebar.md), generated with the reference (commit this file so the API sidebar works before a full regen).
 - Other files under `docs/api/` are generated; run `npm run docs:api` before `npm run docs` or publishing the docs site.
 
-## Sample mod READMEs (`src/*-example/README.md`)
+## Sample mod READMEs (`examples/*/README.md`)
 
 Short player-facing copy. Builds do not copy these files into the game folder or `build/` staging.
 

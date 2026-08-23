@@ -17,7 +17,7 @@ npm install
 npm run setup
 ```
 
-Root `npm install` sets up the template. It also runs `npm install` in each `src/<name>/` that has a `package.json`. Put mod-only packages there — not in the repo root.
+Root `npm install` sets up the template. It also runs `npm install` in each mod folder that has a `package.json` (`src/` or `examples/`). Put mod-only packages there — not in the repo root.
 
 `npm run setup` checks the machine (Node version, root and mod npm installs, vendored types in `modkit/types/`, Sandustry binary, game asar, Steam **[mods]** beta, and `sandkit` in the bundle). It then extracts game source to `sandustry/` and links `logs/`. Run it again after a Sandustry update if you need a fresh extract.
 
@@ -42,24 +42,24 @@ With the **debug** companion installed (debug builds), turn on **Auto-load last 
 
 In game:
 
-- **Alt+E** — overlay from `overlay-hotkey-example`
-- Toast on load — `hello-world-example`
+- **Alt+E** — overlay from `examples/overlay-hotkey`
+- Toast on load — `examples/hello-world`
 - **C** then **F7** — Selection Capture (PNG / GIF)
 
 Edit a file under `src/`. Save. The mod reloads without a game restart.
 
 ## 4. Make your own mod
 
-1. Copy `src/hello-world-example/` to `src/<your-mod>/`.
+1. Copy `examples/hello-world/` to `src/<your-mod>/`.
 2. Open that folder’s `mod.ts`.
 3. Set `id`, `name`, `author`, and `description`.
 4. Change `main.ts` (and add `ui/` when you need overlays).
 
 Rules:
 
-- Each `src/<name>/` with a `mod.ts` is a separate game mod.
+- Each `src/<name>/` or `examples/<name>/` with a `mod.ts` is a separate game mod.
 - The OS mods folder uses `modinfo.name`.
-- Import `@modkit/*` and files in your own folder only. Do not import another `src/<name>/` tree.
+- Import `@modkit/*` and files in your own folder only. Do not import another mod folder.
 - Import `onDispose` from `@modkit/debug` when a registration needs cleanup. Release builds stub that package. The debug companion watches local mods.
 
 ## Useful commands
@@ -72,7 +72,7 @@ Rules:
 | `npm run sandustry` | Stop and launch the game (no build)                              |
 | `npm run typecheck` | TypeScript check                                                 |
 
-Build one folder: `npm run dev -- --mod hello-world-example`.
+Build one folder: `npm run dev -- --mod hello-world`.
 
 ## Next steps
 

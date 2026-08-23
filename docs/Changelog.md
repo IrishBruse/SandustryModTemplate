@@ -5,16 +5,20 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ## Unreleased
 
+### Changed
+
+- **Sample mods** moved from `src/*-example/` to [`examples/`](examples/README.md) without the `-example` suffix (`hello-world`, `overlay-hotkey`, …). `src/` keeps shipped mods (`selection-capture`, `debug`). Copy an example into `src/<your-mod>/` to start a new mod. See [layout.md](layout.md).
+
 ### Added
 
-- **`custom-element-example`:** register a powder element, paint at the mouse cell with **P**, and unlock it in the codex. See [`src/custom-element-example/`](../src/custom-element-example/).
-- **`input-binding-example`:** `registerBinding`, `getDisplayKey`, and a small overlay that reflects rebinding in settings. See [`src/input-binding-example/`](../src/input-binding-example/).
-- **`events-example`:** subscribe to `game:ready` and `frame:render`, and unsubscribe through `onDispose` on hot reload. See [`src/events-example/`](../src/events-example/).
-- **`mod-assets-example`:** ship files under `mod/` and load them with `assets.getUrl`. See [`src/mod-assets-example/`](../src/mod-assets-example/).
-- **`content-machine-example`:** input and output elements, a custom structure, and `addProcessor` conversion loop. See [`src/content-machine-example/`](../src/content-machine-example/).
+- **`custom-element`:** register a powder element, paint at the mouse cell with **P**, and unlock it in the codex. See [`examples/custom-element/`](../examples/custom-element/).
+- **`input-binding`:** `registerBinding`, `getDisplayKey`, and a small overlay that reflects rebinding in settings. See [`examples/input-binding/`](../examples/input-binding/).
+- **`events`:** subscribe to `game:ready` and `frame:render`, and unsubscribe through `onDispose` on hot reload. See [`examples/events/`](../examples/events/).
+- **`mod-assets`:** ship files under `mod/` and load them with `assets.getUrl`. See [`examples/mod-assets/`](../examples/mod-assets/).
+- **`content-machine`:** input and output elements, a custom structure, and `addProcessor` conversion loop. See [`examples/content-machine/`](../examples/content-machine/).
 - **Debug companion:** watches **local** mods (not Workshop) and hot-evals `main.js` when the mod has `onDispose` or auto-tracked `api.ui.inject`. Settings: **Watch local mods**, **If hot reload cannot run** (off / toast / reload page). Loader patches on `js/external-mod-runtime.js` define `reloaded` and publish a local-mod registry. `patches.json` / `modinfo.json` / worker still require a game restart. See [modkit/debug.md](modkit/debug.md).
-- **Debug companion:** **Start save** in Options → Mods lists local saves (bundle patch) and chooses which world auto-load boots with `?db_load=`. See [modkit/debug.md](modkit/debug.md).
-- **`settings-example`:** sample mod that shows every game-supported `configSchema` field type (`boolean`, `number`, `choice`) and reacts with `settings.onChange`. See [modkit/config-schema.md](modkit/config-schema.md) and [`src/settings-example/`](../src/settings-example/).
+- **Debug companion:** **Start save** is Last played or Mod storage in Options. A companion panel lists local saves and writes `api.storage`. Auto-load boots that world with `?db_load=`. See [modkit/debug.md](modkit/debug.md).
+- **`settings`:** sample mod that shows every game-supported `configSchema` field type (`boolean`, `number`, `choice`) and reacts with `settings.onChange`. See [modkit/config-schema.md](modkit/config-schema.md) and [`examples/settings/`](../examples/settings/).
 - **`npm run docs:api`:** generates a Sandkit API Markdown reference under `docs/api/` from vendored `modkit/types/` JSDoc (TypeDoc). `npm run docs` runs this, then serves Docsify. See [modkit/types/README.md](../modkit/types/README.md).
 - **Debug companion:** a bundle patch restores the vanilla **Options → Debug** tab (Hard Mode, Debug Active, Draw Chunks, Cinematic, Debug Console). See [modkit/debug.md](modkit/debug.md).
 - **`npm run test`:** Node test runner on `src/**/*.test.ts` (type stripping on Node 24). Selection Capture tests the 1 MB GIF encode cap. `OptionsPanel`, `OptionsSection`, `OptionsRow`, `OptionsSelect`, `OptionsSlider`, `OptionsSliderRow`, `OptionsSwitch`, `OptionsNumberInput`, and `OptionsButton` — same Tailwind classes as the in-game Options dialog. Import `@modkit/ui/options.css` only for slider thumb/track. See [ui/overview.md](ui/overview.md).
@@ -24,13 +28,16 @@ The template has no release tags yet. Dated sections match the day the change la
 ### Removed
 
 - Watch HTTP hot-reload notify (`GET /hot-reload/last` and **Ctrl+R** in the `npm run dev` TTY). The debug companion polls local files instead. `npm run dev` still starts `scripts/dev/log-server.js` for `POST /log`. See [modkit/debug.md](modkit/debug.md).
+- Debug companion bundle patch `mod-settings-start-save`. Choice fields cannot list live saves. The Start save panel writes `api.storage` instead. See [modkit/debug.md](modkit/debug.md).
 
 ### Changed
 
-- **`@modkit/debug`** exports `onDispose` only. Re-eval, file poll, and loader patches live in `src/debug/`. See [modkit/debug.md](modkit/debug.md).
+- **Debug companion:** source layout — `mod.ts`, `main.ts`, and `patches.ts` at `src/debug/`; other files under `boot/`, `reload/`, and `f3/`. See [modkit/debug.md](modkit/debug.md).
+- **Debug companion:** game-file patches live in [`src/debug/patches.ts`](../src/debug/patches.ts) (re-exported from `mod.ts`). See [modkit/debug.md](modkit/debug.md).
+- **`@modkit/debug`** exports `onDispose` only. Re-eval and file poll live in `src/debug/reload/`. Loader rewrites live in `src/debug/patches.ts`. See [modkit/debug.md](modkit/debug.md).
 - **Debug companion:** `loadOrder` is `-2147483648` so the companion runs before other local mods. See [modkit/debug.md](modkit/debug.md).
 - **Debug companion:** local-mod hot reload no longer needs esbuild inject in each bundle. Subscribe to the companion on the Workshop (this template still installs a local copy on debug builds). It watches **local** folders only, not other Workshop items. See [modkit/debug.md](modkit/debug.md).
-- **Debug companion:** **Auto-load save** (default on) replaces splash skip and main-menu Continue clicking. **Start save** in Options → Mods picks the world (dynamic list via bundle patch). Legacy `autoBoot` prefs still apply until you set `autoLoad`. See [modkit/debug.md](modkit/debug.md).
+- **Debug companion:** **Auto-load save** (default on) replaces splash skip and main-menu Continue clicking. **Start save** in Options chooses Last played or Mod storage. Pick a world in the Start save panel. Legacy `autoBoot` prefs still apply until you set `autoLoad`. See [modkit/debug.md](modkit/debug.md).
 - **`configSchema` types** in `modkit/modinfo.ts` match the game validator: `boolean`, `number`, and `choice` (with `{ value, labelKey }` options). Removed incorrect `string` and `enum` field types. See [modkit/config-schema.md](modkit/config-schema.md).
 - **`modkit/types/`:** vendored `.d.ts` files from [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types) (MIT). Layout mirrors the live `sandkit` object (`sandkit/api`, `sandkit/engine/api`, `worker/`, …). See [`modkit/types/ATTRIBUTION.md`](../modkit/types/ATTRIBUTION.md). Ambient `sandkit` is in [`modkit/types/global.d.ts`](../modkit/types/global.d.ts); template-only `reloaded` and `WorkerSandkitApi` are in [`modkit/ambient.d.ts`](../modkit/ambient.d.ts).
 - **`npm run publish`:** if SteamCMD is not on PATH, the script downloads Valve's official installer into `.tmp/steamcmd/` and then uploads. It does not add the npm `steamcmd` package (old `request` / `unzip` deps, and that API is game download, not Workshop). See [builds.md](builds.md#workshop-publish).

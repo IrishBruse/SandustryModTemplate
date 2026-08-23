@@ -2,24 +2,25 @@
 
 This page lists the folders you use when you write a mod.
 
-Each `src/<name>/` folder with a `mod.ts` is one game mod.
+Each `src/<name>/` or `examples/<name>/` folder with a `mod.ts` is one game mod.
 Put shared code in `modkit/`.
-Do not import files from another `src/<name>/` folder.
+Do not import files from another mod folder (in `src/` or `examples/`).
 
 New to the template? Start with [Quick start](quick-start.md).
 
 ## Repo folders
 
-| Path            | What it is                                |
-| --------------- | ----------------------------------------- |
-| `src/<name>/`   | Your mod (`mod.ts` + `main.ts`)           |
-| `modkit/`       | Shared kit. Import as `@modkit/*`         |
-| `dist/<name>/`  | Link to that mod's folder in the game     |
-| `build/<name>/` | Release staging (`npm run build:release`) |
-| `logs/`         | Link to Sandustry log files               |
+| Path              | What it is                                |
+| ----------------- | ----------------------------------------- |
+| `src/<name>/`     | Your mod (`mod.ts` + `main.ts`)           |
+| `examples/<name>/` | Sample mods to copy into `src/`           |
+| `modkit/`         | Shared kit. Import as `@modkit/*`         |
+| `dist/<name>/`    | Link to that mod's folder in the game     |
+| `build/<name>/`   | Release staging (`npm run build:release`) |
+| `logs/`           | Link to Sandustry log files               |
 
-The game folder uses the `name` field in `mod.ts`, not the `src/` folder name.
-`dist/<src-folder>/` points at that game folder.
+The game folder uses the `name` field in `mod.ts`, not the repo folder name.
+`dist/<folder>/` points at that game folder.
 
 You do not copy files into the game folder by hand. `npm run dev` and `npm run build` write them.
 
@@ -32,31 +33,36 @@ You do not copy files into the game folder by hand. `npm run dev` and `npm run b
 
 ## Sample mods
 
-Copy a folder under `src/` to start a new mod. `hello-world-example` is the smallest.
+Copy a folder from [`examples/`](../examples/) into `src/<your-mod>/`. [`hello-world`](../examples/hello-world/) is the smallest.
 
-| Folder                                                           | What it shows                                       |
-| ---------------------------------------------------------------- | --------------------------------------------------- |
-| [`hello-world-example`](../src/hello-world-example/)             | Toast on load — good copy target                    |
-| [`overlay-hotkey-example`](../src/overlay-hotkey-example/)       | React overlay + Tailwind (**Alt+E**)                |
-| [`retro-game-example`](../src/retro-game-example/)               | Retro Console demo                                  |
-| [`management-button-example`](../src/management-button-example/) | Management-column row                               |
-| [`worker-api-example`](../src/worker-api-example/)               | Worker-thread `sandkit.api`                         |
-| [`settings-example`](../src/settings-example/)                   | All `configSchema` types (`boolean` / `number` / `choice`) |
-| [`custom-element-example`](../src/custom-element-example/)       | Register an element and paint at the mouse cell     |
-| [`input-binding-example`](../src/input-binding-example/)         | `api.input.registerBinding` + bound-key UI          |
-| [`events-example`](../src/events-example/)                       | `api.events.on` subscribe and dispose               |
-| [`mod-assets-example`](../src/mod-assets-example/)               | Static `mod/` files + `assets.getUrl`               |
-| [`content-machine-example`](../src/content-machine-example/)     | Elements + structure + processor loop               |
-| [`selection-capture`](../src/selection-capture/)                 | Screenshot / GIF recorder (**C**, **F7**)           |
-| [`debug`](../src/debug/)                                         | Dev companion (debug builds only). Do not copy this |
+| Folder | What it shows |
+| --- | --- |
+| [`hello-world`](../examples/hello-world/) | Toast on load — good copy target |
+| [`overlay-hotkey`](../examples/overlay-hotkey/) | React overlay + Tailwind (**Alt+E**) |
+| [`retro-game`](../examples/retro-game/) | Retro Console demo |
+| [`management-button`](../examples/management-button/) | Management-column row |
+| [`worker-api`](../examples/worker-api/) | Worker-thread `sandkit.api` |
+| [`settings`](../examples/settings/) | All `configSchema` types (`boolean` / `number` / `choice`) |
+| [`custom-element`](../examples/custom-element/) | Register an element and paint at the mouse cell |
+| [`input-binding`](../examples/input-binding/) | `api.input.registerBinding` + bound-key UI |
+| [`events`](../examples/events/) | `api.events.on` subscribe and dispose |
+| [`mod-assets`](../examples/mod-assets/) | Static `mod/` files + `assets.getUrl` |
+| [`content-machine`](../examples/content-machine/) | Elements + structure + processor loop |
 
-## Files in `src/<name>/`
+Shipped mods in `src/` (not copy targets for new mods):
 
-Every mod needs these files:
+| Folder | What it shows |
+| --- | --- |
+| [`selection-capture`](../src/selection-capture/) | Screenshot / GIF recorder (**C**, **F7**) |
+| [`debug`](../src/debug/) | Dev companion (debug builds only). Do not copy this |
+
+## Files in a mod folder
+
+Every mod under `src/<name>/` or `examples/<name>/` needs these files:
 
 | File            | Role                                                                                                                                                            |
 | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `mod.ts`        | Manifest and optional patches. `export const modinfo = defineModInfo(...)`. Use `modinfo.id` for the mod id. The build writes `modinfo.json` and `patches.json` |
+| `mod.ts`        | Manifest. Optional `patches` export (or re-export from `patches.ts`). `export const modinfo = defineModInfo(...)`. Use `modinfo.id` for the mod id. The build writes `modinfo.json` and `patches.json` |
 | `main.ts`       | Mod entry. Debug builds get free `reloaded` from the debug companion loader patch. Release defines `reloaded` as `false` |
 | `tsconfig.json` | Isolated TypeScript project. This folder cannot see sibling mods                                                                                                |
 
@@ -70,6 +76,7 @@ Add these when you need them:
 | `package.json`               | npm packages for this mod only                                                                      |
 | `README.md` / `CHANGELOG.md` | Repo docs only. Publish reads `CHANGELOG.md` for Steam change notes; builds do not copy these files |
 | `workshop/`                  | Workshop assets (`workshop.json`, previews, `workshop.txt`, `screenshots/`)                         |
+| `patches.ts`                 | Optional patch list. Re-export `patches` from `mod.ts`. The debug companion uses this.              |
 
 ## What you import
 
