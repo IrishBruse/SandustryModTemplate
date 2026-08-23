@@ -155,7 +155,7 @@ export function Overlay() {
         });
         switch (result) {
           case "ok":
-            api.ui.toast("GIF saved — check your downloads", {});
+            api.ui.toast("GIF saved", {});
             break;
           case "ok-1mb":
             api.ui.toast("GIF saved — 1 MB limit", {});
@@ -252,7 +252,13 @@ export function Overlay() {
             </OptionsSection>
             <OptionsSection title="Actions">
               <OptionsRow
-                label={phase === "encoding" ? "Encoding…" : phase === "recording" ? "Recording…" : "Record GIF"}
+                label={
+                  phase === "encoding"
+                    ? "Encoding…"
+                    : phase === "recording"
+                      ? "Recording…"
+                      : "Record GIF"
+                }
               >
                 <div className="flex items-center gap-2">
                   {!busy && recordGifKey ? <HotkeyBadge>{recordGifKey}</HotkeyBadge> : null}
