@@ -69,14 +69,14 @@ Add these when you need them:
 
 Import `@modkit/*` and files in your own folder only.
 
-| Import                                        | From                                                  |
-| --------------------------------------------- | ----------------------------------------------------- |
-| `@modkit/modinfo`                             | `defineModInfo` / `definePatches`                     |
-| `@modkit/react` / JSX                         | Runtime React from `sandkit.react`                    |
+| Import                                        | From                                                      |
+| --------------------------------------------- | --------------------------------------------------------- |
+| `@modkit/modinfo`                             | `defineModInfo` / `definePatches`                         |
+| `@modkit/react` / JSX                         | Runtime React from `sandkit.react`                        |
 | `@modkit/debug`                               | Hot reload (`onDispose`; free `reloaded` on debug builds) |
-| `@modkit/utils`                               | `safe`, `isEnabled`, `inGame`, `registerRetroGame`    |
-| `@modkit/ui`                                  | Shared React UI components                            |
-| `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix |
+| `@modkit/utils`                               | `safe`, `isEnabled`, `inGame`, `registerRetroGame`        |
+| `@modkit/ui`                                  | Shared React UI components                                |
+| `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix     |
 
 Types submodule: [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types) under `modkit/types/`. Ambient names live in [`modkit/sandkit-global.d.ts`](../modkit/sandkit-global.d.ts).
 

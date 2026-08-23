@@ -51,16 +51,16 @@ Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized dem
 
 ### `modkit/`
 
-| Path                | Role                                                                                                                 |
-| ------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `modkit/modinfo.ts` | `defineModInfo` / `definePatches` plus manifest and patch types                                                      |
-| `modkit/patches.ts` | Empty shared patch list (browser stub via `esbuild/patches.empty.ts`)                                                |
-| `modkit/esbuild/`           | React/JSX aliases and `patches.empty.ts` stub                                                                          |
-| `modkit/internal/esbuild/` | Debug esbuild inject (`console`, hot-reload) and release `@modkit/debug` stub |
-| `modkit/utils/`     | `safe`, `isEnabled`, `inGame`, `registerRetroGame`                                                                   |
-| `modkit/internal/debug/`  | Hot reload helpers (`onDispose`; inject calls `installHotReload` / `isHotReloadEval`) |
-| `modkit/log.ts`     | File-log helper used with the hot-reload watch server                                                                |
-| `modkit/types/`     | Sandkit API types submodule ([sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types)) |
+| Path                       | Role                                                                                                                 |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `modkit/modinfo.ts`        | `defineModInfo` / `definePatches` plus manifest and patch types                                                      |
+| `modkit/patches.ts`        | Empty shared patch list (browser stub via `esbuild/patches.empty.ts`)                                                |
+| `modkit/esbuild/`          | React/JSX aliases and `patches.empty.ts` stub                                                                        |
+| `modkit/internal/esbuild/` | Debug esbuild inject (`console`, hot-reload) and release `@modkit/debug` stub                                        |
+| `modkit/utils/`            | `safe`, `isEnabled`, `inGame`, `registerRetroGame`                                                                   |
+| `modkit/internal/debug/`   | Hot reload helpers (`onDispose`; inject calls `installHotReload` / `isHotReloadEval`)                                |
+| `modkit/log.ts`            | File-log helper used with the hot-reload watch server                                                                |
+| `modkit/types/`            | Sandkit API types submodule ([sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types)) |
 
 Hot reload boots via esbuild inject on **debug** builds only. Use free `reloaded`. Import `onDispose` from `@modkit/debug` when needed. Release defines `reloaded` as `false` and stubs `@modkit/debug` to `modkit/internal/esbuild/debug.empty.ts`.
 
@@ -101,12 +101,12 @@ Folders match `npm run` commands. Shared helpers live in `scripts/lib/`.
 
 ## Builds
 
-| Command                 | Debug helpers                                            | `debugPatches` | Output                                                       |
-| ----------------------- | -------------------------------------------------------- | -------------- | ------------------------------------------------------------ |
+| Command                 | Debug helpers                                                     | `debugPatches` | Output                                                       |
+| ----------------------- | ----------------------------------------------------------------- | -------------- | ------------------------------------------------------------ |
 | `npm run build`         | Stub (`modkit/internal/esbuild/debug.empty.ts`); omit `src/debug` | Omitted        | OS mods folder; `dist/<folder>/` links                       |
-| `npm run build:release` | Stub; omit `src/debug`                                   | Omitted        | `build/<folder>/` (Workshop staging; not the OS mods folder) |
-| `npm run dev`           | Included; install `src/debug`                            | Included       | OS mods folder while watching; removed when the watch stops  |
-| `--game` / `--debug`    | Included; install `src/debug`                            | Included       | Game mods folder                                             |
+| `npm run build:release` | Stub; omit `src/debug`                                            | Omitted        | `build/<folder>/` (Workshop staging; not the OS mods folder) |
+| `npm run dev`           | Included; install `src/debug`                                     | Included       | OS mods folder while watching; removed when the watch stops  |
+| `--game` / `--debug`    | Included; install `src/debug`                                     | Included       | Game mods folder                                             |
 
 `--no-debug` forces a release-style bundle. Debug builds emit inline source maps; `--sourcemap` / `--no-sourcemap` override. `--mod <folder>` builds one src folder. Debug builds also install `src/debug` unless `--mod debug`.
 

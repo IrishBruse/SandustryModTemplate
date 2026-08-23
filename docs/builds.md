@@ -4,12 +4,12 @@ The game runs `main.js` as a script body (`new Function`). `sandkit` is already 
 
 ## Debug vs release
 
-| Command                 | Debug helpers                                            | `debugPatches` | Output                                                       |
-| ----------------------- | -------------------------------------------------------- | -------------- | ------------------------------------------------------------ |
+| Command                 | Debug helpers                                                     | `debugPatches` | Output                                                       |
+| ----------------------- | ----------------------------------------------------------------- | -------------- | ------------------------------------------------------------ |
 | `npm run build`         | Stub (`modkit/internal/esbuild/debug.empty.ts`); omit `src/debug` | Omitted        | OS mods folder; `dist/<folder>/` links                       |
-| `npm run build:release` | Stub; omit `src/debug`                                   | Omitted        | `build/<folder>/` (Workshop staging; not the OS mods folder) |
-| `npm run dev`           | Included; install `src/debug`                            | Included       | OS mods folder while watching; removed when the watch stops  |
-| `--game` / `--debug`    | Included; install `src/debug`                            | Included       | Game mods folder                                             |
+| `npm run build:release` | Stub; omit `src/debug`                                            | Omitted        | `build/<folder>/` (Workshop staging; not the OS mods folder) |
+| `npm run dev`           | Included; install `src/debug`                                     | Included       | OS mods folder while watching; removed when the watch stops  |
+| `--game` / `--debug`    | Included; install `src/debug`                                     | Included       | Game mods folder                                             |
 
 `--no-debug` forces a release-style bundle even when watch or game flags are set. `--mod <folder>` builds one `src/<name>/` folder. Debug builds also install `src/debug` unless `--mod debug`. The build discovers every `src/*/mod.ts`.
 
