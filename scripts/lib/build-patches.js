@@ -14,23 +14,7 @@ export const CACHE_DIR = join(tmpdir(), "sandustry-mod-template");
 const JS_PATCH_PATH = /^js\/[^/]+\.js$/;
 const OPERATIONS = new Set(["insertBefore", "replace", "wrap"]);
 
-/** Resolve `@modkit/...` to `modkit/...`. */
-function modkitAliasPlugin() {
-  return {
-    name: "modkit-alias",
-    setup(build) {
-      build.onResolve({ filter: /^@modkit(?:\/|$)/ }, (args) => {
-        const rest = args.path === "@modkit" ? "" : args.path.slice("@modkit/".length);
-        return build.resolve(rest === "" ? "." : `./${rest}`, {
-          kind: args.kind,
-          importer: args.importer,
-          resolveDir: MODKIT_DIR,
-        });
-      });
-    },
-  };
-}
-
+import { modkitAliasPlugin } from "./modkit-alias.js";
 /**
  * Bundle a TypeScript entry and import it as Node ESM.
  * @param {string} entryPoint
@@ -45,7 +29,7 @@ export async function bundleAndImport(entryPoint, cacheName) {
     bundle: true,
     platform: "node",
     format: "esm",
-    plugins: [modkitAliasPlugin()],
+    plugins: [modkitAliasPlugin(MODKIT_DIR)],
     logLevel: "silent",
   });
   return import(`${pathToFileURL(outfile).href}?t=${Date.now()}`);

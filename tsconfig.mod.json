@@ -13,6 +13,8 @@
     "types": ["react"],
     "paths": {
       "*": ["./*"],
+      "@modkit/debug": ["./modkit/internal/debug"],
+      "@modkit/debug/*": ["./modkit/internal/debug/*"],
       "@modkit/*": ["./modkit/*"]
     }
   }

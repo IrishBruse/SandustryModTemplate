@@ -73,6 +73,7 @@ Import `@modkit/*` and files in your own folder only.
 | --------------------------------------------- | ----------------------------------------------------- |
 | `@modkit/modinfo`                             | `defineModInfo` / `definePatches`                     |
 | `@modkit/react` / JSX                         | Runtime React from `sandkit.react`                    |
+| `@modkit/debug`                               | Hot reload (`onDispose`; free `reloaded` on debug builds) |
 | `@modkit/utils`                               | `safe`, `isEnabled`, `inGame`, `registerRetroGame`    |
 | `@modkit/ui`                                  | Shared React UI components                            |
 | `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix |

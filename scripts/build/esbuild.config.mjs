@@ -25,9 +25,11 @@ import {
 import { loadMods, modIsolationPlugin, prepareModOutputs, PUBLISH_OUT_ROOT } from "../lib/mods.js";
 import { copyWorkshopInstallFiles, removeWorkshopPublishFiles } from "../lib/workshop-files.js";
 import { devWatchUrl, notifyHotReload, startHotReloadServer } from "../dev/hot-reload-server.js";
+import { modkitAliasPlugin } from "../lib/modkit-alias.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const MODKIT_DIR = join(ROOT, "modkit");
+const INTERNAL_ESBUILD = join(MODKIT_DIR, "internal/esbuild");
 const args = process.argv.slice(2);
 const watch = args.includes("--watch");
 const game = args.includes("--game");
@@ -132,20 +134,8 @@ function logBuildResult(mod, result) {
 }
 
 /** Resolve `@modkit/...` to `modkit/...`. */
-function modkitAliasPlugin() {
-  return {
-    name: "modkit-alias",
-    setup(build) {
-      build.onResolve({ filter: /^@modkit(?:\/|$)/ }, (args) => {
-        const rest = args.path === "@modkit" ? "" : args.path.slice("@modkit/".length);
-        return build.resolve(rest === "" ? "." : `./${rest}`, {
-          kind: args.kind,
-          importer: args.importer,
-          resolveDir: MODKIT_DIR,
-        });
-      });
-    },
-  };
+function modkitAliasPluginForBuild() {
+  return modkitAliasPlugin(MODKIT_DIR);
 }
 
 /**
@@ -173,7 +163,7 @@ function releaseDebugStubPlugin() {
     setup(build) {
       if (modDebug) return;
       build.onResolve({ filter: /^@modkit\/debug$/ }, () => ({
-        path: join(MODKIT_DIR, "esbuild/debug.empty.ts"),
+        path: join(INTERNAL_ESBUILD, "debug.empty.ts"),
       }));
     },
   };
@@ -242,7 +232,7 @@ const SOURCE_URL_RE = /\n\/\/# sourceURL=.*$/;
  * Sandkit loads `main.js` via `new Function("__sandkit", body)` where `body` is:
  *   "use strict";\nconst sandkit = __sandkit;\nreturn (async () => {\n<source>\n})();\n
  * The Function header is two lines, then three body lines — five lines before `<source>`.
- * Hot reload in `modkit/debug/hot-reload.ts` must use the same wrapper.
+ * Hot reload in `modkit/internal/debug/hot-reload.ts` must use the same wrapper.
  */
 const SANDKIT_LOADER_LINE_OFFSET = 5;
 
@@ -348,7 +338,7 @@ function bundleOptions(mod) {
       ...(modDebug ? {} : { reloaded: "false" }),
     },
     inject: modDebug
-      ? [join(MODKIT_DIR, "esbuild/hot-reload.inject.ts"), join(MODKIT_DIR, "esbuild/console.ts")]
+      ? [join(INTERNAL_ESBUILD, "hot-reload.inject.ts"), join(INTERNAL_ESBUILD, "console.ts")]
       : [],
     alias: {
       react: join(ROOT, "modkit/esbuild/react.ts"),
@@ -392,7 +382,7 @@ function workerBundleOptions(mod) {
       __DEV_WATCH_URL__: '""',
       reloaded: "false",
     },
-    inject: modDebug ? [join(MODKIT_DIR, "esbuild/console.ts")] : [],
+    inject: modDebug ? [join(INTERNAL_ESBUILD, "console.ts")] : [],
     banner: {
       js: [
         `// Generated — edit src/${mod.folder}/worker.ts and run npm run dev.`,
@@ -413,7 +403,7 @@ function basePlugins(mod) {
     browserPatchesStubPlugin(),
     releaseDebugStubPlugin(),
     modkitCssResolvePlugin(),
-    modkitAliasPlugin(),
+    modkitAliasPluginForBuild(),
     mainEntryBootstrapPlugin(mod),
     gifWorkerAsTextPlugin(),
   ];

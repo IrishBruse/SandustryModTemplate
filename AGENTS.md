@@ -55,13 +55,14 @@ Each `src/<name>/` folder with a `mod.ts` is a separate game mod. Byte-sized dem
 | ------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | `modkit/modinfo.ts` | `defineModInfo` / `definePatches` plus manifest and patch types                                                      |
 | `modkit/patches.ts` | Empty shared patch list (browser stub via `esbuild/patches.empty.ts`)                                                |
-| `modkit/esbuild/`   | esbuild wiring: React/JSX aliases, console inject, patches stub, release debug stub                                  |
+| `modkit/esbuild/`           | React/JSX aliases and `patches.empty.ts` stub                                                                          |
+| `modkit/internal/esbuild/` | Debug esbuild inject (`console`, hot-reload) and release `@modkit/debug` stub |
 | `modkit/utils/`     | `safe`, `isEnabled`, `inGame`, `registerRetroGame`                                                                   |
-| `modkit/debug/`     | Hot reload helpers (`onDispose`; inject calls `installHotReload` / `isHotReloadEval`)                                |
+| `modkit/internal/debug/`  | Hot reload helpers (`onDispose`; inject calls `installHotReload` / `isHotReloadEval`) |
 | `modkit/log.ts`     | File-log helper used with the hot-reload watch server                                                                |
 | `modkit/types/`     | Sandkit API types submodule ([sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types)) |
 
-Hot reload boots via esbuild inject on **debug** builds only. Use free `reloaded`. Import `onDispose` from `@modkit/debug` when needed. Release defines `reloaded` as `false` and stubs `@modkit/debug` to `modkit/esbuild/debug.empty.ts`.
+Hot reload boots via esbuild inject on **debug** builds only. Use free `reloaded`. Import `onDispose` from `@modkit/debug` when needed. Release defines `reloaded` as `false` and stubs `@modkit/debug` to `modkit/internal/esbuild/debug.empty.ts`.
 
 ### `modkit/types/`
 
@@ -76,7 +77,7 @@ Git submodule: [sandustry-modding-types](https://github.com/flamableassassin/san
 | `modkit/types/src/common-types/`  | Shared domain shapes                                               |
 | `modkit/sandkit-global.d.ts`      | Ambient `sandkit` / `SandkitApi` / `WorkerSandkitApi` / `reloaded` |
 
-Path aliases: `@modkit/*` → `./modkit/*`. Use ambient `sandkit`, `SandkitApi`, and `WorkerSandkitApi` — do not import them with a `types/` prefix. Retro Console types come from `@modkit/utils`.
+Path aliases: `@modkit/*` → `./modkit/*` (`@modkit/debug` → `modkit/internal/debug`). Use ambient `sandkit`, `SandkitApi`, and `WorkerSandkitApi` — do not import them with a `types/` prefix. Retro Console types come from `@modkit/utils`.
 
 Use the free name `sandkit` in mod and modkit code. Do not import `@modkit/sandkit`.
 
@@ -102,7 +103,7 @@ Folders match `npm run` commands. Shared helpers live in `scripts/lib/`.
 
 | Command                 | Debug helpers                                            | `debugPatches` | Output                                                       |
 | ----------------------- | -------------------------------------------------------- | -------------- | ------------------------------------------------------------ |
-| `npm run build`         | Stub (`modkit/esbuild/debug.empty.ts`); omit `src/debug` | Omitted        | OS mods folder; `dist/<folder>/` links                       |
+| `npm run build`         | Stub (`modkit/internal/esbuild/debug.empty.ts`); omit `src/debug` | Omitted        | OS mods folder; `dist/<folder>/` links                       |
 | `npm run build:release` | Stub; omit `src/debug`                                   | Omitted        | `build/<folder>/` (Workshop staging; not the OS mods folder) |
 | `npm run dev`           | Included; install `src/debug`                            | Included       | OS mods folder while watching; removed when the watch stops  |
 | `--game` / `--debug`    | Included; install `src/debug`                            | Included       | Game mods folder                                             |
@@ -148,7 +149,7 @@ npm run sandustry        # stop + launch (no build)
 
 The renderer does not write `console.log` into `logs/main.log` (that file is the Electron main process).
 
-In **debug** builds, esbuild injects [`modkit/esbuild/console.ts`](modkit/esbuild/console.ts) so bare `console.log` / `info` / `warn` / `error` / `debug` in DevTools also append to `logs/<modinfo.id>.log` (link: `logs/` → OS sandustry logs) when `npm run dev` is running.
+In **debug** builds, esbuild injects [`modkit/internal/esbuild/console.ts`](modkit/internal/esbuild/console.ts) so bare `console.log` / `info` / `warn` / `error` / `debug` in DevTools also append to `logs/<modinfo.id>.log` (link: `logs/` → OS sandustry logs) when `npm run dev` is running.
 
 ```ts
 console.log("my-feature", { width, collapsed });

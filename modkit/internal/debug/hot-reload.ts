@@ -1,5 +1,5 @@
-import { clearLog } from "../log";
-import { safe } from "../utils";
+import { clearLog } from "../../log";
+import { safe } from "../../utils";
 
 /**
  * Renderer hot reload for official Sandkit mods.

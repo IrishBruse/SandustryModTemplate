@@ -2,7 +2,7 @@
 
 Session debug helpers live in the **debug** companion mod ([`src/debug/`](../../src/debug/)). The game folder name is **debug** (`mods/debug`). Debug builds install it. Release builds omit it and remove a leftover `mods/debug`.
 
-The main **debug** bundle injects [`modkit/esbuild/hot-reload.inject.ts`](../../modkit/esbuild/hot-reload.inject.ts): it calls `installHotReload` and exposes free **`reloaded`**. Release builds omit that inject and define **`reloaded`** as `false`. Import `onDispose` from [`@modkit/debug`](../../modkit/debug/) when you need cleanup. Release stubs `@modkit/debug` to [`modkit/esbuild/debug.empty.ts`](../../modkit/esbuild/debug.empty.ts).
+The main **debug** bundle injects [`modkit/internal/esbuild/hot-reload.inject.ts`](../../modkit/internal/esbuild/hot-reload.inject.ts): it calls `installHotReload` and exposes free **`reloaded`**. Release builds omit that inject and define **`reloaded`** as `false`. Import `onDispose` from [`@modkit/debug`](../../modkit/internal/debug/) when you need cleanup. Release stubs `@modkit/debug` to [`modkit/internal/esbuild/debug.empty.ts`](../../modkit/internal/esbuild/debug.empty.ts).
 
 The same main-entry rewrite also skips the entry body when **`enabled`** is false (`isEnabled`). Do not add that guard in `main.ts`. See [utils.md](utils.md).
 
@@ -10,7 +10,7 @@ The same main-entry rewrite also skips the entry body when **`enabled`** is fals
 
 | Build   | Command                                       | `src/debug` mod            | `@modkit/debug`                           | `debugPatches` |
 | ------- | --------------------------------------------- | -------------------------- | ----------------------------------------- | -------------- |
-| Release | `npm run build`                               | Omitted (leftover removed) | Stub (`modkit/esbuild/debug.empty.ts`)    | Omitted        |
+| Release | `npm run build`                               | Omitted (leftover removed) | Stub (`modkit/internal/esbuild/debug.empty.ts`)    | Omitted        |
 | Dev     | `npm run dev`, `--watch`, `--game`, `--debug` | Installed (`mods/debug`)   | Bundled (inject boots `installHotReload`) | Included       |
 
 `--mod hello-world-example` on a debug build still installs **debug**. `--mod debug` builds only that folder. `npm run publish` never lists the companion.
@@ -45,7 +45,7 @@ Turn on **Skip splash**, **Auto-boot Continue**, or **Open DevTools on load** in
 | Splash skip           | [`splash.ts`](../../src/debug/splash.ts)                         | Skip splash      | Clicks the splash while logos are visible                             |
 | Main-menu auto-boot   | `boot-menu.ts` + [`menu.ts`](../../src/debug/menu.ts)            | Auto-boot        | Clicks **Continue** after it has been visible                         |
 | Disable autosave      | [`autosave.ts`](../../src/debug/autosave.ts)                     | Disable autosave | Sets interval to `0` on load and each hot-reload eval                 |
-| Renderer hot reload   | [`modkit/debug/hot-reload.ts`](../../modkit/debug/hot-reload.ts) | `npm run dev`    | Polls `GET /hot-reload/last` on the dev watch server                  |
+| Renderer hot reload   | [`modkit/internal/debug/hot-reload.ts`](../../modkit/internal/debug/hot-reload.ts) | `npm run dev`    | Polls `GET /hot-reload/last` on the dev watch server                  |
 | F3 debug panel        | [`src/debug/toggle/`](../../src/debug/toggle/)                   | Debug panel (F3) | Top-left companion panel; vanilla Debug / Stats stay for engine tools |
 | Options Debug tab     | [`src/debug/mod.ts`](../../src/debug/mod.ts) `patches`           | Mod installed    | Bundle patch adds the hidden **Debug** tab to Options (Debug Active, Draw Chunks, Cinematic, etc.) |
 
@@ -111,7 +111,7 @@ Free **`reloaded`** is true when this script body is running because a reload ev
 
 ## File logging (`console`)
 
-Debug builds use esbuild [`inject`](https://esbuild.github.io/api/#inject) with [`modkit/esbuild/console.ts`](../../modkit/esbuild/console.ts). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code also `POST` to `http://127.0.0.1:19147/log` while `npm run dev` is up. Lines append to `logs/<modinfo.id>.log` (workspace `logs/` → OS sandustry logs: `~/.config/sandustry/logs` or `%APPDATA%/sandustry/logs`). Tag messages yourself or use `createLogger` from `@modkit/log` when you want a bracket prefix.
+Debug builds use esbuild [`inject`](https://esbuild.github.io/api/#inject) with [`modkit/internal/esbuild/console.ts`](../../modkit/internal/esbuild/console.ts). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code also `POST` to `http://127.0.0.1:19147/log` while `npm run dev` is up. Lines append to `logs/<modinfo.id>.log` (workspace `logs/` → OS sandustry logs: `~/.config/sandustry/logs` or `%APPDATA%/sandustry/logs`). Tag messages yourself or use `createLogger` from `@modkit/log` when you want a bracket prefix.
 
 A renderer hot reload (save or **Ctrl+R**) truncates that file via `POST /log/clear` and calls `console.clear()` so the session starts clean. Use `clearLog(modId)` from `@modkit/log` to clear by hand. `clearLog` aborts after 500 ms if F5 / CDP stalls the POST.
 
@@ -132,11 +132,11 @@ Optional extra debug-only patches can still be exported from a mod's `mod.ts` as
 | Path                                  | Role                                                                       |
 | ------------------------------------- | -------------------------------------------------------------------------- |
 | [`src/debug/`](../../src/debug/)      | Companion mod: DevTools, splash, auto-boot, F3, settings                   |
-| `modkit/debug/index.ts`               | Re-exports `installHotReload`, `onDispose`, `isHotReloadEval`              |
-| `modkit/debug/hot-reload.ts`          | Poll `GET /hot-reload/last`, `onDispose`, `isHotReloadEval`                |
-| `modkit/esbuild/debug.empty.ts`       | Release stub: no-op `installHotReload`, `onDispose`, `isHotReloadEval`     |
-| `modkit/esbuild/hot-reload.inject.ts` | esbuild inject: boot hot reload + free `reloaded` (debug main builds only) |
-| `modkit/esbuild/console.ts`           | esbuild inject: mirror `console.*` to watch-server file log (debug builds) |
+| `modkit/internal/debug/index.ts`               | Re-exports `installHotReload`, `onDispose`, `isHotReloadEval`              |
+| `modkit/internal/debug/hot-reload.ts`          | Poll `GET /hot-reload/last`, `onDispose`, `isHotReloadEval`                |
+| `modkit/internal/esbuild/debug.empty.ts`       | Release stub: no-op `installHotReload`, `onDispose`, `isHotReloadEval`     |
+| `modkit/internal/esbuild/hot-reload.inject.ts` | esbuild inject: boot hot reload + free `reloaded` (debug main builds only) |
+| `modkit/internal/esbuild/console.ts`           | esbuild inject: mirror `console.*` to watch-server file log (debug builds) |
 
 ## Wiring
 
@@ -155,8 +155,8 @@ onDispose(() => {
 
 | Path                                  | Role                                                              |
 | ------------------------------------- | ----------------------------------------------------------------- |
-| `modkit/esbuild/hot-reload.inject.ts` | esbuild inject: `installHotReload` + free `reloaded` (debug only) |
-| `modkit/debug/index.ts`               | Re-exports `installHotReload`, `onDispose`, `isHotReloadEval`     |
-| `modkit/esbuild/debug.empty.ts`       | Release stub: no-op `installHotReload` / `onDispose`              |
+| `modkit/internal/esbuild/hot-reload.inject.ts` | esbuild inject: `installHotReload` + free `reloaded` (debug only) |
+| `modkit/internal/debug/index.ts`               | Re-exports `installHotReload`, `onDispose`, `isHotReloadEval`     |
+| `modkit/internal/esbuild/debug.empty.ts`       | Release stub: no-op `installHotReload` / `onDispose`              |
 
-Release builds omit the hot-reload inject and define `reloaded` as `false`. They still resolve `@modkit/debug` to `modkit/esbuild/debug.empty.ts` when a mod imports `onDispose`.
+Release builds omit the hot-reload inject and define `reloaded` as `false`. They still resolve `@modkit/debug` to `modkit/internal/esbuild/debug.empty.ts` when a mod imports `onDispose`.
