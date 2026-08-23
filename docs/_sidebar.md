@@ -16,5 +16,11 @@
 
 - Reference
   - [Patches](patches.md)
-  - [Types](https://github.com/flamableassassin/sandustry-modding-types ":target=_blank")
+  - API
+    - [Overview](api/README.md)
+    - [Module index](api/modules.md)
+    - [Main thread (`sandkit.api`)](api/sandkit/api/README.md)
+    - [Worker (`sandkit.api`)](api/worker/README.md)
+    - [Engine (`sandkit.engine`)](api/engine/README.md)
+    - [Globals](api/global/README.md)
   - [Modkit todos](todos/README.md)

@@ -41,3 +41,13 @@ Types are copied from the upstream repo. For license, vendored commit, and refre
 - **API reference:** https://flamableassassin.github.io/sandustry-modding-types/
 
 To change API shapes, open an issue or pull request upstream, then refresh this folder from upstream `src/**/*.d.ts` and update `SOURCE.json`.
+
+## Docs site
+
+Regenerate the Docsify API reference from these declarations:
+
+```bash
+npm run docs:api
+```
+
+Output lands in `docs/api/`. `npm run docs` runs that step, then serves the docs site.

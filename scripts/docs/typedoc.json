@@ -1,0 +1,30 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "name": "Sandkit API",
+  "entryPoints": [
+    "../../modkit/types/global.d.ts",
+    "../../modkit/types/sandkit/index.d.ts",
+    "../../modkit/types/sandkit/api/index.d.ts",
+    "../../modkit/types/sandkit/enums/index.d.ts",
+    "../../modkit/types/sandkit/react.d.ts",
+    "../../modkit/types/worker/index.d.ts",
+    "../../modkit/types/sandkit/engine/index.d.ts"
+  ],
+  "entryPointStrategy": "resolve",
+  "tsconfig": "../../modkit/types/tsconfig.json",
+  "plugin": ["typedoc-plugin-markdown"],
+  "readme": "../../modkit/types/README.md",
+  "out": "../../docs/api",
+  "excludePrivate": true,
+  "excludeInternal": false,
+  "hidePageHeader": true,
+  "hideBreadcrumbs": true,
+  "fileExtension": ".md",
+  "entryFileName": "README.md",
+  "sort": ["source-order"],
+  "categorizeByGroup": true,
+  "validation": {
+    "notDocumented": false,
+    "invalidLink": false
+  }
+}

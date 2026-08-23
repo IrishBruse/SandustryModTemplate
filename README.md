@@ -39,6 +39,8 @@ Full steps, copy-a-mod, and sample list: [Quick start](https://ethanconneely.com
 | `npm run publish`       | Runs `build:release`, then Workshop upload ([SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD) on PATH, or a download into `.tmp/steamcmd/`) |
 | `npm run typecheck`     | TypeScript check                                                                                                                                        |
 | `npm run test`          | Node tests (`src/**/*.test.ts`)                                                                                                                         |
+| `npm run docs`          | Regenerate API docs (`docs:api`), then serve the docs site                                                                                              |
+| `npm run docs:api`      | Generate `docs/api/` Markdown from `modkit/types/`                                                                                                      |
 | `npm run sandustry`     | Stop and launch the game (no build)                                                                                                                     |
 
 ## Troubleshooting

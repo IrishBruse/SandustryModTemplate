@@ -20,6 +20,14 @@ Avoid:
 - Marketing tone in guide pages.
 - Duplicating large code samples that already live next to the feature.
 
+## Generated API reference (`docs/api/`)
+
+`docs/api/` is **generated** from `modkit/types/` by `npm run docs:api`. Do not edit those Markdown files by hand.
+
+- Change JSDoc in `modkit/types/**/*.d.ts`, then run `npm run docs:api`.
+- Sidebar links live in [`_sidebar.md`](_sidebar.md) under **API**.
+- Output is gitignored; run the generator before `npm run docs` or publishing the docs site.
+
 ## Sample mod READMEs (`src/*-example/README.md`)
 
 Short player-facing copy. Builds do not copy these files into the game folder or `build/` staging.

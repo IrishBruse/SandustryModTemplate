@@ -1,0 +1,14 @@
+{
+  "include": ["./**/*.d.ts"],
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "ESNext",
+    "lib": ["ES2020", "DOM"],
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "types": ["react"],
+    "forceConsistentCasingInFileNames": true
+  }
+}

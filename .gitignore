@@ -6,4 +6,5 @@ dist/
 logs
 /sandustry/
 .tmp/
+docs/api/
 *.tsbuildinfo

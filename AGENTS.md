@@ -95,6 +95,7 @@ Folders match `npm run` commands. Shared helpers live in `scripts/lib/`.
 | `scripts/publish/publish-workshop.js`     | `npm run publish` — release-build + SteamCMD Workshop upload                                                                                            |
 | `scripts/sandustry/launch-sandustry.js`   | `npm run sandustry` — stop and launch the game (no build)                                                                                               |
 | `scripts/ui/`                             | `npm run ui:css` / `ui:previews` — docs canvas Tailwind + screenshots                                                                                   |
+| `scripts/docs/`                           | `npm run docs:api` — TypeDoc Markdown from `modkit/types/` into `docs/api/` (gitignored)                                                                |
 | `scripts/lib/`                            | Shared: mod discovery, patches, paths, mod-path, workshop files, launch helpers                                                                         |
 
 ## Builds
