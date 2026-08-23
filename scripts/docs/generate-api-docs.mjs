@@ -6,13 +6,7 @@
  * TypeDoc runs from scripts/docs/ with TypeScript 5.9 (TypeDoc does not support TS 7 yet).
  */
 import { spawnSync } from "node:child_process";
-import {
-  existsSync,
-  readdirSync,
-  readFileSync,
-  rmSync,
-  writeFileSync,
-} from "node:fs";
+import { existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -64,13 +58,10 @@ function fixDocsifyLinks(outDir) {
     const pageDir = dirname(filePath);
     const relPageDir = toPosixPath(pageDir.slice(outDir.length + 1));
     const content = readFileSync(filePath, "utf8");
-    const fixed = content.replace(
-      /\[([^\]]+)\]\(([^)\s]+)\)/g,
-      (match, label, href) => {
-        const rewritten = rewriteDocsifyHref(href, relPageDir);
-        return rewritten === href ? match : `[${label}](${rewritten})`;
-      },
-    );
+    const fixed = content.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (match, label, href) => {
+      const rewritten = rewriteDocsifyHref(href, relPageDir);
+      return rewritten === href ? match : `[${label}](${rewritten})`;
+    });
 
     if (fixed !== content) writeFileSync(filePath, fixed);
   }
@@ -191,8 +182,5 @@ function indentNamespaceLinks(outDir, modulePath, prefixPath) {
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name)
     .sort((a, b) => a.localeCompare(b))
-    .map(
-      (name) =>
-        `  - [${name}](${prefixPath(`${modulePath}/namespaces/${name}/README.md`)})`,
-    );
+    .map((name) => `  - [${name}](${prefixPath(`${modulePath}/namespaces/${name}/README.md`)})`);
 }

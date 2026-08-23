@@ -30,17 +30,17 @@ Full steps, copy-a-mod, and sample list: [Quick start](https://ethanconneely.com
 
 ## Commands
 
-| Command                 | Effect                                                                                                                                                  |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run setup`         | Check install, extract game source to `sandustry/`, link `logs/`                                                                                        |
-| `npm run dev`           | Watch and write to the OS mods folder (`~/.config/...` or `%APPDATA%`)                                                                                  |
-| `npm run build`         | Release bundle to the OS mods folder and `build/<folder>/` (Workshop staging)                                                                           |
-| `npm run publish`       | Runs `npm run build`, then Workshop upload ([SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD) on PATH, or a download into `.tmp/steamcmd/`) |
-| `npm run typecheck`     | TypeScript check                                                                                                                                        |
-| `npm run test`          | Node tests (`src/**/*.test.ts`)                                                                                                                         |
-| `npm run docs`          | Regenerate API docs (`docs:api`), then serve the docs site                                                                                              |
-| `npm run docs:api`      | Generate `docs/api/` Markdown from `modkit/types/`                                                                                                      |
-| `npm run sandustry`     | Stop and launch the game (no build)                                                                                                                     |
+| Command             | Effect                                                                                                                                                  |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run setup`     | Check install, extract game source to `sandustry/`, link `logs/`                                                                                        |
+| `npm run dev`       | Watch and write to the OS mods folder (`~/.config/...` or `%APPDATA%`)                                                                                  |
+| `npm run build`     | Release bundle to the OS mods folder and `build/<folder>/` (Workshop staging)                                                                           |
+| `npm run publish`   | Runs `npm run build`, then Workshop upload ([SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD) on PATH, or a download into `.tmp/steamcmd/`) |
+| `npm run typecheck` | TypeScript check                                                                                                                                        |
+| `npm run test`      | Node tests (`src/**/*.test.ts`)                                                                                                                         |
+| `npm run docs`      | Regenerate API docs (`docs:api`), then serve the docs site                                                                                              |
+| `npm run docs:api`  | Generate `docs/api/` Markdown from `modkit/types/`                                                                                                      |
+| `npm run sandustry` | Stop and launch the game (no build)                                                                                                                     |
 
 ## Troubleshooting
 

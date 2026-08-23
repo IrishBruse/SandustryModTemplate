@@ -10,14 +10,14 @@ New to the template? Start with [Quick start](quick-start.md).
 
 ## Repo folders
 
-| Path              | What it is                                |
-| ----------------- | ----------------------------------------- |
-| `src/<name>/`     | Your mod (`mod.ts` + `main.ts`)           |
-| `examples/<name>/` | Sample mods to copy into `src/`           |
-| `modkit/`         | Shared kit. Import as `@modkit/*`         |
-| `dist/<name>/`    | Link to that mod's folder in the game     |
-| `build/<name>/`   | Workshop staging (copied on `npm run build`) |
-| `logs/`           | Link to Sandustry log files               |
+| Path               | What it is                                   |
+| ------------------ | -------------------------------------------- |
+| `src/<name>/`      | Your mod (`mod.ts` + `main.ts`)              |
+| `examples/<name>/` | Sample mods to copy into `src/`              |
+| `modkit/`          | Shared kit. Import as `@modkit/*`            |
+| `dist/<name>/`     | Link to that mod's folder in the game        |
+| `build/<name>/`    | Workshop staging (copied on `npm run build`) |
+| `logs/`            | Link to Sandustry log files                  |
 
 The game folder uses the `name` field in `mod.ts`, not the repo folder name.
 `dist/<folder>/` points at that game folder.
@@ -35,36 +35,36 @@ You do not copy files into the game folder by hand. `npm run dev` and `npm run b
 
 Copy a folder from [`examples/`](../examples/) into `src/<your-mod>/`. [`hello-world`](../examples/hello-world/) is the smallest.
 
-| Group | Folder | What it shows |
-| --- | --- | --- |
-| — | [`hello-world`](../examples/hello-world/) | Toast on load — good copy target |
-| UI | [`overlay-hotkey`](../examples/ui/overlay-hotkey/) | React overlay + Tailwind (**Alt+E**) |
-| UI | [`management-button`](../examples/ui/management-button/) | Management-column row |
-| UI | [`input-binding`](../examples/ui/input-binding/) | `registerBinding` + `getDisplayKey` |
-| Content | [`custom-element`](../examples/content/custom-element/) | Register an element and paint at the mouse cell |
-| Content | [`mod-assets`](../examples/content/mod-assets/) | Static `mod/` files + `assets.getUrl` |
-| Content | [`content-machine`](../examples/content/content-machine/) | Elements + structure + processor loop |
-| API | [`events`](../examples/api/events/) | `api.events.on` subscribe and dispose |
-| API | [`worker-api`](../examples/api/worker-api/) | Worker-thread `sandkit.api` |
-| API | [`settings`](../examples/api/settings/) | All `configSchema` types (`boolean` / `number` / `choice`) |
-| Games | [`retro-game`](../examples/games/retro-game/) | Retro Console demo |
+| Group   | Folder                                                    | What it shows                                              |
+| ------- | --------------------------------------------------------- | ---------------------------------------------------------- |
+| —       | [`hello-world`](../examples/hello-world/)                 | Toast on load — good copy target                           |
+| UI      | [`overlay-hotkey`](../examples/ui/overlay-hotkey/)        | React overlay + Tailwind (**Alt+E**)                       |
+| UI      | [`management-button`](../examples/ui/management-button/)  | Management-column row                                      |
+| UI      | [`input-binding`](../examples/ui/input-binding/)          | `registerBinding` + `getDisplayKey`                        |
+| Content | [`custom-element`](../examples/content/custom-element/)   | Register an element and paint at the mouse cell            |
+| Content | [`mod-assets`](../examples/content/mod-assets/)           | Static `mod/` files + `assets.getUrl`                      |
+| Content | [`content-machine`](../examples/content/content-machine/) | Elements + structure + processor loop                      |
+| API     | [`events`](../examples/api/events/)                       | `api.events.on` subscribe and dispose                      |
+| API     | [`worker-api`](../examples/api/worker-api/)               | Worker-thread `sandkit.api`                                |
+| API     | [`settings`](../examples/api/settings/)                   | All `configSchema` types (`boolean` / `number` / `choice`) |
+| Games   | [`retro-game`](../examples/games/retro-game/)             | Retro Console demo                                         |
 
 Shipped mods in `src/` (not copy targets for new mods):
 
-| Folder | What it shows |
-| --- | --- |
-| [`selection-capture`](../src/selection-capture/) | Screenshot / GIF recorder (**C**, **F7**) |
-| [`debug`](../src/debug/) | Dev companion (debug builds only). Do not copy this |
+| Folder                                           | What it shows                                       |
+| ------------------------------------------------ | --------------------------------------------------- |
+| [`selection-capture`](../src/selection-capture/) | Screenshot / GIF recorder (**C**, **F7**)           |
+| [`debug`](../src/debug/)                         | Dev companion (debug builds only). Do not copy this |
 
 ## Files in a mod folder
 
 Every mod under `src/<name>/` or `examples/<name>/` needs these files:
 
-| File            | Role                                                                                                                                                            |
-| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| File            | Role                                                                                                                                                                                                   |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `mod.ts`        | Manifest. Optional `patches` export (or re-export from `patches.ts`). `export const modinfo = defineModInfo(...)`. Use `modinfo.id` for the mod id. The build writes `modinfo.json` and `patches.json` |
-| `main.ts`       | Mod entry. Debug builds get free `reloaded` from the debug companion loader patch. Release defines `reloaded` as `false` |
-| `tsconfig.json` | Isolated TypeScript project. This folder cannot see sibling mods                                                                                                |
+| `main.ts`       | Mod entry. Debug builds get free `reloaded` from the debug companion loader patch. Release defines `reloaded` as `false`                                                                               |
+| `tsconfig.json` | Isolated TypeScript project. This folder cannot see sibling mods                                                                                                                                       |
 
 Add these when you need them:
 
@@ -82,14 +82,14 @@ Add these when you need them:
 
 Import `@modkit/*` and files in your own folder only.
 
-| Import                                        | From                                                      |
-| --------------------------------------------- | --------------------------------------------------------- |
-| `@modkit/modinfo`                             | `defineModInfo` / `definePatches`                         |
-| `@modkit/react` / JSX                         | Runtime React from `sandkit.react`                        |
+| Import                                        | From                                                                       |
+| --------------------------------------------- | -------------------------------------------------------------------------- |
+| `@modkit/modinfo`                             | `defineModInfo` / `definePatches`                                          |
+| `@modkit/react` / JSX                         | Runtime React from `sandkit.react`                                         |
 | `@modkit/debug`                               | `onDispose` (release stub). Free `reloaded` comes from the debug companion |
-| `@modkit/utils`                               | `safe`, `isEnabled`, `inGame`, `registerRetroGame`        |
-| `@modkit/ui`                                  | Shared React UI components                                |
-| `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix     |
+| `@modkit/utils`                               | `safe`, `isEnabled`, `inGame`, `registerRetroGame`                         |
+| `@modkit/ui`                                  | Shared React UI components                                                 |
+| `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix                      |
 
 Types are vendored under `modkit/types/` from [sandustry-modding-types](https://github.com/flamableassassin/sandustry-modding-types). See [`modkit/types/ATTRIBUTION.md`](../modkit/types/ATTRIBUTION.md). Layout mirrors the live object (`sandkit/api`, `sandkit/engine/api`, …). Ambient `sandkit` is in [`modkit/types/global.d.ts`](../modkit/types/global.d.ts); `reloaded` and `WorkerSandkitApi` are in [`modkit/ambient.d.ts`](../modkit/ambient.d.ts).
 

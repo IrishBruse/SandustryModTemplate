@@ -40,10 +40,7 @@ function writeLastSelection(picked) {
     writeFileSync(SELECTION_FILE, `${JSON.stringify({ all: true }, null, 2)}\n`);
     return;
   }
-  writeFileSync(
-    SELECTION_FILE,
-    `${JSON.stringify({ all: false, folders: picked }, null, 2)}\n`,
-  );
+  writeFileSync(SELECTION_FILE, `${JSON.stringify({ all: false, folders: picked }, null, 2)}\n`);
 }
 
 /**
@@ -74,8 +71,7 @@ export async function pickDevModArgs(argv) {
         .sort((a, b) => a.folder.localeCompare(b.folder))
         .map((mod) => ({
           folder: mod.folder,
-          hint:
-            mod.folder === DEBUG_MOD_FOLDER ? `${mod.repoPath} · companion` : mod.repoPath,
+          hint: mod.folder === DEBUG_MOD_FOLDER ? `${mod.repoPath} · companion` : mod.repoPath,
         }));
 
     /** @type {{ label: string, mods: { folder: string, hint?: string }[] }[]} */

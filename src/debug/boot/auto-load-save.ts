@@ -57,9 +57,7 @@ export async function listSaveFiles(): Promise<SaveFileInfo[]> {
   if (typeof bridge?.getSaveFiles !== "function") return [];
   try {
     const files = await bridge.getSaveFiles();
-    return [...files].sort(
-      (a, b) => Date.parse(b.timestamp || "") - Date.parse(a.timestamp || ""),
-    );
+    return [...files].sort((a, b) => Date.parse(b.timestamp || "") - Date.parse(a.timestamp || ""));
   } catch {
     return [];
   }

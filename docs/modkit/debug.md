@@ -23,32 +23,32 @@ Use free `reloaded` to skip one-shot boot work. Import `onDispose` from `@modkit
 
 Settings live on the debug mod only (`src/debug/mod.ts` `configSchema`). Open **Options → Mods → debug**.
 
-| Setting                   | Key               | Default | Effect                                                                                                                                                                                      |
-| ------------------------- | ----------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Mod enabled**           | `enabled`         | on      | Master switch for runtime helpers                                                                                                                                                           |
-| **Open DevTools on load** | `openDevTools`    | off     | Open Electron DevTools on load. Keep off under F5 so the IDE debugger stays attached                                                                                                        |
-| **F12 opens DevTools**    | `f12DevTools`     | on      | Capture-phase F12. Can disconnect an IDE debugger session                                                                                                                                   |
-| **Auto-load save**        | `autoLoad`        | on      | On load, `location.assign` with `?db_load=<saveId>`. Skips splash and main menu. Legacy `autoBoot` prefs still count until you set `autoLoad`                                               |
-| **Start save**            | `startSave`       | Mod storage | **Last played** or **Mod storage**. **Mod storage** reads `api.storage` (`startSave`). Pick a world in the Start save panel. |
-| **Engine debug**          | `engineDebug`     | on      | Force `debug.active` (vanilla Debug / Stats). F3 toggles companion debug overlay                                                                                                            |
-| **Disable autosave**      | `disableAutosave` | on      | Sets `session.settings.autosaveInterval` to `0`. Manual saves still work                                                                                                                    |
-| **Watch local mods**      | `watchLocalMods`  | on      | Poll local mod folders for `main.js` / `patches.json` / `modinfo.json` / worker entry. Workshop mods are ignored                                                                            |
-| **If hot reload cannot run** | `hotReloadFallback` | Toast | When `main.js` changed but the mod has no dispose path: **Do nothing**, **Toast**, or **Reload page**. Page reload does not re-apply `patches.json` |
+| Setting                      | Key                 | Default     | Effect                                                                                                                                              |
+| ---------------------------- | ------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Mod enabled**              | `enabled`           | on          | Master switch for runtime helpers                                                                                                                   |
+| **Open DevTools on load**    | `openDevTools`      | off         | Open Electron DevTools on load. Keep off under F5 so the IDE debugger stays attached                                                                |
+| **F12 opens DevTools**       | `f12DevTools`       | on          | Capture-phase F12. Can disconnect an IDE debugger session                                                                                           |
+| **Auto-load save**           | `autoLoad`          | on          | On load, `location.assign` with `?db_load=<saveId>`. Skips splash and main menu. Legacy `autoBoot` prefs still count until you set `autoLoad`       |
+| **Start save**               | `startSave`         | Mod storage | **Last played** or **Mod storage**. **Mod storage** reads `api.storage` (`startSave`). Pick a world in the Start save panel.                        |
+| **Engine debug**             | `engineDebug`       | on          | Force `debug.active` (vanilla Debug / Stats). F3 toggles companion debug overlay                                                                    |
+| **Disable autosave**         | `disableAutosave`   | on          | Sets `session.settings.autosaveInterval` to `0`. Manual saves still work                                                                            |
+| **Watch local mods**         | `watchLocalMods`    | on          | Poll local mod folders for `main.js` / `patches.json` / `modinfo.json` / worker entry. Workshop mods are ignored                                    |
+| **If hot reload cannot run** | `hotReloadFallback` | Toast       | When `main.js` changed but the mod has no dispose path: **Do nothing**, **Toast**, or **Reload page**. Page reload does not re-apply `patches.json` |
 
 Turn on **Auto-load save** or **Open DevTools on load** when you want those helpers.
 
 ## Features
 
-| Feature               | Where                                                                              | Setting          | Notes                                                                                              |
-| --------------------- | ---------------------------------------------------------------------------------- | ---------------- | -------------------------------------------------------------------------------------------------- |
-| DevTools globals      | [`src/debug/main.ts`](../../src/debug/main.ts)                                     | Mod enabled      | `sandkit`, `api`, `enums`, `react` on `globalThis`                                                 |
-| Open DevTools on load | [`boot/boot-menu.ts`](../../src/debug/boot/boot-menu.ts)                                     | Open DevTools    | Retries until the Electron bridge is ready. Keep off under F5                                      |
-| F12 opens DevTools    | [`boot/boot-menu.ts`](../../src/debug/boot/boot-menu.ts)                                     | F12              | Capture-phase keydown; skipped on hot-reload eval                                                  |
-| Auto-load save        | [`boot/boot-menu.ts`](../../src/debug/boot/boot-menu.ts) + [`boot/auto-load-save.ts`](../../src/debug/boot/auto-load-save.ts) | Auto-load + Start save | Reloads with `?db_load=` for the **Start save** pick |
-| Start save picker     | [`boot/start-save-picker.tsx`](../../src/debug/boot/start-save-picker.tsx)           | Start save       | Lists local saves on the main menu. Writes `api.storage`. Hidden in-game. |
-| Disable autosave      | [`boot/autosave.ts`](../../src/debug/boot/autosave.ts)                                       | Disable autosave | Sets interval to `0` on load and each hot-reload eval                                              |
-| Renderer hot reload   | [`reload/local-mod-reload.ts`](../../src/debug/reload/local-mod-reload.ts)                       | Watch local mods | Polls local folders; Workshop mods are skipped                                             |
-| F3 debug overlay      | [`f3/F3DebugOverlay.tsx`](../../src/debug/f3/F3DebugOverlay.tsx) | Engine debug     | Minecraft-style text HUD; extensible via `registerF3Section` / `globalThis.debugF3`              |
+| Feature               | Where                                                                                                                         | Setting                | Notes                                                                               |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ---------------------- | ----------------------------------------------------------------------------------- |
+| DevTools globals      | [`src/debug/main.ts`](../../src/debug/main.ts)                                                                                | Mod enabled            | `sandkit`, `api`, `enums`, `react` on `globalThis`                                  |
+| Open DevTools on load | [`boot/boot-menu.ts`](../../src/debug/boot/boot-menu.ts)                                                                      | Open DevTools          | Retries until the Electron bridge is ready. Keep off under F5                       |
+| F12 opens DevTools    | [`boot/boot-menu.ts`](../../src/debug/boot/boot-menu.ts)                                                                      | F12                    | Capture-phase keydown; skipped on hot-reload eval                                   |
+| Auto-load save        | [`boot/boot-menu.ts`](../../src/debug/boot/boot-menu.ts) + [`boot/auto-load-save.ts`](../../src/debug/boot/auto-load-save.ts) | Auto-load + Start save | Reloads with `?db_load=` for the **Start save** pick                                |
+| Start save picker     | [`boot/start-save-picker.tsx`](../../src/debug/boot/start-save-picker.tsx)                                                    | Start save             | Lists local saves on the main menu. Writes `api.storage`. Hidden in-game.           |
+| Disable autosave      | [`boot/autosave.ts`](../../src/debug/boot/autosave.ts)                                                                        | Disable autosave       | Sets interval to `0` on load and each hot-reload eval                               |
+| Renderer hot reload   | [`reload/local-mod-reload.ts`](../../src/debug/reload/local-mod-reload.ts)                                                    | Watch local mods       | Polls local folders; Workshop mods are skipped                                      |
+| F3 debug overlay      | [`f3/F3DebugOverlay.tsx`](../../src/debug/f3/F3DebugOverlay.tsx)                                                              | Engine debug           | Minecraft-style text HUD; extensible via `registerF3Section` / `globalThis.debugF3` |
 
 Hot-reload eval skips DevTools shortcut and auto-load so those do not stack on every save. Autosave disable runs again on each hot-reload eval.
 
@@ -171,11 +171,11 @@ The shim uses `globalThis.console` internally so it does not recurse.
 
 The companion rewrites `js/external-mod-runtime.js`. Definitions live in [`src/debug/patches.ts`](../../src/debug/patches.ts) and are re-exported from `mod.ts`.
 
-| id | File | Role |
-| --- | --- | --- |
+| id                           | File                         | Role                                                                |
+| ---------------------------- | ---------------------------- | ------------------------------------------------------------------- |
 | `local-mod-compile-reloaded` | `js/external-mod-runtime.js` | Define free `reloaded` and the active mod id in the loader wrapper. |
-| `local-mod-registry` | `js/external-mod-runtime.js` | Publish local mods on `globalThis.__sandkitLocalModRegistry__`. |
-| `local-mod-track-inject` | `js/external-mod-runtime.js` | Auto-track `ui.inject` unregister functions for hot-eval. |
+| `local-mod-registry`         | `js/external-mod-runtime.js` | Publish local mods on `globalThis.__sandkitLocalModRegistry__`.     |
+| `local-mod-track-inject`     | `js/external-mod-runtime.js` | Auto-track `ui.inject` unregister functions for hot-eval.           |
 
 These three patches use the same `atomicGroup` (`local-mod-loader`).
 
@@ -183,14 +183,14 @@ Workshop mods are not added to the registry. See [patches.md](../patches.md) for
 
 ## Files
 
-| Path                                           | Role                                                                       |
-| ---------------------------------------------- | -------------------------------------------------------------------------- |
-| [`src/debug/`](../../src/debug/)               | Companion: `mod.ts`, `main.ts`, `patches.ts` at the root                   |
-| [`src/debug/boot/`](../../src/debug/boot/)     | Auto-load, Start save picker, DevTools boot, autosave, settings helpers |
-| [`src/debug/reload/`](../../src/debug/reload/) | Local-mod poll, hot-eval, loader health (`loader-health.ts`)               |
-| [`src/debug/f3/`](../../src/debug/f3/)         | F3 overlay, engine debug sync, built-in sections                           |
-| `modkit/internal/debug/index.ts`               | `onDispose` only                                                           |
-| `modkit/internal/esbuild/debug.empty.ts`       | Release stub: no-op `onDispose`                                            |
+| Path                                           | Role                                                                            |
+| ---------------------------------------------- | ------------------------------------------------------------------------------- |
+| [`src/debug/`](../../src/debug/)               | Companion: `mod.ts`, `main.ts`, `patches.ts` at the root                        |
+| [`src/debug/boot/`](../../src/debug/boot/)     | Auto-load, Start save picker, DevTools boot, autosave, settings helpers         |
+| [`src/debug/reload/`](../../src/debug/reload/) | Local-mod poll, hot-eval, loader health (`loader-health.ts`)                    |
+| [`src/debug/f3/`](../../src/debug/f3/)         | F3 overlay, engine debug sync, built-in sections                                |
+| `modkit/internal/debug/index.ts`               | `onDispose` only                                                                |
+| `modkit/internal/esbuild/debug.empty.ts`       | Release stub: no-op `onDispose`                                                 |
 | `modkit/internal/esbuild/console.ts`           | esbuild inject: `[modId]` prefix on `console.*`; file POST in debug builds only |
 
 ## Wiring

@@ -1,6 +1,5 @@
 # Changelog
 
-
 The template has no release tags yet. Dated sections match the day the change landed on `main`.
 
 ## Unreleased

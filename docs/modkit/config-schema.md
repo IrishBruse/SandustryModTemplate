@@ -12,11 +12,11 @@ Game validation lives in `sandustry/workshop-mods.js` (`validateConfigSchema`). 
 
 The game accepts only these `type` values:
 
-| `type`    | Control in Options → Mods                         | Value type |
-| --------- | ------------------------------------------------- | ---------- |
-| `boolean` | Switch                                            | `boolean`  |
+| `type`    | Control in Options → Mods                          | Value type |
+| --------- | -------------------------------------------------- | ---------- |
+| `boolean` | Switch                                             | `boolean`  |
 | `number`  | Number box; range slider when both `min` and `max` | `number`   |
-| `choice`  | Select list                                       | `string`   |
+| `choice`  | Select list                                        | `string`   |
 
 There is **no** free-text `string` field and **no** `enum` field. Use `choice` when the player picks one of a fixed set of string values.
 

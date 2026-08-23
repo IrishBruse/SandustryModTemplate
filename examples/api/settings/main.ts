@@ -48,6 +48,4 @@ const stop = api.settings.onChange(() => {
 });
 onDispose(stop);
 
-console.log(
-  `${reloaded ? "reloaded" : "loaded"} — edit Options → Mods → ${modinfo.name}`,
-);
+console.log(`${reloaded ? "reloaded" : "loaded"} — edit Options → Mods → ${modinfo.name}`);

@@ -242,9 +242,7 @@ export function tuiModCombobox(opts) {
       rows.push(`  ${DIM}Selected:${RESET} ${selectedSummary()}`);
       const filterText = filter.length > 0 ? filter : `${DIM}(type to filter)${RESET}`;
       rows.push(`  ${DIM}Filter:${RESET} ${filterText}`);
-      rows.push(
-        `${DIM}  ↑↓ move  Space toggle  Enter confirm  Backspace filter  q cancel${RESET}`,
-      );
+      rows.push(`${DIM}  ↑↓ move  Space toggle  Enter confirm  Backspace filter  q cancel${RESET}`);
       return rows.join("\n");
     }
 
