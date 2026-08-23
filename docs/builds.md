@@ -27,7 +27,7 @@ The game ships Tailwind **v3.4.19** inside `bundle.js`. That stylesheet is purge
 
 Sandkit loads `main.js` only. There is no CSS file in the mod manifest. The build still has to insert a `<style>` tag. Import shared `@modkit/ui/tailwind.css` from the mod entry. Import `@modkit/ui/options.css` only when you use `OptionsSlider` / `OptionsSliderRow`. The kit re-exports those React components from `modkit/ui/options/index.ts` so esbuild does not pick `options.css` instead. The build inlines CSS as text (no `main.css` in the mod folder). The compiled Tailwind sheet is **only the utilities this bundle uses**: esbuild lists the source files it packed, then Tailwind scans those files. Unused `modkit/ui` components do not add CSS. Mods that never import those files skip the compile.
 
-The insert lives in [examples/overlay-hotkey/main.ts](../examples/overlay-hotkey/main.ts) (`style#<mod-id>-tailwind`). Hot reload removes that tag before it inserts a new one.
+The insert lives in [examples/ui/overlay-hotkey/main.ts](../examples/ui/overlay-hotkey/main.ts) (`style#<mod-id>-tailwind`). Hot reload removes that tag before it inserts a new one.
 
 Do not enable Tailwind preflight. The game already resets `*, ::before, ::after`. A second preflight can change the HUD.
 

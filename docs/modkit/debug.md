@@ -48,7 +48,6 @@ Turn on **Auto-load save** or **Open DevTools on load** when you want those help
 | Start save picker     | [`boot/start-save-picker.tsx`](../../src/debug/boot/start-save-picker.tsx)           | Start save       | Lists local saves. Writes `api.storage`. In-game: management-column **Start save**. |
 | Disable autosave      | [`boot/autosave.ts`](../../src/debug/boot/autosave.ts)                                       | Disable autosave | Sets interval to `0` on load and each hot-reload eval                                              |
 | Renderer hot reload   | [`reload/local-mod-reload.ts`](../../src/debug/reload/local-mod-reload.ts)                       | Watch local mods | Polls local folders; Workshop mods are skipped                                             |
-| Options Debug tab     | [`src/debug/patches.ts`](../../src/debug/patches.ts) `options-debug-tab`            | Mod installed    | Adds the hidden **Debug** tab to Options (Debug Active, Draw Chunks, Cinematic, etc.) |
 | F3 debug overlay      | [`f3/F3DebugOverlay.tsx`](../../src/debug/f3/F3DebugOverlay.tsx) | Engine debug     | Minecraft-style text HUD; extensible via `registerF3Section` / `globalThis.debugF3`              |
 
 Hot-reload eval skips DevTools shortcut and auto-load so those do not stack on every save. Autosave disable runs again on each hot-reload eval.
@@ -159,18 +158,17 @@ A renderer hot reload truncates that file via `POST /log/clear` and calls `conso
 ```ts
 console.log("my-feature", payload);
 // DevTools: my-feature {…}
-// logs/author.hello-world.log: [log] my-feature {…}
+// logs/author.hello-world-example.log: [log] my-feature {…}
 ```
 
 Release builds skip the inject. The shim uses `globalThis.console` so it does not recurse. `__MOD_ID__` is defined from that mod's `mod.ts` at build time.
 
 ## Debug patches
 
-The companion rewrites two game files. Definitions live in [`src/debug/patches.ts`](../../src/debug/patches.ts) and are re-exported from `mod.ts`.
+The companion rewrites `js/external-mod-runtime.js`. Definitions live in [`src/debug/patches.ts`](../../src/debug/patches.ts) and are re-exported from `mod.ts`.
 
 | id | File | Role |
 | --- | --- | --- |
-| `options-debug-tab` | `js/bundle.js` | Show the Options **Debug** tab (content already in the bundle). |
 | `local-mod-compile-reloaded` | `js/external-mod-runtime.js` | Define free `reloaded` and the active mod id in the loader wrapper. |
 | `local-mod-registry` | `js/external-mod-runtime.js` | Publish local mods on `globalThis.__sandkitLocalModRegistry__`. |
 | `local-mod-track-inject` | `js/external-mod-runtime.js` | Auto-track `ui.inject` unregister functions for hot-eval. |

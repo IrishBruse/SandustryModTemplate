@@ -119,7 +119,7 @@ async function syncModFiles(mod) {
     modDebug,
     modTs: mod.modTs,
     cachePrefix: mod.folder,
-    label: `${mod.root}/${mod.folder}/mod.ts`,
+    label: `${mod.repoPath}/mod.ts`,
   });
 }
 
@@ -343,7 +343,7 @@ function bundleOptions(mod) {
     jsxImportSource: "react",
     banner: {
       js: [
-        `// Generated — edit ${mod.root}/${mod.folder}/ and run npm run dev.`,
+        `// Generated — edit ${mod.repoPath}/ and run npm run dev.`,
         "// Runs as a plain script via new Function(...). No import/export.",
         "// sandkit is already in scope.",
       ].join("\n"),
@@ -378,7 +378,7 @@ function workerBundleOptions(mod) {
     inject: modDebug ? [join(INTERNAL_ESBUILD, "console.ts")] : [],
     banner: {
       js: [
-        `// Generated — edit ${mod.root}/${mod.folder}/worker.ts and run npm run dev.`,
+        `// Generated — edit ${mod.repoPath}/worker.ts and run npm run dev.`,
         "// Worker entry via new Function(...). No import/export.",
         "// sandkit is already in scope (worker-thread api).",
       ].join("\n"),

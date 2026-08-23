@@ -28,15 +28,15 @@ if (mods.length === 0) {
   process.exit(1);
 }
 
-for (const { folder, root } of mods) {
-  const project = join(root, folder, "tsconfig.json");
+for (const { repoPath } of mods) {
+  const project = join(repoPath, "tsconfig.json");
   if (!existsSync(join(ROOT, project))) {
-    console.error(`${root}/${folder}/mod.ts has no tsconfig.json`);
+    console.error(`${repoPath}/mod.ts has no tsconfig.json`);
     process.exit(1);
   }
   typecheck(project);
 
-  const workerProject = join(root, folder, "tsconfig.worker.json");
+  const workerProject = join(repoPath, "tsconfig.worker.json");
   if (existsSync(join(ROOT, workerProject))) {
     typecheck(workerProject);
   }

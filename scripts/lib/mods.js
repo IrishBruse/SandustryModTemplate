@@ -3,7 +3,7 @@
  * Optional `--mod <folder>` (or `--mod=<folder>`) selects one.
  */
 import { existsSync, readdirSync, statSync } from "node:fs";
-import { dirname, isAbsolute, join, normalize, relative } from "node:path";
+import { basename, dirname, isAbsolute, join, normalize, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { bundleAndImport } from "./build-patches.js";
 import { ensureGameModDir, gameModDir, linkRepoDistToModOutputs } from "./mod-path.js";
@@ -24,21 +24,34 @@ export function publishStagingDir(folder) {
   return join(PUBLISH_OUT_ROOT, folder);
 }
 
+const SKIP_DIR_NAMES = new Set(["node_modules", ".git"]);
+
 /**
- * Mod-folder name for a path under `src/<name>/...` or `examples/<name>/...`, or null when outside.
+ * Mod-folder name for a path inside a mod tree, or null when outside.
  * @param {string | undefined} filePath
  * @param {string} [root]
  * @returns {string | null}
  */
 export function modFolderFromPath(filePath, root = ROOT) {
   if (!filePath) return null;
-  const path = normalize(filePath);
+  let dir = normalize(filePath);
+  try {
+    if (!statSync(dir).isDirectory()) dir = dirname(dir);
+  } catch {
+    return null;
+  }
+
   for (const modRoot of MOD_ROOTS) {
     const base = join(root, modRoot);
-    const rel = relative(base, path);
-    if (!rel || rel.startsWith("..") || isAbsolute(rel)) continue;
-    const name = rel.split(/[\\/]/)[0];
-    if (name) return name;
+    let current = dir;
+    while (true) {
+      const rel = relative(base, current);
+      if (!rel || rel.startsWith("..") || isAbsolute(rel)) break;
+      if (existsSync(join(current, "mod.ts"))) return basename(current);
+      const parent = dirname(current);
+      if (parent === current) break;
+      current = parent;
+    }
   }
   return null;
 }
@@ -85,10 +98,55 @@ export function modIsolationPlugin(root = ROOT) {
 
 /**
  * @typedef {object} DiscoveredMod
- * @property {string} folder
+ * @property {string} folder Leaf folder name (`--mod` id and `dist/<folder>/` link)
  * @property {string} root `src` or `examples`
  * @property {string} dir Absolute path to the mod folder
+ * @property {string} repoPath Repo-relative path (for example `examples/ui/overlay-hotkey`)
  */
+
+/**
+ * Walk a mod root and collect every directory that contains `mod.ts`.
+ * @param {string} modRoot `src` or `examples`
+ * @returns {DiscoveredMod[]}
+ */
+function discoverModsInTree(modRoot) {
+  const base = join(ROOT, modRoot);
+  if (!existsSync(base)) return [];
+
+  /** @type {DiscoveredMod[]} */
+  const mods = [];
+
+  /** @param {string} dir */
+  function walk(dir) {
+    if (existsSync(join(dir, "mod.ts"))) {
+      mods.push({
+        folder: basename(dir),
+        root: modRoot,
+        dir,
+        repoPath: relative(ROOT, dir).split(sep).join("/"),
+      });
+      return;
+    }
+    let names;
+    try {
+      names = readdirSync(dir);
+    } catch {
+      return;
+    }
+    for (const name of names) {
+      if (SKIP_DIR_NAMES.has(name)) continue;
+      const child = join(dir, name);
+      try {
+        if (statSync(child).isDirectory()) walk(child);
+      } catch {
+        /* removed while walking */
+      }
+    }
+  }
+
+  walk(base);
+  return mods;
+}
 
 /**
  * @returns {DiscoveredMod[]} Sorted by folder name.
@@ -100,19 +158,15 @@ export function discoverMods() {
   const seen = new Map();
 
   for (const root of MOD_ROOTS) {
-    const rootDir = join(ROOT, root);
-    if (!existsSync(rootDir)) continue;
-    for (const name of readdirSync(rootDir)) {
-      const dir = join(rootDir, name);
-      if (!statSync(dir).isDirectory() || !existsSync(join(dir, "mod.ts"))) continue;
-      const prior = seen.get(name);
+    for (const mod of discoverModsInTree(root)) {
+      const prior = seen.get(mod.folder);
       if (prior) {
         throw new Error(
-          `Duplicate mod folder name "${name}" in ${prior}/ and ${root}/. Folder names must be unique across mod roots.`,
+          `Duplicate mod folder name "${mod.folder}" in ${prior} and ${mod.repoPath}. Folder names must be unique across mod roots.`,
         );
       }
-      seen.set(name, root);
-      mods.push({ folder: name, root, dir });
+      seen.set(mod.folder, mod.repoPath);
+      mods.push(mod);
     }
   }
 
@@ -158,6 +212,7 @@ export function parseModFilter(argv) {
  * @typedef {object} LoadedMod
  * @property {string} folder
  * @property {string} root
+ * @property {string} repoPath
  * @property {string} dir
  * @property {string} modTs
  * @property {string} main
@@ -209,22 +264,20 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
   /** @type {LoadedMod[]} */
   const mods = [];
   for (const entry of selected) {
-    const { folder, root, dir } = entry;
+    const { folder, dir, repoPath } = entry;
     const modTs = join(dir, "mod.ts");
     const main = join(dir, "main.ts");
     const workerTs = join(dir, "worker.ts");
     const tsconfig = join(dir, "tsconfig.json");
     if (!existsSync(main)) {
-      throw new Error(`${root}/${folder}/mod.ts needs ${root}/${folder}/main.ts`);
+      throw new Error(`${repoPath}/mod.ts needs ${repoPath}/main.ts`);
     }
 
     const loaded = await bundleAndImport(modTs, `modinfo-${folder}.mjs`);
     const manifest = structuredClone(loaded.modinfo);
     const name = manifest?.name;
     if (typeof name !== "string" || !name.trim()) {
-      throw new Error(
-        `${root}/${folder}/mod.ts modinfo.name must be a non-empty string (mods folder name)`,
-      );
+      throw new Error(`${repoPath}/mod.ts modinfo.name must be a non-empty string (mods folder name)`);
     }
 
     const worker = existsSync(workerTs) ? workerTs : null;
@@ -235,7 +288,8 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
     const gameName = name.trim();
     mods.push({
       folder,
-      root,
+      root: entry.root,
+      repoPath,
       dir,
       modTs,
       main,

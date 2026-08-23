@@ -8,6 +8,7 @@ The template has no release tags yet. Dated sections match the day the change la
 ### Changed
 
 - **Sample mods** moved from `src/*-example/` to [`examples/`](examples/README.md) without the `-example` suffix (`hello-world`, `overlay-hotkey`, …). `src/` keeps shipped mods (`selection-capture`, `debug`). Copy an example into `src/<your-mod>/` to start a new mod. See [layout.md](layout.md).
+- **Example mods** grouped under `examples/ui/`, `examples/content/`, `examples/api/`, and `examples/games/`. [`hello-world`](examples/hello-world/) stays at the top level. Folder names omit `-example`; `modinfo.id` keeps it (for example `author.hello-world-example`).
 
 ### Added
 
@@ -20,7 +21,6 @@ The template has no release tags yet. Dated sections match the day the change la
 - **Debug companion:** **Start save** is Last played or Mod storage in Options. A companion panel lists local saves and writes `api.storage`. Auto-load boots that world with `?db_load=`. See [modkit/debug.md](modkit/debug.md).
 - **`settings`:** sample mod that shows every game-supported `configSchema` field type (`boolean`, `number`, `choice`) and reacts with `settings.onChange`. See [modkit/config-schema.md](modkit/config-schema.md) and [`examples/settings/`](../examples/settings/).
 - **`npm run docs:api`:** generates a Sandkit API Markdown reference under `docs/api/` from vendored `modkit/types/` JSDoc (TypeDoc). `npm run docs` runs this, then serves Docsify. See [modkit/types/README.md](../modkit/types/README.md).
-- **Debug companion:** a bundle patch restores the vanilla **Options → Debug** tab (Hard Mode, Debug Active, Draw Chunks, Cinematic, Debug Console). See [modkit/debug.md](modkit/debug.md).
 - **`npm run test`:** Node test runner on `src/**/*.test.ts` (type stripping on Node 24). Selection Capture tests the 1 MB GIF encode cap. `OptionsPanel`, `OptionsSection`, `OptionsRow`, `OptionsSelect`, `OptionsSlider`, `OptionsSliderRow`, `OptionsSwitch`, `OptionsNumberInput`, and `OptionsButton` — same Tailwind classes as the in-game Options dialog. Import `@modkit/ui/options.css` only for slider thumb/track. See [ui/overview.md](ui/overview.md).
 - **`npm run build:release`:** release-builds mods into `build/<folder>/` (gitignored), separate from `dist/` and the OS mods folder. Staging is the release bundle plus `workshop.json` / previews only (no `README.md`, `CHANGELOG.md`, or `screenshots/`). `npm run publish` runs this, then uploads with SteamCMD. See [builds.md](builds.md#workshop-publish).
 - **Pixel-perfect Screenshot and GIF recorder:** panel **Show mouse** toggle draws the in-game cursor into PNG/GIF captures; **Greenscreen** / **Show mouse** use pill toggles; **Frames** / **Ticks / frame** use number boxes with a white up/down strip; **Record GIF** / **Screenshot** show bound keys when set. **Record GIF** clears the **C** marquee when recording starts so you can keep playing. GIF encode runs on a worker after capture so the game does not hitch. **0.4.0** adds panel **1 MB limit** so a GIF stays at or under 1 MiB for Steam Workshop thumbnails.
@@ -29,6 +29,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 - Watch HTTP hot-reload notify (`GET /hot-reload/last` and **Ctrl+R** in the `npm run dev` TTY). The debug companion polls local files instead. `npm run dev` still starts `scripts/dev/log-server.js` for `POST /log`. See [modkit/debug.md](modkit/debug.md).
 - Debug companion bundle patch `mod-settings-start-save`. Choice fields cannot list live saves. The Start save panel writes `api.storage` instead. See [modkit/debug.md](modkit/debug.md).
+- Debug companion bundle patch `options-debug-tab`. The companion no longer shows the vanilla Options **Debug** tab. Use **Engine debug** and **F3** instead. See [modkit/debug.md](modkit/debug.md).
 
 ### Changed
 

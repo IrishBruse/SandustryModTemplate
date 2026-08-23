@@ -2,13 +2,13 @@ import { defineModInfo } from "@modkit/modinfo";
 
 export const modinfo = defineModInfo({
   manifestVersion: 1,
-  id: "author.hello-world-example",
-  name: "Hello World",
+  id: "author.mod-assets-example",
+  name: "Mod Assets",
   version: "0.0.1",
   apiVersion: 1,
   entry: "main.js",
   author: "Your Name",
-  description: "Minimal mod: toast on load.",
+  description: "Ship static files under mod/ and load them with assets.getUrl.",
   dependencies: [],
   loadOrder: 0,
   configSchema: {

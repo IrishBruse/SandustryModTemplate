@@ -35,19 +35,19 @@ You do not copy files into the game folder by hand. `npm run dev` and `npm run b
 
 Copy a folder from [`examples/`](../examples/) into `src/<your-mod>/`. [`hello-world`](../examples/hello-world/) is the smallest.
 
-| Folder | What it shows |
-| --- | --- |
-| [`hello-world`](../examples/hello-world/) | Toast on load — good copy target |
-| [`overlay-hotkey`](../examples/overlay-hotkey/) | React overlay + Tailwind (**Alt+E**) |
-| [`retro-game`](../examples/retro-game/) | Retro Console demo |
-| [`management-button`](../examples/management-button/) | Management-column row |
-| [`worker-api`](../examples/worker-api/) | Worker-thread `sandkit.api` |
-| [`settings`](../examples/settings/) | All `configSchema` types (`boolean` / `number` / `choice`) |
-| [`custom-element`](../examples/custom-element/) | Register an element and paint at the mouse cell |
-| [`input-binding`](../examples/input-binding/) | `api.input.registerBinding` + bound-key UI |
-| [`events`](../examples/events/) | `api.events.on` subscribe and dispose |
-| [`mod-assets`](../examples/mod-assets/) | Static `mod/` files + `assets.getUrl` |
-| [`content-machine`](../examples/content-machine/) | Elements + structure + processor loop |
+| Group | Folder | What it shows |
+| --- | --- | --- |
+| — | [`hello-world`](../examples/hello-world/) | Toast on load — good copy target |
+| UI | [`overlay-hotkey`](../examples/ui/overlay-hotkey/) | React overlay + Tailwind (**Alt+E**) |
+| UI | [`management-button`](../examples/ui/management-button/) | Management-column row |
+| UI | [`input-binding`](../examples/ui/input-binding/) | `registerBinding` + `getDisplayKey` |
+| Content | [`custom-element`](../examples/content/custom-element/) | Register an element and paint at the mouse cell |
+| Content | [`mod-assets`](../examples/content/mod-assets/) | Static `mod/` files + `assets.getUrl` |
+| Content | [`content-machine`](../examples/content/content-machine/) | Elements + structure + processor loop |
+| API | [`events`](../examples/api/events/) | `api.events.on` subscribe and dispose |
+| API | [`worker-api`](../examples/api/worker-api/) | Worker-thread `sandkit.api` |
+| API | [`settings`](../examples/api/settings/) | All `configSchema` types (`boolean` / `number` / `choice`) |
+| Games | [`retro-game`](../examples/games/retro-game/) | Retro Console demo |
 
 Shipped mods in `src/` (not copy targets for new mods):
 

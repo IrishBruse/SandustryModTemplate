@@ -2,13 +2,13 @@ import { defineModInfo } from "@modkit/modinfo";
 
 export const modinfo = defineModInfo({
   manifestVersion: 1,
-  id: "author.hello-world-example",
-  name: "Hello World",
+  id: "author.input-binding-example",
+  name: "Input Binding",
   version: "0.0.1",
   apiVersion: 1,
   entry: "main.js",
   author: "Your Name",
-  description: "Minimal mod: toast on load.",
+  description: "Register Sandkit key bindings and show the bound key in UI.",
   dependencies: [],
   loadOrder: 0,
   configSchema: {

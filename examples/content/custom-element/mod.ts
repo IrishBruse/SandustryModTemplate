@@ -2,13 +2,13 @@ import { defineModInfo } from "@modkit/modinfo";
 
 export const modinfo = defineModInfo({
   manifestVersion: 1,
-  id: "author.hello-world-example",
-  name: "Hello World",
+  id: "author.custom-element-example",
+  name: "Custom Element",
   version: "0.0.1",
   apiVersion: 1,
   entry: "main.js",
   author: "Your Name",
-  description: "Minimal mod: toast on load.",
+  description: "Register a powder element and paint it at the mouse cell.",
   dependencies: [],
   loadOrder: 0,
   configSchema: {

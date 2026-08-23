@@ -2,7 +2,7 @@
 
 Add a vanilla-style row under Upgrades (same look as Toolbox / Building / Research / Upgrades). The row mounts in the management column and follows expand / collapse.
 
-Prefer `registerManagementMenuButton` from `src/<name>/main.ts`. Live demo: [`examples/management-button/`](../../examples/management-button/). Use the React `ManagementMenuButton` only when the icon must be a React node or `active` must update every render.
+Prefer `registerManagementMenuButton` from `src/<name>/main.ts`. Live demo: [`examples/ui/management-button/`](../../examples/ui/management-button/). Use the React `ManagementMenuButton` only when the icon must be a React node or `active` must update every render.
 
 Hover plays `blip`; click plays `click` when those sounds exist. `hotkey` is badge text only — it does not bind a key.
 
@@ -44,7 +44,7 @@ Rows stack under Upgrades in registration order. Each row root is placed as a **
 import { ManagementMenuButton } from "@modkit/ui";
 
 <ManagementMenuButton
-  id="author.management-button:example"
+  id="author.management-button-example:example"
   icon={<span>?</span>}
   label="Example"
   hotkey="F1"
