@@ -6,8 +6,8 @@ Share a machine, a line, or a whole scene without a blurry screenshot. **Screens
 
 ## Use
 
-1. Press **C** and drag a box around the area.
-2. Keep that box on screen.
+1. Press **C** and drag a box around the area (or select structures).
+2. Keep the selection on screen.
 3. Press **F7**.
 4. Choose **Screenshot** or **Record GIF**.
 
@@ -21,9 +21,14 @@ Set keys for **Screenshot** and **Record GIF** in Options → Controls. The pane
 
 - **Frames** — 2–120 (default 60)
 - **Ticks / frame** — 1–30 (default 1)
+- **Block padding** — 0–32 (default 1). Extra structure blocks around the crop. Use **0** for a tight crop. Raise it when light halos clip.
 - **Greenscreen** — on/off (default off)
 - **Show mouse** — on/off (default off)
 - **1 MB limit** — on/off (default off). Record GIF keeps the longest prefix that stays at or under 1 MiB.
+
+Panel settings are saved between sessions.
+
+While the panel is open, a **blue** outline shows the PNG/GIF crop. During GIF capture or encode the outline turns **red**.
 
 **Greenscreen** hides the parallax sky and fills empty pixels with `#00FF00` for chroma key.
 
@@ -37,7 +42,7 @@ Set keys for **Screenshot** and **Record GIF** in Options → Controls. The pane
 
 ## Limits
 
-- The crop is the selection box, plus 1 px on each edge.
+- The crop follows selected structure footprints when present, otherwise the marquee content. **Block padding** adds extra structure blocks on every side. Crops align to whole cell pixels.
 - Overlay chrome (handles, HUD) is not in the image.
 - A selection that is off-screen cannot be captured. Pan the camera and try again.
 
