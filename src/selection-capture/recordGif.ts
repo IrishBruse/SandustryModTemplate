@@ -9,6 +9,8 @@ const MIN_TICKS = 1;
 const MAX_TICKS = 30;
 /** Same nearest-neighbor scale as the PNG screenshot. */
 const GIF_SCALE = 2;
+/** Steam Workshop preview / thumbnail cap (1 MiB). */
+const GIF_1MB = 1024 * 1024;
 
 /**
  * WorkerMessage.SetPaused in the current game bundle (`dist/js/bundle.js`).
@@ -21,9 +23,21 @@ export type RecordGifOptions = {
   ticksPerFrame: number;
   greenscreen: boolean;
   showMouse: boolean;
+  /** Stop the file at 1 MiB (Steam Workshop thumbnails). */
+  limit1Mb: boolean;
+  signal?: AbortSignal;
+  /** Called after capture, before encode. */
+  onEncodeStart?: () => void;
 };
 
-export type RecordGifResult = "ok" | "no-selection" | "out-of-view" | "failed";
+export type RecordGifResult =
+  | "ok"
+  | "ok-1mb"
+  | "too-large"
+  | "cancelled"
+  | "no-selection"
+  | "out-of-view"
+  | "failed";
 
 type EnvironmentShape = {
   multithreading?: {
@@ -52,18 +66,39 @@ function setSimulationPaused(paused: boolean): void {
   }
 }
 
-function waitTicks(api: SandkitApi, count: number): Promise<void> {
+function throwIfAborted(signal: AbortSignal | undefined): void {
+  if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
+}
+
+function isAbortError(error: unknown): boolean {
+  return error instanceof DOMException && error.name === "AbortError";
+}
+
+function waitTicks(api: SandkitApi, count: number, signal: AbortSignal | undefined): Promise<void> {
   return new Promise((resolve, reject) => {
+    if (signal?.aborted) {
+      reject(new DOMException("Aborted", "AbortError"));
+      return;
+    }
+
     let left = count;
     const timeoutId = setTimeout(() => {
       setSimulationPaused(true);
       reject(new Error("tick wait timed out"));
     }, 15_000);
 
+    const onAbort = () => {
+      clearTimeout(timeoutId);
+      reject(new DOMException("Aborted", "AbortError"));
+    };
+    signal?.addEventListener("abort", onAbort, { once: true });
+
     const step = () => {
+      if (signal?.aborted) return;
       left -= 1;
       if (left <= 0) {
         clearTimeout(timeoutId);
+        signal?.removeEventListener("abort", onAbort);
         // Stay unpaused so this tick can paint before we capture.
         resolve();
         return;
@@ -160,13 +195,55 @@ function gifEncodeWorkerUrl(): string | undefined {
   }
 }
 
-async function encodeGif(frames: ImageData[], delayMs: number): Promise<Uint8Array | null> {
+async function encodeRgbaFrames(
+  prepared: UnencodedFrame[],
+  width: number,
+  height: number,
+  signal: AbortSignal | undefined,
+): Promise<Uint8Array | null> {
+  if (prepared.length === 0) return null;
+  throwIfAborted(signal);
+  const encoder = new Encoder({
+    width,
+    height,
+    maxColors: 255,
+    looped: true,
+    workerUrl: gifEncodeWorkerUrl(),
+  });
+  for (const frame of prepared) {
+    throwIfAborted(signal);
+    const src = frame.data;
+    if (!(src instanceof Uint8ClampedArray)) return null;
+    // Worker encode transfers the buffer — copy so we can trim and encode again.
+    const data = new Uint8ClampedArray(src.length);
+    data.set(src);
+    await encoder.encode({
+      data,
+      delay: frame.delay,
+      disposal: frame.disposal,
+    });
+  }
+  throwIfAborted(signal);
+  const buffer = await encoder.flush();
+  throwIfAborted(signal);
+  return new Uint8Array(buffer);
+}
+
+type EncodedGif = { bytes: Uint8Array; frameCount: number; hitLimit: boolean };
+
+async function encodeGif(
+  frames: ImageData[],
+  delayMs: number,
+  maxBytes: number | undefined,
+  signal: AbortSignal | undefined,
+): Promise<EncodedGif | "too-large" | null> {
   if (frames.length === 0) return null;
 
   const prepared: UnencodedFrame[] = [];
   let width = 0;
   let height = 0;
   for (let i = 0; i < frames.length; i++) {
+    throwIfAborted(signal);
     const rgba = frameToRgba(frames[i]);
     if (!rgba) return null;
     width = rgba.width;
@@ -182,18 +259,31 @@ async function encodeGif(frames: ImageData[], delayMs: number): Promise<Uint8Arr
   }
   frames.length = 0;
 
-  const encoder = new Encoder({
-    width,
-    height,
-    maxColors: 255,
-    looped: true,
-    workerUrl: gifEncodeWorkerUrl(),
-  });
-  for (const frame of prepared) {
-    await encoder.encode(frame);
+  const full = await encodeRgbaFrames(prepared, width, height, signal);
+  if (!full) return null;
+  if (maxBytes === undefined || full.byteLength <= maxBytes) {
+    return { bytes: full, frameCount: prepared.length, hitLimit: false };
   }
-  const buffer = await encoder.flush();
-  return new Uint8Array(buffer);
+
+  let lo = MIN_FRAMES;
+  let hi = prepared.length - 1;
+  let best: Uint8Array | null = null;
+  let bestCount = 0;
+  while (lo <= hi) {
+    throwIfAborted(signal);
+    const mid = (lo + hi) >> 1;
+    const attempt = await encodeRgbaFrames(prepared.slice(0, mid), width, height, signal);
+    await yieldToRenderer();
+    if (attempt && attempt.byteLength <= maxBytes) {
+      best = attempt;
+      bestCount = mid;
+      lo = mid + 1;
+    } else {
+      hi = mid - 1;
+    }
+  }
+  if (!best) return "too-large";
+  return { bytes: best, frameCount: bestCount, hitLimit: true };
 }
 
 function bytesToGifBlob(bytes: Uint8Array): Blob {
@@ -237,12 +327,14 @@ export async function recordSelectionGif(
 
   clearMarqueeSelection(api);
   const wasPaused = getSession()?.paused === true;
+  const maxBytes = options.limit1Mb ? GIF_1MB : undefined;
   console.log(`record start`, {
     bounds,
     framesWanted,
     ticksPerFrame,
     greenscreen: look.greenscreen,
     showMouse: look.showMouse,
+    limit1Mb: options.limit1Mb,
   });
 
   const frames: ImageData[] = [];
@@ -250,12 +342,15 @@ export async function recordSelectionGif(
   try {
     try {
       const first = await captureGifFrame(api, bounds, look);
+      throwIfAborted(options.signal);
       if (!first) return "out-of-view";
       frames.push(first);
 
       for (let i = 1; i < framesWanted; i++) {
-        await waitTicks(api, ticksPerFrame);
+        await waitTicks(api, ticksPerFrame, options.signal);
+        throwIfAborted(options.signal);
         const frame = await captureGifFrame(api, bounds, look);
+        throwIfAborted(options.signal);
         if (!frame) {
           console.warn(`frame ${i + 1} missing — abort`);
           return "failed";
@@ -272,17 +367,21 @@ export async function recordSelectionGif(
 
     if (frames.length < 2) return "failed";
 
+    options.onEncodeStart?.();
     api.ui.toast("Encoding GIF…", {});
-    const bytes = await encodeGif(frames, delayMs);
-    if (!bytes) return "failed";
+    const encoded = await encodeGif(frames, delayMs, maxBytes, options.signal);
+    if (encoded === "too-large") return "too-large";
+    if (!encoded) return "failed";
 
-    downloadGif(bytes);
+    downloadGif(encoded.bytes);
     console.log(`GIF ready`, {
-      frames: frames.length,
-      bytes: bytes.byteLength,
+      frames: encoded.frameCount,
+      bytes: encoded.bytes.byteLength,
+      hitLimit: encoded.hitLimit,
     });
-    return "ok";
+    return encoded.hitLimit ? "ok-1mb" : "ok";
   } catch (error) {
+    if (isAbortError(error)) return "cancelled";
     console.error(`record threw:`, error);
     return "failed";
   }

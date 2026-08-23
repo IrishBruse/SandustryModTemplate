@@ -30,6 +30,7 @@ type OverlayLive = {
   toggle: () => void;
   screenshot: () => void;
   recordGif: () => void;
+  abortRecord: AbortController | null;
 };
 
 /**
@@ -45,6 +46,7 @@ const live: OverlayLive = (() => {
     toggle: () => {},
     screenshot: () => {},
     recordGif: () => {},
+    abortRecord: null,
   });
 })();
 
@@ -95,7 +97,9 @@ export function Overlay() {
   const [ticksPerFrame, setTicksPerFrame] = useState(1);
   const [greenscreen, setGreenscreen] = useState(false);
   const [showMouse, setShowMouse] = useState(false);
-  const [busy, setBusy] = useState(false);
+  const [limit1Mb, setLimit1Mb] = useState(false);
+  const [phase, setPhase] = useState<"idle" | "recording" | "encoding">("idle");
+  const busy = phase !== "idle";
 
   live.toggle = () => {
     live.open = !live.open;
@@ -130,8 +134,13 @@ export function Overlay() {
   };
 
   live.recordGif = () => {
-    if (busy) return;
-    setBusy(true);
+    if (live.abortRecord) {
+      live.abortRecord.abort();
+      return;
+    }
+    const abort = new AbortController();
+    live.abortRecord = abort;
+    setPhase("recording");
     const api = sandkit.api;
     void (async () => {
       try {
@@ -140,10 +149,22 @@ export function Overlay() {
           ticksPerFrame,
           greenscreen,
           showMouse,
+          limit1Mb,
+          signal: abort.signal,
+          onEncodeStart: () => setPhase("encoding"),
         });
         switch (result) {
           case "ok":
             api.ui.toast("GIF saved — check your downloads", {});
+            break;
+          case "ok-1mb":
+            api.ui.toast("GIF saved — 1 MB limit", {});
+            break;
+          case "too-large":
+            api.ui.toast("Selection too large for 1 MB — crop smaller", {});
+            break;
+          case "cancelled":
+            api.ui.toast("GIF cancelled", {});
             break;
           case "no-selection":
             api.ui.toast("No marquee selection — press C, drag, then Record", {});
@@ -159,7 +180,8 @@ export function Overlay() {
         console.error("record threw:", error);
         api.ui.toast("GIF record failed", {});
       } finally {
-        setBusy(false);
+        if (live.abortRecord === abort) live.abortRecord = null;
+        setPhase("idle");
       }
     })();
   };
@@ -224,13 +246,18 @@ export function Overlay() {
               <OptionsRow label="Show mouse">
                 <OptionsSwitch checked={showMouse} disabled={busy} onChange={setShowMouse} />
               </OptionsRow>
+              <OptionsRow label="1 MB limit" description="Warning takes a while.">
+                <OptionsSwitch checked={limit1Mb} disabled={busy} onChange={setLimit1Mb} />
+              </OptionsRow>
             </OptionsSection>
             <OptionsSection title="Actions">
-              <OptionsRow label={busy ? "Recording…" : "Record GIF"}>
+              <OptionsRow
+                label={phase === "encoding" ? "Encoding…" : phase === "recording" ? "Recording…" : "Record GIF"}
+              >
                 <div className="flex items-center gap-2">
                   {!busy && recordGifKey ? <HotkeyBadge>{recordGifKey}</HotkeyBadge> : null}
-                  <OptionsButton disabled={busy} onClick={() => live.recordGif()}>
-                    Record
+                  <OptionsButton onClick={() => live.recordGif()}>
+                    {busy ? "Cancel" : "Record"}
                   </OptionsButton>
                 </div>
               </OptionsRow>

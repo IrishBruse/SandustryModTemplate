@@ -23,12 +23,15 @@ Set keys for **Screenshot** and **Record GIF** in Options → Controls. The pane
 - **Ticks / frame** — 1–30 (default 1)
 - **Greenscreen** — on/off (default off)
 - **Show mouse** — on/off (default off)
+- **1 MB limit** — on/off (default off). Record GIF keeps the longest prefix that stays at or under 1 MiB.
 
 **Greenscreen** hides the parallax sky and fills empty pixels with `#00FF00` for chroma key.
 
 **Show mouse** draws the in-game cursor into the PNG or GIF when the pointer tip is inside the selection.
 
-**Record GIF** pauses the sim on each painted frame, then steps the ticks you set before the next capture. After the last frame the sim unpauses and the GIF encodes on a worker so the game stays responsive. The GIF is **2×** nearest-neighbor, same as the PNG. The file downloads.
+**1 MB limit** encodes the captured frames, then drops frames from the end until the `.gif` is at most 1 MiB. Use this for Steam Workshop thumbnails. If even two frames are over 1 MiB, crop a smaller box.
+
+**Record GIF** pauses the sim on each painted frame, then steps the ticks you set before the next capture. After the last frame the sim unpauses and the GIF encodes on a worker so the game stays responsive. The GIF is **2×** nearest-neighbor, same as the PNG. The file downloads. The row shows **Recording…** during capture and **Encoding…** during encode. The button is **Cancel** in both cases.
 
 **Record GIF** clears the dashed **C** marquee when recording starts so you can keep building. The crop stays the box you selected. The marquee is not restored when the GIF finishes.
 

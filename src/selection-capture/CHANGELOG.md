@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.0
+
+### Added
+
+- Panel **1 MB limit** — Record GIF drops frames from the end until the file is at most 1 MiB (Steam Workshop thumbnail size).
+- **Cancel** on the Record button (or the Record GIF key) stops a capture or encode in progress.
+
 ## 0.3.0
 
 ### Added

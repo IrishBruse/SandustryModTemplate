@@ -4,7 +4,7 @@ export const modinfo = defineModInfo({
   manifestVersion: 1,
   id: "irishbruse.selection-capture",
   name: "Screenshot and GIF recorder",
-  version: "0.3.0",
+  version: "0.4.0",
   apiVersion: 1,
   entry: "main.js",
   author: "IrishBruse",
