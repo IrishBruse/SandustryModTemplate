@@ -10,7 +10,7 @@ The game runs `main.js` as a script body (`new Function`). `sandkit` is already 
 | `npm run dev`        | Included; install `src/debug`                                     | Included       | OS mods folder while watching; removed when the watch stops   |
 | `--game` / `--debug` | Included; install `src/debug`                                     | Included       | Game mods folder                                              |
 
-`--no-debug` forces a release-style bundle even when watch or game flags are set. `--mod <folder>` builds one mod folder (repeat `--mod` for several). `--mod debug` includes the debug companion on `npm run build` (release bundle in `build/debug/`). Debug builds (`npm run dev`, `--game`, `--debug`) install to the OS mods folder with `dist/<folder>/` links unless you pass only `--mod debug`. The build discovers every `src/*/mod.ts` and `examples/*/mod.ts`.
+`--no-debug` forces a release-style bundle even when watch or game flags are set. `--mod <folder>` builds one mod folder (repeat `--mod` for several). `--mod debug` includes the debug companion on `npm run build` (release bundle in `build/debug/`). Debug builds (`npm run dev`, `--game`, `--debug`) install to the OS mods folder (`dist/` links there) unless you pass only `--mod debug`. The build discovers every `src/*/mod.ts` and `examples/*/mod.ts`.
 
 Debug builds emit **inline** source maps on `main.js` (needed for `new Function` eval). Use `--sourcemap` to force maps on a release build, or `--no-sourcemap` to omit them from a debug build.
 
@@ -53,7 +53,7 @@ In game:
 ## Commands
 
 ```bash
-npm run setup            # check install, extract sandustry/, link logs/ (one time)
+npm run setup            # check install, extract sandustry/, link dist/ and logs/ (one time)
 npm run dev              # watch mods (TTY picker; last choice pre-selected)
 npm run dev -- --mod overlay-hotkey
 npm run dev -- --mod overlay-hotkey --mod hello-world
@@ -68,7 +68,7 @@ npm run ui:css           # compile docs/ui/canvas preview Tailwind
 npm run ui:previews      # compile preview CSS, then screenshot preview.html
 ```
 
-When `npm run dev` stops (Ctrl+C, terminal close, or process exit), it removes the OS mod folders this template owns and the matching `dist/<folder>` links. Use `npm run build` when you want mods to stay installed.
+When `npm run dev` stops (Ctrl+C, terminal close, or process exit), it removes the OS mod folders this template built in that watch session. The `dist/` link stays. Use `npm run build` when you want mods to stay installed.
 
 In a TTY, `npm run dev` always opens a keyboard picker before the watch starts. **All mods** is the first row. Mods are grouped under **src** (including the **debug** companion) and **Examples**. Type to filter the list, **Space** toggles mods, **Enter** confirms (All, checked mods, or the highlighted mod). Your last choice is saved under `.tmp/dev-mod-selection.json` and pre-selected next time. Pass `--mod` to skip the picker. Non-TTY runs watch all mods.
 

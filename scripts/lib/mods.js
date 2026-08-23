@@ -6,7 +6,7 @@ import { existsSync, mkdirSync, readdirSync, statSync } from "node:fs";
 import { basename, dirname, isAbsolute, join, normalize, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { bundleAndImport } from "./build-patches.js";
-import { ensureGameModDir, gameModDir, linkRepoDistToModOutputs } from "./mod-path.js";
+import { gameModDir, syncModGameFolders } from "./mod-path.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 
@@ -98,7 +98,7 @@ export function modIsolationPlugin(root = ROOT) {
 
 /**
  * @typedef {object} DiscoveredMod
- * @property {string} folder Leaf folder name (`--mod` id and `dist/<folder>/` link)
+ * @property {string} folder Leaf folder name (`--mod` id)
  * @property {string} root `src` or `examples`
  * @property {string} dir Absolute path to the mod folder
  * @property {string} repoPath Repo-relative path (for example `examples/ui/overlay-hotkey`)
@@ -327,8 +327,8 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
 }
 
 /**
- * Create each game mod folder and `dist/<folder>` links.
- * Stale dist links are removed only when that folder is gone, not when `--mod` filters the build.
+ * Link `dist/` to the OS mods folder and create each game mod folder.
+ * Stale game folders are removed only when a src folder is gone, not when `--mod` filters the build.
  * Release builds omit `src/debug` from keepFolders so leftover `mods/debug` is removed.
  * @param {string} repoRoot
  * @param {LoadedMod[]} mods
@@ -339,6 +339,5 @@ export function prepareModOutputs(repoRoot, mods, options = {}) {
   const keepFolders = discoverModFolders().filter(
     (folder) => folder !== DEBUG_MOD_FOLDER || includeDebugKit,
   );
-  for (const mod of mods) ensureGameModDir(mod.gameName);
-  linkRepoDistToModOutputs(repoRoot, mods, keepFolders);
+  syncModGameFolders(repoRoot, mods, keepFolders);
 }

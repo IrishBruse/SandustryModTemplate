@@ -7,6 +7,7 @@
  *
  * Layout:
  *   sandustry/   game JS/JSON/HTML/CSS from app.asar
+ *   dist/        symlink (Linux) / junction (Windows) to sandustry mods folder
  *   logs/        symlink (Linux) / junction (Windows) to sandustry logs
  *                Linux: ~/.config/sandustry/logs
  *                Windows: %APPDATA%/sandustry/logs
@@ -32,6 +33,7 @@ import {
   steamLibraryRoots,
 } from "../lib/paths.js";
 import { discoverMods, MOD_ROOTS } from "../lib/mods.js";
+import { ensureRepoDistLink } from "../lib/mod-path.js";
 import { SANDUSTRY, SANDUSTRY_DIR } from "../lib/sandustry-common.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
@@ -274,6 +276,23 @@ function ensureUserDataDirs() {
   ok(`Game logs folder: ${LOGS_SRC}`);
 }
 
+function syncDist() {
+  try {
+    const status = ensureRepoDistLink(ROOT, { quiet: true });
+    if (status === "already") {
+      ok(`Link dist/ -> ${MODS_DIR} (already linked)`);
+      return;
+    }
+    if (status === "migrated") {
+      ok(`Migrated dist/ per-mod links -> ${MODS_DIR}`);
+      return;
+    }
+    ok(`Linked dist/ -> ${MODS_DIR}`);
+  } catch (err) {
+    fail(`Could not link dist/ to ${MODS_DIR}: ${err instanceof Error ? err.message : err}`);
+  }
+}
+
 function syncLogs() {
   try {
     const stat = lstatSync(LOGS_DEST);
@@ -319,6 +338,7 @@ if (haveAsar) {
 }
 
 ensureUserDataDirs();
+syncDist();
 syncLogs();
 
 console.log("");

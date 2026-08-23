@@ -7,8 +7,8 @@ The template has no release tags yet. Dated sections match the day the change la
 ### Changed
 
 - **Debug companion:** **Auto-load save** runs once per browser session on initial boot only. Exit to the main menu no longer forces you back into the save. Hot reload still skips auto-load. See [modkit/debug.md](modkit/debug.md).
-
 - **Sandkit API types:** `modkit/types/` is described as normal template types, not vendored copies from sandustry-modding-types. `npm run setup` checks for `modkit/types/` declarations without upstream wording.
+- **`dist/`:** `npm run setup` links `dist/` to the OS Sandustry mods folder. Debug builds no longer create per-mod `dist/<folder>/` links on each rebuild. `npm run dev` still removes template-built mod folders when the watch stops; the `dist/` link stays. See [layout.md](layout.md) and [builds.md](builds.md).
 - **Console inject:** All builds prefix bare `console.*` with `[modId]`. POST to the watch log server (`logs/<mod-id>.log`) stays debug-only. See [builds.md](builds.md) and [modkit/debug.md](modkit/debug.md).
 - **`npm run build`:** Writes the OS mods folder and copies each mod to `build/<folder>/` for Workshop staging. `npm run build:release` is removed; `npm run publish` runs `npm run build`. See [builds.md](builds.md).
 - **Sample mods** moved from `src/*-example/` to [`examples/`](examples/README.md) without the `-example` suffix (`hello-world`, `overlay-hotkey`, …). `src/` keeps shipped mods (`selection-capture`, `debug`). Copy an example into `src/<your-mod>/` to start a new mod. See [layout.md](layout.md).
