@@ -6,6 +6,15 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Changed
 
+- **Mod layout:** a mod root keeps only `mod.ts`, `main.ts`, and optional `worker.ts` as TypeScript. Other source files live in feature folders. See [layout.md](layout.md).
+- **Survival Mode:** vanilla **Sprint Boost** (Shift burst and meter) is off. **Shift** is a hold sprint on the ground (1.6× walk speed). See [`src/survival-mode/`](../src/survival-mode/).
+- **Survival Mode:** fire deals 6 and lava deals 12 every 400 ms while overlapping. See [`src/survival-mode/`](../src/survival-mode/).
+
+### Fixed
+
+- **Survival Mode:** fire and lava keep dealing damage while you stand still. Ticks run on `frame:render` with a cooldown, not only on `player:moved`. See [`src/survival-mode/`](../src/survival-mode/).
+- **Survival Mode:** hold **Shift** now speeds up walk. The SprintBoost binding is `Shift`; session keys use `ShiftLeft` / `ShiftRight`. See [`src/survival-mode/`](../src/survival-mode/).
+
 - **`@modkit/debug`:** Release builds no longer stub `onDispose` to a no-op. Hot reload can run disposers from release `main.js` when the debug companion is installed. See [modkit/debug.md](modkit/debug.md).
 - **Debug companion:** **Auto-load save** runs once per browser session on initial boot only. Exit to the main menu no longer forces you back into the save. Hot reload still skips auto-load. See [modkit/debug.md](modkit/debug.md).
 - **Sandkit API types:** `modkit/types/` is described as normal template types, not vendored copies from sandustry-modding-types. `npm run setup` checks for `modkit/types/` declarations without upstream wording.
@@ -18,7 +27,8 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Added
 
-- **Survival Mode** (`src/survival-mode/`): health on the resource HUD, hover flight locked, and step-up on small inclines (`maxStepCells`). See [`src/survival-mode/`](../src/survival-mode/).
+- **Survival Mode:** **H** restores health to 100 (debug). Rebind under **Options → Controls**. See [`src/survival-mode/`](../src/survival-mode/).
+- **Survival Mode:** fire, flame, and lava now damage the player. The player sprite tints orange or red while touching a hazard. See [`src/survival-mode/`](../src/survival-mode/) and [player sprite tint](player-sprite-tint.md).
 - **`npm run dev` mod picker:** In a TTY, choose **All mods** or filter and multi-select folders before the watch starts. Repeat `--mod` on the CLI for several mods without the picker.
 - **`custom-element`:** register a powder element, paint at the mouse cell with **P**, and unlock it in the codex. See [`examples/custom-element/`](../examples/custom-element/).
 - **`input-binding`:** `registerBinding`, `getDisplayKey`, and a small overlay that reflects rebinding in settings. See [`examples/input-binding/`](../examples/input-binding/).
@@ -43,8 +53,8 @@ The template has no release tags yet. Dated sections match the day the change la
 
 - Watch extra `watchDirs` cover only static `mod/` copies. Imported `modkit/` files are already in the esbuild graph. The watch writes bundles; the debug companion polls those files for hot reload. See [builds.md](builds.md).
 - **Debug companion:** source layout — `mod.ts`, `main.ts`, and `patches.ts` at `src/debug/`; other files under `boot/`, `reload/`, and `f3/`. See [modkit/debug.md](modkit/debug.md).
-- **Debug companion:** game-file patches live in [`src/debug/patches.ts`](../src/debug/patches.ts) (re-exported from `mod.ts`). See [modkit/debug.md](modkit/debug.md).
-- **`@modkit/debug`** exports `onDispose` only. Re-eval and file poll live in `src/debug/reload/`. Loader rewrites live in `src/debug/patches.ts`. See [modkit/debug.md](modkit/debug.md).
+- **Debug companion:** game-file patches live in [`src/debug/patches/patches.ts`](../src/debug/patches/patches.ts) (re-exported from `mod.ts`). See [modkit/debug.md](modkit/debug.md).
+- **`@modkit/debug`** exports `onDispose` only. Re-eval and file poll live in `src/debug/reload/`. Loader rewrites live in `src/debug/patches/patches.ts`. See [modkit/debug.md](modkit/debug.md).
 - **Debug companion:** `loadOrder` is `-2147483648` so the companion runs before other local mods. See [modkit/debug.md](modkit/debug.md).
 - **Debug companion:** local-mod hot reload no longer needs esbuild inject in each bundle. Subscribe to the companion on the Workshop (this template still installs a local copy on debug builds). It watches **local** folders only, not other Workshop items. See [modkit/debug.md](modkit/debug.md).
 - **Debug companion:** **Auto-load save** (default on) replaces splash skip and main-menu Continue clicking. **Start save** in Options chooses Last played or Mod storage. Pick a world in the Start save panel. Legacy `autoBoot` prefs still apply until you set `autoLoad`. See [modkit/debug.md](modkit/debug.md).
