@@ -5,7 +5,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { styleText } from "../lib/cli-style.js";
-import { DEBUG_MOD_FOLDER, discoverMods, parseModFilters } from "../lib/mods.js";
+import { DEBUG_MOD_FOLDER, discoverMods, parseModFilters, resolveModRoots } from "../lib/mods.js";
 import { isCliTty, tuiModCombobox } from "../lib/tui.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
@@ -45,16 +45,22 @@ function writeLastSelection(picked) {
 
 /**
  * @param {string[]} argv
- * @returns {Promise<string[]>} Extra args to pass to esbuild (`[]` = all mods).
+ * @param {{ skipPicker?: boolean, roots?: string[] }} [options]
+ * @returns {Promise<string[]>} Extra args to pass to esbuild (`[]` = all mods in scope).
  */
-export async function pickDevModArgs(argv) {
-  if (parseModFilters(argv).length > 0) return [];
+export async function pickDevModArgs(argv, options = {}) {
+  if (options.skipPicker || parseModFilters(argv).length > 0) return [];
 
   if (!isCliTty()) return [];
 
-  const mods = discoverMods();
+  const modRoots = options.roots ?? resolveModRoots(argv);
+  const mods = discoverMods({ roots: modRoots });
   if (mods.length === 0) {
-    throw new Error("No mods found. Add src/<name>/mod.ts or examples/<name>/mod.ts");
+    const hint =
+      modRoots.length === 1 && modRoots[0] === "examples"
+        ? "Add examples/<name>/mod.ts"
+        : "Add src/<name>/mod.ts";
+    throw new Error(`No mods found. ${hint}`);
   }
   if (mods.length === 1) {
     console.log(styleText("dim", `Watching ${mods[0].folder}`));
@@ -76,10 +82,12 @@ export async function pickDevModArgs(argv) {
 
     /** @type {{ label: string, mods: { folder: string, hint?: string }[] }[]} */
     const groups = [];
-    const srcMods = byRoot("src");
-    const exampleMods = byRoot("examples");
-    if (srcMods.length > 0) groups.push({ label: "src", mods: srcMods });
-    if (exampleMods.length > 0) groups.push({ label: "Examples", mods: exampleMods });
+    for (const root of modRoots) {
+      const rootMods = byRoot(root);
+      if (rootMods.length > 0) {
+        groups.push({ label: root === "examples" ? "Examples" : root, mods: rootMods });
+      }
+    }
 
     const picked = await tuiModCombobox({
       title: "Watch which mods?",

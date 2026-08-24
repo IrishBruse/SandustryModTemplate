@@ -1,11 +1,7 @@
 #!/usr/bin/env node
 /**
- * Watch src/<name>/ and build each mod into the game mods folder
- * (Linux: ~/.config/sandustry/mods/<modinfo.id>;
- *  Windows: %APPDATA%/sandustry/mods/<modinfo.id>).
- * On stop (Ctrl+C, terminal close, or child exit), remove those owned mods.
- * Usage: npm run dev [-- --mod hello-world]
- * In a TTY with no --mod, shows a keyboard mod picker (last choice pre-selected).
+ * Watch every examples/<name>/ mod (no TTY picker).
+ * Usage: npm run examples [-- --mod hello-world]
  */
 import { spawn } from "node:child_process";
 import { dirname, join } from "node:path";
@@ -15,10 +11,10 @@ import { removeOwnedGameMods } from "../lib/mod-path.js";
 import { pickDevModArgs } from "./pick-dev-mods.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
-const extra = process.argv.slice(2);
-const modArgs = await pickDevModArgs(extra, { roots: ["src"] });
+const extra = ["--examples", ...process.argv.slice(2)];
+const modArgs = await pickDevModArgs(extra, { skipPicker: true, roots: ["examples"] });
 
-console.log(styleText(["bold", "cyan"], "Watching src/ mods"));
+console.log(styleText(["bold", "cyan"], "Watching examples/ mods"));
 
 const child = spawn(
   "node",

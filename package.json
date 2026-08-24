@@ -6,6 +6,7 @@
     "setup": "node scripts/setup/setup.js",
     "build": "node scripts/build/esbuild.config.mjs",
     "dev": "node scripts/dev/dev.js",
+    "examples": "node scripts/dev/examples.js",
     "typecheck": "node scripts/typecheck/typecheck.js",
     "test": "node scripts/test/test.js",
     "postinstall": "node scripts/mod-install/install-mod-deps.js",

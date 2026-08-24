@@ -2,7 +2,7 @@
  * Discover `src/<name>/mod.ts` and `examples/<name>/mod.ts` folders and load each manifest.
  * Optional `--mod <folder>` (repeatable, or `--mod=<folder>`) selects one or more.
  */
-import { existsSync, mkdirSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readdirSync, statSync } from "node:fs";
 import { basename, dirname, isAbsolute, join, normalize, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { bundleAndImport } from "./build-patches.js";
@@ -12,6 +12,19 @@ const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 
 /** Mod source roots relative to the repo root. */
 export const MOD_ROOTS = ["src", "examples"];
+
+/** Dev watch without `--examples` only builds `src/`. */
+export const DEV_MOD_ROOTS = ["src"];
+
+/**
+ * @param {string[]} argv
+ * @returns {string[]}
+ */
+export function resolveModRoots(argv) {
+  if (argv.includes("--examples")) return ["examples"];
+  if (argv.includes("--watch")) return DEV_MOD_ROOTS;
+  return MOD_ROOTS;
+}
 
 /** Companion mod folder. Debug builds install it; release builds omit it. */
 export const DEBUG_MOD_FOLDER = "debug";
@@ -149,15 +162,17 @@ function discoverModsInTree(modRoot) {
 }
 
 /**
+ * @param {{ roots?: string[] }} [options]
  * @returns {DiscoveredMod[]} Sorted by folder name.
  */
-export function discoverMods() {
+export function discoverMods(options = {}) {
+  const roots = options.roots ?? MOD_ROOTS;
   /** @type {DiscoveredMod[]} */
   const mods = [];
   /** @type {Map<string, string>} */
   const seen = new Map();
 
-  for (const root of MOD_ROOTS) {
+  for (const root of roots) {
     for (const mod of discoverModsInTree(root)) {
       const prior = seen.get(mod.folder);
       if (prior) {
@@ -244,24 +259,32 @@ export function parseModFilter(argv) {
  */
 export async function loadMods(argv = process.argv.slice(2), options = {}) {
   const includeDebugKit = options.includeDebugKit === true;
-  const discovered = discoverMods();
+  const modRoots = resolveModRoots(argv);
+  const discovered = discoverMods({ roots: modRoots });
+  const allDiscovered = modRoots.length === MOD_ROOTS.length ? discovered : discoverMods();
   if (discovered.length === 0) {
-    throw new Error("No mods found. Add src/<name>/mod.ts or examples/<name>/mod.ts");
+    const hint =
+      modRoots.length === 1 && modRoots[0] === "examples"
+        ? "Add examples/<name>/mod.ts"
+        : modRoots.length === 1 && modRoots[0] === "src"
+          ? "Add src/<name>/mod.ts"
+          : "Add src/<name>/mod.ts or examples/<name>/mod.ts";
+    throw new Error(`No mods found. ${hint}`);
   }
 
   const filters = parseModFilters(argv);
   let selected =
     filters.length > 0 ? discovered.filter((mod) => filters.includes(mod.folder)) : discovered;
   if (filters.length > 0) {
-    const unknown = filters.filter((folder) => !discovered.some((mod) => mod.folder === folder));
+    const unknown = filters.filter((folder) => !allDiscovered.some((mod) => mod.folder === folder));
     if (unknown.length > 0) {
       throw new Error(
-        `Unknown --mod ${unknown.map((folder) => JSON.stringify(folder)).join(", ")}. Found: ${discovered.map((m) => m.folder).join(", ")}`,
+        `Unknown --mod ${unknown.map((folder) => JSON.stringify(folder)).join(", ")}. Found: ${allDiscovered.map((m) => m.folder).join(", ")}`,
       );
     }
     if (selected.length === 0) {
       throw new Error(
-        `No mods matched --mod. Found: ${discovered.map((m) => m.folder).join(", ")}`,
+        `No mods matched --mod. Found: ${allDiscovered.map((m) => m.folder).join(", ")}`,
       );
     }
   }
@@ -271,12 +294,8 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
     if (selected.length === 0) {
       throw new Error("src/debug is omitted from release builds. Pass --debug or use npm run dev.");
     }
-  } else if (
-    filters.length > 0 &&
-    !filters.includes(DEBUG_MOD_FOLDER) &&
-    discovered.some((mod) => mod.folder === DEBUG_MOD_FOLDER)
-  ) {
-    const debugMod = discovered.find((mod) => mod.folder === DEBUG_MOD_FOLDER);
+  } else {
+    const debugMod = allDiscovered.find((mod) => mod.folder === DEBUG_MOD_FOLDER);
     if (debugMod && !selected.some((mod) => mod.folder === DEBUG_MOD_FOLDER)) {
       selected = [...selected, debugMod];
     }
