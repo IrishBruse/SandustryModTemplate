@@ -5,5 +5,3 @@ Press **Picker** (default **F**) to pick the structure under the cursor. One key
 Rebind in **Options → Controls → Pick Block**.
 
 Turn **Mod enabled** off in Options → Mods to restore hold-to-pick.
-
-The shortcut helper can still say “Hold F”.

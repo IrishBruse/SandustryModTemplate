@@ -17,7 +17,6 @@ import {
   existsSync,
   lstatSync,
   mkdirSync,
-  readdirSync,
   readFileSync,
   readlinkSync,
   rmSync,
@@ -42,7 +41,6 @@ const SOURCE_DEST = join(ROOT, "sandustry");
 const LOGS_SRC = sandustryLogsDir();
 const LOGS_DEST = join(ROOT, "logs");
 const MODS_DIR = sandustryModsDir();
-const TYPES_SENTINEL = join(ROOT, "modkit/types/global.d.ts");
 const SANDUSTRY_APP_ID = "2764460";
 const BUNDLE_RELS = ["dist/js/bundle.js", "js/bundle.js"];
 /** Previous references/ folder (source extract, logs link, workshop copies). */
@@ -108,14 +106,6 @@ function checkRootInstall() {
     return;
   }
   fail("Root node_modules is incomplete. Run npm install in the repo root.");
-}
-
-function checkTypes() {
-  if (existsSync(TYPES_SENTINEL)) {
-    ok("modkit/types/ Sandkit API declarations");
-    return;
-  }
-  fail("modkit/types/ is missing. Pull the latest template.");
 }
 
 function checkModPackageInstalls() {
@@ -321,7 +311,6 @@ console.log("");
 
 checkNode();
 checkRootInstall();
-checkTypes();
 checkModPackageInstalls();
 
 const haveBinary = checkGameBinary();

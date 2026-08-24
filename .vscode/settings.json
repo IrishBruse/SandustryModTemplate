@@ -1,6 +1,7 @@
 {
-  "[html][css][scss][html][typescript][javascript][json][jsonc][yaml][github-actions-workflow]": {
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "debug.showSubSessionsInToolBar": false,
+  "[typescriptreact]": {
     "editor.defaultFormatter": "oxc.oxc-vscode"
-  },
-  "debug.showSubSessionsInToolBar": false
+  }
 }
