@@ -11,8 +11,8 @@ import {
   OptionsSwitch,
   OverlayRoot,
 } from "@modkit/ui";
-import { captureSelectionPng } from "../capturePng";
-import { installCaptureAreaPreview } from "../capturePreview";
+import { captureSelectionPng } from "../capture/capturePng";
+import { installCaptureAreaPreview } from "../capture/capturePreview";
 import {
   loadCaptureSettings,
   MAX_FRAMES,
@@ -21,16 +21,16 @@ import {
   MIN_TICKS,
   saveCaptureSettings,
   type CaptureSettings,
-} from "../captureSettings";
+} from "../capture/captureSettings";
 import { modinfo } from "../mod";
-import { recordSelectionGif } from "../recordGif";
+import { recordSelectionGif } from "../capture/recordGif";
 import {
   clampBlockPadding,
   getSelectionCellBounds,
   MAX_BLOCK_PADDING,
   MIN_BLOCK_PADDING,
   type CellBounds,
-} from "../selectionBounds";
+} from "../capture/selectionBounds";
 
 /** Game `registerBinding` forwards `displayNameKey`, not `displayName`. */
 const BINDINGS = {
