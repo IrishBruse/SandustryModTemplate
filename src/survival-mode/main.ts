@@ -1,8 +1,13 @@
 import { onDispose } from "@modkit/debug";
 import { isEnabled } from "@modkit/utils";
 import { modinfo } from "./mod";
-import { loadHealth } from "./health";
-import { applySurvivalMovementRules, installMovementHooks, JUMP_VELOCITY } from "./movement";
+import { installDebugHealBinding, loadHealth } from "./health/health";
+import { installHazardHooks } from "./hazards/hazards";
+import {
+  applySurvivalMovementRules,
+  installMovementHooks,
+  JUMP_VELOCITY,
+} from "./movement/movement";
 import { HealthHud } from "./ui/HealthHud";
 
 const api = sandkit.api;
@@ -26,9 +31,11 @@ function boot() {
 
   api.storage.ensure(modinfo.id);
   loadHealth();
+  installDebugHealBinding();
   applySurvivalMovementRules();
   registerUi();
   onDispose(installMovementHooks());
+  onDispose(installHazardHooks());
 }
 
 const stopReady = api.events.on("game:ready", boot);

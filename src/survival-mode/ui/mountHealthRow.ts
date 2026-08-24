@@ -1,5 +1,5 @@
 import { inGame } from "@modkit/utils";
-import { formatHealth, getHealth } from "../health";
+import { formatHealth, getHealth } from "../health/health";
 import { modinfo } from "../mod";
 import { findResourceStack } from "./resourceStack";
 
@@ -81,6 +81,10 @@ export function mountHealthRow(source: HTMLElement): () => void {
 
   const stopFrames = sandkit.api.events.on("frame:render", () => {
     if (!live) return;
+    if (row && !row.isConnected) {
+      row = null;
+      valueEl = null;
+    }
     if (valueEl) {
       valueEl.textContent = formatHealth(getHealth());
     }

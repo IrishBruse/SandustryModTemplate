@@ -5,17 +5,21 @@ Survival rules for Sandustry.
 ## Features
 
 - Health on the resource HUD (first row in the vanilla `div.mb-4` stack, shown as `current/100`).
-- **Jump** on **Space** (120 ms input buffer — press slightly before landing and jump still fires).
-- **Run** on **Boost** (hold Up / Boost binding for faster walk speed).
+- **Fire, flame, and lava** damage the player while overlapping (lava hits harder). The player sprite tints orange or red. Damage ticks on a timer, so standing still still hurts.
+- **Jump** on **Boost** (Up / W) or **Space** (120 ms input buffer).
+- **Sprint** on **Shift** (SprintBoost binding) while moving left/right on ground.
+- Vanilla **Sprint Boost** (temporary Shift burst and meter) is off.
 - **Stronger gravity** (1.75× vanilla fall speed).
 - **Auto step-up** up to 3 cells when walking into ledges (configurable 1–8).
 - Hover flight disabled.
 
 ## Controls
 
-- **Up** (Boost binding) — hold to run (1.55× walk speed).
+- **Up** (Boost binding, e.g. W) — press to jump.
+- **Shift** (SprintBoost binding) + **A/D** on ground — hold sprint (1.6× walk speed, no meter).
 - **Space** — jump when on ground.
-- Hover key and sustained up-thrust are blocked.
+- **H** — restore health to 100 (debug). Rebind under **Options → Controls**.
+- Hover key, Sprint Boost burst, and sustained up-thrust are blocked.
 
 ## Options
 

@@ -7,8 +7,13 @@ const { Tech, KeyBinding } = sandkit.enums;
 const BASE_GRAVITY = 0.06 * 60 * 60;
 /** Extra gravity multiplier (1.75 = 75% stronger fall). */
 const GRAVITY_MULT = 1.75;
-/** Walk speed multiplier while Boost is held (1 = vanilla walk). */
-const RUN_SPEED_MULT = 1.55;
+/** Walk speed while sprinting on ground. Vanilla walk is 1. */
+const RUN_SPEED_MULT = 1.6;
+/**
+ * Walk speed when not sprinting.
+ * Vanilla Sprint Boost only runs when `movementSpeedMultiplier` is exactly 1.
+ */
+const WALK_SPEED_MULT = 1.0001;
 const AUTO_STEP_CELLS = 3;
 /** Upward velocity (negative y). Higher magnitude = taller jump. */
 export const JUMP_VELOCITY = -380;
@@ -36,11 +41,13 @@ type InterceptContext = {
 type KeydownArgs = {
   key?: string;
   code?: string;
+  event?: KeyboardEvent;
 };
 
 let lastJumpAt = 0;
 let jumpBufferedAt = 0;
-let boostHeld = false;
+
+type SessionKeys = Record<string, number | undefined>;
 
 function clearJumpBuffer() {
   jumpBufferedAt = 0;
@@ -88,6 +95,55 @@ function keyMatchesBinding(bindingId: string, key?: string, code?: string): bool
   return false;
 }
 
+/**
+ * Session `input.keys` uses `KeyboardEvent.code`.
+ * Bindings may store modifier aliases (`Shift`, `Alt`, `Control`, `Meta`).
+ */
+const MODIFIER_KEY_CODES: Record<string, readonly string[]> = {
+  Shift: ["ShiftLeft", "ShiftRight"],
+  Alt: ["AltLeft", "AltRight"],
+  Control: ["ControlLeft", "ControlRight"],
+  Meta: ["MetaLeft", "MetaRight"],
+};
+
+function codesForBoundKey(bound: string): readonly string[] {
+  return MODIFIER_KEY_CODES[bound] ?? [bound];
+}
+
+function isJumpKey(payload: KeydownArgs): boolean {
+  if (payload.code === "Space" || payload.key === " ") return true;
+  return keyMatchesBinding(KeyBinding.Boost, payload.key, payload.code);
+}
+
+function inputKeys(): SessionKeys {
+  const session = sandkit.state.session as { input?: { keys?: SessionKeys } };
+  return session.input?.keys ?? {};
+}
+
+function isKeyBindingActive(bindingId: string, keys = inputKeys()): boolean {
+  const { KeyState } = sandkit.enums;
+  const activeStates = [KeyState.Down, KeyState.Pressed, KeyState.All];
+  for (const bound of api.input.getBoundKeys(bindingId)) {
+    for (const code of codesForBoundKey(bound)) {
+      const state = keys[code];
+      if (state !== undefined && activeStates.includes(state)) return true;
+    }
+  }
+  return false;
+}
+
+function isSprintKeyDown(): boolean {
+  return isKeyBindingActive(KeyBinding.SprintBoost);
+}
+
+function isMovingHorizontally(): boolean {
+  return isKeyBindingActive(KeyBinding.Left) || isKeyBindingActive(KeyBinding.Right);
+}
+
+function shouldSprint(): boolean {
+  return isSprintKeyDown() && isMovingHorizontally() && api.player.isOnGround();
+}
+
 function clearVerticalBoost() {
   const action = sessionInput()?.action;
   if (action?.boost) {
@@ -98,13 +154,22 @@ function clearVerticalBoost() {
 function applyRunSpeed() {
   if (!isSurvivalActive()) return;
 
-  const session = sandkit.state.session as { movementSpeedMultiplier?: number };
+  const session = sandkit.state.session as {
+    movementSpeedMultiplier?: number;
+    sprintBoost?: { meter: number; recharging: boolean };
+  };
   const current = session.movementSpeedMultiplier ?? 1;
   if (current === 0) return;
 
-  const target = boostHeld ? RUN_SPEED_MULT : 1;
+  const target = shouldSprint() ? RUN_SPEED_MULT : WALK_SPEED_MULT;
   if (current !== target) {
     api.player.setMovementSpeedMultiplier(target);
+  }
+
+  const boost = session.sprintBoost;
+  if (boost && (boost.meter !== 1 || boost.recharging)) {
+    boost.meter = 1;
+    boost.recharging = false;
   }
 }
 
@@ -114,7 +179,6 @@ function resetRunSpeed() {
   if (current !== 0 && current !== 1) {
     api.player.setMovementSpeedMultiplier(1);
   }
-  boostHeld = false;
 }
 
 function tryJump(): boolean {
@@ -143,6 +207,7 @@ function processJumpBuffer() {
 
 function forceGroundMode() {
   api.tech.setLockedById(Tech.Hover, true);
+  api.tech.setLockedById(Tech.SprintBoost, true);
 
   const player = playerSnapshot();
   if (!player) return;
@@ -170,8 +235,8 @@ export function installMovementHooks(): () => void {
   const stopBoostDown = api.hooks.intercept("input:boost-down", (_args, context) => {
     if (!isSurvivalActive()) return;
     cancelInputIntercept(context as InterceptContext);
-    boostHeld = true;
-    applyRunSpeed();
+    bufferJumpPress();
+    tryJump();
   });
 
   const stopDescendDown = api.hooks.intercept("input:descend-down", (_args, context) => {
@@ -186,19 +251,10 @@ export function installMovementHooks(): () => void {
       cancelInputIntercept(context as InterceptContext);
       return;
     }
-    if (payload.code === "Space") {
-      bufferJumpPress();
-      tryJump();
-    }
-  });
-
-  const stopKeyup = api.hooks.intercept("input:keyup", (args) => {
-    if (!isSurvivalActive()) return;
-    const payload = args as KeydownArgs;
-    if (keyMatchesBinding(KeyBinding.Boost, payload.key, payload.code)) {
-      boostHeld = false;
-      applyRunSpeed();
-    }
+    if (payload.event?.repeat) return;
+    if (!isJumpKey(payload)) return;
+    bufferJumpPress();
+    tryJump();
   });
 
   const stopCollision = api.events.on("player:collision:prepare", (payload) => {
@@ -229,7 +285,6 @@ export function installMovementHooks(): () => void {
     stopBoostDown();
     stopDescendDown();
     stopHoverKey();
-    stopKeyup();
     stopCollision();
     stopMoved();
     stopFrame();

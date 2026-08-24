@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
 import { ResourceRow } from "@modkit/ui";
-import { formatHealth, getHealth } from "../health";
+import { formatHealth, getHealth } from "../health/health";
 import { mountHealthRow } from "./mountHealthRow";
 
 const HEART_COLOR = "#ff2f45";
