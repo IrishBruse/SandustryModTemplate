@@ -77,6 +77,7 @@ Build one folder: `npm run dev -- --mod hello-world`.
 ## Next steps
 
 - [Folder layout](layout.md) — what each path is for
+- [Mod ideas](mod-ideas.md) — content mod concepts and API pointers
 - [Builds](builds.md) — debug vs release, Tailwind, Workshop publish
 - [Modkit](modkit/README.md) — React, utils, debug helpers
 - [Troubleshooting](troubleshooting.md) — mods beta, paths, SteamCMD

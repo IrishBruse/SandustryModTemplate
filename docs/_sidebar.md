@@ -4,6 +4,7 @@
 - Guide
   - [Quick start](quick-start.md)
   - [Folder layout](layout.md)
+  - [Mod ideas](mod-ideas.md)
   - [Builds](builds.md)
   - [Troubleshooting](troubleshooting.md)
 
