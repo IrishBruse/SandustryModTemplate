@@ -4,7 +4,7 @@ import { clearLog } from "@modkit/log";
  * Re-eval `main.js` for a local mod. JavaScript cannot unload.
  * Cleanup comes from `onDispose` (kit) and auto-tracked `api.ui.inject`.
  *
- * Keys must match `src/debug/patches.ts` (`local-mod-compile-reloaded`) and `modkit/internal/debug`.
+ * Keys must match `src/debug/patches/patches.ts` (`local-mod-compile-reloaded`) and `modkit/internal/debug`.
  */
 
 const EVAL_IDS_KEY = "__sandkitHotReloadEvalIds__";

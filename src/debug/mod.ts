@@ -1,7 +1,7 @@
 import { defineModInfo } from "@modkit/modinfo";
 import { AUTO_LOAD_FROM_STORAGE, AUTO_LOAD_LAST_PLAYED } from "./boot/auto-load-save";
 
-export { patches } from "./patches";
+export { patches } from "./patches/patches";
 
 export const modinfo = defineModInfo({
   manifestVersion: 1,

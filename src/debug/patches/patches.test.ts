@@ -5,7 +5,7 @@ import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 
 const DIR = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(DIR, "../..");
+const ROOT = join(DIR, "../../..");
 const RUNTIME_CANDIDATES = [
   join(ROOT, "sandustry/dist/js/external-mod-runtime.js"),
   join(ROOT, "sandustry/js/external-mod-runtime.js"),
