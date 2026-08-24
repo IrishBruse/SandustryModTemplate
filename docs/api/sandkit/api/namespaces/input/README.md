@@ -109,6 +109,8 @@ Defined in: [sandkit/api/input.d.ts:13](https://github.com/IrishBruse/SandustryM
 
 Register a key binding and return its binding id.
 
+A second `registerBinding` for the same `bindingId` replaces `sandkit.state.sandkit.keyBindings[id]`. To restore a previous engine binding (for example vanilla **Picker** after a mod override), keep the old object and assign it back to that map — do not re-register through the mod API if the original handlers expect the engine `game` argument.
+
 #### Parameters
 
 ##### bindingId

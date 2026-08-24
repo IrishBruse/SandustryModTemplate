@@ -5,5 +5,9 @@
 ### Added
 
 - **Instant Pick Block** — press **Picker** (default **F**) once to pick the structure under the cursor. No hold-and-click.
-- **Mod enabled** toggle in Options → Mods. Turn off to restore vanilla Picker on the next restart or hot reload.
-- Filter, color, and structure data copy rules match vanilla pick block.
+- **Mod enabled** toggle in Options → Mods. Turn off to restore vanilla Picker immediately.
+- Bundle patch on vanilla **Picker** `down` — when enabled, sets `mouse.clicked` and runs vanilla `pressed` so pick logic stays 100% vanilla.
+
+### Removed
+
+- Duplicated pick/copy helpers (`copied-structure`, `resolve-type`, custom `registerBinding` override).
