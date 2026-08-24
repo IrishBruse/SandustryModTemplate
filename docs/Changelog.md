@@ -17,6 +17,8 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Changed
 
+- **Workshop listing copy:** write `workshop/workshop.md` in Markdown. `npm run publish` converts it to Steam BBCode at upload time. Links and raw URLs are rejected (Steam virus scan). Legacy `workshop.txt` still works if present. See [builds.md](builds.md#workshop-publish).
+- **Workshop publish:** `npm run publish` can create a new Steam Workshop item on first upload (`publishedfileid` `0`). After success it writes `src/<mod>/workshop/workshop.json` with the new item id. You no longer need in-game create or a manual `workshop.json` before the first publish. See [builds.md](builds.md#workshop-publish).
 - **OS mods folder:** builds now write to `mods/<modinfo.id>/` instead of `mods/<modinfo.name>/`. The next dev or debug build removes stale name-based folders for the same id. Remove any leftover folders by hand if needed. See [layout.md](layout.md).
 - **Mod layout:** a mod root keeps only `mod.ts`, `main.ts`, and optional `worker.ts` as TypeScript. Other source files live in feature folders. See [layout.md](layout.md).
 - **Survival Mode:** vanilla **Sprint Boost** (Shift burst and meter) is off. **Shift** is a hold sprint on the ground (1.6× walk speed). See [`src/survival-mode/`](../src/survival-mode/).
@@ -25,6 +27,8 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Fixed
 
+- **Survival Mode:** stored health of **0** (or invalid) loads as full HP. A **new game** boot always starts at full HP. See [`src/survival-mode/`](../src/survival-mode/).
+- **Instant Pick Block:** uses a bundle patch to fake a left click on **Picker** down when enabled; vanilla code handles the pick. Turning **Mod enabled** off restores hold-to-pick immediately. See [`src/pick-block/`](../src/pick-block/).
 - **Debug companion:** local `main.js` hot-eval runs tracked cleanup for `api.events.on`, `api.ui.inject`, and `api.ui.overlays.register` before re-eval. Inject tracking uses that mod's sandkit id, so a late `api.ui.inject` / `overlays.register` still disposes. A failed poll read no longer drops the last snapshot (that skipped the next save). See [modkit/debug.md](modkit/debug.md).
 - **Survival Mode:** fire and lava keep dealing damage while you stand still. Ticks run on `frame:render` with a cooldown, not only on `player:moved`. See [`src/survival-mode/`](../src/survival-mode/).
 - **Survival Mode:** hold **Shift** now speeds up walk. The SprintBoost binding is `Shift`; session keys use `ShiftLeft` / `ShiftRight`. See [`src/survival-mode/`](../src/survival-mode/).

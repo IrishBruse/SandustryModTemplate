@@ -1,15 +1,20 @@
 import { isEnabled } from "@modkit/utils";
 import { modinfo } from "../mod";
+import { HEALTH_MAX, resolveStoredHealth } from "./storedHealth";
 
 const BINDING_DEBUG_HEAL = `${modinfo.id}.debugHeal`;
 
-export const HEALTH_MAX = 100;
+export { HEALTH_MAX } from "./storedHealth";
 const STORAGE_KEY = "health";
 
 let health = HEALTH_MAX;
 
 function clampHealth(value: number): number {
   return Math.min(HEALTH_MAX, Math.max(0, Math.round(value)));
+}
+
+function isNewGameBoot(): boolean {
+  return new URLSearchParams(window.location.search).has("new_game");
 }
 
 export function getHealth(): number {
@@ -29,13 +34,17 @@ export function applyDamage(amount: number): number {
 }
 
 export function loadHealth(): void {
-  const stored = sandkit.api.storage.get(modinfo.id, STORAGE_KEY);
-  if (typeof stored === "number" && Number.isFinite(stored)) {
-    health = clampHealth(stored);
+  if (isNewGameBoot()) {
+    health = HEALTH_MAX;
+    sandkit.api.storage.set(modinfo.id, STORAGE_KEY, health);
     return;
   }
-  health = HEALTH_MAX;
-  sandkit.api.storage.set(modinfo.id, STORAGE_KEY, health);
+
+  const stored = sandkit.api.storage.get(modinfo.id, STORAGE_KEY);
+  health = resolveStoredHealth(stored);
+  if (stored !== health) {
+    sandkit.api.storage.set(modinfo.id, STORAGE_KEY, health);
+  }
 }
 
 export function formatHealth(value = health): string {
