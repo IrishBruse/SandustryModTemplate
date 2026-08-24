@@ -171,13 +171,15 @@ The companion rewrites `js/external-mod-runtime.js`. Definitions live in [`src/h
 | id                           | File                         | Role                                                                |
 | ---------------------------- | ---------------------------- | ------------------------------------------------------------------- |
 | `local-mod-compile-reloaded` | `js/external-mod-runtime.js` | Define free `reloaded` and the active mod id in the loader wrapper. |
-| `local-mod-registry`         | `js/external-mod-runtime.js` | Auto-track `events.on` and publish local mods for polling.          |
+| `local-mod-registry`         | `js/external-mod-runtime.js` | Publish local mods for polling.                                     |
+| `local-mod-track-events`     | `js/external-mod-runtime.js` | Auto-track `events.on` unregisters in the factory (API is frozen).  |
+| `local-mod-track-events-end` | `js/external-mod-runtime.js` | Close the `events.on` wrap.                                         |
 | `local-mod-track-inject`     | `js/external-mod-runtime.js` | Auto-track `ui.inject` unregister functions for hot-eval.           |
 | `local-mod-track-overlays`   | `js/external-mod-runtime.js` | Auto-track `ui.overlays.register` unregisters for hot-eval.         |
 
 These loader patches use the same `atomicGroup` (`local-mod-loader`).
 
-Workshop mods are not added to the registry. See [patches.md](../patches.md) for the patch format.
+Sandkit freezes `sandkit`, `api`, and `api.events`. The events wrap runs in the factory before that freeze. Workshop mods are not added to the registry. See [patches.md](../patches.md) for the patch format.
 
 ## Files
 

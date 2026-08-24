@@ -101,7 +101,7 @@ export function startLocalModReload(api: SandkitApi): void {
 
   async function pollAll(): Promise<void> {
     const records = registry();
-    if (!probed && records[modinfo.id]) {
+    if (!probed) {
       probed = true;
       probeLoaderPatches(api);
     }

@@ -1,6 +1,6 @@
 /**
  * `sandkit.api.events` — subscribe to and emit named game events.
- * Main thread only.
+ * Main thread only. The `events` object is frozen; do not replace `on` or `emit`.
  */
 export namespace events {
   /**

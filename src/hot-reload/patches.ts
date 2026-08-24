@@ -6,9 +6,14 @@ import { definePatches } from "@modkit/modinfo";
  * | id | File | Why a patch |
  * | --- | --- | --- |
  * | `local-mod-compile-reloaded` | `js/external-mod-runtime.js` | Loader must define free `reloaded` and the active mod id. |
- * | `local-mod-registry` | `js/external-mod-runtime.js` | Patch `events.on` tracking and publish local mods for polling. |
+ * | `local-mod-registry` | `js/external-mod-runtime.js` | Publish local mods so the companion can poll them. |
+ * | `local-mod-track-events` | `js/external-mod-runtime.js` | Auto-track `events.on` unregisters before Sandkit freezes the API. |
+ * | `local-mod-track-events-end` | `js/external-mod-runtime.js` | Close the `events.on` wrap and record the unsubscribe. |
  * | `local-mod-track-inject` | `js/external-mod-runtime.js` | Auto-track `ui.inject` disposers for hot-eval. |
  * | `local-mod-track-overlays` | `js/external-mod-runtime.js` | Auto-track `ui.overlays.register` unregisters for hot-eval. |
+ *
+ * Sandkit freezes `sandkit`, `api`, and `api.events`. Do not assign `events.on`
+ * on the live object — wrap it in the factory passed to `q(...)`.
  *
  * Start save reads `api.storage` (`boot/auto-load-save.ts`). Choice fields cannot list live saves in Options.
  *
@@ -26,9 +31,20 @@ const COMPILE_CODE =
 const EXECUTE_FIND =
   "const t=ie(e,{manifest:i,discovered:r});e.store.integrity.modsUsed=!0,await c(t)";
 
-/** After `ie(...)`, patch `events.on` tracking and record local mods on `__sandkitLocalModRegistry__`. */
+/** After `ie(...)`, record local mods on `__sandkitLocalModRegistry__`. */
 const EXECUTE_CODE =
-  'const t=ie(e,{manifest:i,discovered:r});(function(rec,sk,fn){try{var w=rec.workshop;if(!w||!Array.isArray(w.discoveredVia)||w.discoveredVia.indexOf("local")<0)return;var g=globalThis;var ev=sk&&sk.api&&sk.api.events;var on=ev&&ev.on;if(on&&!ev.__sandkitEventsOnPatched__){ev.__sandkitEventsOnPatched__=true;var orig=on.bind(ev);ev.on=function(id,cb){var u=orig(id,cb);var tr=g.__sandkitTrackInjectDispose;tr&&rec.manifest&&rec.manifest.id&&tr(rec.manifest.id,u);return u};}g.__sandkitLocalModRegistry__=g.__sandkitLocalModRegistry__||{};g.__sandkitLocalModRegistry__[rec.manifest.id]={id:rec.manifest.id,name:rec.manifest.name,rootUrl:rec.rootUrl,entry:rec.manifest.entry,workerEntry:rec.manifest.workerEntry||null,sandkit:sk,run:fn};}catch(err){}})(r,t,c);e.store.integrity.modsUsed=!0,await c(t)';
+  'const t=ie(e,{manifest:i,discovered:r});(function(rec,sk,fn){try{var w=rec.workshop;if(!w||!Array.isArray(w.discoveredVia)||w.discoveredVia.indexOf("local")<0)return;var g=globalThis;g.__sandkitLocalModRegistry__=g.__sandkitLocalModRegistry__||{};g.__sandkitLocalModRegistry__[rec.manifest.id]={id:rec.manifest.id,name:rec.manifest.name,rootUrl:rec.rootUrl,entry:rec.manifest.entry,workerEntry:rec.manifest.workerEntry||null,sandkit:sk,run:fn};}catch(err){console.warn("local-mod registry",err)}})(r,t,c);e.store.integrity.modsUsed=!0,await c(t)';
+
+/** `events.on` factory before `q(...)` freezes the API. Outer `r` is the manifest. */
+const EVENTS_ON_FIND = "S=q({on:(t,r)=>i.FH.events.on(e,t,function(e,i){r(";
+
+const EVENTS_ON_CODE = "S=q({on:(t,n)=>{var u=i.FH.events.on(e,t,function(e,i){n(";
+
+const EVENTS_ON_END_FIND =
+  '}})(t,i))}),emit:(t,r)=>{i.FH.events.emit(e,t,"frame:render"===t?{state:e}:r)}})';
+
+const EVENTS_ON_END_CODE =
+  '}})(t,i))});globalThis.__sandkitEventsOnPatched__=true;var tr=globalThis.__sandkitTrackInjectDispose;tr&&r.id&&tr(r.id,u);return u},emit:(t,r)=>{i.FH.events.emit(e,t,"frame:render"===t?{state:e}:r)}})';
 
 const INJECT_FIND =
   'return l.set(n,s),i.FH.ui.overlays.register(e,"global",n,function(){return $.createElement(o)}),()=>{const t=G.get(e);(null==t?void 0:t.get(n))===s&&(t.delete(n),i.FH.ui.overlays.unregister(e,"global",n))}';
@@ -47,7 +63,14 @@ const OVERLAYS_CODE =
 const LOADER_GROUP = "local-mod-loader";
 
 /** Exact `find` strings for tests against extracted game JS. */
-export const LOADER_PATCH_FINDS = [COMPILE_FIND, EXECUTE_FIND, INJECT_FIND, OVERLAYS_FIND] as const;
+export const LOADER_PATCH_FINDS = [
+  COMPILE_FIND,
+  EXECUTE_FIND,
+  EVENTS_ON_FIND,
+  EVENTS_ON_END_FIND,
+  INJECT_FIND,
+  OVERLAYS_FIND,
+] as const;
 
 export const patches = definePatches([
   {
@@ -65,6 +88,24 @@ export const patches = definePatches([
     find: EXECUTE_FIND,
     operation: "replace",
     code: EXECUTE_CODE,
+    expectedMatches: 1,
+    atomicGroup: LOADER_GROUP,
+  },
+  {
+    id: "local-mod-track-events",
+    file: "js/external-mod-runtime.js",
+    find: EVENTS_ON_FIND,
+    operation: "replace",
+    code: EVENTS_ON_CODE,
+    expectedMatches: 1,
+    atomicGroup: LOADER_GROUP,
+  },
+  {
+    id: "local-mod-track-events-end",
+    file: "js/external-mod-runtime.js",
+    find: EVENTS_ON_END_FIND,
+    operation: "replace",
+    code: EVENTS_ON_END_CODE,
     expectedMatches: 1,
     atomicGroup: LOADER_GROUP,
   },
