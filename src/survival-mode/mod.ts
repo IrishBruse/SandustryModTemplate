@@ -9,7 +9,7 @@ export const modinfo = defineModInfo({
   entry: "main.js",
   author: "IrishBruse",
   description:
-    "Survival rules: health HUD, hazard damage, jump and sprint, stronger gravity, and step-up climbing.",
+    "Survival rules: health HUD, hazard damage, fall damage, jump and sprint, stronger gravity, and step-up climbing.",
   dependencies: [],
   loadOrder: 0,
   configSchema: {

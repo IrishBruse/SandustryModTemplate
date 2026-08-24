@@ -47,6 +47,8 @@ export namespace player {
 
   /**
    * Return true when the player is on ground.
+   * Tests solid cells 1 pixel below the hitbox. Do not use `player.onGround`
+   * on the store snapshot — that flag is not updated during play.
    * @returns True when the player touches solid ground.
    */
   export function isOnGround(): boolean;

@@ -1,4 +1,6 @@
 import { isEnabled } from "@modkit/utils";
+import { applyDamage } from "../health/health";
+import { resetFallDamage, tickFallDamage } from "./fallDamage";
 
 const api = sandkit.api;
 const { Tech, KeyBinding } = sandkit.enums;
@@ -22,6 +24,7 @@ const JUMP_COOLDOWN_MS = 450;
 const JUMP_BUFFER_MS = 120;
 
 type HoveringPlayer = {
+  y: number;
   isHovering: boolean;
   velocity?: { x: number; y: number };
 };
@@ -263,7 +266,21 @@ export function installMovementHooks(): () => void {
   });
 
   const stopMoved = api.events.on("player:moved", (payload) => {
-    if (!isSurvivalActive()) return;
+    if (!isSurvivalActive()) {
+      resetFallDamage();
+      return;
+    }
+    const player = playerSnapshot();
+    if (player) {
+      const damage = tickFallDamage({
+        dt: payload.dt,
+        y: player.y,
+        onGround: api.player.isOnGround(),
+        isHovering: player.isHovering,
+        cellSize: api.rendering.getGridMetrics().cellSize ?? 4,
+      });
+      if (damage > 0) applyDamage(damage);
+    }
     if (typeof payload.dt === "number" && payload.dt > 0) {
       applyExtraGravity(payload.dt);
     }
@@ -289,5 +306,6 @@ export function installMovementHooks(): () => void {
     stopMoved();
     stopFrame();
     resetRunSpeed();
+    resetFallDamage();
   };
 }

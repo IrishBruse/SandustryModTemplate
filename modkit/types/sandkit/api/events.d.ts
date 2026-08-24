@@ -33,7 +33,11 @@ export namespace events {
   export interface EventPayloadMap {
     "player:collision:prepare": PlayerCollisionPreparePayload;
     "player:moved": {
-      /** Simulation step duration in seconds. */
+      /**
+       * Simulation step duration in seconds.
+       * `0` on teleports. The event runs after collision; landing already
+       * zeroes `velocity.y`. Vanilla gravity is applied after this event.
+       */
       dt?: number;
       state?: unknown;
     };

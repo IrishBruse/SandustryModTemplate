@@ -44,7 +44,10 @@ export interface Player {
   velocity: Vector2
   /** Movement threshold accumulator used by physics. */
   threshold: Vector2;
-  /** True when the player is standing on ground this tick. */
+  /**
+   * Spawn flag. Live physics does not update this field.
+   * Use `sandkit.api.player.isOnGround()` (solid cells 1px below the hitbox).
+   */
   onGround: boolean;
   /** Temporary speed-cap bonuses applied on each axis. */
   speedCapOverdrive: {

@@ -54,7 +54,7 @@ Shipped mods in `src/` (not copy targets for new mods):
 | Folder                                           | What it shows                                       |
 | ------------------------------------------------ | --------------------------------------------------- |
 | [`selection-capture`](../src/selection-capture/) | Screenshot / GIF recorder (**C**, **F7**)           |
-| [`survival-mode`](../src/survival-mode/)         | Health HUD, grounded walking, step-up on inclines   |
+| [`survival-mode`](../src/survival-mode/)         | Health HUD, hazards, fall damage, grounded walking  |
 | [`debug`](../src/debug/)                         | Dev companion (debug builds only). Do not copy this |
 
 ## Files in a mod folder

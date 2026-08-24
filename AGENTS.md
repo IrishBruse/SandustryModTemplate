@@ -16,4 +16,14 @@ Docs: [`docs/ui/management-menu-button.md`](docs/ui/management-menu-button.md).
 Mods must not import files from another mod folder in `src/` or `examples/`.
 Shared code lives in `modkit/`.
 
-Any new findings about Sandustry **MUST** be recorded in either `docs/` or `modkit/types`
+Any new findings about Sandustry **MUST** be recorded in either `docs/` or `modkit/types`.
+
+## Small features
+
+Do not treat a local rule as a research project. Lock a minimum design, then implement.
+
+1. Open the call site first (the hook or function that will own the behaviour).
+2. Prefer the Sandkit / mod API already in use nearby. Grep the whole template or extracted game bundle only for one missing fact.
+3. Keep pure rules (math, thresholds) free of Sandkit so Node tests can load them; wire one call from the hook.
+4. Read the exact lines you will change, then patch once. Do not edit from memory or from a guessed tree.
+5. Touch only the feature folder, its tests, and the mod README / changelog. Do not reformat unrelated docs.

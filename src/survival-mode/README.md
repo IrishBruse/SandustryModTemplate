@@ -10,6 +10,7 @@ Survival rules for Sandustry.
 - **Sprint** on **Shift** (SprintBoost binding) while moving left/right on ground.
 - Vanilla **Sprint Boost** (temporary Shift burst and meter) is off.
 - **Stronger gravity** (1.75× vanilla fall speed).
+- **Fall damage** on landing after a long drop. Jumps and drops of 28 cells or less are safe. Longer falls deal 2 HP per extra cell (about 80 cells is lethal).
 - **Auto step-up** up to 3 cells when walking into ledges (configurable 1–8).
 - Hover flight disabled.
 

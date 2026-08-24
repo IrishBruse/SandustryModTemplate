@@ -4,6 +4,10 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ## Unreleased
 
+### Added
+
+- **Survival Mode:** landing after a long fall now deals damage. Jumps and drops of 28 cells or less are safe. Longer falls deal 2 HP per extra cell. See [`src/survival-mode/`](../src/survival-mode/).
+
 ### Changed
 
 - **Mod layout:** a mod root keeps only `mod.ts`, `main.ts`, and optional `worker.ts` as TypeScript. Other source files live in feature folders. See [layout.md](layout.md).
