@@ -38,7 +38,7 @@ Run `npm run dev`. Save a file. The mod reloads in game with no restart.
 It also notifies of any changes that cant be hotreloaded with a notification at the top of the screen.
 
 **Debug helpers:**
-Debug builds install the **debug** companion (`src/debug`). It adds F12 DevTools, auto-load save, a Start save panel, and console globals. `npm run build` omits that mod.
+Debug builds install the **debug** companion (`src/debug`). It adds F12 DevTools, auto-load save, and console globals. `npm run build` omits that mod.
 
 **Typed `mod.ts`:**
 One file per mod for the manifest and patches. Each `src/<mod-name>/` folder with a `mod.ts` is a separate game mod.

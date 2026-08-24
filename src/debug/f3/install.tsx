@@ -23,7 +23,7 @@ export function installDebugCompanion(api: SandkitApi, modId: string): void {
 
   const dispose = api.ui.inject(`${modId}:f3-debug`, () => <F3DebugOverlay />);
   if (!dispose) {
-    console.warn(`[${modId}] F3 debug overlay registration failed`);
+    console.warn("F3 debug overlay registration failed");
     return;
   }
   onDispose(dispose);

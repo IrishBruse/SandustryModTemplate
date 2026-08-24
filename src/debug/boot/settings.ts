@@ -6,11 +6,11 @@ import { isEnabled } from "@modkit/utils";
  */
 const SETTING_DEFAULTS: Record<string, boolean> = {
   openDevTools: false,
-  f12DevTools: true,
-  autoLoad: true,
-  engineDebug: true,
-  disableAutosave: true,
-  watchLocalMods: true,
+  f12DevTools: false,
+  autoLoad: false,
+  engineDebug: false,
+  disableAutosave: false,
+  watchLocalMods: false,
 };
 
 export type HotReloadFallback = "off" | "toast" | "reload";
@@ -41,7 +41,7 @@ export function autoLoadOn(api: SandkitApi): boolean {
   return SETTING_DEFAULTS.autoLoad;
 }
 
-/** When `main.js` changed but hot eval is not safe. */
+/** When `main.js` changed and the dispose list is empty. */
 export function hotReloadFallback(api: SandkitApi): HotReloadFallback {
   if (!isEnabled(api)) return FALLBACK_DEFAULT;
   const value = api.settings.get("hotReloadFallback");

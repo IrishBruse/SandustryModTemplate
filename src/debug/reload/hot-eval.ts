@@ -2,7 +2,8 @@ import { clearLog } from "@modkit/log";
 
 /**
  * Re-eval `main.js` for a local mod. JavaScript cannot unload.
- * Cleanup comes from `onDispose` (kit) and auto-tracked `api.ui.inject`.
+ * Cleanup comes from `onDispose` (kit) and auto-tracked `api.ui.inject` /
+ * `api.ui.overlays.register`.
  *
  * Keys must match `src/debug/patches.ts` (`local-mod-compile-reloaded`) and `modkit/internal/debug`.
  */
@@ -117,7 +118,7 @@ function runDisposers(modId: string): { ran: number; failed: number } {
     } catch (error) {
       failed++;
       const message = error instanceof Error ? error.message : String(error);
-      console.error(`[${modId}] dispose callback failed: ${message}`, error);
+      console.error(`dispose callback failed: ${message}`, error);
     }
   }
   return { ran, failed };
@@ -161,7 +162,7 @@ export async function reloadRenderer(modId: string, source: string): Promise<voi
   if (host.reloading) return;
   const target = host.targetSandkit;
   if (!target) {
-    console.error(`[${modId}] hot reload skipped — no sandkit instance`);
+    console.error("hot reload skipped — no sandkit instance");
     return;
   }
 
@@ -177,18 +178,18 @@ export async function reloadRenderer(modId: string, source: string): Promise<voi
 
   const report = runDisposers(modId);
   console.log(
-    `[${modId}] disposed for reload (${report.ran} callback(s), ${report.failed} failed)`,
+    `disposed for reload (${report.ran} callback(s), ${report.failed} failed)`,
   );
 
   const sourceUrl = `sandkit-workshop://${modId}/${host.entry}`;
   try {
     runSource(source, modId, target, sourceUrl);
     toast(host.toastApi, `${modId} reloaded`);
-    console.log(`[${modId}] hot reloaded`);
+    console.log("hot reloaded");
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     toast(host.toastApi, `Reload failed: ${message}`);
-    console.error(`[${modId}] hot reload failed: ${message}`, error);
+    console.error(`hot reload failed: ${message}`, error);
   } finally {
     host.reloading = false;
   }

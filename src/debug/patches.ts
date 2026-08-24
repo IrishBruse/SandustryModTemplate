@@ -8,8 +8,9 @@ import { definePatches } from "@modkit/modinfo";
  * | `local-mod-compile-reloaded` | `js/external-mod-runtime.js` | Loader must define free `reloaded` and the active mod id. |
  * | `local-mod-registry` | `js/external-mod-runtime.js` | Publish local mods so the companion can poll them. |
  * | `local-mod-track-inject` | `js/external-mod-runtime.js` | Auto-track `ui.inject` disposers for hot-eval. |
+ * | `local-mod-track-overlays` | `js/external-mod-runtime.js` | Auto-track `ui.overlays.register` unregisters for hot-eval. |
  *
- * Start save uses companion UI + `api.storage` (`boot/start-save-picker.tsx`). Choice fields cannot list live saves.
+ * Start save reads `api.storage` (`boot/auto-load-save.ts`). Choice fields cannot list live saves in Options.
  *
  * Find strings are exact minified snippets. `expectedMatches: 1` fails the load if the game bundle changes.
  */
@@ -32,14 +33,21 @@ const EXECUTE_CODE =
 const INJECT_FIND =
   'return l.set(n,s),i.FH.ui.overlays.register(e,"global",n,function(){return $.createElement(o)}),()=>{const t=G.get(e);(null==t?void 0:t.get(n))===s&&(t.delete(n),i.FH.ui.overlays.unregister(e,"global",n))}';
 
-/** Same unregister function, also passed to `__sandkitTrackInjectDispose`. */
+/** Same unregister function, tracked under this sandkit's mod id `e` (not the last active id). */
 const INJECT_CODE =
-  'return l.set(n,s),i.FH.ui.overlays.register(e,"global",n,function(){return $.createElement(o)}),(function(){globalThis.__sandkitInjectDisposePatched__=true;var d=()=>{const t=G.get(e);(null==t?void 0:t.get(n))===s&&(t.delete(n),i.FH.ui.overlays.unregister(e,"global",n))};var a=globalThis.__sandkitHotReloadActive__,tr=globalThis.__sandkitTrackInjectDispose;tr&&a&&tr(a,d);return d})()';
+  'return l.set(n,s),i.FH.ui.overlays.register(e,"global",n,function(){return $.createElement(o)}),(function(){globalThis.__sandkitInjectDisposePatched__=true;var d=()=>{const t=G.get(e);(null==t?void 0:t.get(n))===s&&(t.delete(n),i.FH.ui.overlays.unregister(e,"global",n))};var tr=globalThis.__sandkitTrackInjectDispose;tr&&e&&tr(e,d);return d})()';
+
+const OVERLAYS_FIND =
+  "Ce=q({register:(t,r,o)=>{i.FH.ui.overlays.register(e,t,r,function(){return o()})},unregister:(t,r)=>{i.FH.ui.overlays.unregister(e,t,r)},update:t=>{i.FH.ui.overlays.update(e,t)}})";
+
+/** Public `overlays.register` also pushes an unregister disposer for this mod id. */
+const OVERLAYS_CODE =
+  "Ce=q({register:(t,r,o)=>{i.FH.ui.overlays.register(e,t,r,function(){return o()});(function(){globalThis.__sandkitInjectDisposePatched__=true;var tr=globalThis.__sandkitTrackInjectDispose;tr&&e&&tr(e,function(){i.FH.ui.overlays.unregister(e,t,r)})})()},unregister:(t,r)=>{i.FH.ui.overlays.unregister(e,t,r)},update:t=>{i.FH.ui.overlays.update(e,t)}})";
 
 const LOADER_GROUP = "local-mod-loader";
 
 /** Exact `find` strings for tests against extracted game JS. */
-export const LOADER_PATCH_FINDS = [COMPILE_FIND, EXECUTE_FIND, INJECT_FIND] as const;
+export const LOADER_PATCH_FINDS = [COMPILE_FIND, EXECUTE_FIND, INJECT_FIND, OVERLAYS_FIND] as const;
 
 export const patches = definePatches([
   {
@@ -66,6 +74,15 @@ export const patches = definePatches([
     find: INJECT_FIND,
     operation: "replace",
     code: INJECT_CODE,
+    expectedMatches: 1,
+    atomicGroup: LOADER_GROUP,
+  },
+  {
+    id: "local-mod-track-overlays",
+    file: "js/external-mod-runtime.js",
+    find: OVERLAYS_FIND,
+    operation: "replace",
+    code: OVERLAYS_CODE,
     expectedMatches: 1,
     atomicGroup: LOADER_GROUP,
   },

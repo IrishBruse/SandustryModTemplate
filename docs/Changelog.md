@@ -4,8 +4,13 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ## Unreleased
 
+### Removed
+
+- **Debug companion:** main-menu **Start save** overlay (dropdown on the main menu and New World flow). Use **Options → Mods → debug → Start save** (Last played / Mod storage) and `api.storage.set("irishbruse.debug", "startSave", saveId)` for a fixed pick. See [modkit/debug.md](modkit/debug.md).
+
 ### Added
 
+- **Mod ideas:** guide page with content mod concepts, API pointers, and a recommended first build. See [mod-ideas.md](mod-ideas.md).
 - **Survival Mode:** landing after a long fall now deals damage. Jumps and drops of 28 cells or less are safe. Longer falls deal 2 HP per extra cell. See [`src/survival-mode/`](../src/survival-mode/).
 
 ### Changed
@@ -13,9 +18,11 @@ The template has no release tags yet. Dated sections match the day the change la
 - **Mod layout:** a mod root keeps only `mod.ts`, `main.ts`, and optional `worker.ts` as TypeScript. Other source files live in feature folders. See [layout.md](layout.md).
 - **Survival Mode:** vanilla **Sprint Boost** (Shift burst and meter) is off. **Shift** is a hold sprint on the ground (1.6× walk speed). See [`src/survival-mode/`](../src/survival-mode/).
 - **Survival Mode:** fire deals 6 and lava deals 12 every 400 ms while overlapping. See [`src/survival-mode/`](../src/survival-mode/).
+- **Debug companion:** **F12**, **Auto-load save**, **Engine debug**, **Disable autosave**, and **Watch local mods** default to off. Turn them on in **Options → Mods → debug**. See [modkit/debug.md](modkit/debug.md).
 
 ### Fixed
 
+- **Debug companion:** local `main.js` hot-eval no longer stops when a mod has no `onDispose`. The default **Eval anyway** setting evaluates the new source (listeners can stack). Inject tracking uses that mod's sandkit id, so a late `api.ui.inject` / `overlays.register` still disposes. A failed poll read no longer drops the last snapshot (that skipped the next save). See [modkit/debug.md](modkit/debug.md).
 - **Survival Mode:** fire and lava keep dealing damage while you stand still. Ticks run on `frame:render` with a cooldown, not only on `player:moved`. See [`src/survival-mode/`](../src/survival-mode/).
 - **Survival Mode:** hold **Shift** now speeds up walk. The SprintBoost binding is `Shift`; session keys use `ShiftLeft` / `ShiftRight`. See [`src/survival-mode/`](../src/survival-mode/).
 

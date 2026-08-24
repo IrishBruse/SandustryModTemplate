@@ -14,17 +14,9 @@ export const START_SAVE_STORAGE_KEY = "startSave";
 /** Must match `modinfo.id` in `../mod.ts`. */
 export const DEBUG_MOD_ID = "irishbruse.debug";
 
-export type SaveFileInfo = {
-  id: string;
-  name?: string;
-  worldName?: string;
-  timestamp?: string;
-};
-
 type ElectronBridge = {
   getLastPlayedGameSync?(): string | null;
   saveExistsSync?(id: string): boolean;
-  getSaveFiles?(): Promise<SaveFileInfo[]>;
 };
 
 function electronBridge(): ElectronBridge | undefined {
@@ -44,37 +36,7 @@ export function getStartSaveSetting(api: SandkitApi): string {
   return AUTO_LOAD_FROM_STORAGE;
 }
 
-/** Label for a save in the Start save picker. */
-export function saveFileLabel(file: SaveFileInfo): string {
-  const title = (file.name || "").trim() || file.id;
-  const world = (file.worldName || "").trim();
-  return world && world !== title ? `${title} (${world})` : title;
-}
-
-/** Local saves from the Electron bridge, newest first. */
-export async function listSaveFiles(): Promise<SaveFileInfo[]> {
-  const bridge = electronBridge();
-  if (typeof bridge?.getSaveFiles !== "function") return [];
-  try {
-    const files = await bridge.getSaveFiles();
-    return [...files].sort((a, b) => Date.parse(b.timestamp || "") - Date.parse(a.timestamp || ""));
-  } catch {
-    return [];
-  }
-}
-
-/** Write or clear the companion storage key that **Mod storage** reads. */
-export function setStorageSaveId(api: SandkitApi, saveId: string | null): void {
-  api.storage.ensure(DEBUG_MOD_ID);
-  if (!saveId) {
-    api.storage.remove(DEBUG_MOD_ID, START_SAVE_STORAGE_KEY);
-    return;
-  }
-  api.storage.set(DEBUG_MOD_ID, START_SAVE_STORAGE_KEY, saveId);
-}
-
-/**
- * Last played save id — same source as the main-menu **Continue** button.
+/** Last played save id — same source as the main-menu **Continue** button.
  * Electron: `getLastPlayedGameSync` + `saveExistsSync`. Else `localStorage.lastPlayedGame`.
  */
 export function getLastPlayedSaveId(): string | null {

@@ -9,7 +9,7 @@ TypeScript template for [Sandustry](https://store.steampowered.com/app/2764460/S
 - **React HUD** — JSX via `sandkit.react` (no extra React package). [React](https://ethanconneely.com/SandustryModTemplate/#/modkit/react) · [UI kit](https://ethanconneely.com/SandustryModTemplate/#/ui/)
 - **Modkit utils** — `safe`, settings, scene checks, retro console. [Utils](https://ethanconneely.com/SandustryModTemplate/#/modkit/utils)
 - **Hot reload** — `npm run dev` reloads the mod without a game restart. [Builds](https://ethanconneely.com/SandustryModTemplate/#/builds) · [debug](https://ethanconneely.com/SandustryModTemplate/#/modkit/debug)
-- **Debug helpers** — companion mod `src/debug` (F12 DevTools, auto-load save, Start save panel). [Debug](https://ethanconneely.com/SandustryModTemplate/#/modkit/debug)
+- **Debug helpers** — companion mod `src/debug` (F12 DevTools, auto-load save). [Debug](https://ethanconneely.com/SandustryModTemplate/#/modkit/debug)
 - **Typed `mod.ts`** — one file per mod for the modinfo and [patches](https://ethanconneely.com/SandustryModTemplate/#/patches). [Folder layout](https://ethanconneely.com/SandustryModTemplate/#/layout)
 
 ## Quick start

@@ -1,6 +1,6 @@
 /**
  * Cleanup registry for the debug companion hot-eval.
- * Release builds stub this module to a no-op.
+ * All builds bundle this module so hot reload can run disposers when the companion is installed.
  *
  * Keys must match `src/debug/patches.ts` and `src/debug/reload/hot-eval.ts`.
  */
@@ -24,13 +24,20 @@ function disposeLists(): Record<string, Array<() => void>> {
 }
 
 /**
+ * Mod id from the loader wrapper at this bundle's first evaluation.
+ * Call-time `__sandkitHotReloadActive__` is the last mod that ran, so delayed
+ * `onDispose` from `game:ready` would land on the wrong list without this.
+ */
+const OWNER_ID = globals()[ACTIVE_KEY];
+
+/**
  * Register cleanup that runs before a renderer hot-eval.
- * No-op when the debug companion has not set an active mod id.
+ * No-op when this bundle evaluated with no active mod id.
  */
 export function onDispose(fn: () => void): () => void {
   if (typeof fn !== "function") return () => {};
 
-  const modId = globals()[ACTIVE_KEY];
+  const modId = OWNER_ID;
   if (!modId) return () => {};
 
   const lists = disposeLists();

@@ -9,6 +9,7 @@ import {
 import { settingOn, hotReloadFallback } from "../boot/settings";
 import { modinfo } from "../mod";
 import { noteRestartNeeded, probeLoaderPatches, remindRestartIfNeeded } from "./loader-health";
+import { planMainReload, shouldWarnNoDispose } from "./main-reload-plan";
 
 const POLL_MS = 400;
 const RESTART_FILES = ["patches.json", "modinfo.json"] as const;
@@ -50,24 +51,32 @@ function displayName(record: LocalModRecord): string {
   return typeof record.name === "string" && record.name.length > 0 ? record.name : record.id;
 }
 
-function toast(api: SandkitApi, message: string): void {
-  api.ui.toast(message, {});
-}
-
-function applyMainFallback(api: SandkitApi, record: LocalModRecord): void {
-  const mode = hotReloadFallback(api);
+function applyMainChange(
+  api: SandkitApi,
+  record: LocalModRecord,
+  source: string,
+): Promise<void> | void {
+  const canDispose = hasDisposers(record.id);
+  const fallback = hotReloadFallback(api);
+  const action = planMainReload(canDispose, fallback);
   const name = displayName(record);
-  if (mode === "off") {
+
+  if (action === "skip") {
     console.warn(`[${record.id}] ${name} main.js changed — hot reload skipped (no dispose)`);
     return;
   }
-  if (mode === "reload") {
+  if (action === "reload") {
     console.warn(`[${record.id}] ${name} main.js changed — reloading the page`);
     globalThis.location.reload();
     return;
   }
-  toast(api, `${name}: main.js changed. No dispose path — restart or reload the page.`);
-  console.warn(`[${record.id}] ${name} main.js changed — toast fallback (no dispose)`);
+
+  if (shouldWarnNoDispose(canDispose, action)) {
+    console.warn(
+      `[${record.id}] ${name} main.js changed — hot eval with no dispose; listeners may stack`,
+    );
+  }
+  return hotEvalMain(api, record, source);
 }
 
 async function snapshot(record: LocalModRecord): Promise<Tracked | null> {
@@ -134,10 +143,10 @@ export function startLocalModReload(api: SandkitApi): void {
       if (!self) bindHostSandkit(id, api, record.sandkit, record.entry || "main.js");
 
       const next = await snapshot(record);
-      if (next == null) {
-        tracked.delete(id);
-        continue;
-      }
+      // Keep the last good snapshot when a poll read fails (rebuild can
+      // briefly miss main.js). Dropping it would treat the next read as a
+      // baseline and skip the change.
+      if (next == null) continue;
       const prev = tracked.get(id);
       if (!prev) {
         tracked.set(id, next);
@@ -152,8 +161,7 @@ export function startLocalModReload(api: SandkitApi): void {
         }
       }
       if (!self && next.files[entry] !== prev.files[entry]) {
-        if (hasDisposers(id)) await hotEvalMain(api, record, next.files[entry]);
-        else applyMainFallback(api, record);
+        await applyMainChange(api, record, next.files[entry]);
       }
       tracked.set(id, next);
     }

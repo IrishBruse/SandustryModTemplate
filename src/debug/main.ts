@@ -1,7 +1,6 @@
 import { disableSessionAutosave } from "./boot/autosave";
 import { registerDevToolsShortcut, scheduleMainMenuBoot } from "./boot/boot-menu";
 import { settingOn } from "./boot/settings";
-import { installStartSavePicker } from "./boot/start-save-picker";
 import { installDebugCompanion } from "./f3/install";
 import { modinfo } from "./mod";
 import { logRendererReload } from "./reload/loader-health";
@@ -24,7 +23,6 @@ scheduleMainMenuBoot(api, !reloaded);
 
 if (settingOn(api, "disableAutosave")) disableSessionAutosave();
 installDebugCompanion(api, modinfo.id);
-installStartSavePicker(modinfo.id);
 startLocalModReload(api);
 
 console.log(`${reloaded ? "reloaded" : "loaded"} — debug companion`);
