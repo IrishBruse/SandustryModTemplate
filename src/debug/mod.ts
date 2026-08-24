@@ -5,9 +5,9 @@ export { patches } from "./patches";
 
 export const modinfo = defineModInfo({
   manifestVersion: 1,
-  id: "irishbruse.debug",
-  name: "debug",
-  version: "0.0.1",
+  id: "hot-reload",
+  name: "Hot Reload Dev Tools",
+  version: "0.0.2",
   apiVersion: 1,
   entry: "main.js",
   author: "IrishBruse",

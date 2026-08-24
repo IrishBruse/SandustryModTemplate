@@ -34,8 +34,8 @@ Default probe includes `%ProgramFiles(x86)%\Steam` and `%ProgramFiles%\Steam`, p
 
 | OS      | Mods                                                          | Logs                       |
 | ------- | ------------------------------------------------------------- | -------------------------- |
-| Linux   | `~/.config/sandustry/mods/<modinfo.name>`                     | `~/.config/sandustry/logs` |
-| Windows | `%APPDATA%\sandustry\mods\<modinfo.name>` (`AppData\Roaming`) | `%APPDATA%\sandustry\logs` |
+| Linux   | `~/.config/sandustry/mods/<modinfo.id>`                     | `~/.config/sandustry/logs` |
+| Windows | `%APPDATA%\sandustry\mods\<modinfo.id>` (`AppData\Roaming`) | `%APPDATA%\sandustry\logs` |
 
 `dist/` links to the OS sandustry mods folder (symlink on Linux, directory junction on Windows). `logs/` links to the OS sandustry logs folder.
 

@@ -1,6 +1,6 @@
 /**
  * Sandustry mod output paths and repo `dist/` link (symlink / Windows junction).
- * Game folder name comes from `modinfo.name` in `src/<name>/mod.ts`.
+ * Game folder name comes from `modinfo.id` in `src/<name>/mod.ts`.
  * The game resolves symlinks with realpath and rejects mod folders outside the mods root.
  *
  * Mods dir: Linux ~/.config/sandustry/mods ; Windows %APPDATA%/sandustry/mods
@@ -196,14 +196,14 @@ export function removeOwnedGameMods(repoRoot) {
   }
 }
 
-/** @param {string} gameName `modinfo.name` */
-export function gameModDir(gameName) {
-  return join(sandustryModsDir(), gameName);
+/** @param {string} modId `modinfo.id` */
+export function gameModDir(modId) {
+  return join(sandustryModsDir(), modId);
 }
 
-/** @param {string} gameName */
-export function ensureGameModDir(gameName) {
-  const dir = gameModDir(gameName);
+/** @param {string} modId */
+export function ensureGameModDir(modId) {
+  const dir = gameModDir(modId);
   mkdirSync(dirname(dir), { recursive: true });
   if (existsSync(dir) && lstatSync(dir).isSymbolicLink()) {
     removePath(dir);
@@ -225,17 +225,17 @@ function readModinfoId(dir) {
 }
 
 /**
- * After a `modinfo.name` rename, an old folder can keep the same `id`.
+ * After a folder-layout change or id reuse, an old folder can keep the same `id`.
  * Sandustry rejects every copy of a duplicate manifest id — remove the leftovers.
- * @param {{ gameName: string; manifest?: { id?: string } }[]} mods
+ * @param {{ gameId: string; manifest?: { id?: string } }[]} mods
  */
 export function removeStaleSameIdGameDirs(mods) {
-  /** @type {Map<string, string>} id → current game folder name */
+  /** @type {Map<string, string>} id → current OS mods folder name */
   const wantedById = new Map();
   for (const mod of mods) {
     const id = typeof mod.manifest?.id === "string" ? mod.manifest.id.trim() : "";
     if (!id) continue;
-    wantedById.set(id, mod.gameName);
+    wantedById.set(id, mod.gameId);
   }
   if (wantedById.size === 0) return;
 
@@ -269,7 +269,7 @@ export function removeStaleSameIdGameDirs(mods) {
  * Ensure `dist/` links to the OS mods folder and sync template-owned game folders.
  * Stale game folders are removed only when a src folder is gone, not when `--mod` filters the build.
  * @param {string} repoRoot
- * @param {{ folder: string; gameName: string; manifest?: { id?: string } }[]} mods
+ * @param {{ folder: string; gameId: string; manifest?: { id?: string } }[]} mods
  * @param {string[]} keepFolders Src folders that should stay tracked (all discovered mods).
  */
 export function syncModGameFolders(repoRoot, mods, keepFolders) {
@@ -277,22 +277,26 @@ export function syncModGameFolders(repoRoot, mods, keepFolders) {
 
   const previousByFolder = readTemplateByFolder(repoRoot);
   const wanted = new Set(keepFolders);
-  for (const [folder, gameName] of Object.entries(previousByFolder)) {
+  for (const [folder, gameDir] of Object.entries(previousByFolder)) {
     if (wanted.has(folder)) continue;
-    removeOwnedGameDir(gameModDir(gameName));
+    removeOwnedGameDir(gameModDir(gameDir));
     delete previousByFolder[folder];
   }
 
   removeStaleSameIdGameDirs(mods);
 
   for (const mod of mods) {
-    ensureGameModDir(mod.gameName);
-    previousByFolder[mod.folder] = mod.gameName;
+    const previous = previousByFolder[mod.folder];
+    if (previous && previous !== mod.gameId) {
+      removeOwnedGameDir(gameModDir(previous));
+    }
+    ensureGameModDir(mod.gameId);
+    previousByFolder[mod.folder] = mod.gameId;
   }
 
   writeTemplateByFolder(repoRoot, previousByFolder);
   writeDevOwnedMods(
     repoRoot,
-    mods.map((mod) => mod.gameName),
+    mods.map((mod) => mod.gameId),
   );
 }

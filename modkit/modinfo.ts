@@ -1,7 +1,7 @@
 /**
  * Mod manifest shapes — canonical example: `src/<name>/mod.ts`.
  * Use `defineModInfo` for type-safe manifest definitions.
- * Export the result as `modinfo` and use `modinfo.id` for the mod id.
+ * Export the result as `modinfo` and use `modinfo.id` for the mod id and OS mods folder name.
  *
  * ```ts
  * export const modinfo = defineModInfo({ ... });

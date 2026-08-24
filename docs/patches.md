@@ -76,7 +76,7 @@ Auto-load last save is runtime-only on the debug companion. The browser bundle s
 
 ## Build output
 
-Do not edit `dist/<modinfo.name>/patches.json` by hand. Change the `patches` export and rebuild:
+Do not edit `dist/<modinfo.id>/patches.json` by hand. Change the `patches` export and rebuild:
 
 ```bash
 npm run build          # release — no debugPatches

@@ -233,7 +233,7 @@ export function parseModFilter(argv) {
  * @property {string | null} worker
  * @property {string} tsconfig
  * @property {any} manifest
- * @property {string} gameName
+ * @property {string} gameId OS mods folder name (`modinfo.id`)
  * @property {string} outDir
  */
 
@@ -296,11 +296,15 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
 
     const loaded = await bundleAndImport(modTs, `modinfo-${folder}.mjs`);
     const manifest = structuredClone(loaded.modinfo);
+    const id = manifest?.id;
+    if (typeof id !== "string" || !id.trim()) {
+      throw new Error(
+        `${repoPath}/mod.ts modinfo.id must be a non-empty string (OS mods folder name)`,
+      );
+    }
     const name = manifest?.name;
     if (typeof name !== "string" || !name.trim()) {
-      throw new Error(
-        `${repoPath}/mod.ts modinfo.name must be a non-empty string (mods folder name)`,
-      );
+      throw new Error(`${repoPath}/mod.ts modinfo.name must be a non-empty string`);
     }
 
     const worker = existsSync(workerTs) ? workerTs : null;
@@ -308,7 +312,7 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
       manifest.workerEntry = "worker.js";
     }
 
-    const gameName = name.trim();
+    const gameId = id.trim();
     mods.push({
       folder,
       root: entry.root,
@@ -319,8 +323,8 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
       worker,
       tsconfig,
       manifest,
-      gameName,
-      outDir: gameModDir(gameName),
+      gameId,
+      outDir: gameModDir(gameId),
     });
   }
   return mods;
@@ -329,7 +333,7 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
 /**
  * Link `dist/` to the OS mods folder and create each game mod folder.
  * Stale game folders are removed only when a src folder is gone, not when `--mod` filters the build.
- * Release builds omit `src/debug` from keepFolders so leftover `mods/debug` is removed.
+ * Release builds omit `src/debug` from keepFolders so leftover debug companion folders are removed.
  * @param {string} repoRoot
  * @param {LoadedMod[]} mods
  * @param {{ includeDebugKit?: boolean }} [options]

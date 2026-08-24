@@ -19,8 +19,8 @@ New to the template? Start with [Quick start](quick-start.md).
 | `build/<name>/`    | Workshop staging (copied on `npm run build`) |
 | `logs/`            | Link to Sandustry log files                  |
 
-The game folder uses the `name` field in `mod.ts`, not the repo folder name.
-`dist/` points at the OS mods folder. Each built mod lives at `dist/<modinfo.name>/`.
+The game folder uses the `id` field in `mod.ts`, not the repo folder name or display `name`.
+`dist/` points at the OS mods folder. Each built mod lives at `dist/<modinfo.id>/`.
 
 You do not copy files into the game folder by hand. `npm run dev` and `npm run build` write them.
 
@@ -28,8 +28,8 @@ You do not copy files into the game folder by hand. `npm run dev` and `npm run b
 
 | OS      | Mods                                      | Logs                       |
 | ------- | ----------------------------------------- | -------------------------- |
-| Linux   | `~/.config/sandustry/mods/<modinfo.name>` | `~/.config/sandustry/logs` |
-| Windows | `%APPDATA%\sandustry\mods\<modinfo.name>` | `%APPDATA%\sandustry\logs` |
+| Linux   | `~/.config/sandustry/mods/<modinfo.id>` | `~/.config/sandustry/logs` |
+| Windows | `%APPDATA%\sandustry\mods\<modinfo.id>` | `%APPDATA%\sandustry\logs` |
 
 ## Sample mods
 

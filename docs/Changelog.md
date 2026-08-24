@@ -15,6 +15,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Changed
 
+- **OS mods folder:** builds now write to `mods/<modinfo.id>/` instead of `mods/<modinfo.name>/`. The next dev or debug build removes stale name-based folders for the same id. Remove any leftover folders by hand if needed. See [layout.md](layout.md).
 - **Mod layout:** a mod root keeps only `mod.ts`, `main.ts`, and optional `worker.ts` as TypeScript. Other source files live in feature folders. See [layout.md](layout.md).
 - **Survival Mode:** vanilla **Sprint Boost** (Shift burst and meter) is off. **Shift** is a hold sprint on the ground (1.6× walk speed). See [`src/survival-mode/`](../src/survival-mode/).
 - **Survival Mode:** fire deals 6 and lava deals 12 every 400 ms while overlapping. See [`src/survival-mode/`](../src/survival-mode/).

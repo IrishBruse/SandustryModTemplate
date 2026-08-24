@@ -58,7 +58,7 @@ Edit a file under `src/`. Save. The mod reloads without a game restart.
 Rules:
 
 - Each `src/<name>/` or `examples/<name>/` with a `mod.ts` is a separate game mod.
-- The OS mods folder uses `modinfo.name`.
+- The OS mods folder uses `modinfo.id`.
 - Import `@modkit/*` and files in your own folder only. Do not import another mod folder.
 - Import `onDispose` from `@modkit/debug` when a registration needs cleanup. Release builds stub that package. The debug companion watches local mods.
 

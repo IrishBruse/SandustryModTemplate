@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
  * Watch src/<name>/ and build each mod into the game mods folder
- * (Linux: ~/.config/sandustry/mods/<modinfo.name>;
- *  Windows: %APPDATA%/sandustry/mods/<modinfo.name>).
+ * (Linux: ~/.config/sandustry/mods/<modinfo.id>;
+ *  Windows: %APPDATA%/sandustry/mods/<modinfo.id>).
  * On stop (Ctrl+C, terminal close, or child exit), remove those owned mods.
  * Usage: npm run dev [-- --mod hello-world]
  * In a TTY with no --mod, shows a keyboard mod picker (last choice pre-selected).
