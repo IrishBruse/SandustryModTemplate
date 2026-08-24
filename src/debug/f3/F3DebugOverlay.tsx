@@ -1,6 +1,6 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import { OverlayRoot } from "@modkit/ui";
-import { settingOn } from "../boot/settings";
+import { f3DebugOn } from "../boot/settings";
 import { hideManagementColumn } from "./management-column";
 import { collectF3Blocks, type F3Block } from "./registry";
 
@@ -45,12 +45,12 @@ function F3BlockView({ block }: { block: F3Block }) {
 /** Minecraft-style F3 debug text overlay (extensible via `registerF3Section`). */
 export function F3DebugOverlay() {
   const [open, setOpen] = useState(false);
-  const [enabled, setEnabled] = useState(() => settingOn(api, "engineDebug"));
+  const [enabled, setEnabled] = useState(() => f3DebugOn(api));
   const [blocks, setBlocks] = useState<F3Block[]>([]);
 
   useEffect(() => {
     function refreshSettings(): void {
-      const on = settingOn(api, "engineDebug");
+      const on = f3DebugOn(api);
       setEnabled(on);
       if (!on) setOpen(false);
     }

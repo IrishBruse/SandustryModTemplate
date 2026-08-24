@@ -30,12 +30,12 @@ Settings live on the debug mod only (`src/debug/mod.ts` `configSchema`). Open **
 | **F12 opens DevTools**       | `f12DevTools`       | off         | Capture-phase F12. Can disconnect an IDE debugger session                                                                                                                                                            |
 | **Auto-load save**           | `autoLoad`          | off         | On load, `location.assign` with `?db_load=<saveId>`. Skips splash and main menu. Legacy `autoBoot` prefs still count until you set `autoLoad`                                                                        |
 | **Start save**               | `startSave`         | Mod storage | **Last played** or **Mod storage**. **Mod storage** reads `api.storage` (`startSave`). Set the id from DevTools or another mod.                                                                                       |
-| **Engine debug**             | `engineDebug`       | off         | Force `debug.active` (vanilla Debug / Stats). F3 toggles companion debug overlay                                                                                                                                     |
+| **F3 debug overlay**         | `f3Debug`           | off         | F3 toggles companion debug overlay. Vanilla Debug / Stats stay on while the mod is enabled                                                                                                                         |
 | **Disable autosave**         | `disableAutosave`   | off         | Sets `session.settings.autosaveInterval` to `0`. Manual saves still work                                                                                                                                             |
 | **Watch local mods**         | `watchLocalMods`    | off         | Poll local mod folders for `main.js` / `patches.json` / `modinfo.json` / worker entry. Workshop mods are ignored                                                                                                     |
 | **If hot reload cannot run** | `hotReloadFallback` | Eval anyway | When `main.js` changed with no dispose path: **Do nothing**, **Eval anyway**, or **Reload page**. **Eval anyway** still evaluates the new source (listeners can stack). Page reload does not re-apply `patches.json` |
 
-Turn on **Watch local mods**, **Auto-load save**, **Engine debug**, **Disable autosave**, **F12**, or **Open DevTools on load** when you want those helpers.
+Turn on **Watch local mods**, **Auto-load save**, **F3 debug overlay**, **Disable autosave**, **F12**, or **Open DevTools on load** when you want those helpers.
 
 ## Features
 
@@ -47,7 +47,7 @@ Turn on **Watch local mods**, **Auto-load save**, **Engine debug**, **Disable au
 | Auto-load save        | [`boot/boot-menu.ts`](../../src/debug/boot/boot-menu.ts) + [`boot/auto-load-save.ts`](../../src/debug/boot/auto-load-save.ts) | Auto-load + Start save | Reloads with `?db_load=` for the **Start save** pick                                |
 | Disable autosave      | [`boot/autosave.ts`](../../src/debug/boot/autosave.ts)                                                                        | Disable autosave       | Sets interval to `0` on load and each hot-reload eval                               |
 | Renderer hot reload   | [`reload/local-mod-reload.ts`](../../src/debug/reload/local-mod-reload.ts)                                                    | Watch local mods       | Polls local folders; Workshop mods are skipped                                      |
-| F3 debug overlay      | [`f3/F3DebugOverlay.tsx`](../../src/debug/f3/F3DebugOverlay.tsx)                                                              | Engine debug           | Minecraft-style text HUD; extensible via `registerF3Section` / `globalThis.debugF3` |
+| F3 debug overlay      | [`f3/F3DebugOverlay.tsx`](../../src/debug/f3/F3DebugOverlay.tsx)                                                              | F3 debug overlay       | Minecraft-style text HUD; extensible via `registerF3Section` / `globalThis.debugF3` |
 
 Hot-reload eval skips DevTools shortcut and auto-load so those do not stack on every save. Autosave disable runs again on each hot-reload eval.
 
@@ -100,7 +100,7 @@ It does nothing when:
 
 ## F3 debug overlay
 
-When **Engine debug** is on, **F3** toggles a Minecraft-style text overlay (monospace, white with shadow). Built-in sections show **Player** world/cell position and **Mouse** cell/world position while in-game.
+When **F3 debug overlay** is on, **F3** toggles a Minecraft-style text overlay (monospace, white with shadow). Built-in sections show **Player** world/cell position and **Mouse** cell/world position while in-game. Vanilla Debug / Stats stay on while the debug companion is enabled.
 
 Add sections from the debug mod:
 

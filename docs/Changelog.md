@@ -19,7 +19,7 @@ The template has no release tags yet. Dated sections match the day the change la
 - **Mod layout:** a mod root keeps only `mod.ts`, `main.ts`, and optional `worker.ts` as TypeScript. Other source files live in feature folders. See [layout.md](layout.md).
 - **Survival Mode:** vanilla **Sprint Boost** (Shift burst and meter) is off. **Shift** is a hold sprint on the ground (1.6× walk speed). See [`src/survival-mode/`](../src/survival-mode/).
 - **Survival Mode:** fire deals 6 and lava deals 12 every 400 ms while overlapping. See [`src/survival-mode/`](../src/survival-mode/).
-- **Debug companion:** **F12**, **Auto-load save**, **Engine debug**, **Disable autosave**, and **Watch local mods** default to off. Turn them on in **Options → Mods → debug**. See [modkit/debug.md](modkit/debug.md).
+- **Debug companion:** vanilla Debug / Stats stay on while the mod is enabled. **F3 debug overlay** is a separate toggle for the F3 HUD. Legacy **Engine debug** prefs map to **F3 debug overlay**. **F12**, **Auto-load save**, **Disable autosave**, and **Watch local mods** still default to off. See [modkit/debug.md](modkit/debug.md).
 
 ### Fixed
 

@@ -1,4 +1,4 @@
-import { settingOn } from "../boot/settings";
+import { isEnabled } from "@modkit/utils";
 
 type DebugConfigRoot = {
   debug: Record<string, unknown>;
@@ -13,11 +13,11 @@ function configRoot(api: SandkitApi): DebugConfigRoot | null {
 }
 
 /**
- * Keep engine `debug.active` in sync with the **Engine debug** setting.
+ * Keep engine `debug.active` on while the debug companion is enabled.
  * Boot localStorage is updated so the next launch matches.
  */
 export function syncEngineDebug(api: SandkitApi): void {
-  const on = settingOn(api, "engineDebug");
+  const on = isEnabled(api);
 
   try {
     localStorage.setItem("debug.active", String(on));

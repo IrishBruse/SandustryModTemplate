@@ -51,11 +51,11 @@ export const modinfo = defineModInfo({
         { value: AUTO_LOAD_FROM_STORAGE, labelKey: "Mod storage" },
       ],
     },
-    engineDebug: {
+    f3Debug: {
       type: "boolean",
       default: false,
-      labelKey: "Engine debug",
-      descriptionKey: "Show vanilla Debug / Stats. F3 toggles the overlay.",
+      labelKey: "F3 debug overlay",
+      descriptionKey: "F3 toggles the debug overlay.",
     },
     disableAutosave: {
       type: "boolean",

@@ -4,7 +4,7 @@ import { registerBuiltinF3Sections } from "./sections";
 import { syncEngineDebug } from "./enable-debug";
 import { F3DebugOverlay } from "./F3DebugOverlay";
 
-/** Keep engine `debug.active` in sync with the **Engine debug** setting. */
+/** Keep engine `debug.active` on while the debug companion is enabled. */
 function installEngineDebug(api: SandkitApi): void {
   syncEngineDebug(api);
   const stop = api.settings.onChange(() => syncEngineDebug(api));
