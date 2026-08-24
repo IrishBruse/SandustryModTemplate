@@ -64,5 +64,5 @@ export function logRendererReload(): void {
   const entries = performance.getEntriesByType("navigation");
   const nav = entries[0] as PerformanceNavigationTiming | undefined;
   if (nav?.type !== "reload") return;
-  console.info("[irishbruse.debug] renderer reload — patches.json is not re-applied");
+  console.info("renderer reload — patches.json is not re-applied");
 }

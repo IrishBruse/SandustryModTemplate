@@ -62,18 +62,18 @@ function applyMainChange(
   const name = displayName(record);
 
   if (action === "skip") {
-    console.warn(`[${record.id}] ${name} main.js changed — hot reload skipped (no dispose)`);
+    console.warn(`${name} main.js changed — hot reload skipped (no dispose)`);
     return;
   }
   if (action === "reload") {
-    console.warn(`[${record.id}] ${name} main.js changed — reloading the page`);
+    console.warn(`${name} main.js changed — reloading the page`);
     globalThis.location.reload();
     return;
   }
 
   if (shouldWarnNoDispose(canDispose, action)) {
     console.warn(
-      `[${record.id}] ${name} main.js changed — hot eval with no dispose; listeners may stack`,
+      `${name} main.js changed — hot eval with no dispose; listeners may stack`,
     );
   }
   return hotEvalMain(api, record, source);
