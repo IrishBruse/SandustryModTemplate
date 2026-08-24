@@ -231,7 +231,7 @@ const CONSOLE_INJECT_SOURCE_SUFFIX = "modkit/internal/esbuild/console.ts";
  * Sandkit loads `main.js` via `new Function("__sandkit", body)` where `body` is:
  *   "use strict";\nconst sandkit = __sandkit;\nreturn (async () => {\n<source>\n})();\n
  * The Function header is two lines, then three body lines — five lines before `<source>`.
- * Hot eval in `src/debug/reload/hot-eval.ts` and `COMPILE_CODE` in `src/debug/patches.ts` must use the same wrapper.
+ * Hot eval in `src/hot-reload/reload/hot-eval.ts` and `COMPILE_CODE` in `src/hot-reload/patches.ts` must use the same wrapper.
  */
 const SANDKIT_LOADER_LINE_OFFSET = 5;
 
@@ -260,7 +260,10 @@ function markConsoleInjectIgnored(map) {
   const ignored = new Set(map.ignoreList ?? []);
   for (let i = 0; i < sources.length; i++) {
     const source = sources[i];
-    if (typeof source === "string" && source.replace(/\\/g, "/").endsWith(CONSOLE_INJECT_SOURCE_SUFFIX)) {
+    if (
+      typeof source === "string" &&
+      source.replace(/\\/g, "/").endsWith(CONSOLE_INJECT_SOURCE_SUFFIX)
+    ) {
       ignored.add(i);
     }
   }

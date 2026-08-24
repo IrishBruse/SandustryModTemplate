@@ -32,8 +32,8 @@ Default probe includes `%ProgramFiles(x86)%\Steam` and `%ProgramFiles%\Steam`, p
 
 **Mods / logs folders**
 
-| OS      | Mods                                                          | Logs                       |
-| ------- | ------------------------------------------------------------- | -------------------------- |
+| OS      | Mods                                                        | Logs                       |
+| ------- | ----------------------------------------------------------- | -------------------------- |
 | Linux   | `~/.config/sandustry/mods/<modinfo.id>`                     | `~/.config/sandustry/logs` |
 | Windows | `%APPDATA%\sandustry\mods\<modinfo.id>` (`AppData\Roaming`) | `%APPDATA%\sandustry\logs` |
 
@@ -47,7 +47,7 @@ Default probe includes `%ProgramFiles(x86)%\Steam` and `%ProgramFiles%\Steam`, p
 
 **Debugger Restart says "No debugger available"** — Select **Sandustry** (the Node launch), not a renderer-only attach. Restart must kill and relaunch the game process; Chrome attach Restart is a page reload and cannot run after that process is gone.
 
-**Hot reload does nothing** — Subscribe to the **debug** companion on the Workshop (this template's debug builds already install a local copy). Turn on **Watch local mods**. Only **local** folders are polled, not other Workshop items. Overlay / Tailwind saves must log `built` in the watch terminal when you use this template. If the game was running on an old debug companion, **restart the game** once so the loader patch applies. A DevTools page reload does not re-apply `patches.json` or refresh workers. A toast shows when a mod hot-evals. Mods with no `onDispose` still eval under the default **Eval anyway** setting (listeners can stack). Set **If hot reload cannot run** to **Do nothing** or **Reload page** if you need the old skip / page-reload behaviour. If the companion toasts that loader patches are missing, restart the game.
+**Hot reload does nothing** — Subscribe to the **debug** companion on the Workshop (this template's debug builds already install a local copy). Turn on **Watch local mods**. Only **local** folders are polled, not other Workshop items. Overlay / Tailwind saves must log `built` in the watch terminal when you use this template. If the game was running on an old debug companion, **restart the game** once so the loader patch applies. A DevTools page reload does not re-apply `patches.json` or refresh workers. A toast shows when a mod hot-evals. If the companion toasts that loader patches are missing, restart the game.
 
 **Hot reload does nothing under F5** — Keep `npm run dev` running if you need this template to rebuild `main.js`. F5 does not build. Restart the game once after you pull a template change so the new debug companion and loader patch load.
 

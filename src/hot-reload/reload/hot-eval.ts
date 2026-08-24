@@ -2,10 +2,10 @@ import { clearLog } from "@modkit/log";
 
 /**
  * Re-eval `main.js` for a local mod. JavaScript cannot unload.
- * Cleanup comes from `onDispose` (kit) and auto-tracked `api.ui.inject` /
- * `api.ui.overlays.register`.
+ * Cleanup comes from optional `onDispose` (kit) and auto-tracked
+ * `api.events.on`, `api.ui.inject`, and `api.ui.overlays.register`.
  *
- * Keys must match `src/debug/patches.ts` (`local-mod-compile-reloaded`) and `modkit/internal/debug`.
+ * Keys must match `src/hot-reload/patches.ts` (`local-mod-compile-reloaded`) and `modkit/internal/debug`.
  */
 
 const EVAL_IDS_KEY = "__sandkitHotReloadEvalIds__";
@@ -101,7 +101,7 @@ export function readRemoteText(url: string): Promise<string | null> {
     .catch(() => readXhr(busted));
 }
 
-/** True when this mod registered `onDispose` or auto-tracked `ui.inject` disposers. */
+/** True when this mod registered cleanup callbacks for hot reload. */
 export function hasDisposers(modId: string): boolean {
   return (disposeLists()[modId]?.length ?? 0) > 0;
 }
@@ -177,9 +177,7 @@ export async function reloadRenderer(modId: string, source: string): Promise<voi
   }
 
   const report = runDisposers(modId);
-  console.log(
-    `disposed for reload (${report.ran} callback(s), ${report.failed} failed)`,
-  );
+  console.log(`disposed for reload (${report.ran} callback(s), ${report.failed} failed)`);
 
   const sourceUrl = `sandkit-workshop://${modId}/${host.entry}`;
   try {

@@ -8,7 +8,7 @@ Subscribe to game events and unsubscribe on hot reload.
 2. On first load, look for the toast **Events — game ready**.
 3. Open DevTools console. Every five seconds you see a `frame:render` count.
 
-Hot reload does not show the toast again. Listeners are removed through `onDispose` before the bundle re-evaluates.
+Hot reload does not show the toast again. The debug companion auto-unsubscribes `api.events.on` listeners before the bundle re-evaluates.
 
 ## Events in this mod
 
@@ -19,4 +19,4 @@ Search `modkit/types/` and [`docs/api/`](../docs/api/) for more event ids.
 
 ## Copy this mod
 
-Copy `examples/api/events/` to `src/<your-mod>/`. Add listeners with `api.events.on` and pass each unsubscribe function to `onDispose`.
+Copy `examples/api/events/` to `src/<your-mod>/`. Add listeners with `api.events.on`. You do not need `onDispose` for event cleanup during hot reload. The example still uses `onDispose` to show the pattern for timers and other custom hooks.

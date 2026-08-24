@@ -2,7 +2,7 @@
  * Cleanup registry for the debug companion hot-eval.
  * All builds bundle this module so hot reload can run disposers when the companion is installed.
  *
- * Keys must match `src/debug/patches.ts` and `src/debug/reload/hot-eval.ts`.
+ * Keys must match `src/hot-reload/patches.ts` and `src/hot-reload/reload/hot-eval.ts`.
  */
 
 const ACTIVE_KEY = "__sandkitHotReloadActive__";

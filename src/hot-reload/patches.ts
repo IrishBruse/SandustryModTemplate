@@ -6,7 +6,7 @@ import { definePatches } from "@modkit/modinfo";
  * | id | File | Why a patch |
  * | --- | --- | --- |
  * | `local-mod-compile-reloaded` | `js/external-mod-runtime.js` | Loader must define free `reloaded` and the active mod id. |
- * | `local-mod-registry` | `js/external-mod-runtime.js` | Publish local mods so the companion can poll them. |
+ * | `local-mod-registry` | `js/external-mod-runtime.js` | Patch `events.on` tracking and publish local mods for polling. |
  * | `local-mod-track-inject` | `js/external-mod-runtime.js` | Auto-track `ui.inject` disposers for hot-eval. |
  * | `local-mod-track-overlays` | `js/external-mod-runtime.js` | Auto-track `ui.overlays.register` unregisters for hot-eval. |
  *
@@ -26,9 +26,9 @@ const COMPILE_CODE =
 const EXECUTE_FIND =
   "const t=ie(e,{manifest:i,discovered:r});e.store.integrity.modsUsed=!0,await c(t)";
 
-/** After `ie(...)`, record local mods on `__sandkitLocalModRegistry__`. */
+/** After `ie(...)`, patch `events.on` tracking and record local mods on `__sandkitLocalModRegistry__`. */
 const EXECUTE_CODE =
-  'const t=ie(e,{manifest:i,discovered:r});(function(rec,sk,fn){try{var w=rec.workshop;if(!w||!Array.isArray(w.discoveredVia)||w.discoveredVia.indexOf("local")<0)return;var g=globalThis;g.__sandkitLocalModRegistry__=g.__sandkitLocalModRegistry__||{};g.__sandkitLocalModRegistry__[rec.manifest.id]={id:rec.manifest.id,name:rec.manifest.name,rootUrl:rec.rootUrl,entry:rec.manifest.entry,workerEntry:rec.manifest.workerEntry||null,sandkit:sk,run:fn};}catch(err){}})(r,t,c);e.store.integrity.modsUsed=!0,await c(t)';
+  'const t=ie(e,{manifest:i,discovered:r});(function(rec,sk,fn){try{var w=rec.workshop;if(!w||!Array.isArray(w.discoveredVia)||w.discoveredVia.indexOf("local")<0)return;var g=globalThis;var ev=sk&&sk.api&&sk.api.events;var on=ev&&ev.on;if(on&&!ev.__sandkitEventsOnPatched__){ev.__sandkitEventsOnPatched__=true;var orig=on.bind(ev);ev.on=function(id,cb){var u=orig(id,cb);var tr=g.__sandkitTrackInjectDispose;tr&&rec.manifest&&rec.manifest.id&&tr(rec.manifest.id,u);return u};}g.__sandkitLocalModRegistry__=g.__sandkitLocalModRegistry__||{};g.__sandkitLocalModRegistry__[rec.manifest.id]={id:rec.manifest.id,name:rec.manifest.name,rootUrl:rec.rootUrl,entry:rec.manifest.entry,workerEntry:rec.manifest.workerEntry||null,sandkit:sk,run:fn};}catch(err){}})(r,t,c);e.store.integrity.modsUsed=!0,await c(t)';
 
 const INJECT_FIND =
   'return l.set(n,s),i.FH.ui.overlays.register(e,"global",n,function(){return $.createElement(o)}),()=>{const t=G.get(e);(null==t?void 0:t.get(n))===s&&(t.delete(n),i.FH.ui.overlays.unregister(e,"global",n))}';

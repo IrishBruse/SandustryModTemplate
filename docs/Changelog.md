@@ -6,6 +6,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Removed
 
+- **Debug companion:** **Without cleanup** / `hotReloadFallback` setting. Hot reload always evals `main.js`. See [modkit/debug.md](modkit/debug.md).
 - **Debug companion:** main-menu **Start save** overlay (dropdown on the main menu and New World flow). Use **Options → Mods → debug → Start save** (Last played / Mod storage) and `api.storage.set("irishbruse.debug", "startSave", saveId)` for a fixed pick. See [modkit/debug.md](modkit/debug.md).
 
 ### Added
@@ -19,11 +20,11 @@ The template has no release tags yet. Dated sections match the day the change la
 - **Mod layout:** a mod root keeps only `mod.ts`, `main.ts`, and optional `worker.ts` as TypeScript. Other source files live in feature folders. See [layout.md](layout.md).
 - **Survival Mode:** vanilla **Sprint Boost** (Shift burst and meter) is off. **Shift** is a hold sprint on the ground (1.6× walk speed). See [`src/survival-mode/`](../src/survival-mode/).
 - **Survival Mode:** fire deals 6 and lava deals 12 every 400 ms while overlapping. See [`src/survival-mode/`](../src/survival-mode/).
-- **Debug companion:** vanilla Debug / Stats stay on while the mod is enabled. **F3 debug overlay** is a separate toggle for the F3 HUD. Legacy **Engine debug** prefs map to **F3 debug overlay**. **F12**, **Auto-load save**, **Disable autosave**, and **Watch local mods** still default to off. See [modkit/debug.md](modkit/debug.md).
+- **Debug companion:** source lives under `src/hot-reload/` (was `src/debug/`). Hot reload always evals local `main.js`. Cleanup is auto-tracked for `api.events.on`, `api.ui.inject`, and `api.ui.overlays.register`. The **Without cleanup** setting is removed. Use `onDispose` only for timers and other custom hooks. Restart the game once after you pull this change so the loader patch applies. See [modkit/debug.md](modkit/debug.md).
 
 ### Fixed
 
-- **Debug companion:** local `main.js` hot-eval no longer stops when a mod has no `onDispose`. The default **Eval anyway** setting evaluates the new source (listeners can stack). Inject tracking uses that mod's sandkit id, so a late `api.ui.inject` / `overlays.register` still disposes. A failed poll read no longer drops the last snapshot (that skipped the next save). See [modkit/debug.md](modkit/debug.md).
+- **Debug companion:** local `main.js` hot-eval runs tracked cleanup for `api.events.on`, `api.ui.inject`, and `api.ui.overlays.register` before re-eval. Inject tracking uses that mod's sandkit id, so a late `api.ui.inject` / `overlays.register` still disposes. A failed poll read no longer drops the last snapshot (that skipped the next save). See [modkit/debug.md](modkit/debug.md).
 - **Survival Mode:** fire and lava keep dealing damage while you stand still. Ticks run on `frame:render` with a cooldown, not only on `player:moved`. See [`src/survival-mode/`](../src/survival-mode/).
 - **Survival Mode:** hold **Shift** now speeds up walk. The SprintBoost binding is `Shift`; session keys use `ShiftLeft` / `ShiftRight`. See [`src/survival-mode/`](../src/survival-mode/).
 

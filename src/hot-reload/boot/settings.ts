@@ -13,10 +13,6 @@ const SETTING_DEFAULTS: Record<string, boolean> = {
   watchLocalMods: false,
 };
 
-export type HotReloadFallback = "off" | "toast" | "reload";
-
-const FALLBACK_DEFAULT: HotReloadFallback = "toast";
-
 function boolSetting(api: SandkitApi, key: string): boolean {
   const value = api.settings.get(key);
   if (typeof value === "boolean") return value;
@@ -51,12 +47,4 @@ export function autoLoadOn(api: SandkitApi): boolean {
   const legacy = api.settings.get("autoBoot");
   if (typeof legacy === "boolean") return legacy;
   return SETTING_DEFAULTS.autoLoad;
-}
-
-/** When `main.js` changed and the dispose list is empty. */
-export function hotReloadFallback(api: SandkitApi): HotReloadFallback {
-  if (!isEnabled(api)) return FALLBACK_DEFAULT;
-  const value = api.settings.get("hotReloadFallback");
-  if (value === "off" || value === "toast" || value === "reload") return value;
-  return FALLBACK_DEFAULT;
 }

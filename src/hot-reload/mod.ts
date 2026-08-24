@@ -69,17 +69,5 @@ export const modinfo = defineModInfo({
       labelKey: "Watch local mods",
       descriptionKey: "Reload local mods when files change. Skips Workshop.",
     },
-    hotReloadFallback: {
-      type: "choice",
-      default: "toast",
-      labelKey: "If hot reload cannot run",
-      descriptionKey:
-        "When main.js has no dispose path: skip, still eval (warn in the console), or reload the page. Page reload does not re-apply patches.json.",
-      options: [
-        { value: "off", labelKey: "Do nothing" },
-        { value: "toast", labelKey: "Eval anyway" },
-        { value: "reload", labelKey: "Reload page" },
-      ],
-    },
   },
 });

@@ -1,15 +1,8 @@
 import { onDispose } from "@modkit/debug";
-import {
-  beginHotEval,
-  bindHostSandkit,
-  hasDisposers,
-  readRemoteText,
-  reloadRenderer,
-} from "./hot-eval";
-import { settingOn, hotReloadFallback } from "../boot/settings";
+import { beginHotEval, bindHostSandkit, readRemoteText, reloadRenderer } from "./hot-eval";
+import { settingOn } from "../boot/settings";
 import { modinfo } from "../mod";
 import { noteRestartNeeded, probeLoaderPatches, remindRestartIfNeeded } from "./loader-health";
-import { planMainReload, shouldWarnNoDispose } from "./main-reload-plan";
 
 const POLL_MS = 400;
 const RESTART_FILES = ["patches.json", "modinfo.json"] as const;
@@ -47,36 +40,12 @@ function joinRoot(rootUrl: string, relative: string): string {
   return new URL(relative.replace(/^\//, ""), base).href;
 }
 
-function displayName(record: LocalModRecord): string {
-  return typeof record.name === "string" && record.name.length > 0 ? record.name : record.id;
-}
-
 function applyMainChange(
-  api: SandkitApi,
+  _api: SandkitApi,
   record: LocalModRecord,
   source: string,
 ): Promise<void> | void {
-  const canDispose = hasDisposers(record.id);
-  const fallback = hotReloadFallback(api);
-  const action = planMainReload(canDispose, fallback);
-  const name = displayName(record);
-
-  if (action === "skip") {
-    console.warn(`${name} main.js changed — hot reload skipped (no dispose)`);
-    return;
-  }
-  if (action === "reload") {
-    console.warn(`${name} main.js changed — reloading the page`);
-    globalThis.location.reload();
-    return;
-  }
-
-  if (shouldWarnNoDispose(canDispose, action)) {
-    console.warn(
-      `${name} main.js changed — hot eval with no dispose; listeners may stack`,
-    );
-  }
-  return hotEvalMain(api, record, source);
+  return hotEvalMain(_api, record, source);
 }
 
 async function snapshot(record: LocalModRecord): Promise<Tracked | null> {
