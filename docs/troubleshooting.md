@@ -53,8 +53,8 @@ Default probe includes `%ProgramFiles(x86)%\Steam` and `%ProgramFiles%\Steam`, p
 
 **`npm run publish` hangs after a successful upload** — SteamCMD used to keep the `Steam>` prompt because it inherited the terminal. Publish now closes stdin and stops SteamCMD if it does not exit. See [Workshop publish](builds.md#workshop-publish).
 
-**`npm run publish` fails to download SteamCMD** — Publish fetches the official Valve installer into `.tmp/steamcmd/` when SteamCMD is not already on PATH. Check the network, or unpack SteamCMD yourself from the [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD) page. See [Workshop publish](builds.md#workshop-publish).
+**`npm run publish` fails to download SteamCMD** — Publish fetches the official Valve installer into `~/.cache/sandustry-steamcmd/` when that install is missing. Check the network, or unpack SteamCMD yourself from the [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD) page into that folder. See [Workshop publish](builds.md#workshop-publish).
 
-**`npm run publish` fails with "No cached credentials"** — SteamCMD does not use the Steam client login. On a TTY, publish prompts for password / Steam Guard once, then retries. Without a TTY, run `steamcmd +login <account>` once (use the item owner), then publish again.
+**`npm run publish` fails with "No cached credentials"** — SteamCMD login is separate from the Steam client (credentials live under `~/.cache/sandustry-steamcmd/`). On a TTY, publish prompts for password / Steam Guard once, then uploads. Without a TTY, run `~/.cache/sandustry-steamcmd/steamcmd.sh +login <account>` once (use the item owner), then publish again. Full SteamCMD output is in `.tmp/steamcmd-publish.log`.
 
 **Types missing** — Pull the latest template. Sandkit API declarations live in `modkit/types/`. See [modkit/types/README.md](../modkit/types/README.md).

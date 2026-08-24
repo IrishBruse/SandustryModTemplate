@@ -80,9 +80,9 @@ Renderer attach loads source maps from scripts named `sandkit-workshop://<modId>
 
 ## Workshop publish
 
-`npm run publish` uses [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD). It prefers `steamcmd` on PATH (or `steamcmd.exe` / `steamcmd.sh` under Steam libraries, `~/steamcmd`, `/usr/games`, or `.tmp/steamcmd/`). If none of those exist, it downloads the official Valve installer into `.tmp/steamcmd/` (gitignored).
+`npm run publish` uses [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD). It uses a **dedicated** install under `~/.cache/sandustry-steamcmd/` (downloads Valve’s official archive on first use). It does **not** use the Steam client’s `steamcmd` or Debian `/usr/games/steamcmd`, which share `~/.local/share/Steam` and clear the login cache when Steam runs.
 
-Log into the Steam client as the Workshop item owner first. SteamCMD keeps its **own** credential cache (separate from the Steam client). The first publish prompts for your Steam password (and Steam Guard if needed), then caches it. Later publishes reuse that cache.
+Log into the Steam client as the Workshop item owner first (so publish can read your account name). SteamCMD keeps a **separate** credential cache under `~/.cache/sandustry-steamcmd/home/` (a private `HOME` for SteamCMD). The first publish prompts for your Steam password (and Steam Guard if needed), then caches it. Later publishes reuse that cache with short status lines. Full SteamCMD output goes to `.tmp/steamcmd-publish.log`.
 
 In a terminal, `npm run publish` shows an arrow-key list of **`src/` mods** (not `examples/`), then a confirm step (Upload / Cancel).
 

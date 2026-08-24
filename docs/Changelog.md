@@ -17,6 +17,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Changed
 
+- **Workshop publish:** `npm run publish` uses a dedicated SteamCMD under `~/.cache/sandustry-steamcmd/` (not the Steam client tree), probes login before upload, and prints short status lines. Full SteamCMD output goes to `.tmp/steamcmd-publish.log`. See [builds.md](builds.md#workshop-publish).
 - **Example mods:** `modinfo.id` is now `example.<name>` (for example `example.hello-world`). Remove leftover `mods/author.*-example/` folders after the next build if needed.
 - **Workshop staging:** `npm run build` writes to `build/<modinfo.id>/` (same name as the OS mods folder), not `build/<repo-folder>/`. See [builds.md](builds.md) and [layout.md](layout.md).
 - **Workshop listing copy:** write `workshop/workshop.md` in Markdown. `npm run publish` converts it to Steam BBCode at upload time. Links and raw URLs are rejected (Steam virus scan). Legacy `workshop.txt` still works if present. See [builds.md](builds.md#workshop-publish).
@@ -29,6 +30,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Fixed
 
+- **Hot Reload Dev Tools:** **Watch local mods** works again. Restart the game once so the new loader patch applies. See [modkit/debug.md](modkit/debug.md).
 - **Survival Mode:** stored health of **0** (or invalid) loads as full HP. A **new game** boot always starts at full HP. See [`src/survival-mode/`](../src/survival-mode/).
 - **Instant Pick Block:** turning **Mod enabled** off restores hold-to-pick immediately. See [`src/pick-block/`](../src/pick-block/).
 - **Debug companion:** local `main.js` hot-eval runs tracked cleanup for `api.events.on`, `api.ui.inject`, and `api.ui.overlays.register` before re-eval. Inject tracking uses that mod's sandkit id, so a late `api.ui.inject` / `overlays.register` still disposes. A failed poll read no longer drops the last snapshot (that skipped the next save). See [modkit/debug.md](modkit/debug.md).

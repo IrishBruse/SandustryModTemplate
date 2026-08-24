@@ -26,7 +26,7 @@ Full steps: **[Quick start](quick-start.md)**.
 | `npm run setup`     | Check install, extract game source to `sandustry/`, link `dist/` and `logs/` |
 | `npm run dev`       | Watch OS mods folder; remove owned mods when the watch stops                 |
 | `npm run build`     | Release to `build/<modinfo.id>/` (Workshop staging)                          |
-| `npm run publish`   | Runs `npm run build`, then SteamCMD upload (PATH or `.tmp/steamcmd/`)        |
+| `npm run publish`   | Runs `npm run build`, then SteamCMD upload (`~/.cache/sandustry-steamcmd/`)  |
 | `npm run typecheck` | TypeScript check                                                             |
 | `npm run test`      | Node tests (`src/**/*.test.ts`)                                              |
 | `npm run docs`      | Regenerate API reference (`docs:api`), then serve Docsify on `docs/`         |

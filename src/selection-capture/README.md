@@ -50,7 +50,7 @@ While the panel is open, a **blue** outline shows the PNG/GIF crop. During GIF c
 
 This mod is published on the Steam Workshop: [Pixel-perfect Screenshot and GIF recorder](https://steamcommunity.com/sharedfiles/filedetails/?id=3787806696).
 
-`npm run publish` uploads from `build/` with [`workshop.json`](workshop/workshop.json) and **preview.gif** (or **preview.png**). It uses [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD) on PATH, or downloads Valve's installer into `.tmp/steamcmd/`. [`workshop.md`](workshop/workshop.md) supplies the Steam description. `README.md`, `CHANGELOG.md`, and [`screenshots/`](workshop/screenshots/) stay in the repo. Change notes for Steam come from `CHANGELOG.md` at upload time.
+`npm run publish` uploads from `build/` with [`workshop.json`](workshop/workshop.json) and **preview.gif** (or **preview.png**). It uses a dedicated [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD) under `~/.cache/sandustry-steamcmd/`. [`workshop.md`](workshop/workshop.md) supplies the Steam description. `README.md`, `CHANGELOG.md`, and [`screenshots/`](workshop/screenshots/) stay in the repo. Change notes for Steam come from `CHANGELOG.md` at upload time.
 
 ## Changelog
 

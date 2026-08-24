@@ -1,18 +1,26 @@
 #!/usr/bin/env node
 /**
  * Release-build mods, then upload to Steam Workshop with SteamCMD.
- * Uses SteamCMD on PATH, or downloads the official Valve installer into .tmp/steamcmd/.
+ * Uses a dedicated SteamCMD under ~/.cache/sandustry-steamcmd/ (not the desktop Steam tree).
  * Usage: npm run publish
  *        npm run publish -- --mod selection-capture
  *        npm run publish -- --mod selection-capture --yes
  */
-import { execFileSync, spawn, spawnSync } from "node:child_process";
-import { chmodSync, existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
-import { homedir } from "node:os";
+import { spawnSync } from "node:child_process";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, basename, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadMods, parseModFilter, publishStagingDir } from "../lib/mods.js";
 import { steamLibraryRoots } from "../lib/paths.js";
+import {
+  ensureDedicatedSteamCmd,
+  probeSteamCmdLogin,
+  runSteamCmdInteractiveLogin,
+  runWorkshopUpload,
+  steamCmdNeedsCachedLogin,
+  steamCmdPublishLogPath,
+  workshopUploadSucceeded,
+} from "../lib/steamcmd.js";
 import { isPublishTty, tuiConfirm, tuiSelect } from "./publish-tui.js";
 import {
   copyWorkshopInstallFiles,
@@ -28,8 +36,6 @@ import {
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const SANDUSTRY_APP_ID = "2764460";
-const STEAMCMD_DOCS = "https://developer.valvesoftware.com/wiki/SteamCMD";
-const STEAMCMD_LOCAL_DIR = join(ROOT, ".tmp", "steamcmd");
 const IS_WIN = process.platform === "win32";
 
 const argv = process.argv.slice(2);
@@ -82,139 +88,6 @@ function workshopItemVdf(item) {
     `}`,
     ``,
   ].join("\n");
-}
-
-/**
- * @param {string} name
- * @returns {string | null}
- */
-function commandOnPath(name) {
-  try {
-    const out = execFileSync(IS_WIN ? "where" : "which", [name], {
-      encoding: "utf8",
-    }).trim();
-    return out.split(/\r?\n/).find((line) => line && existsSync(line)) ?? null;
-  } catch {
-    return null;
-  }
-}
-
-/** @returns {string | null} */
-function findSteamCmd() {
-  const fromPath = commandOnPath(IS_WIN ? "steamcmd.exe" : "steamcmd");
-  if (fromPath) return fromPath;
-
-  const names = IS_WIN
-    ? ["steamcmd.exe", join("steamcmd", "steamcmd.exe")]
-    : ["steamcmd.sh", join("steamcmd", "steamcmd.sh"), join("steamcmd", "linux64", "steamcmd")];
-
-  const roots = [
-    ...steamLibraryRoots(),
-    join(homedir(), "steamcmd"),
-    STEAMCMD_LOCAL_DIR,
-    "/usr/games",
-  ];
-  for (const root of roots) {
-    for (const name of names) {
-      const candidate = join(root, name);
-      if (existsSync(candidate)) return candidate;
-    }
-  }
-  return null;
-}
-
-/**
- * Official Valve archive. The npm `steamcmd` package (2017) is not used: it
- * pulls `request` / `unzip`, and its API is game download, not Workshop upload.
- * @returns {{ url: string, archiveName: string }}
- */
-function officialSteamCmdArchive() {
-  if (IS_WIN) {
-    return {
-      url: "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip",
-      archiveName: "steamcmd.zip",
-    };
-  }
-  if (process.platform === "darwin") {
-    return {
-      url: "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_osx.tar.gz",
-      archiveName: "steamcmd_osx.tar.gz",
-    };
-  }
-  if (process.platform === "linux") {
-    return {
-      url: "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz",
-      archiveName: "steamcmd_linux.tar.gz",
-    };
-  }
-  fail(`No official SteamCMD archive for ${process.platform}. See ${STEAMCMD_DOCS}`);
-  throw new Error("unreachable");
-}
-
-/**
- * @param {string} dir
- * @param {string} archive
- */
-function extractSteamCmdArchive(dir, archive) {
-  const args = archive.endsWith(".zip")
-    ? ["-xf", archive, "-C", dir]
-    : ["-xzf", archive, "-C", dir];
-  const unpacked = spawnSync("tar", args, { stdio: "inherit" });
-  if (unpacked.status !== 0) {
-    fail(`Failed to unpack SteamCMD archive with tar (exit ${unpacked.status ?? "?"}).`);
-  }
-}
-
-/**
- * SteamCMD exit 7 means it self-updated. That is success for a first run.
- * @param {string} bin
- */
-function bootstrapSteamCmd(bin) {
-  console.log("Updating SteamCMD (first run)…");
-  let result;
-  try {
-    result = spawnSync(bin, ["+quit"], {
-      cwd: dirname(bin),
-      stdio: "inherit",
-      timeout: 180_000,
-    });
-  } catch (error) {
-    fail(error instanceof Error ? error.message : String(error));
-  }
-  if (result.status !== 0 && result.status !== 7) {
-    fail(`SteamCMD bootstrap failed (exit ${result.status ?? "?"}). See ${STEAMCMD_DOCS}`);
-  }
-}
-
-/**
- * @returns {Promise<string>}
- */
-async function ensureSteamCmd() {
-  const existing = findSteamCmd();
-  if (existing) {
-    if (!IS_WIN && existing.startsWith(STEAMCMD_LOCAL_DIR) && existing.endsWith(".sh")) {
-      chmodSync(existing, 0o755);
-    }
-    return existing;
-  }
-
-  console.log(`SteamCMD not on PATH. Downloading into ${STEAMCMD_LOCAL_DIR}/ …`);
-  mkdirSync(STEAMCMD_LOCAL_DIR, { recursive: true });
-  const { url, archiveName } = officialSteamCmdArchive();
-  const archive = join(STEAMCMD_LOCAL_DIR, archiveName);
-  const res = await fetch(url);
-  if (!res.ok) fail(`SteamCMD download failed: ${res.status} ${res.statusText} (${url})`);
-  writeFileSync(archive, Buffer.from(await res.arrayBuffer()));
-  extractSteamCmdArchive(STEAMCMD_LOCAL_DIR, archive);
-  unlinkSync(archive);
-
-  const bin = findSteamCmd();
-  if (!bin) {
-    fail(`SteamCMD download finished, but the binary is missing. See ${STEAMCMD_DOCS}`);
-  }
-  if (!IS_WIN && bin.endsWith(".sh")) chmodSync(bin, 0o755);
-  bootstrapSteamCmd(bin);
-  return bin;
 }
 
 /**
@@ -307,174 +180,37 @@ function workshopChangeNote(mod, { warn = true } = {}) {
 }
 
 /**
- * @param {string} bin
- * @param {string[]} args
- * @returns {Promise<{ code: number | null; out: string }>}
- */
-function runSteamCmd(bin, args) {
-  return new Promise((resolve, reject) => {
-    // Do not inherit the TTY. SteamCMD otherwise stays on the Steam> prompt
-    // after +workshop_build_item and never runs +quit.
-    const child = spawn(bin, args, { stdio: ["pipe", "pipe", "pipe"] });
-    try {
-      child.stdin.end();
-    } catch {
-      /* ignore */
-    }
-    let out = "";
-    let settled = false;
-    /** @type {ReturnType<typeof setTimeout> | null} */
-    let stopTimer = null;
-
-    const finish = (code) => {
-      if (settled) return;
-      settled = true;
-      if (stopTimer) clearTimeout(stopTimer);
-      try {
-        child.stdin.end();
-      } catch {
-        /* already closed */
-      }
-      resolve({ code, out });
-    };
-
-    const stopSteamCmd = (reason) => {
-      if (settled || child.exitCode != null) return;
-      console.warn(`${reason} Stopping SteamCMD.`);
-      try {
-        child.kill("SIGTERM");
-      } catch {
-        /* already gone */
-      }
-      setTimeout(() => {
-        if (settled || child.exitCode != null) return;
-        try {
-          child.kill("SIGKILL");
-        } catch {
-          /* already gone */
-        }
-      }, 2000);
-    };
-
-    const requestQuit = () => {
-      if (settled || stopTimer) return;
-      try {
-        child.stdin.write("quit\n");
-        child.stdin.end();
-      } catch {
-        /* stdin closed */
-      }
-      stopTimer = setTimeout(() => {
-        stopSteamCmd("SteamCMD did not exit after the upload.");
-      }, 8000);
-    };
-
-    child.stdin.on("error", () => {
-      /* EPIPE when SteamCMD already left */
-    });
-
-    child.stdout.on("data", (chunk) => {
-      const text = String(chunk);
-      process.stdout.write(chunk);
-      out += text;
-      if (workshopUploadFinished(out) || /ERROR!/i.test(out) || /Steam>/.test(out)) {
-        requestQuit();
-      }
-    });
-    child.stderr.on("data", (chunk) => {
-      const text = String(chunk);
-      process.stderr.write(chunk);
-      out += text;
-      if (workshopUploadFinished(out) || /ERROR!/i.test(out) || /Steam>/.test(out)) {
-        requestQuit();
-      }
-    });
-    child.on("error", reject);
-    child.on("close", (code) => finish(code));
-  });
-}
-
-/** True when workshop_build_item finished (not the earlier login "Success."). */
-function workshopUploadFinished(out) {
-  return /workshop/i.test(out) && /success\./i.test(out);
-}
-
-function workshopUploadSucceeded(out) {
-  return workshopUploadFinished(out) && !/ERROR!/i.test(out);
-}
-
-/** SteamCMD cache is separate from the Steam client login. */
-function steamCmdNeedsCachedLogin(out) {
-  return (
-    /No cached credentials/i.test(out) ||
-    /Cached credentials not found/i.test(out) ||
-    /@NoPromptForPassword is set/i.test(out)
-  );
-}
-
-/**
- * Interactive login so SteamCMD can cache credentials for later non-interactive uploads.
- * @param {string} bin
- * @param {string} account
- * @returns {Promise<number | null>}
- */
-function runSteamCmdInteractiveLogin(bin, account) {
-  return new Promise((resolve, reject) => {
-    console.log("");
-    console.log(`SteamCMD has no cached login for ${account}.`);
-    console.log("Enter your Steam password (and Steam Guard code if asked).");
-    console.log("");
-    const child = spawn(bin, ["+login", account, "+quit"], { stdio: "inherit" });
-    child.on("error", reject);
-    child.on("close", (code) => resolve(code));
-  });
-}
-
-/**
- * @param {string} steamCmd
- * @param {string} account
- * @param {string} vdfFile
- * @returns {Promise<{ code: number | null; out: string }>}
- */
-async function runWorkshopUpload(steamCmd, account, vdfFile) {
-  return runSteamCmd(steamCmd, [
-    "+@ShutdownOnFailedCommand",
-    "1",
-    "+@NoPromptForPassword",
-    "1",
-    "+login",
-    account,
-    "+workshop_build_item",
-    vdfFile,
-    "+quit",
-  ]);
-}
-
-/**
  * @param {string} folder
  * @param {string} account
  * @param {string} steamCmd
  * @param {string} out
+ * @param {string} logPath
  */
-function failWorkshopUpload(folder, account, steamCmd, out) {
+function failWorkshopUpload(folder, account, steamCmd, out, logPath) {
   if (steamCmdNeedsCachedLogin(out)) {
     fail(
       [
         `SteamCMD has no cached credentials for ${account}.`,
         `Log in once, then run npm run publish again:`,
         `  ${steamCmd} +login ${account}`,
-        `Use the Workshop item owner account. Steam client login alone is not enough.`,
+        `Credentials are stored under ~/.cache/sandustry-steamcmd/ (not the Steam client).`,
+        `Full SteamCMD log: ${logPath}`,
       ].join("\n"),
     );
   }
   fail(
-    `SteamCMD did not update ${folder}. Stay logged into Steam as the item owner. Close Steam if SteamCMD reports a lock.`,
+    [
+      `SteamCMD did not update ${folder}.`,
+      `Stay logged into Steam as the item owner. Close Steam if SteamCMD reports a lock.`,
+      `Full SteamCMD log: ${logPath}`,
+    ].join("\n"),
   );
 }
 
 /**
  * @param {import("../build/mods.js").LoadedMod} mod
  * @param {string} vdfFile
+ * @returns {string | null}
  */
 function saveNewWorkshopId(mod, vdfFile) {
   const newId = parsePublishedFileIdFromVdf(readFileSync(vdfFile, "utf8"));
@@ -482,14 +218,55 @@ function saveNewWorkshopId(mod, vdfFile) {
     fail(
       [
         "Workshop upload succeeded, but SteamCMD did not write a publishedfileid to the upload VDF.",
-        "Check the SteamCMD output above, then add src/" +
-          `${mod.folder}/workshop/workshop.json manually.`,
+        `Check ${steamCmdPublishLogPath(ROOT)}, then add src/${mod.folder}/workshop/workshop.json manually.`,
       ].join("\n"),
     );
   }
   writeWorkshopManifest(mod.dir, newId);
   copyWorkshopInstallFiles(mod.dir, mod.outDir);
   console.log(`Saved src/${mod.folder}/workshop/workshop.json with publishedFileId ${newId}.`);
+  return newId;
+}
+
+/**
+ * @param {string} steamCmd
+ * @param {string} account
+ */
+async function ensureSteamCmdLogin(steamCmd, account) {
+  const logPath = steamCmdPublishLogPath(ROOT);
+  console.log(`Steam login (${account})…`);
+  const probe = await probeSteamCmdLogin(steamCmd, account, { logPath });
+  if (probe.ok) {
+    console.log(`Steam login OK (${account})`);
+    return;
+  }
+
+  if (!isPublishTty()) {
+    fail(
+      [
+        `SteamCMD has no cached credentials for ${account}.`,
+        `Log in once in a terminal, then run npm run publish again:`,
+        `  ${steamCmd} +login ${account}`,
+        `Full SteamCMD log: ${logPath}`,
+      ].join("\n"),
+    );
+  }
+
+  const loginCode = await runSteamCmdInteractiveLogin(steamCmd, account);
+  if (loginCode !== 0) {
+    fail(`SteamCMD login failed for ${account} (exit ${loginCode ?? "?"}).`);
+  }
+
+  const verify = await probeSteamCmdLogin(steamCmd, account, { logPath });
+  if (!verify.ok) {
+    fail(
+      [
+        `SteamCMD login finished, but cached credentials for ${account} are still missing.`,
+        `Full SteamCMD log: ${logPath}`,
+      ].join("\n"),
+    );
+  }
+  console.log(`Steam login OK (${account})`);
 }
 
 async function publishMod(steamCmd, account, mod) {
@@ -508,6 +285,7 @@ async function publishMod(steamCmd, account, mod) {
   const tmpDir = join(ROOT, ".tmp");
   mkdirSync(tmpDir, { recursive: true });
   const vdfFile = join(tmpDir, `workshop-${mod.folder}.vdf`);
+  const logPath = steamCmdPublishLogPath(ROOT);
   const changeNote = workshopChangeNote(mod, { warn: yesFlag });
   writeFileSync(
     vdfFile,
@@ -522,35 +300,34 @@ async function publishMod(steamCmd, account, mod) {
     }),
   );
 
+  await ensureSteamCmdLogin(steamCmd, account);
+
   console.log(
     isNewItem
-      ? `Workshop upload: src/${mod.folder}/ -> new item (SteamCMD assigns id)`
-      : `Workshop upload: src/${mod.folder}/ -> ${publishedFileId}`,
+      ? `Uploading src/${mod.folder}/ (new Workshop item)…`
+      : `Uploading src/${mod.folder}/ → ${publishedFileId}…`,
   );
-  console.log(`Preview: ${previewFile}`);
-  console.log(`Content: ${mod.outDir}`);
-  console.log(`Change notes:\n${changeNote}`);
 
-  let result = await runWorkshopUpload(steamCmd, account, vdfFile);
+  const result = await runWorkshopUpload(steamCmd, account, vdfFile, {
+    logPath,
+    onStatus: (line) => {
+      // Login lines already printed by ensureSteamCmdLogin.
+      if (line.startsWith("Steam login")) return;
+      console.log(line);
+    },
+  });
+
   if (workshopUploadSucceeded(result.out)) {
-    if (isNewItem) saveNewWorkshopId(mod, vdfFile);
+    if (isNewItem) {
+      const newId = saveNewWorkshopId(mod, vdfFile);
+      if (newId) console.log(`Workshop item ${newId} published.`);
+    } else {
+      console.log(`Workshop item ${publishedFileId} updated.`);
+    }
     return;
   }
 
-  if (steamCmdNeedsCachedLogin(result.out) && isPublishTty()) {
-    const loginCode = await runSteamCmdInteractiveLogin(steamCmd, account);
-    if (loginCode !== 0) {
-      fail(`SteamCMD login failed for ${account} (exit ${loginCode ?? "?"}).`);
-    }
-    console.log("Retrying Workshop upload…");
-    result = await runWorkshopUpload(steamCmd, account, vdfFile);
-    if (workshopUploadSucceeded(result.out)) {
-      if (isNewItem) saveNewWorkshopId(mod, vdfFile);
-      return;
-    }
-  }
-
-  failWorkshopUpload(mod.folder, account, steamCmd, result.out);
+  failWorkshopUpload(mod.folder, account, steamCmd, result.out, logPath);
 }
 
 function workshopState(mod) {
@@ -653,7 +430,12 @@ if (blocked) {
   fail("npm run publish is a release upload. Do not pass --watch, --debug, or --game.");
 }
 
-const steamCmd = await ensureSteamCmd();
+let steamCmd;
+try {
+  steamCmd = await ensureDedicatedSteamCmd(ROOT);
+} catch (error) {
+  fail(error instanceof Error ? error.message : String(error));
+}
 
 const account = steamAccountName();
 const allMods = (await loadMods([], { includeDebugKit: false })).filter(
@@ -686,7 +468,6 @@ console.log("Release build…");
 const build = spawnSync("npm", ["run", "build", "--", "--mod", selected.folder], {
   stdio: "inherit",
   cwd: ROOT,
-  shell: true,
 });
 if (build.status !== 0) process.exit(build.status ?? 1);
 
