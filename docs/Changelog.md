@@ -11,6 +11,7 @@ The template has no release tags yet. Dated sections match the day the change la
 
 ### Added
 
+- **Instant Pick Block** mod — **Picker** (default **F**) picks the structure under the cursor on one press instead of enter-mode-then-click. See [`src/pick-block/`](../src/pick-block/).
 - **Mod ideas:** guide page with content mod concepts, API pointers, and a recommended first build. See [mod-ideas.md](mod-ideas.md).
 - **Survival Mode:** landing after a long fall now deals damage. Jumps and drops of 28 cells or less are safe. Longer falls deal 2 HP per extra cell. See [`src/survival-mode/`](../src/survival-mode/).
 

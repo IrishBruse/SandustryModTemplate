@@ -26,8 +26,8 @@ You do not copy files into the game folder by hand. `npm run dev` and `npm run b
 
 ## Game folders on disk
 
-| OS      | Mods                                      | Logs                       |
-| ------- | ----------------------------------------- | -------------------------- |
+| OS      | Mods                                    | Logs                       |
+| ------- | --------------------------------------- | -------------------------- |
 | Linux   | `~/.config/sandustry/mods/<modinfo.id>` | `~/.config/sandustry/logs` |
 | Windows | `%APPDATA%\sandustry\mods\<modinfo.id>` | `%APPDATA%\sandustry\logs` |
 
@@ -55,17 +55,18 @@ Shipped mods in `src/` (not copy targets for new mods):
 | ------------------------------------------------ | --------------------------------------------------- |
 | [`selection-capture`](../src/selection-capture/) | Screenshot / GIF recorder (**C**, **F7**)           |
 | [`survival-mode`](../src/survival-mode/)         | Health HUD, hazards, fall damage, grounded walking  |
+| [`pick-block`](../src/pick-block/)               | Instant pick block on **Picker** (default **F**)    |
 | [`debug`](../src/debug/)                         | Dev companion (debug builds only). Do not copy this |
 
 ## Files in a mod folder
 
 Every mod under `src/<name>/` or `examples/<name>/` needs these files:
 
-| File            | Role                                                                                                                                                                                                     |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| File            | Role                                                                                                                                                                                                   |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `mod.ts`        | Manifest. Optional `patches` export (or re-export from `patches.ts`). `export const modinfo = defineModInfo(...)`. Use `modinfo.id` for the mod id. The build writes `modinfo.json` and `patches.json` |
-| `main.ts`       | Mod entry. Debug builds get free `reloaded` from the debug companion loader patch. Release defines `reloaded` as `false`                                                                                 |
-| `tsconfig.json` | Isolated TypeScript project. This folder cannot see sibling mods                                                                                                                                         |
+| `main.ts`       | Mod entry. Debug builds get free `reloaded` from the debug companion loader patch. Release defines `reloaded` as `false`                                                                               |
+| `tsconfig.json` | Isolated TypeScript project. This folder cannot see sibling mods                                                                                                                                       |
 
 Keep extra TypeScript out of the mod root. Only `mod.ts`, `main.ts`, optional `worker.ts`, and optional `patches.ts` may sit next to `tsconfig.json`. Put other source files in feature folders (`ui/`, `health/`, `capture/`, …).
 
@@ -76,7 +77,7 @@ Add these when you need them:
 | `worker.ts`                  | Worker entry at the mod root. The build writes `worker.js`                                          |
 | `patches.ts`                 | Optional patch list. Re-export `patches` from `mod.ts`. The debug companion uses this.              |
 | `ui/`                        | React overlays                                                                                      |
-| Feature folders              | Other source files (`health/`, `capture/`, …). Keep tests next to the file they test               |
+| Feature folders              | Other source files (`health/`, `capture/`, …). Keep tests next to the file they test                |
 | `mod/`                       | Static files copied into the output folder                                                          |
 | `package.json`               | npm packages for this mod only                                                                      |
 | `README.md` / `CHANGELOG.md` | Repo docs only. Publish reads `CHANGELOG.md` for Steam change notes; builds do not copy these files |
