@@ -1,0 +1,24 @@
+[h1]Instant Pick Block[/h1]
+[b]Press F once to pick the structure under your cursor — Minecraft-style.[/b]
+
+Vanilla pick block needs you to hold **Picker**, click, then release. This mod picks on one key press.
+
+[h2]How to use[/h2]
+[olist]
+[*]Aim the cursor at a structure in the world.
+[*]Press [b]F[/b] (or your bound [b]Picker[/b] key).
+[*]The structure type is ready to place from the hotbar, with filter and color copied when vanilla would copy them.
+[/olist]
+
+Rebind under [b]Options → Controls → Pick Block[/b].
+
+[h2]Options[/h2]
+[list]
+[*][b]Mod enabled[/b] — turn off to restore vanilla Picker (hold F, click, release) on the next game restart or hot reload.
+[/list]
+
+[h2]Notes[/h2]
+[list]
+[*]Empty cells and blocked structures show the same toasts as vanilla.
+[*]The shortcut helper may still say “Hold F”; the key now picks on press.
+[/list]
