@@ -63,19 +63,20 @@ Every mod under `src/<name>/` or `examples/<name>/` needs these files:
 
 | File            | Role                                                                                                                                                                                                     |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `mod.ts`        | Manifest. Optional `patches` export (or re-export from a feature file). `export const modinfo = defineModInfo(...)`. Use `modinfo.id` for the mod id. The build writes `modinfo.json` and `patches.json` |
+| `mod.ts`        | Manifest. Optional `patches` export (or re-export from `patches.ts`). `export const modinfo = defineModInfo(...)`. Use `modinfo.id` for the mod id. The build writes `modinfo.json` and `patches.json` |
 | `main.ts`       | Mod entry. Debug builds get free `reloaded` from the debug companion loader patch. Release defines `reloaded` as `false`                                                                                 |
 | `tsconfig.json` | Isolated TypeScript project. This folder cannot see sibling mods                                                                                                                                         |
 
-Keep extra TypeScript out of the mod root. Only `mod.ts`, `main.ts`, and optional `worker.ts` may sit next to `tsconfig.json`. Put other source files in feature folders (`ui/`, `health/`, `patches/`, …).
+Keep extra TypeScript out of the mod root. Only `mod.ts`, `main.ts`, optional `worker.ts`, and optional `patches.ts` may sit next to `tsconfig.json`. Put other source files in feature folders (`ui/`, `health/`, `capture/`, …).
 
 Add these when you need them:
 
 | File                         | Role                                                                                                |
 | ---------------------------- | --------------------------------------------------------------------------------------------------- |
 | `worker.ts`                  | Worker entry at the mod root. The build writes `worker.js`                                          |
+| `patches.ts`                 | Optional patch list. Re-export `patches` from `mod.ts`. The debug companion uses this.              |
 | `ui/`                        | React overlays                                                                                      |
-| Feature folders              | Other source files (`health/`, `capture/`, `patches/`, …). Keep tests next to the file they test    |
+| Feature folders              | Other source files (`health/`, `capture/`, …). Keep tests next to the file they test               |
 | `mod/`                       | Static files copied into the output folder                                                          |
 | `package.json`               | npm packages for this mod only                                                                      |
 | `README.md` / `CHANGELOG.md` | Repo docs only. Publish reads `CHANGELOG.md` for Steam change notes; builds do not copy these files |

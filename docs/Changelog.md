@@ -53,8 +53,8 @@ The template has no release tags yet. Dated sections match the day the change la
 
 - Watch extra `watchDirs` cover only static `mod/` copies. Imported `modkit/` files are already in the esbuild graph. The watch writes bundles; the debug companion polls those files for hot reload. See [builds.md](builds.md).
 - **Debug companion:** source layout — `mod.ts`, `main.ts`, and `patches.ts` at `src/debug/`; other files under `boot/`, `reload/`, and `f3/`. See [modkit/debug.md](modkit/debug.md).
-- **Debug companion:** game-file patches live in [`src/debug/patches/patches.ts`](../src/debug/patches/patches.ts) (re-exported from `mod.ts`). See [modkit/debug.md](modkit/debug.md).
-- **`@modkit/debug`** exports `onDispose` only. Re-eval and file poll live in `src/debug/reload/`. Loader rewrites live in `src/debug/patches/patches.ts`. See [modkit/debug.md](modkit/debug.md).
+- **Debug companion:** game-file patches live in [`src/debug/patches.ts`](../src/debug/patches.ts) (re-exported from `mod.ts`). See [modkit/debug.md](modkit/debug.md).
+- **`@modkit/debug`** exports `onDispose` only. Re-eval and file poll live in `src/debug/reload/`. Loader rewrites live in `src/debug/patches.ts`. See [modkit/debug.md](modkit/debug.md).
 - **Debug companion:** `loadOrder` is `-2147483648` so the companion runs before other local mods. See [modkit/debug.md](modkit/debug.md).
 - **Debug companion:** local-mod hot reload no longer needs esbuild inject in each bundle. Subscribe to the companion on the Workshop (this template still installs a local copy on debug builds). It watches **local** folders only, not other Workshop items. See [modkit/debug.md](modkit/debug.md).
 - **Debug companion:** **Auto-load save** (default on) replaces splash skip and main-menu Continue clicking. **Start save** in Options chooses Last played or Mod storage. Pick a world in the Start save panel. Legacy `autoBoot` prefs still apply until you set `autoLoad`. See [modkit/debug.md](modkit/debug.md).

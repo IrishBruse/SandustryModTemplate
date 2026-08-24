@@ -171,7 +171,7 @@ The shim uses `globalThis.console` internally so it does not recurse.
 
 ## Debug patches
 
-The companion rewrites `js/external-mod-runtime.js`. Definitions live in [`src/debug/patches/patches.ts`](../../src/debug/patches/patches.ts) and are re-exported from `mod.ts`.
+The companion rewrites `js/external-mod-runtime.js`. Definitions live in [`src/debug/patches.ts`](../../src/debug/patches.ts) and are re-exported from `mod.ts`.
 
 | id                           | File                         | Role                                                                |
 | ---------------------------- | ---------------------------- | ------------------------------------------------------------------- |
@@ -187,11 +187,10 @@ Workshop mods are not added to the registry. See [patches.md](../patches.md) for
 
 | Path                                             | Role                                                                            |
 | ------------------------------------------------ | ------------------------------------------------------------------------------- |
-| [`src/debug/`](../../src/debug/)                 | Companion: `mod.ts` and `main.ts` at the root                                   |
+| [`src/debug/`](../../src/debug/)               | Companion: `mod.ts`, `main.ts`, and `patches.ts` at the root                      |
 | [`src/debug/boot/`](../../src/debug/boot/)       | Auto-load, Start save picker, DevTools boot, autosave, settings helpers         |
 | [`src/debug/reload/`](../../src/debug/reload/)   | Local-mod poll, hot-eval, loader health (`loader-health.ts`)                    |
 | [`src/debug/f3/`](../../src/debug/f3/)           | F3 overlay, engine debug sync, built-in sections                                |
-| [`src/debug/patches/`](../../src/debug/patches/) | Game-file loader patches (re-exported from `mod.ts`)                            |
 | `modkit/internal/debug/index.ts`                 | `onDispose` only (bundled in all builds)                                        |
 | `modkit/internal/esbuild/debug.empty.ts`         | Unused legacy stub (release builds no longer alias `@modkit/debug` here)        |
 | `modkit/internal/esbuild/console.ts`             | esbuild inject: `[modId]` prefix on `console.*`; file POST in debug builds only |

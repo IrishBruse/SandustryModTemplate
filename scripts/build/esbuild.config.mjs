@@ -231,7 +231,7 @@ const CONSOLE_INJECT_SOURCE_SUFFIX = "modkit/internal/esbuild/console.ts";
  * Sandkit loads `main.js` via `new Function("__sandkit", body)` where `body` is:
  *   "use strict";\nconst sandkit = __sandkit;\nreturn (async () => {\n<source>\n})();\n
  * The Function header is two lines, then three body lines — five lines before `<source>`.
- * Hot eval in `src/debug/reload/hot-eval.ts` and `COMPILE_CODE` in `src/debug/patches/patches.ts` must use the same wrapper.
+ * Hot eval in `src/debug/reload/hot-eval.ts` and `COMPILE_CODE` in `src/debug/patches.ts` must use the same wrapper.
  */
 const SANDKIT_LOADER_LINE_OFFSET = 5;
 

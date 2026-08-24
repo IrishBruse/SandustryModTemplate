@@ -2,7 +2,7 @@
  * Cleanup registry for the debug companion hot-eval.
  * Release builds stub this module to a no-op.
  *
- * Keys must match `src/debug/patches/patches.ts` and `src/debug/reload/hot-eval.ts`.
+ * Keys must match `src/debug/patches.ts` and `src/debug/reload/hot-eval.ts`.
  */
 
 const ACTIVE_KEY = "__sandkitHotReloadActive__";
