@@ -62,6 +62,28 @@ player:collision:prepare: PlayerCollisionPreparePayload
 
 Defined in: [sandkit/api/events.d.ts:34](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/events.d.ts#L34)
 
+##### player:moved
+
+```ts
+player:moved: object
+```
+
+Defined in: [sandkit/api/events.d.ts:35](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/events.d.ts#L35)
+
+###### dt?
+
+```ts
+optional dt?: number
+```
+
+Simulation step duration in seconds.
+
+###### state?
+
+```ts
+optional state?: unknown
+```
+
 ## Type Aliases
 
 ### EventPayload
@@ -70,7 +92,7 @@ Defined in: [sandkit/api/events.d.ts:34](https://github.com/IrishBruse/Sandustry
 EventPayload<K> = K *extends* keyof EventPayloadMap ? EventPayloadMap[K] : unknown
 ```
 
-Defined in: [sandkit/api/events.d.ts:38](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/events.d.ts#L38)
+Defined in: [sandkit/api/events.d.ts:43](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/events.d.ts#L43)
 
 Event payload type for a given event id.
 

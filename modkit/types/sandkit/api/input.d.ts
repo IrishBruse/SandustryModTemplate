@@ -21,7 +21,9 @@ export namespace input {
   /**
    * Return the keys currently bound to a binding id.
    * @param bindingId - Registered binding id.
-   * @returns Key code strings for the active binding.
+   * @returns Key strings from settings (for example `"KeyA"` or `"Shift"`).
+   * Session `input.keys` is keyed by `KeyboardEvent.code`. Modifier aliases
+   * (`Shift`, `Alt`, `Control`, `Meta`) expand to `ShiftLeft` / `ShiftRight` and the same for the other modifiers.
    */
   export function getBoundKeys(bindingId: string): string[];
 

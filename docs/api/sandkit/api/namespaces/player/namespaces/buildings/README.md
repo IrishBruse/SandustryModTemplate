@@ -10,7 +10,7 @@ Player building unlock helpers.
 unlockByType(structureId: string): void
 ```
 
-Defined in: [sandkit/api/player.d.ts:79](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/player.d.ts#L79)
+Defined in: [sandkit/api/player.d.ts:80](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/player.d.ts#L80)
 
 Unlock a structure type for building.
 

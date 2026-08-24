@@ -18,9 +18,9 @@ export namespace cooldown {
 
   /** Cooldown state object passed to {@link check} and {@link isReady}. */
   export interface Cooldown {
-    /** Timestamp (ms) when the cooldown was last triggered. */
-    lastUsed: number;
+    /** Timestamp when the cooldown was last triggered (game time). */
+    last: number;
     /** Cooldown duration in milliseconds. */
-    duration: number;
+    time: number;
   }
 }

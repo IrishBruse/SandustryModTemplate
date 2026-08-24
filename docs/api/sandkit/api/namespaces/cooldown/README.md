@@ -13,20 +13,20 @@ Cooldown state object passed to [check](#check) and [isReady](#isready).
 
 #### Properties
 
-##### lastUsed
+##### last
 
 ```ts
-lastUsed: number
+last: number
 ```
 
 Defined in: [sandkit/api/cooldown.d.ts:22](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/cooldown.d.ts#L22)
 
-Timestamp (ms) when the cooldown was last triggered.
+Timestamp when the cooldown was last triggered (game time).
 
-##### duration
+##### time
 
 ```ts
-duration: number
+time: number
 ```
 
 Defined in: [sandkit/api/cooldown.d.ts:24](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/cooldown.d.ts#L24)

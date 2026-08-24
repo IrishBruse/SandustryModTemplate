@@ -33,7 +33,8 @@ export namespace player {
 
   /**
    * Set the movement speed multiplier.
-   * @param multiplier - Speed scale factor (1 is default).
+   * @param multiplier - Speed scale factor (`1` is default walk). `0` freezes movement.
+   * Vanilla Sprint Boost (Shift burst + meter) only runs when this value is exactly `1`.
    */
   export function setMovementSpeedMultiplier(multiplier: number): void;
 

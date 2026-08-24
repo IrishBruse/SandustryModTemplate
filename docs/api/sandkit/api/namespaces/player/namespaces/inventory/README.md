@@ -10,7 +10,7 @@ Player inventory helpers.
 addFromId(itemId: string): void
 ```
 
-Defined in: [sandkit/api/player.d.ts:70](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/player.d.ts#L70)
+Defined in: [sandkit/api/player.d.ts:71](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/player.d.ts#L71)
 
 Add an item to inventory by item id.
 

@@ -75,7 +75,7 @@ Vertical velocity in pixels per second.
 setMovementSpeedMultiplier(multiplier: number): void
 ```
 
-Defined in: [sandkit/api/player.d.ts:38](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/player.d.ts#L38)
+Defined in: [sandkit/api/player.d.ts:39](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/player.d.ts#L39)
 
 Set the movement speed multiplier.
 
@@ -85,7 +85,8 @@ Set the movement speed multiplier.
 
 `number`
 
-Speed scale factor (1 is default).
+Speed scale factor (`1` is default walk). `0` freezes movement.
+Vanilla Sprint Boost (Shift burst + meter) only runs when this value is exactly `1`.
 
 #### Returns
 
@@ -99,7 +100,7 @@ Speed scale factor (1 is default).
 setMovementMode(mode: "normal" | "hover"): boolean
 ```
 
-Defined in: [sandkit/api/player.d.ts:45](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/player.d.ts#L45)
+Defined in: [sandkit/api/player.d.ts:46](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/player.d.ts#L46)
 
 Set movement mode to normal or hover.
 
@@ -125,7 +126,7 @@ True when the mode changes.
 isOnGround(): boolean
 ```
 
-Defined in: [sandkit/api/player.d.ts:51](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/player.d.ts#L51)
+Defined in: [sandkit/api/player.d.ts:52](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/player.d.ts#L52)
 
 Return true when the player is on ground.
 
@@ -143,7 +144,7 @@ True when the player touches solid ground.
 teleportToGround(): void
 ```
 
-Defined in: [sandkit/api/player.d.ts:54](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/player.d.ts#L54)
+Defined in: [sandkit/api/player.d.ts:55](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/player.d.ts#L55)
 
 Move the player down until ground is found.
 
@@ -159,7 +160,7 @@ Move the player down until ground is found.
 isWorldPositionClear(worldX: number, worldY: number): boolean
 ```
 
-Defined in: [sandkit/api/player.d.ts:62](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/player.d.ts#L62)
+Defined in: [sandkit/api/player.d.ts:63](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/player.d.ts#L63)
 
 Return true when the world position has no collision.
 
