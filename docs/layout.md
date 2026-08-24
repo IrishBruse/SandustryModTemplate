@@ -61,36 +61,38 @@ Shipped mods in `src/` (not copy targets for new mods):
 
 Every mod under `src/<name>/` or `examples/<name>/` needs these files:
 
-| File            | Role                                                                                                                                                                                                   |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `mod.ts`        | Manifest. Optional `patches` export (or re-export from `patches.ts`). `export const modinfo = defineModInfo(...)`. Use `modinfo.id` for the mod id. The build writes `modinfo.json` and `patches.json` |
-| `main.ts`       | Mod entry. Debug builds get free `reloaded` from the debug companion loader patch. Release defines `reloaded` as `false`                                                                               |
-| `tsconfig.json` | Isolated TypeScript project. This folder cannot see sibling mods                                                                                                                                       |
+| File            | Role                                                                                                                                                                                                     |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mod.ts`        | Manifest. Optional `patches` export (or re-export from a feature file). `export const modinfo = defineModInfo(...)`. Use `modinfo.id` for the mod id. The build writes `modinfo.json` and `patches.json` |
+| `main.ts`       | Mod entry. Debug builds get free `reloaded` from the debug companion loader patch. Release defines `reloaded` as `false`                                                                                 |
+| `tsconfig.json` | Isolated TypeScript project. This folder cannot see sibling mods                                                                                                                                         |
+
+Keep extra TypeScript out of the mod root. Only `mod.ts`, `main.ts`, and optional `worker.ts` may sit next to `tsconfig.json`. Put other source files in feature folders (`ui/`, `health/`, `patches/`, …).
 
 Add these when you need them:
 
 | File                         | Role                                                                                                |
 | ---------------------------- | --------------------------------------------------------------------------------------------------- |
-| `worker.ts`                  | Worker entry. The build writes `worker.js`                                                          |
+| `worker.ts`                  | Worker entry at the mod root. The build writes `worker.js`                                          |
 | `ui/`                        | React overlays                                                                                      |
+| Feature folders              | Other source files (`health/`, `capture/`, `patches/`, …). Keep tests next to the file they test    |
 | `mod/`                       | Static files copied into the output folder                                                          |
 | `package.json`               | npm packages for this mod only                                                                      |
 | `README.md` / `CHANGELOG.md` | Repo docs only. Publish reads `CHANGELOG.md` for Steam change notes; builds do not copy these files |
 | `workshop/`                  | Workshop assets (`workshop.json`, previews, `workshop.txt`, `screenshots/`)                         |
-| `patches.ts`                 | Optional patch list. Re-export `patches` from `mod.ts`. The debug companion uses this.              |
 
 ## What you import
 
 Import `@modkit/*` and files in your own folder only.
 
-| Import                                        | From                                                                       |
-| --------------------------------------------- | -------------------------------------------------------------------------- |
-| `@modkit/modinfo`                             | `defineModInfo` / `definePatches`                                          |
-| `@modkit/react` / JSX                         | Runtime React from `sandkit.react`                                         |
+| Import                                        | From                                                                                |
+| --------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `@modkit/modinfo`                             | `defineModInfo` / `definePatches`                                                   |
+| `@modkit/react` / JSX                         | Runtime React from `sandkit.react`                                                  |
 | `@modkit/debug`                               | `onDispose` (bundled in all builds). Free `reloaded` comes from the debug companion |
-| `@modkit/utils`                               | `safe`, `isEnabled`, `inGame`, `registerRetroGame`                         |
-| `@modkit/ui`                                  | Shared React UI components                                                 |
-| `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix                      |
+| `@modkit/utils`                               | `safe`, `isEnabled`, `inGame`, `registerRetroGame`                                  |
+| `@modkit/ui`                                  | Shared React UI components                                                          |
+| `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix                               |
 
 Sandkit API types live in `modkit/types/`. Layout mirrors the live object (`sandkit/api`, `sandkit/engine/api`, …). Ambient `sandkit` is in [`modkit/types/global.d.ts`](../modkit/types/global.d.ts); `reloaded` and `WorkerSandkitApi` are in [`modkit/ambient.d.ts`](../modkit/ambient.d.ts).
 

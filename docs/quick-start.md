@@ -53,7 +53,7 @@ Edit a file under `src/`. Save. The mod reloads without a game restart.
 1. Copy `examples/hello-world/` to `src/<your-mod>/`.
 2. Open that folder’s `mod.ts`.
 3. Set `id`, `name`, `author`, and `description`.
-4. Change `main.ts` (and add `ui/` when you need overlays).
+4. Change `main.ts`. Add `ui/` for overlays. Put other source files in feature folders, not next to `main.ts`.
 
 Rules:
 
@@ -64,13 +64,13 @@ Rules:
 
 ## Useful commands
 
-| Command             | Effect                                                           |
-| ------------------- | ---------------------------------------------------------------- |
+| Command             | Effect                                                                       |
+| ------------------- | ---------------------------------------------------------------------------- |
 | `npm run setup`     | Check install, extract game source to `sandustry/`, link `dist/` and `logs/` |
-| `npm run dev`       | Watch all mods; remove owned folders when the watch stops        |
-| `npm run build`     | Release bundle (no debug helpers); leaves mods installed         |
-| `npm run sandustry` | Stop and launch the game (no build)                              |
-| `npm run typecheck` | TypeScript check                                                 |
+| `npm run dev`       | Watch all mods; remove owned folders when the watch stops                    |
+| `npm run build`     | Release bundle (no debug helpers); leaves mods installed                     |
+| `npm run sandustry` | Stop and launch the game (no build)                                          |
+| `npm run typecheck` | TypeScript check                                                             |
 
 Build one folder: `npm run dev -- --mod hello-world`.
 

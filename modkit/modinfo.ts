@@ -146,7 +146,7 @@ export interface WorkshopManifest {
  * do the job. Keep replacements small, set `expectedMatches`, and put runtime
  * helpers on `globalThis` (patch code runs outside the bundle IIFE).
  *
- * Define patches with `definePatches` in `src/<name>/mod.ts` (or re-export from `patches.ts`).
+ * Define patches with `definePatches` in `src/<name>/mod.ts` (or re-export from a feature file).
  *
  * @example
  * ```ts
