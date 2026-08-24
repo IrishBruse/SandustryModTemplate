@@ -39,6 +39,15 @@ Short player-facing copy. Builds do not copy these files into the game folder or
 
 When a change is **user-visible** (new feature, behaviour change, fix, removal, or docs that announce a product change), update [`Changelog.md`](Changelog.md) in the same change set. Do not wait for a release tag.
 
+### Mod `CHANGELOG.md` (Steam change notes)
+
+Each shipped mod may keep `src/<name>/CHANGELOG.md`. `npm run publish` sends the matching version section to Steam.
+
+- Write for **players**, not developers.
+- Say what changed in play (controls, options, feel, fixes you can notice).
+- Do **not** mention patches, APIs, file paths, internals, or implementation unless that detail changes how the mod plays.
+- Keep technical notes in the mod `README.md` or template docs instead.
+
 ### `Changelog.md`
 
 - Newest first. Follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).

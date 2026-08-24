@@ -31,7 +31,7 @@ npm run publish -- --mod pick-block
 
 On the **first** publish, SteamCMD creates the Workshop item (`publishedfileid` `0`) and writes `workshop/workshop.json` with the new item id. Later runs update that item.
 
-SteamCMD uploads from `build/pick-block/` using `workshop.md` for the listing description and [`CHANGELOG.md`](CHANGELOG.md) for change notes at `modinfo.version` (`0.1.0`). See [Workshop publish](../../docs/builds.md#workshop-publish).
+SteamCMD uploads from `build/irishbruse.pick-block/` using `workshop.md` for the listing description and [`CHANGELOG.md`](CHANGELOG.md) for change notes at `modinfo.version` (`0.1.0`). See [Workshop publish](../../docs/builds.md#workshop-publish).
 
 ## Changelog
 

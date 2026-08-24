@@ -34,7 +34,7 @@ Full steps, copy-a-mod, and sample list: [Quick start](https://ethanconneely.com
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `npm run setup`     | Check install, extract game source to `sandustry/`, link `logs/`                                                                                        |
 | `npm run dev`       | Watch and write to the OS mods folder (`~/.config/...` or `%APPDATA%`)                                                                                  |
-| `npm run build`     | Release bundle to `build/<folder>/` (Workshop staging)                |
+| `npm run build`     | Release bundle to `build/<modinfo.id>/` (Workshop staging)                                                                                              |
 | `npm run publish`   | Runs `npm run build`, then Workshop upload ([SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD) on PATH, or a download into `.tmp/steamcmd/`) |
 | `npm run typecheck` | TypeScript check                                                                                                                                        |
 | `npm run test`      | Node tests (`src/**/*.test.ts`)                                                                                                                         |

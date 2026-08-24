@@ -8,7 +8,10 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
-const files = globSync("src/**/*.test.ts", { cwd: ROOT }).sort();
+const files = [
+  ...globSync("src/**/*.test.ts", { cwd: ROOT }),
+  ...globSync("scripts/**/*.test.js", { cwd: ROOT }),
+].sort();
 
 if (files.length === 0) {
   console.error("No tests found (src/**/*.test.ts).");

@@ -9,7 +9,7 @@ import { defineModInfo } from "@modkit/modinfo";
  */
 export const modinfo = defineModInfo({
   manifestVersion: 1,
-  id: "author.settings-example",
+  id: "example.settings",
   name: "Settings",
   version: "0.0.1",
   apiVersion: 1,

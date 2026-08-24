@@ -7,7 +7,7 @@ Probes worker-thread `sandkit.api` against ambient `WorkerSandkitApi`.
 1. Enable the mod.
 2. Load a save so simulation workers start.
 3. Check the toast: **Worker API loaded — check worker console for probe**.
-4. Open the worker / DevTools console for `[author.worker-api-example]` probe lines.
+4. Open the worker / DevTools console for `[example.worker-api]` probe lines.
 
 `mod.ts` sets `workerEntry: "worker.js"`. The build bundles `worker.ts` when that file exists. The probe runs once on worker index 0.
 

@@ -15,6 +15,6 @@ test("mod.ts version matches the latest CHANGELOG heading", () => {
 });
 
 test("workshop copy mentions the 1 MB GIF cap", () => {
-  const text = readFileSync(join(DIR, "workshop/workshop.txt"), "utf8");
+  const text = readFileSync(join(DIR, "workshop/workshop.md"), "utf8");
   assert.match(text, /1 MB GIF cap/i);
 });

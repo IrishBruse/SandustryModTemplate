@@ -2,7 +2,7 @@ import { defineModInfo } from "@modkit/modinfo";
 
 export const modinfo = defineModInfo({
   manifestVersion: 1,
-  id: "author.content-machine-example",
+  id: "example.content-machine",
   name: "Content Machine",
   version: "0.0.1",
   apiVersion: 1,

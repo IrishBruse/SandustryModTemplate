@@ -4,13 +4,13 @@ The game runs `main.js` as a script body (`new Function`). `sandkit` is already 
 
 ## Debug vs release
 
-| Command              | Debug helpers                                                     | `debugPatches` | Output                                                        |
-| -------------------- | ----------------------------------------------------------------- | -------------- | ------------------------------------------------------------- |
-| `npm run build`      | Real `onDispose` registry; omit `src/debug`                       | Omitted        | `build/<folder>/` only (no OS mods folder, no `dist/` links) |
-| `npm run dev`        | Included; install `src/debug`                                     | Included       | OS mods folder while watching; removed when the watch stops   |
-| `--game` / `--debug` | Included; install `src/debug`                                     | Included       | Game mods folder                                              |
+| Command              | Debug helpers                               | `debugPatches` | Output                                                           |
+| -------------------- | ------------------------------------------- | -------------- | ---------------------------------------------------------------- |
+| `npm run build`      | Real `onDispose` registry; omit `src/debug` | Omitted        | `build/<modinfo.id>/` only (no OS mods folder, no `dist/` links) |
+| `npm run dev`        | Included; install `src/debug`               | Included       | OS mods folder while watching; removed when the watch stops      |
+| `--game` / `--debug` | Included; install `src/debug`               | Included       | Game mods folder                                                 |
 
-`--no-debug` forces a release-style bundle even when watch or game flags are set. `--mod <folder>` builds one mod folder (repeat `--mod` for several). `--mod debug` includes the debug companion on `npm run build` (release bundle in `build/debug/`). Debug builds (`npm run dev`, `--game`, `--debug`) install to the OS mods folder (`dist/` links there) unless you pass only `--mod debug`. The build discovers every `src/*/mod.ts` and `examples/*/mod.ts`.
+`--no-debug` forces a release-style bundle even when watch or game flags are set. `--mod <folder>` builds one mod folder (repeat `--mod` for several). `--mod hot-reload` includes the debug companion on `npm run build` (release bundle in `build/hot-reload/`). Debug builds (`npm run dev`, `--game`, `--debug`) install to the OS mods folder (`dist/` links there) unless you pass only `--mod hot-reload`. The build discovers every `src/*/mod.ts` and `examples/*/mod.ts`.
 
 Debug builds emit **inline** source maps on `main.js` (needed for `new Function` eval). Use `--sourcemap` to force maps on a release build, or `--no-sourcemap` to omit them from a debug build.
 
@@ -57,7 +57,7 @@ npm run setup            # check install, extract sandustry/, link dist/ and log
 npm run dev              # watch mods (TTY picker; last choice pre-selected)
 npm run dev -- --mod overlay-hotkey
 npm run dev -- --mod overlay-hotkey --mod hello-world
-npm run build            # release all mods to build/<folder>/
+npm run build            # release all mods to build/<modinfo.id>/
 npm run build -- --mod overlay-hotkey
 npm run publish          # npm run build + SteamCMD Workshop upload
 npm run publish -- --mod selection-capture
@@ -84,7 +84,7 @@ Renderer attach loads source maps from scripts named `sandkit-workshop://<modId>
 
 Log into the Steam client as the Workshop item owner first. SteamCMD keeps its **own** credential cache (separate from the Steam client). The first publish prompts for your Steam password (and Steam Guard if needed), then caches it. Later publishes reuse that cache.
 
-In a terminal, `npm run publish` shows an arrow-key list of mods, then a confirm step (Upload / Cancel).
+In a terminal, `npm run publish` shows an arrow-key list of **`src/` mods** (not `examples/`), then a confirm step (Upload / Cancel).
 
 ```bash
 npm run publish
@@ -92,6 +92,10 @@ npm run publish -- --mod selection-capture
 npm run publish -- --mod selection-capture --yes
 ```
 
-The command runs `npm run build` for that folder. The bundle lands in `build/<folder>/` (Workshop staging). Staging gets the release bundle plus `workshop.json` and preview images only. `README.md`, `CHANGELOG.md`, and `workshop/screenshots/` stay in the repo. SteamCMD uploads from `build/<folder>/`. `workshop.txt` supplies the Steam description (it stays under `src/<name>/workshop/`). `npm run build` and `npm run dev` also copy only `workshop.json` and preview images, and remove leftover `README.md`, `CHANGELOG.md`, and `screenshots/` from the game folder.
+The command runs `npm run build` for that folder. The bundle lands in `build/<modinfo.id>/` (Workshop staging). Staging gets the release bundle plus `workshop.json` and preview images only. `README.md`, `CHANGELOG.md`, and `workshop/screenshots/` stay in the repo. SteamCMD uploads from `build/<modinfo.id>/`. `workshop/workshop.md` supplies the Steam description in Markdown; `npm run publish` converts it to Steam BBCode at upload time. `npm run build` and `npm run dev` also copy only `workshop.json` and preview images, and remove leftover `README.md`, `CHANGELOG.md`, and `screenshots/` from the game folder.
 
-Steam **change notes** come from that mod's `CHANGELOG.md` (Keep a Changelog). `npm run publish` uses the `##` section that matches `modinfo.version` (for example `## 0.2.0` or `## [0.2.0] - 2026-08-22`). If that heading is missing, it uses `## Unreleased` and warns you to rename the heading to the version. If there is no changelog, it sends the version string. The confirm step prints the full Steam change-notes text before Upload / Cancel.
+**First publish:** you do not need `workshop/workshop.json` or an in-game Workshop create step. If the mod has `workshop/preview.png` (or `preview.gif`) and `workshop/workshop.md` (or `modinfo.description`), `npm run publish` sends `publishedfileid` `0` to SteamCMD, creates the item, then writes `src/<name>/workshop/workshop.json` with the new id. Later publishes update that item.
+
+**`workshop.md` syntax:** `#` / `##` headings, `**bold**`, numbered lists (`1.`), and bullet lists (`-`). Do not add links or raw URLs — Steam Workshop virus scan rejects them and publish will fail. Legacy `workshop.txt` (raw BBCode) still works if you keep it instead.
+
+Steam **change notes** come from that mod's `CHANGELOG.md` (Keep a Changelog). Write them for players: what changed in play, not how it was built. `npm run publish` uses the `##` section that matches `modinfo.version` (for example `## 0.2.0` or `## [0.2.0] - 2026-08-22`). If that heading is missing, it uses `## Unreleased` and warns you to rename the heading to the version. If there is no changelog, it sends the version string. The confirm step prints the full Steam change-notes text before Upload / Cancel.

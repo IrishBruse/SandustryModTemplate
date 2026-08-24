@@ -32,9 +32,9 @@ export const DEBUG_MOD_FOLDER = "hot-reload";
 /** Workshop staging root (`npm run build` / `npm run publish`). */
 export const PUBLISH_OUT_ROOT = join(ROOT, "build");
 
-/** @param {string} folder Mod folder name (under `src/` or `examples/`) */
-export function publishStagingDir(folder) {
-  return join(PUBLISH_OUT_ROOT, folder);
+/** @param {string} gameId `modinfo.id` (same name as the OS mods folder) */
+export function publishStagingDir(gameId) {
+  return join(PUBLISH_OUT_ROOT, gameId);
 }
 
 const SKIP_DIR_NAMES = new Set(["node_modules", ".git"]);

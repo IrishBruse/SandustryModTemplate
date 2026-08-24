@@ -5,6 +5,7 @@ import {
   loadCaptureSettings,
   normalizeCaptureSettings,
   saveCaptureSettings,
+  type CaptureSettings,
 } from "./captureSettings.ts";
 
 const STORAGE_KEY = "irishbruse.selection-capture.settings";
@@ -40,7 +41,7 @@ test("normalizeCaptureSettings clamps invalid values", () => {
       greenscreen: true,
       showMouse: "yes",
       limit1Mb: true,
-    }),
+    } as unknown as Partial<CaptureSettings>),
     {
       frames: 120,
       ticksPerFrame: 1,

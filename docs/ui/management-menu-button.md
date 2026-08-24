@@ -44,7 +44,7 @@ Rows stack under Upgrades in registration order. Each row root is placed as a **
 import { ManagementMenuButton } from "@modkit/ui";
 
 <ManagementMenuButton
-  id="author.management-button-example:example"
+  id="example.management-button:example"
   icon={<span>?</span>}
   label="Example"
   hotkey="F1"

@@ -28,3 +28,8 @@ Do not treat a local rule as a research project. Lock a minimum design, then imp
 3. Keep pure rules (math, thresholds) free of Sandkit so Node tests can load them; wire one call from the hook.
 4. Read the exact lines you will change, then patch once. Do not edit from memory or from a guessed tree.
 5. Touch only the feature folder, its tests, and the mod README / changelog. Do not reformat unrelated docs.
+6. Mod `CHANGELOG.md` is player-facing (Steam change notes). Do not put patch, API, or implementation detail there unless it changes how the mod plays.
+
+## Changelogs
+
+Keep change logs player/user facing dont include technical information unless its important to how it plays.

@@ -10,17 +10,17 @@ New to the template? Start with [Quick start](quick-start.md).
 
 ## Repo folders
 
-| Path               | What it is                                   |
-| ------------------ | -------------------------------------------- |
-| `src/<name>/`      | Your mod (`mod.ts` + `main.ts`)              |
-| `examples/<name>/` | Sample mods to copy into `src/`              |
-| `modkit/`          | Shared kit. Import as `@modkit/*`            |
-| `dist/`            | Link to the Sandustry mods folder on disk    |
-| `build/<name>/`    | Workshop staging (copied on `npm run build`) |
-| `logs/`            | Link to Sandustry log files                  |
+| Path                  | What it is                                   |
+| --------------------- | -------------------------------------------- |
+| `src/<name>/`         | Your mod (`mod.ts` + `main.ts`)              |
+| `examples/<name>/`    | Sample mods to copy into `src/`              |
+| `modkit/`             | Shared kit. Import as `@modkit/*`            |
+| `dist/`               | Link to the Sandustry mods folder on disk    |
+| `build/<modinfo.id>/` | Workshop staging (copied on `npm run build`) |
+| `logs/`               | Link to Sandustry log files                  |
 
-The game folder uses the `id` field in `mod.ts`, not the repo folder name or display `name`.
-`dist/` points at the OS mods folder. Each built mod lives at `dist/<modinfo.id>/`.
+The game folder and Workshop staging use the `id` field in `mod.ts`, not the repo folder name or display `name`.
+`dist/` points at the OS mods folder. Each built mod lives at `dist/<modinfo.id>/`. Release staging is `build/<modinfo.id>/`.
 
 You do not copy files into the game folder by hand. `npm run dev` and `npm run build` write them.
 
@@ -81,7 +81,7 @@ Add these when you need them:
 | `mod/`                       | Static files copied into the output folder                                                          |
 | `package.json`               | npm packages for this mod only                                                                      |
 | `README.md` / `CHANGELOG.md` | Repo docs only. Publish reads `CHANGELOG.md` for Steam change notes; builds do not copy these files |
-| `workshop/`                  | Workshop assets (`workshop.json`, previews, `workshop.txt`, `screenshots/`)                         |
+| `workshop/`                  | Workshop assets (`workshop.json`, previews, `workshop.md`, `screenshots/`)                          |
 
 ## What you import
 

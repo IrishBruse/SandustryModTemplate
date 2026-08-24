@@ -29,7 +29,7 @@ function lineCount(text) {
  * @template T
  * @param {object} opts
  * @param {string} opts.title
- * @param {{ label: string, hint?: string, disabled?: boolean, value: T }[]} opts.items
+ * @param {{ label: string, hint?: string, hintTone?: "dim" | "green", disabled?: boolean, value: T }[]} opts.items
  * @returns {Promise<T>}
  */
 export function tuiSelect(opts) {
@@ -67,7 +67,8 @@ export function tuiSelect(opts) {
           : active
             ? `${CYAN}${BOLD}${item.label}${RESET}`
             : item.label;
-        const hint = item.hint ? ` ${DIM}${item.hint}${RESET}` : "";
+        const hintTone = item.hintTone === "green" ? GREEN : DIM;
+        const hint = item.hint ? ` ${hintTone}${item.hint}${RESET}` : "";
         rows.push(`  ${mark} ${name}${hint}`);
       }
       rows.push(`${DIM}  ↑↓ move  Enter select  q cancel${RESET}`);

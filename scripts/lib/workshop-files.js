@@ -1,13 +1,21 @@
 /**
  * Files under `src/<name>/workshop/` (Steam listing assets).
  * The build copies `workshop.json` and previews to the installed mod root.
+ * `workshop.md` is converted to Steam BBCode when you publish.
  * `README.md`, `CHANGELOG.md`, and `workshop/screenshots/` stay in the repo only.
  */
-import { cpSync, existsSync, readFileSync, rmSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 export const WORKSHOP_PREVIEW_NAMES = ["preview.gif", "preview.png"];
+/** SteamCMD creates a new Workshop item when `publishedfileid` is `"0"`. */
+export const WORKSHOP_NEW_ITEM_ID = "0";
 const PUBLISHED_FILE_ID_PATTERN = /^[1-9]\d*$/;
+
+/** @param {string} value */
+export function isValidPublishedFileId(value) {
+  return typeof value === "string" && PUBLISHED_FILE_ID_PATTERN.test(value);
+}
 
 /** @param {string} modDir */
 export function workshopDir(modDir) {
@@ -16,26 +24,94 @@ export function workshopDir(modDir) {
 
 /**
  * @param {string} modDir
- * @returns {{ schemaVersion: 1; publishedFileId: string } | null}
+ * @returns {{ schemaVersion: 1; publishedFileId: string | null } | null}
  */
 export function readWorkshopManifest(modDir) {
   const file = join(workshopDir(modDir), "workshop.json");
   if (!existsSync(file)) return null;
   const value = JSON.parse(readFileSync(file, "utf8"));
-  if (
-    !value ||
-    typeof value !== "object" ||
-    Array.isArray(value) ||
-    value.schemaVersion !== 1 ||
-    typeof value.publishedFileId !== "string" ||
-    !PUBLISHED_FILE_ID_PATTERN.test(value.publishedFileId)
-  ) {
+  if (!value || typeof value !== "object" || Array.isArray(value) || value.schemaVersion !== 1) {
     throw new Error(`Invalid workshop.json: ${file}`);
   }
+  const raw = typeof value.publishedFileId === "string" ? value.publishedFileId.trim() : "";
   return {
     schemaVersion: 1,
-    publishedFileId: value.publishedFileId,
+    publishedFileId: isValidPublishedFileId(raw) ? raw : null,
   };
+}
+
+/**
+ * @param {string} modDir
+ * @param {string} publishedFileId
+ */
+export function writeWorkshopManifest(modDir, publishedFileId) {
+  if (!isValidPublishedFileId(publishedFileId)) {
+    throw new Error(`Invalid publishedFileId: ${publishedFileId}`);
+  }
+  const dir = workshopDir(modDir);
+  mkdirSync(dir, { recursive: true });
+  const file = join(dir, "workshop.json");
+  writeFileSync(
+    file,
+    `${JSON.stringify({ schemaVersion: 1, publishedFileId }, null, 2)}\n`,
+    "utf8",
+  );
+}
+
+/**
+ * Read the item id SteamCMD writes into the upload VDF after a successful build.
+ * @param {string} vdfText
+ * @returns {string | null}
+ */
+export function parsePublishedFileIdFromVdf(vdfText) {
+  const match = vdfText.match(/"publishedfileid"\s+"(\d+)"/i);
+  if (!match) return null;
+  return isValidPublishedFileId(match[1]) ? match[1] : null;
+}
+
+/**
+ * @param {string} modDir
+ * @param {{ description?: string }} [manifest]
+ * @returns {{ ready: boolean; publishedFileId: string | null; error: string | null }}
+ */
+export function workshopPublishReadiness(modDir, manifest = {}) {
+  if (!workshopPreviewPath(modDir)) {
+    return { ready: false, publishedFileId: null, error: "needs preview.gif or preview.png" };
+  }
+  let hasDescription = false;
+  try {
+    hasDescription = Boolean(workshopDescriptionText(modDir));
+  } catch (error) {
+    return {
+      ready: false,
+      publishedFileId: null,
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
+  if (
+    !hasDescription &&
+    !(typeof manifest.description === "string" && manifest.description.trim().length > 0)
+  ) {
+    return {
+      ready: false,
+      publishedFileId: null,
+      error: "needs workshop.md or modinfo.description",
+    };
+  }
+  try {
+    const workshop = readWorkshopManifest(modDir);
+    return {
+      ready: true,
+      publishedFileId: workshop?.publishedFileId ?? null,
+      error: null,
+    };
+  } catch (error) {
+    return {
+      ready: false,
+      publishedFileId: null,
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
 }
 
 /** @param {string} modDir @returns {string | null} */
@@ -47,12 +123,155 @@ export function workshopPreviewPath(modDir) {
   return null;
 }
 
+/**
+ * Inline markdown → Steam Workshop BBCode (bold).
+ * @param {string} text
+ * @returns {string}
+ */
+function workshopInlineMarkdown(text) {
+  return text.replaceAll(/\*\*([^*]+)\*\*/g, "[b]$1[/b]").replaceAll(/`([^`]+)`/g, "$1");
+}
+
+/** @typedef {{ kind: string; line: number; snippet: string }} WorkshopLinkIssue */
+
+const WORKSHOP_LINK_PATTERNS = [
+  { kind: "markdown link", pattern: /\[[^\]]+\]\([^)]+\)/ },
+  { kind: "autolink", pattern: /<https?:\/\/[^>\s]+>/i },
+  { kind: "URL", pattern: /https?:\/\/[^\s\])>]+/i },
+  { kind: "BBCode link", pattern: /\[\/?url(?:=[^\]]+)?\]/i },
+  { kind: "HTML link", pattern: /<a\s+[^>]*href\s*=/i },
+];
+
+/**
+ * Find links and other URL markup that Steam Workshop virus scan rejects.
+ * @param {string} text
+ * @returns {WorkshopLinkIssue[]}
+ */
+export function findWorkshopLinkIssues(text) {
+  const lines = text.replaceAll("\r\n", "\n").split("\n");
+  /** @type {WorkshopLinkIssue[]} */
+  const issues = [];
+  for (let index = 0; index < lines.length; index++) {
+    const line = lines[index];
+    for (const { kind, pattern } of WORKSHOP_LINK_PATTERNS) {
+      if (!pattern.test(line)) continue;
+      issues.push({
+        kind,
+        line: index + 1,
+        snippet: line.trim().slice(0, 120),
+      });
+      break;
+    }
+  }
+  return issues;
+}
+
+/**
+ * @param {string} text
+ * @param {string} fileLabel
+ */
+function assertWorkshopListingHasNoLinks(text, fileLabel) {
+  const issues = findWorkshopLinkIssues(text);
+  if (issues.length === 0) return;
+  const detail = issues
+    .map((issue) => `  line ${issue.line}: ${issue.kind} — ${issue.snippet}`)
+    .join("\n");
+  throw new Error(
+    `${fileLabel} must not contain links or URLs (Steam Workshop virus scan rejects them):\n${detail}`,
+  );
+}
+
+/**
+ * Convert `workshop.md` to Steam Workshop BBCode (`[h1]`, `[h2]`, `[b]`, `[list]`, `[olist]`).
+ * @param {string} markdown
+ * @returns {string}
+ */
+export function workshopMarkdownToBbcode(markdown) {
+  const lines = markdown.replaceAll("\r\n", "\n").split("\n");
+  /** @type {string[]} */
+  const out = [];
+  /** @type {"ordered" | "unordered" | null} */
+  let listKind = null;
+
+  const closeList = () => {
+    if (!listKind) return;
+    out.push(listKind === "ordered" ? "[/olist]" : "[/list]");
+    listKind = null;
+  };
+
+  const openList = (kind) => {
+    if (listKind === kind) return;
+    closeList();
+    listKind = kind;
+    out.push(kind === "ordered" ? "[olist]" : "[list]");
+  };
+
+  for (const rawLine of lines) {
+    const trimmed = rawLine.trimEnd().trim();
+    if (!trimmed) {
+      closeList();
+      if (out.length > 0 && out[out.length - 1] !== "") out.push("");
+      continue;
+    }
+
+    const h1 = trimmed.match(/^#\s+(.+)$/);
+    if (h1) {
+      closeList();
+      out.push(`[h1]${workshopInlineMarkdown(h1[1])}[/h1]`);
+      continue;
+    }
+
+    const h2 = trimmed.match(/^##+\s+(.+)$/);
+    if (h2) {
+      closeList();
+      out.push(`[h2]${workshopInlineMarkdown(h2[1])}[/h2]`);
+      continue;
+    }
+
+    const ordered = trimmed.match(/^\d+\.\s+(.*)$/);
+    if (ordered) {
+      openList("ordered");
+      out.push(`[*]${workshopInlineMarkdown(ordered[1])}`);
+      continue;
+    }
+
+    const unordered = trimmed.match(/^[-*]\s+(.*)$/);
+    if (unordered) {
+      openList("unordered");
+      out.push(`[*]${workshopInlineMarkdown(unordered[1])}`);
+      continue;
+    }
+
+    closeList();
+    out.push(workshopInlineMarkdown(trimmed));
+  }
+
+  closeList();
+  return out
+    .join("\n")
+    .replaceAll(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 /** @param {string} modDir @returns {string | null} */
 export function workshopDescriptionText(modDir) {
-  const file = join(workshopDir(modDir), "workshop.txt");
-  if (!existsSync(file)) return null;
-  const text = readFileSync(file, "utf8").trim();
-  return text.length > 0 ? text : null;
+  const mdFile = join(workshopDir(modDir), "workshop.md");
+  if (existsSync(mdFile)) {
+    const text = readFileSync(mdFile, "utf8").trim();
+    if (text.length > 0) {
+      assertWorkshopListingHasNoLinks(text, "workshop/workshop.md");
+      return workshopMarkdownToBbcode(text);
+    }
+  }
+  const txtFile = join(workshopDir(modDir), "workshop.txt");
+  if (existsSync(txtFile)) {
+    const text = readFileSync(txtFile, "utf8").trim();
+    if (text.length > 0) {
+      assertWorkshopListingHasNoLinks(text, "workshop/workshop.txt");
+      return text;
+    }
+  }
+  return null;
 }
 
 const CHANGELOG_HEADING = /^##\s+\[?([^\]]+?)\]?(?:\s*[-–—]\s*\d{4}-\d{2}-\d{2})?\s*$/;

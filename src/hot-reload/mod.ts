@@ -22,18 +22,14 @@ export const modinfo = defineModInfo({
       labelKey: "Mod enabled",
       descriptionKey: "Disable helpers without removing the mod.",
     },
-    openDevTools: {
+    // Hot reloading
+    watchLocalMods: {
       type: "boolean",
       default: false,
-      labelKey: "Open DevTools on load",
-      descriptionKey: "Open DevTools when the mod loads.",
+      labelKey: "Watch local mods",
+      descriptionKey: "Reload local mods when files change. Skips Workshop.",
     },
-    f12DevTools: {
-      type: "boolean",
-      default: false,
-      labelKey: "F12 opens DevTools",
-      descriptionKey: "F12 opens DevTools.",
-    },
+    // Save auto loading
     autoLoad: {
       type: "boolean",
       default: false,
@@ -51,23 +47,31 @@ export const modinfo = defineModInfo({
         { value: AUTO_LOAD_FROM_STORAGE, labelKey: "Mod storage" },
       ],
     },
-    f3Debug: {
-      type: "boolean",
-      default: false,
-      labelKey: "F3 debug overlay",
-      descriptionKey: "F3 toggles the debug overlay.",
-    },
     disableAutosave: {
       type: "boolean",
       default: false,
       labelKey: "Disable autosave",
       descriptionKey: "Stop session autosave. Manual saves still work.",
     },
-    watchLocalMods: {
+    // Dev tools
+    openDevTools: {
       type: "boolean",
       default: false,
-      labelKey: "Watch local mods",
-      descriptionKey: "Reload local mods when files change. Skips Workshop.",
+      labelKey: "Open DevTools on load",
+      descriptionKey: "Open DevTools when the mod loads.",
+    },
+    f12DevTools: {
+      type: "boolean",
+      default: false,
+      labelKey: "F12 opens DevTools",
+      descriptionKey: "F12 opens DevTools.",
+    },
+    // F3 Menu
+    f3Debug: {
+      type: "boolean",
+      default: false,
+      labelKey: "F3 debug overlay",
+      descriptionKey: "F3 toggles the debug overlay.",
     },
   },
 });

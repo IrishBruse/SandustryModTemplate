@@ -2,7 +2,7 @@ import { defineModInfo } from "@modkit/modinfo";
 
 export const modinfo = defineModInfo({
   manifestVersion: 1,
-  id: "author.overlay-hotkey-example",
+  id: "example.overlay-hotkey",
   name: "Overlay Hotkey",
   version: "0.0.1",
   apiVersion: 1,

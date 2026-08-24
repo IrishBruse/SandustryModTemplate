@@ -10,7 +10,7 @@ Register a Sandkit key binding and read the bound key with `getDisplayKey`.
 4. Press **T** (or your rebound key) for a toast: **Input binding fired**.
 5. Open **Options → Controls** and rebind the key. Hot reload or reload the save, then check the load toast and console — the label from `getDisplayKey` matches the new binding.
 
-Open DevTools console on load. You see the binding id and the display key (for example `author.input-binding-example.toast (T)`).
+Open DevTools console on load. You see the binding id and the display key (for example `example.input-binding.toast (T)`).
 
 Keys come from Sandkit bindings. Change them in game settings; `getDisplayKey` reflects the active binding.
 

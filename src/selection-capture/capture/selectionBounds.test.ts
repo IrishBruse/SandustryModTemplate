@@ -15,16 +15,19 @@ import {
   unionBounds,
 } from "./selectionBounds.ts";
 
-const previousSandkit = globalThis.sandkit;
+type Host = typeof globalThis & { sandkit?: typeof sandkit };
+const host = globalThis as Host;
+
+const previousSandkit = host.sandkit;
 
 afterEach(() => {
-  globalThis.sandkit = previousSandkit;
+  host.sandkit = previousSandkit;
 });
 
 const SNAP = 4;
 
 function installSandkit(session: object, shared: object = {}) {
-  globalThis.sandkit = {
+  host.sandkit = {
     state: { session, shared },
     api: {
       rendering: {
@@ -32,7 +35,7 @@ function installSandkit(session: object, shared: object = {}) {
       },
     },
     enums: { ComponentId: { ShortcutHelper: 1 } },
-  };
+  } as unknown as typeof sandkit;
 }
 
 test("boundsFromPoints returns null for an empty list", () => {

@@ -158,8 +158,8 @@ A renderer hot reload truncates that file via `POST /log/clear` and calls `conso
 
 ```ts
 console.log("my-feature", payload);
-// DevTools: [author.hello-world-example] my-feature {…}
-// logs/author.hello-world-example.log (debug only): [author.hello-world-example] my-feature {…}
+// DevTools: [example.hello-world] my-feature {…}
+// logs/example.hello-world.log (debug only): [example.hello-world] my-feature {…}
 ```
 
 The shim uses `globalThis.console` internally so it does not recurse.

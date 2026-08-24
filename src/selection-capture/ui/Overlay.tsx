@@ -263,7 +263,9 @@ export function Overlay() {
                   disabled={busy}
                   aria-label="Frames"
                   onChange={(value) =>
-                    patchSettings({ frames: clampInt(value, MIN_FRAMES, MAX_FRAMES) })
+                    patchSettings({
+                      frames: clampInt(value, MIN_FRAMES, MAX_FRAMES),
+                    })
                   }
                 />
               </OptionsRow>
@@ -275,7 +277,9 @@ export function Overlay() {
                   disabled={busy}
                   aria-label="Ticks per frame"
                   onChange={(value) =>
-                    patchSettings({ ticksPerFrame: clampInt(value, MIN_TICKS, MAX_TICKS) })
+                    patchSettings({
+                      ticksPerFrame: clampInt(value, MIN_TICKS, MAX_TICKS),
+                    })
                   }
                 />
               </OptionsRow>

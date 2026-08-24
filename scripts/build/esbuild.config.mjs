@@ -28,6 +28,7 @@ import {
   publishStagingDir,
   parseModFilters,
   DEBUG_MOD_FOLDER,
+  PUBLISH_OUT_ROOT,
 } from "../lib/mods.js";
 import { copyWorkshopInstallFiles, removeWorkshopPublishFiles } from "../lib/workshop-files.js";
 import { startLogServer } from "../dev/log-server.js";
@@ -63,7 +64,7 @@ function resolveModDebug() {
 
 const includeDebugKit = resolveIncludeDebugKit();
 const modDebug = resolveModDebug();
-/** Release `npm run build` — write to `build/<folder>/` only; no OS mods folder or `dist/` links. */
+/** Release `npm run build` — write to `build/<modinfo.id>/` only; no OS mods folder or `dist/` links. */
 const releaseBuild = !watch && !modDebug;
 
 /**
@@ -84,8 +85,12 @@ const mods = await loadMods(args, {
 });
 if (releaseBuild) {
   for (const mod of mods) {
-    mod.outDir = publishStagingDir(mod.folder);
+    mod.outDir = publishStagingDir(mod.gameId);
     mkdirSync(mod.outDir, { recursive: true });
+    // Drop legacy `build/<folder>/` when staging moved to `build/<modinfo.id>/`.
+    if (mod.folder !== mod.gameId) {
+      rmSync(join(PUBLISH_OUT_ROOT, mod.folder), { recursive: true, force: true });
+    }
   }
 } else {
   prepareModOutputs(ROOT, mods, { includeDebugKit });

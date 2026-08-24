@@ -15,10 +15,15 @@ import { loadMods, parseModFilter, publishStagingDir } from "../lib/mods.js";
 import { steamLibraryRoots } from "../lib/paths.js";
 import { isPublishTty, tuiConfirm, tuiSelect } from "./publish-tui.js";
 import {
+  copyWorkshopInstallFiles,
+  parsePublishedFileIdFromVdf,
   readChangelogChangeNote,
   readWorkshopManifest,
+  WORKSHOP_NEW_ITEM_ID,
   workshopDescriptionText,
   workshopPreviewPath,
+  workshopPublishReadiness,
+  writeWorkshopManifest,
 } from "../lib/workshop-files.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
@@ -280,7 +285,7 @@ function workshopDescription(mod) {
   if (fromFile) return fromFile;
   const fromManifest = mod.manifest.description;
   if (typeof fromManifest === "string" && fromManifest.trim()) return fromManifest.trim();
-  fail(`src/${mod.folder}/workshop/workshop.txt is missing (or set modinfo.description).`);
+  fail(`src/${mod.folder}/workshop/workshop.md is missing (or set modinfo.description).`);
 }
 
 /**
@@ -467,16 +472,37 @@ function failWorkshopUpload(folder, account, steamCmd, out) {
   );
 }
 
+/**
+ * @param {import("../build/mods.js").LoadedMod} mod
+ * @param {string} vdfFile
+ */
+function saveNewWorkshopId(mod, vdfFile) {
+  const newId = parsePublishedFileIdFromVdf(readFileSync(vdfFile, "utf8"));
+  if (!newId) {
+    fail(
+      [
+        "Workshop upload succeeded, but SteamCMD did not write a publishedfileid to the upload VDF.",
+        "Check the SteamCMD output above, then add src/" +
+          `${mod.folder}/workshop/workshop.json manually.`,
+      ].join("\n"),
+    );
+  }
+  writeWorkshopManifest(mod.dir, newId);
+  copyWorkshopInstallFiles(mod.dir, mod.outDir);
+  console.log(`Saved src/${mod.folder}/workshop/workshop.json with publishedFileId ${newId}.`);
+}
+
 async function publishMod(steamCmd, account, mod) {
-  let publishedFileId;
+  let manifest;
   try {
-    publishedFileId = readWorkshopManifest(mod.dir)?.publishedFileId;
+    manifest = readWorkshopManifest(mod.dir);
   } catch (error) {
     fail(error instanceof Error ? error.message : String(error));
   }
-  if (!publishedFileId) {
-    fail(`src/${mod.folder}/workshop/workshop.json needs publishedFileId.`);
-  }
+
+  const existingId = manifest?.publishedFileId ?? null;
+  const publishedFileId = existingId ?? WORKSHOP_NEW_ITEM_ID;
+  const isNewItem = publishedFileId === WORKSHOP_NEW_ITEM_ID;
 
   const previewFile = previewPath(mod);
   const tmpDir = join(ROOT, ".tmp");
@@ -496,13 +522,20 @@ async function publishMod(steamCmd, account, mod) {
     }),
   );
 
-  console.log(`Workshop upload: src/${mod.folder}/ -> ${publishedFileId}`);
+  console.log(
+    isNewItem
+      ? `Workshop upload: src/${mod.folder}/ -> new item (SteamCMD assigns id)`
+      : `Workshop upload: src/${mod.folder}/ -> ${publishedFileId}`,
+  );
   console.log(`Preview: ${previewFile}`);
   console.log(`Content: ${mod.outDir}`);
   console.log(`Change notes:\n${changeNote}`);
 
   let result = await runWorkshopUpload(steamCmd, account, vdfFile);
-  if (workshopUploadSucceeded(result.out)) return;
+  if (workshopUploadSucceeded(result.out)) {
+    if (isNewItem) saveNewWorkshopId(mod, vdfFile);
+    return;
+  }
 
   if (steamCmdNeedsCachedLogin(result.out) && isPublishTty()) {
     const loginCode = await runSteamCmdInteractiveLogin(steamCmd, account);
@@ -511,18 +544,17 @@ async function publishMod(steamCmd, account, mod) {
     }
     console.log("Retrying Workshop upload…");
     result = await runWorkshopUpload(steamCmd, account, vdfFile);
-    if (workshopUploadSucceeded(result.out)) return;
+    if (workshopUploadSucceeded(result.out)) {
+      if (isNewItem) saveNewWorkshopId(mod, vdfFile);
+      return;
+    }
   }
 
   failWorkshopUpload(mod.folder, account, steamCmd, result.out);
 }
 
 function workshopState(mod) {
-  try {
-    return { manifest: readWorkshopManifest(mod.dir), error: null };
-  } catch (error) {
-    return { manifest: null, error: error instanceof Error ? error.message : String(error) };
-  }
+  return workshopPublishReadiness(mod.dir, mod.manifest);
 }
 
 async function pickMod(allMods) {
@@ -532,9 +564,7 @@ async function pickMod(allMods) {
     if (!selected) fail(`Unknown --mod ${JSON.stringify(filter)}.`);
     const state = workshopState(selected);
     if (state.error) fail(state.error);
-    if (!state.manifest) {
-      fail(`src/${selected.folder}/workshop/workshop.json is missing.`);
-    }
+    if (!state.ready) fail(`src/${selected.folder}/ is not ready for Workshop publish.`);
     return selected;
   }
 
@@ -544,10 +574,17 @@ async function pickMod(allMods) {
 
   const items = allMods.map((mod) => {
     const state = workshopState(mod);
-    const ready = Boolean(state.manifest);
+    const ready = state.ready && !state.error;
+    const firstPublish = ready && !state.publishedFileId;
+    const hint = !ready
+      ? (state.error ?? "missing listing assets")
+      : firstPublish
+        ? `${mod.manifest.name} · first publish`
+        : String(mod.manifest.name);
     return {
       label: mod.folder,
-      hint: ready ? String(mod.manifest.name) : (state.error ?? "no workshop.json"),
+      hint,
+      hintTone: firstPublish ? /** @type {const} */ ("green") : undefined,
       disabled: !ready,
       value: mod,
     };
@@ -555,7 +592,7 @@ async function pickMod(allMods) {
 
   if (!items.some((item) => !item.disabled)) {
     fail(
-      "No mod has workshop/workshop.json. Add publishedFileId after the first in-game Workshop create.",
+      "No mod is ready to publish. Add workshop/preview.png (or preview.gif) and workshop/workshop.md (or modinfo.description).",
     );
   }
 
@@ -573,24 +610,29 @@ async function pickMod(allMods) {
   }
 }
 
-async function confirmUpload(mod, account, steamCmd, previewFile, publishedFileId) {
+async function confirmUpload(mod, account, steamCmd, previewFile, publishedFileId, isNewItem) {
   if (yesFlag) return true;
   if (!isPublishTty()) {
     fail("Pass --yes to skip confirmation when stdin is not a TTY.");
   }
   const changeNote = workshopChangeNote(mod);
+  const green = "\x1b[32m";
+  const reset = "\x1b[0m";
+  const itemLabel = isNewItem
+    ? `${green}first publish · SteamCMD creates a new item${reset}`
+    : publishedFileId;
   try {
     return await tuiConfirm({
-      title: "Upload to Steam Workshop?",
+      title: isNewItem ? "Create Steam Workshop item?" : "Upload to Steam Workshop?",
       fields: [
         ["Folder", `src/${mod.folder}/`],
         ["Title", String(mod.manifest.name).trim()],
         ["Version", String(mod.manifest.version ?? "")],
-        ["Item", publishedFileId],
+        ["Item", itemLabel],
         ["Preview", basename(previewFile)],
         ["Steam", account],
         ["SteamCMD", steamCmd],
-        ["Staging", `build/${mod.folder}/`],
+        ["Staging", `build/${mod.gameId}/`],
       ],
       preview: {
         label: "Change notes (Steam)",
@@ -614,21 +656,27 @@ if (blocked) {
 const steamCmd = await ensureSteamCmd();
 
 const account = steamAccountName();
-const allMods = await loadMods([], { includeDebugKit: false });
+const allMods = (await loadMods([], { includeDebugKit: false })).filter(
+  (mod) => mod.root === "src",
+);
 const selected = await pickMod(allMods);
 
-let publishedFileId;
-try {
-  publishedFileId = readWorkshopManifest(selected.dir)?.publishedFileId;
-} catch (error) {
-  fail(error instanceof Error ? error.message : String(error));
-}
-if (!publishedFileId) {
-  fail(`src/${selected.folder}/workshop/workshop.json needs publishedFileId.`);
-}
+const publishState = workshopState(selected);
+if (publishState.error) fail(publishState.error);
+if (!publishState.ready) fail(`src/${selected.folder}/ is not ready for Workshop publish.`);
+
+const publishedFileId = publishState.publishedFileId ?? WORKSHOP_NEW_ITEM_ID;
+const isNewItem = publishedFileId === WORKSHOP_NEW_ITEM_ID;
 
 const previewFile = previewPath(selected);
-const confirmed = await confirmUpload(selected, account, steamCmd, previewFile, publishedFileId);
+const confirmed = await confirmUpload(
+  selected,
+  account,
+  steamCmd,
+  previewFile,
+  publishedFileId,
+  isNewItem,
+);
 if (!confirmed) {
   console.log("Cancelled.");
   process.exit(0);
@@ -642,7 +690,7 @@ const build = spawnSync("npm", ["run", "build", "--", "--mod", selected.folder],
 });
 if (build.status !== 0) process.exit(build.status ?? 1);
 
-selected.outDir = publishStagingDir(selected.folder);
+selected.outDir = publishStagingDir(selected.gameId);
 if (!existsSync(join(selected.outDir, "main.js"))) {
   fail(`Publish staging missing main.js: ${selected.outDir}`);
 }

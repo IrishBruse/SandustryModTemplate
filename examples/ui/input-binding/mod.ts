@@ -2,7 +2,7 @@ import { defineModInfo } from "@modkit/modinfo";
 
 export const modinfo = defineModInfo({
   manifestVersion: 1,
-  id: "author.input-binding-example",
+  id: "example.input-binding",
   name: "Input Binding",
   version: "0.0.1",
   apiVersion: 1,

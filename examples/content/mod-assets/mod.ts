@@ -2,7 +2,7 @@ import { defineModInfo } from "@modkit/modinfo";
 
 export const modinfo = defineModInfo({
   manifestVersion: 1,
-  id: "author.mod-assets-example",
+  id: "example.mod-assets",
   name: "Mod Assets",
   version: "0.0.1",
   apiVersion: 1,
