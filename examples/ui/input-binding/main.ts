@@ -16,9 +16,7 @@ api.input.registerBinding(BINDING_TOAST, ["KeyT"], {
 
 const toastKey = api.input.getDisplayKey(BINDING_TOAST, "T");
 
-if (!reloaded) {
-  api.ui.toast(`Input Binding — press ${toastKey} for a toast`, {});
-}
+api.ui.toast(`Input Binding — press ${toastKey} for a toast`, {});
 
 console.log(
   `${reloaded ? "reloaded" : "loaded"} — toast binding ${BINDING_TOAST} (${toastKey}). Rebind under Options → Controls`,

@@ -26,7 +26,7 @@ The template has no release tags yet. Dated sections match the day the change la
 - **Mod layout:** a mod root keeps only `mod.ts`, `main.ts`, and optional `worker.ts` as TypeScript. Other source files live in feature folders. See [layout.md](layout.md).
 - **Survival Mode:** vanilla **Sprint Boost** (Shift burst and meter) is off. **Shift** is a hold sprint on the ground (1.6× walk speed). See [`src/survival-mode/`](../src/survival-mode/).
 - **Survival Mode:** fire deals 6 and lava deals 12 every 400 ms while overlapping. See [`src/survival-mode/`](../src/survival-mode/).
-- **Debug companion:** source lives under `src/hot-reload/` (was `src/debug/`). Hot reload always evals local `main.js`. Cleanup is auto-tracked for `api.events.on`, `api.ui.inject`, and `api.ui.overlays.register`. The **Without cleanup** setting is removed. Use `onDispose` only for timers and other custom hooks. Restart the game once after you pull this change so the loader patch applies. See [modkit/debug.md](modkit/debug.md).
+- **Debug companion:** wraps `sandkit.api` at eval so other mods do not import `onDispose` or check `reloaded` for normal Sandkit use. Dispose tracking covers `events.on`, `ui.inject`, `hooks.intercept` / `modify`, `settings.onChange`, and `overlays.register`. Re-eval suppresses load toasts and replays `game:ready` when already in-game. Restart the game once so the new loader patch applies. See [modkit/debug.md](modkit/debug.md).
 
 ### Fixed
 

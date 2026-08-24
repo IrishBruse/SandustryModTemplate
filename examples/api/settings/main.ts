@@ -1,4 +1,3 @@
-import { onDispose } from "@modkit/debug";
 import { safe } from "@modkit/utils";
 import { modinfo } from "./mod";
 
@@ -36,16 +35,11 @@ function notify(message: string, values: SettingSnapshot) {
 }
 
 const initial = readSettings();
-if (!reloaded) {
-  notify(`Settings loaded — ${formatSnapshot(initial)}`, initial);
-} else {
-  console.log(`reloaded — ${formatSnapshot(initial)}`);
-}
+notify(`Settings loaded — ${formatSnapshot(initial)}`, initial);
 
-const stop = api.settings.onChange(() => {
+api.settings.onChange(() => {
   const next = readSettings();
   notify(`Settings changed — ${formatSnapshot(next)}`, next);
 });
-onDispose(stop);
 
 console.log(`${reloaded ? "reloaded" : "loaded"} — edit Options → Mods → ${modinfo.name}`);

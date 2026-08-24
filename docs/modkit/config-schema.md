@@ -90,16 +90,14 @@ priority: {
 ## Read and react in `main.ts`
 
 ```ts
-import { onDispose } from "@modkit/debug";
 import { safe } from "@modkit/utils";
 
 const api = sandkit.api;
 
 const volume = safe(() => api.settings.get("volume"));
-const stop = api.settings.onChange((values) => {
+api.settings.onChange((values) => {
   console.log("settings", values);
 });
-onDispose(stop);
 ```
 
 `settings.get` / `getAll` return `string | number | boolean | null` (`ConfigValueV1`). Check the type before you use the value.

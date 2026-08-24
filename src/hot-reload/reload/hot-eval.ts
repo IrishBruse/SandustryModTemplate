@@ -1,17 +1,21 @@
 import { clearLog } from "@modkit/log";
+import {
+  ACTIVE_KEY,
+  DISPOSE_LISTS_KEY,
+  EVAL_IDS_KEY,
+  WRAP_KEY,
+  withToastSuppressed,
+} from "./wrap-sandkit";
 
 /**
  * Re-eval `main.js` for a local mod. JavaScript cannot unload.
- * Cleanup comes from optional `onDispose` (kit) and auto-tracked
- * `api.events.on`, `api.ui.inject`, and `api.ui.overlays.register`.
+ * Cleanup comes from optional `onDispose` (kit) and auto-tracked Sandkit
+ * disposer APIs (`events.on`, `ui.inject`, `hooks.*`, `settings.onChange`,
+ * `ui.overlays.register`) via `__sandkitWrapForDispose`.
  *
- * Keys must match `src/hot-reload/patches.ts` (`local-mod-compile-reloaded`) and `modkit/internal/debug`.
+ * Keys must match `src/hot-reload/patches.ts` (`local-mod-compile-reloaded`)
+ * and `modkit/internal/debug`.
  */
-
-const EVAL_IDS_KEY = "__sandkitHotReloadEvalIds__";
-const ACTIVE_KEY = "__sandkitHotReloadActive__";
-const DISPOSE_LISTS_KEY = "__sandkitDisposeLists__";
-const TRACK_INJECT_KEY = "__sandkitTrackInjectDispose";
 
 type Host = {
   toastApi: SandkitApi;
@@ -24,7 +28,6 @@ type HotEvalGlobals = {
   [EVAL_IDS_KEY]?: Set<string>;
   [ACTIVE_KEY]?: string;
   [DISPOSE_LISTS_KEY]?: Record<string, Array<() => void>>;
-  [TRACK_INJECT_KEY]?: (modId: string, fn: () => void) => void;
 };
 
 const hosts: Record<string, Host> = {};
@@ -130,7 +133,7 @@ function runDisposers(modId: string): { ran: number; failed: number } {
  */
 function runSource(source: string, modId: string, target: typeof sandkit, sourceUrl: string): void {
   const body = `"use strict";
-const sandkit = __sandkit;const reloaded=!!(globalThis.${EVAL_IDS_KEY}&&globalThis.${EVAL_IDS_KEY}.has("${modId}"));globalThis.${ACTIVE_KEY}="${modId}";
+const sandkit=(globalThis.${WRAP_KEY}||(s=>s))(__sandkit,"${modId}");const reloaded=!!(globalThis.${EVAL_IDS_KEY}&&globalThis.${EVAL_IDS_KEY}.has("${modId}"));globalThis.${ACTIVE_KEY}="${modId}";
 return (async () => {
 ${source}
 })();
@@ -181,7 +184,9 @@ export async function reloadRenderer(modId: string, source: string): Promise<voi
 
   const sourceUrl = `sandkit-workshop://${modId}/${host.entry}`;
   try {
-    runSource(source, modId, target, sourceUrl);
+    await withToastSuppressed(() => {
+      runSource(source, modId, target, sourceUrl);
+    });
     toast(host.toastApi, `${modId} reloaded`);
     console.log("hot reloaded");
   } catch (error) {
@@ -192,12 +197,3 @@ export async function reloadRenderer(modId: string, source: string): Promise<voi
     host.reloading = false;
   }
 }
-
-function trackInjectDispose(modId: string, fn: () => void): void {
-  if (typeof fn !== "function" || !modId) return;
-  const lists = disposeLists();
-  if (!lists[modId]) lists[modId] = [];
-  lists[modId].push(fn);
-}
-
-globals()[TRACK_INJECT_KEY] = trackInjectDispose;

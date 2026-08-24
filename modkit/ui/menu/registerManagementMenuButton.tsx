@@ -1,3 +1,4 @@
+import { onDispose } from "@modkit/debug";
 import { useEffect, useState } from "react";
 import { ManagementMenuButton } from "./ManagementMenuButton";
 
@@ -87,7 +88,8 @@ function teardownHostIfEmpty(): void {
 
 /**
  * Add a vanilla-style row under Upgrades (Toolbox / Building / …).
- * Hotkey is badge text only. Returns a dispose function for `onDispose`.
+ * Hotkey is badge text only. Returns a dispose function. Hot reload tracks
+ * that dispose automatically — callers do not need `onDispose`.
  */
 export function registerManagementMenuButton(
   options: RegisterManagementMenuButtonOptions,
@@ -100,10 +102,12 @@ export function registerManagementMenuButton(
   ensureHost(next.id);
   notify();
 
-  return () => {
+  const stop = () => {
     const i = rows.findIndex((row) => row.id === next.id);
     if (i >= 0) rows.splice(i, 1);
     notify();
     teardownHostIfEmpty();
   };
+  onDispose(stop);
+  return stop;
 }

@@ -1,4 +1,3 @@
-import { onDispose } from "@modkit/debug";
 import { modinfo } from "./mod";
 
 const api = sandkit.api;
@@ -96,14 +95,10 @@ api.input.registerBinding(BINDING_PAINT, ["KeyF"], {
   },
 });
 
-const stopReady = api.events.on("game:ready", () => {
+api.events.on("game:ready", () => {
   api.player.buildings.unlockByType(STRUCTURE_ID);
-  if (!reloaded) {
-    api.ui.toast("Content Machine — build the Flake Converter from the hotbar", {});
-  }
+  api.ui.toast("Content Machine — build the Flake Converter from the hotbar", {});
 });
-
-onDispose(stopReady);
 
 console.log(
   `${reloaded ? "reloaded" : "loaded"} — ${STRUCTURE_ID} converts ${INPUT_ID} → ${OUTPUT_ID}`,

@@ -1,6 +1,6 @@
 # Events Example
 
-Subscribe to game events and unsubscribe on hot reload.
+Subscribe to game events.
 
 ## Use
 
@@ -19,4 +19,4 @@ Search `modkit/types/` and [`docs/api/`](../docs/api/) for more event ids.
 
 ## Copy this mod
 
-Copy `examples/api/events/` to `src/<your-mod>/`. Add listeners with `api.events.on`. You do not need `onDispose` for event cleanup during hot reload. The example still uses `onDispose` to show the pattern for timers and other custom hooks.
+Copy `examples/api/events/` to `src/<your-mod>/`. Add listeners with `api.events.on`. You do not need `onDispose` for event cleanup during hot reload.

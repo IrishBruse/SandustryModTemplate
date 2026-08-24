@@ -15,7 +15,7 @@ function apply() {
 }
 
 apply();
-onDispose(api.settings.onChange(apply));
+api.settings.onChange(apply);
 onDispose(() => sync(false));
 
 console.log(`${reloaded ? "reloaded" : "loaded"} — Picker picks instantly (default F)`);

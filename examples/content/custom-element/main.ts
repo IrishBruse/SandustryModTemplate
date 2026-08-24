@@ -1,4 +1,3 @@
-import { onDispose } from "@modkit/debug";
 import { modinfo } from "./mod";
 
 const api = sandkit.api;
@@ -38,9 +37,7 @@ api.input.registerBinding(BINDING_PAINT, ["KeyP"], {
   },
 });
 
-if (!reloaded) {
-  api.ui.toast("Custom Element loaded — press P at the mouse cell", {});
-}
+api.ui.toast("Custom Element loaded — press P at the mouse cell", {});
 
 console.log(
   `${reloaded ? "reloaded" : "loaded"} — ${ELEMENT_ID} type ${elementType}, binding ${BINDING_PAINT}`,

@@ -1,13 +1,11 @@
 import { modinfo } from "../mod";
+import { WRAP_KEY } from "./wrap-sandkit";
 
 const RESTART_STORAGE_KEY = "irishbruse.debug:restartNeeded";
-const INJECT_PATCHED_KEY = "__sandkitInjectDisposePatched__";
-const EVENTS_PATCHED_KEY = "__sandkitEventsOnPatched__";
 const REGISTRY_KEY = "__sandkitLocalModRegistry__";
 
 type HealthGlobals = {
-  [INJECT_PATCHED_KEY]?: boolean;
-  [EVENTS_PATCHED_KEY]?: boolean;
+  [WRAP_KEY]?: (sk: typeof sandkit, modId: string) => typeof sandkit;
   [REGISTRY_KEY]?: Record<string, unknown>;
 };
 
@@ -55,8 +53,7 @@ export function probeLoaderPatches(api: SandkitApi): void {
   const issues: string[] = [];
   if (typeof reloaded !== "boolean") issues.push("reloaded binding");
   if (g[REGISTRY_KEY]?.[modinfo.id] == null) issues.push("local-mod registry");
-  if (g[EVENTS_PATCHED_KEY] !== true) issues.push("events.on tracking");
-  if (g[INJECT_PATCHED_KEY] !== true) issues.push("ui.inject tracking");
+  if (typeof g[WRAP_KEY] !== "function") issues.push("sandkit dispose wrap");
   if (issues.length === 0) return;
   const message = `Debug loader patches missing (${issues.join(", ")}). Restart the game.`;
   toast(api, message);

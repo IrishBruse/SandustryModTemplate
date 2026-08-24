@@ -2,7 +2,7 @@
 
 Session debug helpers live in the **debug** companion mod ([`src/hot-reload/`](../../src/hot-reload/)). The game folder name is **`hot-reload`** (`mods/hot-reload`, from `modinfo.id`). Debug builds install it. Release builds omit it and remove a leftover `mods/hot-reload`. Manifest **`loadOrder`** is `-2147483648` so this companion runs before other local mods.
 
-The **debug** companion patches the game loader so local mods can hot-reload without esbuild inject. The loader wrapper defines free **`reloaded`** and sets the active mod id. Import `onDispose` from [`@modkit/debug`](../../modkit/internal/debug/) only when you need extra cleanup (for example timers). Release builds omit the companion and define **`reloaded`** as `false`, but still bundle real `onDispose` so hot reload can dispose when the companion is installed.
+The **debug** companion patches the game loader so local mods can hot-reload without esbuild inject. The loader wrapper defines free **`reloaded`**, sets the active mod id, and wraps `sandkit.api` so disposer APIs un-register on reload. Other mods do not import hot-reload helpers for normal Sandkit use. Import `onDispose` from [`@modkit/debug`](../../modkit/internal/debug/) only for extra cleanup (timers, DOM nodes, reversing player or world mutations). Release builds omit the companion and define **`reloaded`** as `false`, but still bundle real `onDispose` so hot reload can dispose when the companion is installed.
 
 The same main-entry rewrite also skips the entry body when **`enabled`** is false (`isEnabled`). Do not add that guard in `main.ts`. See [utils.md](utils.md).
 
@@ -17,7 +17,7 @@ The same main-entry rewrite also skips the entry body when **`enabled`** is fals
 
 `__MOD_DEBUG__` is `true` in dev builds and `false` in release.
 
-Use free `reloaded` to skip one-shot boot work. Import `onDispose` only for extra cleanup (timers, custom hooks). Other developers subscribe to this companion on the Workshop. The companion does not watch other Workshop items.
+Other mods do not need to know about hot reload. The companion wraps `sandkit.api`, suppresses load toasts during re-eval, and replays `game:ready` when the world is already open. Import `onDispose` only for extra cleanup. Free `reloaded` stays available for one-shot boot work in this companion. Other developers subscribe to this companion on the Workshop. The companion does not watch other Workshop items.
 
 ## Companion settings
 
@@ -47,6 +47,7 @@ Turn on **Watch local mods**, **Auto-load save**, **F3 debug overlay**, **Disabl
 | Disable autosave      | [`boot/autosave.ts`](../../src/hot-reload/boot/autosave.ts)                                                                             | Disable autosave       | Sets interval to `0` on load and each hot-reload eval                               |
 | Renderer hot reload   | [`reload/local-mod-reload.ts`](../../src/hot-reload/reload/local-mod-reload.ts)                                                         | Watch local mods       | Polls local folders; Workshop mods are skipped                                      |
 | F3 debug overlay      | [`f3/F3DebugOverlay.tsx`](../../src/hot-reload/f3/F3DebugOverlay.tsx)                                                                   | F3 debug overlay       | Minecraft-style text HUD; extensible via `registerF3Section` / `globalThis.debugF3` |
+| Mod Inspector         | [`mod-inspector/`](../../src/hot-reload/mod-inspector/)                                                                                 | Mod enabled            | Pause menu **Mods** (under **Options**) opens a blank panel. Esc closes             |
 
 Hot-reload eval skips DevTools shortcut and auto-load so those do not stack on every save. Autosave disable runs again on each hot-reload eval.
 
@@ -121,16 +122,19 @@ Subscribe to the **debug** companion on the Workshop. This template's debug buil
 
 When **local** `main.js` bytes change:
 
-- The companion runs auto-tracked unregisters for `api.events.on`, `api.ui.inject`, and `api.ui.overlays.register`, plus any optional `onDispose` callbacks, then evaluates the new source with that mod's `sandkit`.
-- `onDispose` is not required for normal Sandkit APIs. Use it only for extra cleanup (timers, DOM nodes, monkey-patches).
+- The companion runs tracked disposers, then evaluates the new source with a wrapped `sandkit`.
+- The wrap auto-tracks function returns from `api.events.on`, `api.ui.inject`, `api.hooks.intercept` / `modify`, and `api.settings.onChange`. `api.ui.overlays.register` tracks a matching unregister.
+- Load toasts during that re-eval (and a synthetic `game:ready`) are suppressed. Action toasts in key handlers still run later.
+- If the active scene is **Game**, the wrap calls new `game:ready` listeners after the eval. Mods that only subscribe to `game:ready` boot in-world with no `reloaded` branch.
+- `onDispose` is not required for those Sandkit APIs. Use it only for extra cleanup (timers, DOM nodes, reversing mutations).
 
 When `patches.json`, `modinfo.json`, or a declared worker entry change (including this companion’s own `patches.json` / `modinfo.json`), the companion toasts **restart the game**. It stores that message in `sessionStorage` so a DevTools page reload still shows it. Patches apply in the Electron main process at process start. `location.reload()` does not re-apply them.
 
 This companion does **not** hot-eval its own `main.js` (that would tear down the poller). After you change the debug companion, **restart the game**. A page reload is not enough for patches or workers.
 
-The loader patches share an **atomic group**. All apply, or none apply. After boot, the companion checks the local-mod registry and `ui.inject` tracking. If a hook is missing, it toasts **restart the game**. Free `reloaded` comes only from the loader patch (not esbuild).
+The loader patches share an **atomic group**. All apply, or none apply. After boot, the companion checks the local-mod registry and the dispose wrap. If a hook is missing, it toasts **restart the game**. Free `reloaded` comes only from the loader patch (not esbuild). Restart the game once after you pull a loader-patch change.
 
-JavaScript cannot be unloaded. The loader auto-tracks unregisters from `api.events.on`, `api.ui.inject`, and `api.ui.overlays.register`. Use `onDispose` only when you need extra cleanup:
+JavaScript cannot be unloaded. Other mods do not opt in. Use `onDispose` only when you need extra cleanup:
 
 ```ts
 import { onDispose } from "@modkit/debug";
@@ -138,15 +142,20 @@ import { onDispose } from "@modkit/debug";
 onDispose(() => clearInterval(timer));
 ```
 
-| Change                                                 | Result                                                    |
-| ------------------------------------------------------ | --------------------------------------------------------- |
-| Local `main.js`                                        | Run tracked unregisters + optional `onDispose`, then eval |
-| `patches.json`, `modinfo.json`, declared `workerEntry` | Toast: restart the game (page reload is not enough)       |
-| Workshop mod files                                     | Ignored                                                   |
+| Change                                                 | Result                                                                      |
+| ------------------------------------------------------ | --------------------------------------------------------------------------- |
+| Local `main.js`                                        | Run tracked disposers, wrap `sandkit`, eval, replay `game:ready` if in-game |
+| `patches.json`, `modinfo.json`, declared `workerEntry` | Toast: restart the game (page reload is not enough)                         |
+| Workshop mod files                                     | Ignored                                                                     |
 
-Timers, DOM nodes, or monkey-patches with no cleanup stay until the game restarts.
+These stay best-effort (restart the game if they stack or throw):
 
-Free **`reloaded`** is true when this script body is running because a reload evaluated a new `main.js`. Use it to skip one-shot boot work (toasts, DevTools, auto-load). The loader patch defines that binding. Release builds define it as `false`.
+- `api.input.registerBinding` — no unregister in Sandkit
+- Content register (`elements`, `structures`, `items`, `i18n`, …) — no unregister
+- Timers / `addEventListener` / anonymous DOM — not Sandkit; use `onDispose` or a stable element id
+- Player / world mutations — re-apply on boot, or `onDispose` the inverse
+
+Free **`reloaded`** is true when this script body is running because a reload evaluated a new `main.js`. This companion uses it to skip DevTools and auto-load. Other mods do not need it for load toasts or `game:ready`. The loader patch defines that binding. Release builds define it as `false`.
 
 ## File logging (`console`)
 
@@ -168,18 +177,14 @@ The shim uses `globalThis.console` internally so it does not recurse.
 
 The companion rewrites `js/external-mod-runtime.js`. Definitions live in [`src/hot-reload/patches.ts`](../../src/hot-reload/patches.ts) and are re-exported from `mod.ts`.
 
-| id                           | File                         | Role                                                                |
-| ---------------------------- | ---------------------------- | ------------------------------------------------------------------- |
-| `local-mod-compile-reloaded` | `js/external-mod-runtime.js` | Define free `reloaded` and the active mod id in the loader wrapper. |
-| `local-mod-registry`         | `js/external-mod-runtime.js` | Publish local mods for polling.                                     |
-| `local-mod-track-events`     | `js/external-mod-runtime.js` | Auto-track `events.on` unregisters in the factory (API is frozen).  |
-| `local-mod-track-events-end` | `js/external-mod-runtime.js` | Close the `events.on` wrap.                                         |
-| `local-mod-track-inject`     | `js/external-mod-runtime.js` | Auto-track `ui.inject` unregister functions for hot-eval.           |
-| `local-mod-track-overlays`   | `js/external-mod-runtime.js` | Auto-track `ui.overlays.register` unregisters for hot-eval.         |
+| id                           | File                         | Role                                                                                          |
+| ---------------------------- | ---------------------------- | --------------------------------------------------------------------------------------------- |
+| `local-mod-compile-reloaded` | `js/external-mod-runtime.js` | Define free `reloaded`, the active mod id, and wrap `sandkit` with `__sandkitWrapForDispose`. |
+| `local-mod-registry`         | `js/external-mod-runtime.js` | Publish local mods for polling.                                                               |
 
 These loader patches use the same `atomicGroup` (`local-mod-loader`).
 
-Sandkit freezes `sandkit`, `api`, and `api.events`. The events wrap runs in the factory before that freeze. Workshop mods are not added to the registry. See [patches.md](../patches.md) for the patch format.
+Sandkit freezes `sandkit`, `api`, and `api.events`. Dispose tracking wraps `sandkit` in the `new Function` body after freeze. Workshop mods are not added to the registry. See [patches.md](../patches.md) for the patch format.
 
 ## Files
 
@@ -187,7 +192,7 @@ Sandkit freezes `sandkit`, `api`, and `api.events`. The events wrap runs in the 
 | -------------------------------------------------------- | ------------------------------------------------------------------------------- |
 | [`src/hot-reload/`](../../src/hot-reload/)               | Companion: `mod.ts`, `main.ts`, and `patches.ts` at the root                    |
 | [`src/hot-reload/boot/`](../../src/hot-reload/boot/)     | Auto-load, DevTools boot, autosave, settings helpers                            |
-| [`src/hot-reload/reload/`](../../src/hot-reload/reload/) | Local-mod poll, hot-eval, loader health (`loader-health.ts`)                    |
+| [`src/hot-reload/reload/`](../../src/hot-reload/reload/) | Local-mod poll, hot-eval, Sandkit wrap (`wrap-sandkit.ts`), loader health       |
 | [`src/hot-reload/f3/`](../../src/hot-reload/f3/)         | F3 overlay, engine debug sync, built-in sections                                |
 | `modkit/internal/debug/index.ts`                         | `onDispose` only (bundled in all builds)                                        |
 | `modkit/internal/esbuild/debug.empty.ts`                 | Unused legacy stub (release builds no longer alias `@modkit/debug` here)        |
@@ -196,16 +201,9 @@ Sandkit freezes `sandkit`, `api`, and `api.events`. The events wrap runs in the 
 ## Wiring
 
 ```ts
-// examples/hello-world/main.ts — loader patch sets `reloaded`
-import { onDispose } from "@modkit/debug"; // only when you need cleanup
-
+// examples/hello-world/main.ts — no hot-reload imports
 const api = sandkit.api;
-if (!reloaded) {
-  /* one-shot boot work */
-}
-onDispose(() => {
-  /* unregister */
-});
+api.ui.toast("Hello World loaded", {});
 ```
 
-The debug companion owns file watching. Release builds define `reloaded` as `false`. All builds bundle real `onDispose` from `@modkit/debug`.
+The debug companion owns file watching and dispose wrapping. Release builds define `reloaded` as `false`. All builds bundle real `onDispose` from `@modkit/debug` for extra cleanup.

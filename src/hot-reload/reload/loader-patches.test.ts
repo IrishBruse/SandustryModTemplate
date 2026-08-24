@@ -8,20 +8,14 @@ const DIR = dirname(fileURLToPath(import.meta.url));
 const PATCHES = readFileSync(join(DIR, "../patches.ts"), "utf8");
 const RUNTIME = join(DIR, "../../../sandustry/dist/js/external-mod-runtime.js");
 
-test("inject tracking uses the sandkit mod id, not the last active id", () => {
-  assert.match(PATCHES, /tr&&e&&tr\(e,d\)/);
-  assert.doesNotMatch(
-    PATCHES,
-    /var a=globalThis\.__sandkitHotReloadActive__,tr=globalThis\.__sandkitTrackInjectDispose/,
-  );
-  assert.match(PATCHES, /local-mod-track-overlays/);
-});
-
-test("registry patch does not assign frozen api.events.on", () => {
+test("compile wrapper calls __sandkitWrapForDispose", () => {
+  assert.match(PATCHES, /__sandkitWrapForDispose/);
+  assert.match(PATCHES, /local-mod-compile-reloaded/);
   assert.match(PATCHES, /__sandkitLocalModRegistry__/);
+  assert.doesNotMatch(PATCHES, /local-mod-track-events/);
+  assert.doesNotMatch(PATCHES, /local-mod-track-inject/);
+  assert.doesNotMatch(PATCHES, /local-mod-track-overlays/);
   assert.doesNotMatch(PATCHES, /ev\.on=/);
-  assert.match(PATCHES, /local-mod-track-events/);
-  assert.match(PATCHES, /tr&&r\.id&&tr\(r\.id,u\)/);
 });
 
 test("loader patch finds still exist in extracted external-mod-runtime.js", (t) => {
@@ -31,11 +25,8 @@ test("loader patch finds still exist in extracted external-mod-runtime.js", (t) 
   }
   const source = readFileSync(RUNTIME, "utf8");
   const finds = [
+    'return new Function("__sandkit",`"use strict";\\nconst sandkit = __sandkit;\\nreturn (async () => {\\n${e.entrySource}\\n})();\\n//# sourceURL=${r}`)',
     "const t=ie(e,{manifest:i,discovered:r});e.store.integrity.modsUsed=!0,await c(t)",
-    "S=q({on:(t,r)=>i.FH.events.on(e,t,function(e,i){r(",
-    '}})(t,i))}),emit:(t,r)=>{i.FH.events.emit(e,t,"frame:render"===t?{state:e}:r)}})',
-    'return l.set(n,s),i.FH.ui.overlays.register(e,"global",n,function(){return $.createElement(o)}),()=>{const t=G.get(e);(null==t?void 0:t.get(n))===s&&(t.delete(n),i.FH.ui.overlays.unregister(e,"global",n))}',
-    "Ce=q({register:(t,r,o)=>{i.FH.ui.overlays.register(e,t,r,function(){return o()})},unregister:(t,r)=>{i.FH.ui.overlays.unregister(e,t,r)},update:t=>{i.FH.ui.overlays.update(e,t)}})",
   ];
   for (const find of finds) {
     const matches = source.split(find).length - 1;

@@ -1,3 +1,4 @@
+import "./reload/wrap-sandkit";
 import { disableSessionAutosave } from "./boot/autosave";
 import { registerDevToolsShortcut, scheduleMainMenuBoot } from "./boot/boot-menu";
 import { settingOn } from "./boot/settings";

@@ -17,9 +17,7 @@ function registerUi() {
   const dispose = api.ui.inject(OVERLAY_ID, HealthHud);
   if (!dispose) {
     console.warn("Survival Mode: health HUD registration failed");
-    return;
   }
-  onDispose(dispose);
 }
 
 let booted = false;
@@ -38,11 +36,6 @@ function boot() {
   onDispose(installHazardHooks());
 }
 
-const stopReady = api.events.on("game:ready", boot);
-onDispose(stopReady);
-
-if (reloaded || api.scene.getActive() === sandkit.enums.Scene.Game) {
-  boot();
-}
+api.events.on("game:ready", boot);
 
 console.log(`${reloaded ? "reloaded" : "loaded"} — jump velocity ${JUMP_VELOCITY}`);

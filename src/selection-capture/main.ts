@@ -1,4 +1,3 @@
-import { onDispose } from "@modkit/debug";
 import { safe } from "@modkit/utils";
 import { modinfo } from "./mod";
 import { Overlay } from "./ui/Overlay";
@@ -14,16 +13,13 @@ function installStyles() {
   style.id = id;
   style.textContent = tailwindCss;
   document.head.appendChild(style);
-  onDispose(() => style.remove());
 }
 
 function registerUi() {
   const dispose = api.ui.inject(OVERLAY_ID, Overlay);
   if (!dispose) {
     console.warn("UI panel registration failed");
-    return;
   }
-  onDispose(dispose);
 }
 
 safe(() => {

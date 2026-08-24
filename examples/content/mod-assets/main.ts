@@ -7,7 +7,7 @@ const INFO_URL = api.assets.getUrl("info.json");
 void fetch(INFO_URL)
   .then((response) => response.json() as Promise<{ message?: string }>)
   .then((info) => {
-    if (!reloaded) api.ui.toast(info.message ?? "Mod asset loaded", {});
+    api.ui.toast(info.message ?? "Mod asset loaded", {});
     console.log(`${modinfo.id} assets`, { badgeUrl: BADGE_URL, info });
   })
   .catch((error) => {

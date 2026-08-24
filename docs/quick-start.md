@@ -60,7 +60,7 @@ Rules:
 - Each `src/<name>/` or `examples/<name>/` with a `mod.ts` is a separate game mod.
 - The OS mods folder uses `modinfo.id`.
 - Import `@modkit/*` and files in your own folder only. Do not import another mod folder.
-- Import `onDispose` from `@modkit/debug` when a registration needs cleanup. Release builds stub that package. The debug companion watches local mods.
+- The debug companion hot-reloads local mods. You do not import hot-reload helpers for normal Sandkit APIs.
 
 ## Useful commands
 

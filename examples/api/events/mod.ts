@@ -8,7 +8,7 @@ export const modinfo = defineModInfo({
   apiVersion: 1,
   entry: "main.js",
   author: "Your Name",
-  description: "Subscribe to game events and clean up on hot reload.",
+  description: "Subscribe to game events.",
   dependencies: [],
   loadOrder: 0,
   configSchema: {

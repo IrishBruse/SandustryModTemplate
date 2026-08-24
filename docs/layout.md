@@ -87,14 +87,14 @@ Add these when you need them:
 
 Import `@modkit/*` and files in your own folder only.
 
-| Import                                        | From                                                                                |
-| --------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `@modkit/modinfo`                             | `defineModInfo` / `definePatches`                                                   |
-| `@modkit/react` / JSX                         | Runtime React from `sandkit.react`                                                  |
-| `@modkit/debug`                               | `onDispose` (bundled in all builds). Free `reloaded` comes from the debug companion |
-| `@modkit/utils`                               | `safe`, `isEnabled`, `inGame`, `registerRetroGame`                                  |
-| `@modkit/ui`                                  | Shared React UI components                                                          |
-| `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix                               |
+| Import                                        | From                                                                                                                                |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `@modkit/modinfo`                             | `defineModInfo` / `definePatches`                                                                                                   |
+| `@modkit/react` / JSX                         | Runtime React from `sandkit.react`                                                                                                  |
+| `@modkit/debug`                               | `onDispose` for extra cleanup (timers, inverse mutations). Sandkit disposers are auto-tracked when the debug companion is installed |
+| `@modkit/utils`                               | `safe`, `isEnabled`, `inGame`, `registerRetroGame`                                                                                  |
+| `@modkit/ui`                                  | Shared React UI components                                                                                                          |
+| `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix                                                                               |
 
 Sandkit API types live in `modkit/types/`. Layout mirrors the live object (`sandkit/api`, `sandkit/engine/api`, …). Ambient `sandkit` is in [`modkit/types/global.d.ts`](../modkit/types/global.d.ts); `reloaded` and `WorkerSandkitApi` are in [`modkit/ambient.d.ts`](../modkit/ambient.d.ts).
 
