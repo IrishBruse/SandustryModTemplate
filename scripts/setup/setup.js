@@ -24,6 +24,7 @@ import {
 } from "node:fs";
 import { dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { asarRelPath } from "../lib/asar-path.js";
 import {
   linkDirectory,
   samePath,
@@ -65,10 +66,6 @@ function warn(message) {
 function fail(message) {
   failCount += 1;
   console.error(`FAIL  ${message}`);
-}
-
-function asarRelPath(listed) {
-  return listed.replace(/^\//, "");
 }
 
 function isGameSourceFile(relPath) {
