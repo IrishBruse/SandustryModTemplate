@@ -4,12 +4,12 @@ Public API: `sandkit.api.tech`. Types: `modkit/types/sandkit/api/tech.d.ts`. UI 
 
 ## API (live 0.5.2)
 
-| Method                                              | Role                                                                                                                                       |
-| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Method                                              | Role                                                                                                                                                                                                                            |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `getDefinitionById(techId)`                         | Return definition. Numeric string ids (`"1"`) and mod string ids (`"fluxEmanator"`) work. Common slugs like `"conveyor"`, `"hover"`, `"signalGate"` return **`null`** on live — use enum numeric strings or registered mod ids. |
-| `isLockedById(techId)`                              | `true` when locked. Id may be `string` or `number` (`sandkit.enums.Tech`).                                                                 |
-| `setLockedById(techId, locked)`                     | Write lock flag into `store.lockedTechs`.                                                                                                  |
-| `addDefinition`, `updateDefinition`, `registerNode` | Mod registration.                                                                                                                          |
+| `isLockedById(techId)`                              | `true` when locked. Id may be `string` or `number` (`sandkit.enums.Tech`).                                                                                                                                                      |
+| `setLockedById(techId, locked)`                     | Write lock flag into `store.lockedTechs`.                                                                                                                                                                                       |
+| `addDefinition`, `updateDefinition`, `registerNode` | Mod registration.                                                                                                                                                                                                               |
 
 Engine twin (state first): `sandkit.engine.api.tech` with `getDefinition`, `isLocked`, `setLocked`, `registerNode`, etc. Prefer public API in mods.
 

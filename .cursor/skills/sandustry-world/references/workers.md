@@ -28,10 +28,10 @@ Exact cell-row ownership per thread: **not** confirmed in this pass (see `gaps.m
 
 On **`shared`**, not `__debug.config` (config has no scheduling keys on live 0.5.2).
 
-| Field                 | Live                | Notes                   |
-| --------------------- | ------------------- | ----------------------- |
-| `shared.schedulingMode`      | object `{ "0": 1 }` | Mode map per worker group |
-| `shared.hybridScheduling`    | object `{ "0": 1 }` | Hybrid flag map         |
+| Field                         | Live                | Notes                                                |
+| ----------------------------- | ------------------- | ---------------------------------------------------- |
+| `shared.schedulingMode`       | object `{ "0": 1 }` | Mode map per worker group                            |
+| `shared.hybridScheduling`     | object `{ "0": 1 }` | Hybrid flag map                                      |
 | `__debug.getSchedulingMode()` | returns **1**       | Sync read; do not call `setSchedulingMode` in probes |
 
 Do not call `__debug.setSchedulingMode` without user ask.

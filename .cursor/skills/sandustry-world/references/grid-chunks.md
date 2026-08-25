@@ -13,18 +13,18 @@ From `__debug.config` (read-only):
 
 ## `shared.sim` (live)
 
-| Field                                        | Live (this session)         | Role                                  |
-| -------------------------------------------- | --------------------------- | ------------------------------------- |
-| `width`, `height`                            | 3840 3840                   | Grid size in cells                    |
-| `chunkSize`                                  | 40                          | Cells per chunk edge (matches config) |
-| `chunkWidth`, `chunkHeight`                  | 96 96                       | Chunk count (= grid / chunkSize)      |
-| `cellIds`                                    | `Uint32Array`, len 14745600 | Packed id per cell                    |
-| `chunkShouldUpdate`, `chunkShouldUpdateNext` | `Uint8Array`, len 9216      | Per-chunk sim dirty flags             |
-| `elementCapacity`                            | 1000000                     | Max element slots                     |
-| `liveElementCount`                           | `Uint32Array[1]`            | Active elements (~1.210 in probe)     |
+| Field                                        | Live (this session)         | Role                                        |
+| -------------------------------------------- | --------------------------- | ------------------------------------------- |
+| `width`, `height`                            | 3840 3840                   | Grid size in cells                          |
+| `chunkSize`                                  | 40                          | Cells per chunk edge (matches config)       |
+| `chunkWidth`, `chunkHeight`                  | 96 96                       | Chunk count (= grid / chunkSize)            |
+| `cellIds`                                    | `Uint32Array`, len 14745600 | Packed id per cell                          |
+| `chunkShouldUpdate`, `chunkShouldUpdateNext` | `Uint8Array`, len 9216      | Per-chunk sim dirty flags                   |
+| `elementCapacity`                            | 1000000                     | Max element slots                           |
+| `liveElementCount`                           | `Uint32Array[1]`            | Active elements (~1.210 in probe)           |
 | `idStats`                                    | `Uint32Array`, len 220      | Slab + worker sim counters — `sim-stats.md` |
-| `overflowPool`                               | `Uint32Array`, len 100001   | Element id overflow stack — `sim-stats.md` |
-| `terrainType`                                | `Uint8Array`, len 1001      | Lookup table for terrain ids 1-1000   |
+| `overflowPool`                               | `Uint32Array`, len 100001   | Element id overflow stack — `sim-stats.md`  |
+| `terrainType`                                | `Uint8Array`, len 1001      | Lookup table for terrain ids 1-1000         |
 
 Chunk index: `chunkY * chunkWidth + chunkX` where `chunkX = floor(cellX / chunkSize)`.
 
