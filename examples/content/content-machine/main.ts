@@ -1,4 +1,4 @@
-import { modinfo } from "./mod";
+import { modinfo } from "./modinfo";
 
 const api = sandkit.api;
 

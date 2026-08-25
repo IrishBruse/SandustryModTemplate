@@ -149,7 +149,7 @@ Reasons:
 
 **Skeleton:**
 
-1. `mod.ts` — modinfo and config schema (`enabled` toggle)
+1. `modinfo.ts` — modinfo and config schema (`enabled` toggle)
 2. `main.ts` — register elements, reactions, structure, processor, i18n, discoveries, tech node; unlock on `game:ready`
 3. `mod/converter.png` — structure sprite through `sprites.loadFromMod`
 4. Optional `worker.ts` only when simulation must run off the main thread ([worker API](api/worker/README.md))

@@ -3,7 +3,7 @@ import { registerDevToolsShortcut, scheduleMainMenuBoot } from "./boot/boot-menu
 import { settingOn } from "./boot/settings";
 import { installDebugCompanion } from "./f3/install";
 import { installModInspector } from "./mod-inspector/install";
-import { modinfo } from "./mod";
+import { modinfo } from "./modinfo";
 import { isEnabled } from "modkit/utils";
 
 const api = sandkit.api;

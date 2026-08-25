@@ -103,7 +103,7 @@ console.log(kv("mod debug", modDebug ? styleText("green", "on") : styleText("dim
 console.log(kv("sourcemap", sourcemap ?? styleText("dim", "off")));
 
 /**
- * Write modinfo.json from that mod's `mod.ts`.
+ * Write modinfo.json from that mod's `modinfo.ts`.
  * @param {import("../lib/mods.js").LoadedMod} mod
  * @param {import("../lib/mods.js").LoadedMod["manifest"]} manifest
  */
@@ -135,7 +135,7 @@ async function syncModFiles(mod) {
     modDebug,
     modTs: mod.modTs,
     cachePrefix: mod.folder,
-    label: `${mod.repoPath}/mod.ts`,
+    label: `${mod.repoPath}/modinfo.ts`,
     loaded,
   });
 }
@@ -520,7 +520,7 @@ function collectWatchDirs(root) {
 
 /**
  * Watch roots outside the module graph. Imported `modkit/` files are already
- * watched. `mod.ts` is in `watchFiles`. Static copies live under `mod/`.
+ * watched. `modinfo.ts` is in `watchFiles`. Static copies live under `mod/`.
  * @param {import("./mods.js").LoadedMod} mod
  * @returns {string[]}
  */
@@ -531,7 +531,7 @@ function extraWatchDirs(mod) {
 /**
  * Main entry only (workers skip this):
  * Wrap the entry body in try/catch so load failures log with `console.error`
- * (modId prefix via inject). Attach watch roots for `mod.ts` and static `mod/`.
+ * (modId prefix via inject). Attach watch roots for `modinfo.ts` and static `mod/`.
  *
  * Uses a block wrap (not top-level `return`) because entries with `import` are
  * ESM and reject top-level return.

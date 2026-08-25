@@ -1,6 +1,6 @@
 /**
  * Sandustry mod output paths and repo `dist/` link (symlink / Windows junction).
- * Game folder name comes from `modinfo.id` in `src/<name>/mod.ts`.
+ * Game folder name comes from `modinfo.id` in `src/<name>/modinfo.ts`.
  * The game resolves symlinks with realpath and rejects mod folders outside the mods root.
  *
  * Mods dir: Linux ~/.config/sandustry/mods ; Windows %APPDATA%/sandustry/mods

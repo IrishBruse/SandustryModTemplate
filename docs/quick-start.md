@@ -43,7 +43,7 @@ In game, look for the toast **Template loaded**. **Alt+E** opens the overlay sam
 ## Your own mod
 
 1. Open `src/template/`.
-2. Set `id`, `name`, and `author` in `mod.ts`.
+2. Set `id`, `name`, and `author` in `modinfo.ts`.
 3. Edit `main.ts`. Put extra source in feature folders, not next to `main.ts`.
 4. Copy `src/template/` to `src/<your-mod>/` when you want a second mod.
 

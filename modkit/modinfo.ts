@@ -1,5 +1,5 @@
 /**
- * Mod manifest shapes — canonical example: `src/<name>/mod.ts`.
+ * Mod manifest shapes — canonical example: `src/<name>/modinfo.ts`.
  * Use `defineModInfo` for type-safe manifest definitions.
  * Export the result as `modinfo` and use `modinfo.id` for the mod id and OS mods folder name.
  *
@@ -107,7 +107,7 @@ export interface MapConfig {
 }
 
 /**
- * Required mod manifest (source: `src/<name>/mod.ts`, output: `modinfo.json`).
+ * Required mod manifest (source: `src/<name>/modinfo.ts`, output: `modinfo.json`).
  *
  * - `entry` — main-thread script (default `main.js`)
  * - `workerEntry` — worker-thread script (default `worker.js`)
@@ -146,11 +146,11 @@ export interface WorkshopManifest {
  * do the job. Keep replacements small, set `expectedMatches`, and put runtime
  * helpers on `globalThis` (patch code runs outside the bundle IIFE).
  *
- * Define patches with `definePatches` in `src/<name>/mod.ts` (or re-export from `patches.ts`).
+ * Define patches with `definePatches` in `src/<name>/modinfo.ts` (or re-export from `patches.ts`).
  *
  * @example
  * ```ts
- * // src/<name>/mod.ts
+ * // src/<name>/modinfo.ts
  * export const patches = definePatches([
  *   {
  *     id: "bundle-log-prefix",
@@ -217,12 +217,12 @@ export type WrapPatch = PatchMatch & {
 
 export type Patch = InsertBeforePatch | ReplacePatch | WrapPatch;
 
-/** Type-safe mod manifest builder — use in `src/<name>/mod.ts`. */
+/** Type-safe mod manifest builder — use in `src/<name>/modinfo.ts`. */
 export function defineModInfo<const T extends ModManifest>(manifest: T): T {
   return manifest;
 }
 
-/** Type-safe patch list builder — use in `src/<name>/mod.ts`. Writes to `patches.json` at build. */
+/** Type-safe patch list builder — use in `src/<name>/modinfo.ts`. Writes to `patches.json` at build. */
 export function definePatches<const T extends readonly Patch[]>(patches: T): T {
   return patches;
 }

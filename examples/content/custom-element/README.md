@@ -12,6 +12,6 @@ Spark Dust uses `MatterType.Powder`. It falls and piles like sand.
 
 ## Copy this mod
 
-Copy `examples/content/custom-element/` to `src/<your-mod>/`. Change `id`, element id, colours, and binding in `mod.ts` and `main.ts`.
+Copy `examples/content/custom-element/` to `src/<your-mod>/`. Change `id`, element id, colours, and binding in `modinfo.ts` and `main.ts`.
 
 For a full factory loop (structure + processor), see [`content-machine`](../content-machine/).

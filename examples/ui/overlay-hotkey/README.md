@@ -12,4 +12,4 @@ The build injects only the Tailwind utilities this overlay uses.
 
 ## Copy this mod
 
-Copy `examples/ui/overlay-hotkey/` to `src/<your-mod>/`. Replace the overlay UI in `ui/Overlay.tsx`. Set `id`, `name`, `author`, and `description` in `mod.ts`.
+Copy `examples/ui/overlay-hotkey/` to `src/<your-mod>/`. Replace the overlay UI in `ui/Overlay.tsx`. Set `id`, `name`, `author`, and `description` in `modinfo.ts`.

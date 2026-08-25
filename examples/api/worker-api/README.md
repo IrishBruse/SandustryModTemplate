@@ -9,8 +9,8 @@ Probes worker-thread `sandkit.api` against ambient `WorkerSandkitApi`.
 3. Check the toast: **Worker API loaded — check worker console for probe**.
 4. Open the worker / DevTools console for `[example.worker-api]` probe lines.
 
-`mod.ts` sets `workerEntry: "worker.js"`. The build bundles `worker.ts` when that file exists. The probe runs once on worker index 0.
+`modinfo.ts` sets `workerEntry: "worker.js"`. The build bundles `worker.ts` when that file exists. The probe runs once on worker index 0.
 
 ## Copy this mod
 
-Copy `examples/api/worker-api/` to `src/<your-mod>/`. Extend the probe list in `worker.ts` when you check new API paths. Set `id`, `name`, `author`, and `description` in `mod.ts`.
+Copy `examples/api/worker-api/` to `src/<your-mod>/`. Extend the probe list in `worker.ts` when you check new API paths. Set `id`, `name`, `author`, and `description` in `modinfo.ts`.

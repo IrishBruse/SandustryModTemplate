@@ -21,7 +21,7 @@ Import `onDispose` from [`@modkit/debug`](../../modkit/internal/debug/) for extr
 
 ## Companion settings
 
-Settings live on the debug mod only (`src/hot-reload/mod.ts` `configSchema`). Open **Options → Mods → hot-reload**.
+Settings live on the debug mod only (`src/hot-reload/modinfo.ts` `configSchema`). Open **Options → Mods → hot-reload**.
 
 | Setting                   | Key               | Default     | Effect                                                                                                                                        |
 | ------------------------- | ----------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -107,7 +107,7 @@ After boot, `globalThis.debugF3.registerSection` is the same API for DevTools ex
 
 ## File logging (`console`)
 
-All builds inject [`modkit/internal/esbuild/console.ts`](../../modkit/internal/esbuild/console.ts) via esbuild [`inject`](https://esbuild.github.io/api/#inject). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code get a `[modId]` prefix in DevTools. `__MOD_ID__` comes from that mod's `mod.ts` at build time. Debug builds add `console.ts` to the source map `ignoreList` so DevTools and VS Code skip the shim when linking console output and breakpoints to your mod files.
+All builds inject [`modkit/internal/esbuild/console.ts`](../../modkit/internal/esbuild/console.ts) via esbuild [`inject`](https://esbuild.github.io/api/#inject). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code get a `[modId]` prefix in DevTools. `__MOD_ID__` comes from that mod's `modinfo.ts` at build time. Debug builds add `console.ts` to the source map `ignoreList` so DevTools and VS Code skip the shim when linking console output and breakpoints to your mod files.
 
 Debug builds also `POST` those lines to `http://127.0.0.1:19147/log` while `npm run dev` is up ([`scripts/dev/log-server.js`](../../scripts/dev/log-server.js)). Lines append to `logs/<modinfo.id>.log` (workspace `logs/` → OS sandustry logs: `~/.config/sandustry/logs` or `%APPDATA%/sandustry/logs`). Use `createLogger` from `@modkit/log` when you want a custom bracket tag.
 
@@ -125,7 +125,7 @@ The shim uses `globalThis.console` internally so it does not recurse.
 
 | Path                                                 | Role                                                                            |
 | ---------------------------------------------------- | ------------------------------------------------------------------------------- |
-| [`src/hot-reload/`](../../src/hot-reload/)           | Companion: `mod.ts` and `main.ts` at the root                                   |
+| [`src/hot-reload/`](../../src/hot-reload/)           | Companion: `modinfo.ts` and `main.ts` at the root                               |
 | [`src/hot-reload/boot/`](../../src/hot-reload/boot/) | Auto-load, DevTools boot, autosave, settings helpers                            |
 | [`src/hot-reload/f3/`](../../src/hot-reload/f3/)     | F3 overlay, engine debug sync, built-in sections                                |
 | `modkit/internal/debug/index.ts`                     | `onDispose` (no-op until a reload wrap sets the active mod id)                  |

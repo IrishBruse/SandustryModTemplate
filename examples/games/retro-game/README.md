@@ -16,4 +16,4 @@ Display size is 160×100.
 
 ## Copy this mod
 
-Copy `examples/games/retro-game/` to `src/<your-mod>/`. Change the `registerRetroGame` call in `main.ts`. Set `id`, `name`, `author`, and `description` in `mod.ts`.
+Copy `examples/games/retro-game/` to `src/<your-mod>/`. Change the `registerRetroGame` call in `main.ts`. Set `id`, `name`, `author`, and `description` in `modinfo.ts`.

@@ -1,5 +1,5 @@
 /**
- * Write patches.json from a mod's `mod.ts` (`patches` + optional `debugPatches`).
+ * Write patches.json from a mod's `modinfo.ts` (`patches` + optional `debugPatches`).
  */
 import { mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -104,7 +104,7 @@ function validatePatches(patches) {
  * }} options
  */
 export async function buildPatches(outDir, options) {
-  const { modDebug = false, modTs, cachePrefix, label = "mod.ts", loaded } = options;
+  const { modDebug = false, modTs, cachePrefix, label = "modinfo.ts", loaded } = options;
   mkdirSync(outDir, { recursive: true });
 
   const mod = loaded ?? (await bundleAndImport(modTs, `${cachePrefix}-patches.mjs`));

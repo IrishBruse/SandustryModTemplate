@@ -7,11 +7,11 @@ export const AUTO_LOAD_FROM_STORAGE = "__storage__";
 /**
  * Storage key other mods write with
  * `api.storage.set(DEBUG_MOD_ID, START_SAVE_STORAGE_KEY, saveId)`.
- * `DEBUG_MOD_ID` must match `modinfo.id` in `../mod.ts`.
+ * `DEBUG_MOD_ID` must match `modinfo.id` in `../modinfo.ts`.
  */
 export const START_SAVE_STORAGE_KEY = "startSave";
 
-/** Must match `modinfo.id` in `../mod.ts`. */
+/** Must match `modinfo.id` in `../modinfo.ts`. */
 export const DEBUG_MOD_ID = "irishbruse.debug";
 
 type ElectronBridge = {

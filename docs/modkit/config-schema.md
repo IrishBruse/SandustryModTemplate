@@ -1,6 +1,6 @@
 # Mod `configSchema`
 
-`configSchema` in `mod.ts` defines settings the player edits under **Options → Mods**.
+`configSchema` in `modinfo.ts` defines settings the player edits under **Options → Mods**.
 
 Read values with `sandkit.api.settings.get(key)`. Subscribe with `settings.onChange`. Put feature switches here instead of hard-coded flags.
 

@@ -17,7 +17,7 @@ npm run dev
 ```
 
 1. Press **F5** in VS Code, or run `npm run sandustry`.
-2. Edit `src/template/` (`mod.ts`: `id`, `name`, `author`, `description`). Copy that folder to `src/<your-mod>/` for a second mod.
+2. Edit `src/template/` (`modinfo.ts`: `id`, `name`, `author`, `description`). Copy that folder to `src/<your-mod>/` for a second mod.
 
 # Features
 
@@ -39,8 +39,8 @@ Run `npm run dev`. Save a file. Restart the game to load the new bundle.
 **Debug helpers:**
 Debug builds install the **debug** companion (`src/hot-reload`). It adds F12 DevTools, auto-load save, and console globals. `npm run build` omits that mod.
 
-**Typed `mod.ts`:**
-One file per mod for the manifest and patches. Each `src/<mod-name>/` folder with a `mod.ts` is a separate game mod.
+**Typed `modinfo.ts`:**
+One file per mod for the manifest and patches. Each `src/<mod-name>/` folder with a `modinfo.ts` is a separate game mod.
 
 **VS Code launch and debugger:**
 Press **F5** to stop and launch the game (Linux and Windows).

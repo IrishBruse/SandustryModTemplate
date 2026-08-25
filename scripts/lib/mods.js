@@ -1,5 +1,5 @@
 /**
- * Discover `src/<name>/mod.ts` and `examples/<name>/mod.ts` folders and load each manifest.
+ * Discover `src/<name>/modinfo.ts` and `examples/<name>/modinfo.ts` folders and load each manifest.
  * Optional `--mod <folder>` (repeatable, or `--mod=<folder>`) selects one or more.
  */
 import { existsSync, readdirSync, statSync } from "node:fs";
@@ -59,7 +59,7 @@ export function modFolderFromPath(filePath, root = ROOT) {
     while (true) {
       const rel = relative(base, current);
       if (!rel || rel.startsWith("..") || isAbsolute(rel)) break;
-      if (existsSync(join(current, "mod.ts"))) return basename(current);
+      if (existsSync(join(current, "modinfo.ts"))) return basename(current);
       const parent = dirname(current);
       if (parent === current) break;
       current = parent;
@@ -117,7 +117,7 @@ export function modIsolationPlugin(root = ROOT) {
  */
 
 /**
- * Walk a mod root and collect every directory that contains `mod.ts`.
+ * Walk a mod root and collect every directory that contains `modinfo.ts`.
  * @param {string} modRoot `src` or `examples`
  * @returns {DiscoveredMod[]}
  */
@@ -130,7 +130,7 @@ function discoverModsInTree(modRoot) {
 
   /** @param {string} dir */
   function walk(dir) {
-    if (existsSync(join(dir, "mod.ts"))) {
+    if (existsSync(join(dir, "modinfo.ts"))) {
       mods.push({
         folder: basename(dir),
         root: modRoot,
@@ -187,7 +187,7 @@ export function discoverMods(options = {}) {
   return mods.sort((a, b) => a.folder.localeCompare(b.folder));
 }
 
-/** @returns {string[]} Sorted folder names that contain `mod.ts`. */
+/** @returns {string[]} Sorted folder names that contain `modinfo.ts`. */
 export function discoverModFolders() {
   return discoverMods().map((mod) => mod.folder);
 }
@@ -264,10 +264,10 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
   if (discovered.length === 0) {
     const hint =
       modRoots.length === 1 && modRoots[0] === "examples"
-        ? "Add examples/<name>/mod.ts"
+        ? "Add examples/<name>/modinfo.ts"
         : modRoots.length === 1 && modRoots[0] === "src"
-          ? "Add src/<name>/mod.ts"
-          : "Add src/<name>/mod.ts or examples/<name>/mod.ts";
+          ? "Add src/<name>/modinfo.ts"
+          : "Add src/<name>/modinfo.ts or examples/<name>/modinfo.ts";
     throw new Error(`No mods found. ${hint}`);
   }
 
@@ -299,12 +299,12 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
   const mods = [];
   for (const entry of selected) {
     const { folder, dir, repoPath } = entry;
-    const modTs = join(dir, "mod.ts");
+    const modTs = join(dir, "modinfo.ts");
     const main = join(dir, "main.ts");
     const workerTs = join(dir, "worker.ts");
     const tsconfig = join(dir, "tsconfig.json");
     if (!existsSync(main)) {
-      throw new Error(`${repoPath}/mod.ts needs ${repoPath}/main.ts`);
+      throw new Error(`${repoPath}/modinfo.ts needs ${repoPath}/main.ts`);
     }
 
     const loaded = await bundleAndImport(modTs, `modinfo-${folder}.mjs`);
@@ -312,12 +312,12 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
     const id = manifest?.id;
     if (typeof id !== "string" || !id.trim()) {
       throw new Error(
-        `${repoPath}/mod.ts modinfo.id must be a non-empty string (OS mods folder name)`,
+        `${repoPath}/modinfo.ts modinfo.id must be a non-empty string (OS mods folder name)`,
       );
     }
     const name = manifest?.name;
     if (typeof name !== "string" || !name.trim()) {
-      throw new Error(`${repoPath}/mod.ts modinfo.name must be a non-empty string`);
+      throw new Error(`${repoPath}/modinfo.ts modinfo.name must be a non-empty string`);
     }
 
     const worker = existsSync(workerTs) ? workerTs : null;

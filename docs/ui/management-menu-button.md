@@ -10,7 +10,7 @@ Hover plays `blip`; click plays `click` when those sounds exist. `hotkey` is bad
 
 ```ts
 import { registerManagementMenuButton } from "@modkit/ui";
-import { modinfo } from "./mod";
+import { modinfo } from "./modinfo";
 
 registerManagementMenuButton({
   id: `${modinfo.id}:example`,

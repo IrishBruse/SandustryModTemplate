@@ -2,7 +2,7 @@ import { isEnabled } from "@modkit/utils";
 
 /**
  * Defaults when `api.settings.get` has no boolean yet.
- * Keep in sync with `configSchema` in `../mod.ts`.
+ * Keep in sync with `configSchema` in `../modinfo.ts`.
  */
 const SETTING_DEFAULTS: Record<string, boolean> = {
   openDevTools: false,

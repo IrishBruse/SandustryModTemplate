@@ -1,13 +1,13 @@
 # Agent notes
 
 This repo is a **Sandustry** mod template.
-Each folder under `src/` or `examples/` that has a `mod.ts` is one game mod. `modkit/` is the shared kit.
+Each folder under `src/` or `examples/` that has a `modinfo.ts` is one game mod. `modkit/` is the shared kit.
 The game runs `main.js` as a script body (`new Function`); `sandkit` is already in scope.
 Do not emit `import` / `export` in the bundle (esbuild IIFE).
 All mod builds inject `modkit/internal/esbuild/console.ts` via esbuild `inject`. Bare `console.log` / `info` / `warn` / `error` / `debug` calls get a `[modId]` prefix automatically — do not add manual `[${modId}]` or `[${__MOD_ID__}]` prefixes in source.
-A mod root may contain only `mod.ts`, `main.ts`, optional `worker.ts`, optional `patches.ts`, and config/docs.
+A mod root may contain only `modinfo.ts`, `main.ts`, optional `worker.ts`, optional `patches.ts`, and config/docs.
 Put other source files in feature folders.
-Put game-file patches in `patches.ts` and re-export them from `mod.ts`. Do not keep patch lists in `mod.ts`.
+Put game-file patches in `patches.ts` and re-export them from `modinfo.ts`. Do not keep patch lists in `modinfo.ts`.
 
 Prefer Sandkit API. Use patches only when the public API cannot do the job.
 Keep behaviour next to its caller.

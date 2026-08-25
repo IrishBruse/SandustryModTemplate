@@ -13,4 +13,4 @@ Use `registerManagementMenuButton` from `@modkit/ui` — not a one-off DOM space
 
 ## Copy this mod
 
-Copy `examples/ui/management-button/` to `src/<your-mod>/`. Change the label, hotkey, and `onClick` in `main.ts`. Set `id`, `name`, `author`, and `description` in `mod.ts`.
+Copy `examples/ui/management-button/` to `src/<your-mod>/`. Change the label, hotkey, and `onClick` in `main.ts`. Set `id`, `name`, `author`, and `description` in `modinfo.ts`.

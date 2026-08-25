@@ -24,4 +24,4 @@ Full reference: [`docs/modkit/config-schema.md`](../../docs/modkit/config-schema
 
 ## Copy this mod
 
-Copy `examples/api/settings/` to `src/<your-mod>/`. Keep the fields you need in `mod.ts`. Set `id`, `name`, `author`, and `description`.
+Copy `examples/api/settings/` to `src/<your-mod>/`. Keep the fields you need in `modinfo.ts`. Set `id`, `name`, `author`, and `description`.

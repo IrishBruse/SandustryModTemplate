@@ -12,6 +12,6 @@ Check the console for `[author.template]`.
 
 ## Edit this mod
 
-Set `id`, `name`, `author`, and `description` in `mod.ts`. Edit `main.ts`.
+Set `id`, `name`, `author`, and `description` in `modinfo.ts`. Edit `main.ts`.
 
 Copy `src/template/` to `src/<your-mod>/` when you want a second mod.
