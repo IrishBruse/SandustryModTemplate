@@ -46,7 +46,7 @@ export const modinfo = defineModInfo({
     },
     watchLocalMods: {
       type: "boolean",
-      default: true,
+      default: false,
       labelKey: "Watch local mods",
       descriptionKey: "Re-eval other mods' main.js when the file changes. Not workers or patches.",
     },
