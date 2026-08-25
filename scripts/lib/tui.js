@@ -53,6 +53,7 @@ export function tuiSelect(opts) {
     function cleanup() {
       process.stdin.setRawMode(wasRaw ?? false);
       process.stdin.removeListener("keypress", onKey);
+      process.stdin.pause();
       process.stdout.write(SHOW);
     }
 
@@ -163,6 +164,7 @@ export function tuiModCombobox(opts) {
     function cleanup() {
       process.stdin.setRawMode(wasRaw ?? false);
       process.stdin.removeListener("keypress", onKey);
+      process.stdin.pause();
       process.stdout.write(SHOW);
     }
 

@@ -483,3 +483,4 @@ if (!existsSync(join(selected.outDir, "main.js"))) {
 
 await publishMod(steamCmd, account, selected);
 console.log("Workshop upload finished.");
+process.exit(0);

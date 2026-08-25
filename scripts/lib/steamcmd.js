@@ -443,7 +443,7 @@ export function runSteamCmd(bin, args, options = {}) {
       } catch {
         /* already gone */
       }
-      setTimeout(() => {
+      const killTimer = setTimeout(() => {
         if (settled || child.exitCode != null) return;
         try {
           child.kill("SIGKILL");
@@ -451,6 +451,7 @@ export function runSteamCmd(bin, args, options = {}) {
           /* already gone */
         }
       }, 2000);
+      killTimer.unref();
     };
 
     const requestQuit = () => {
