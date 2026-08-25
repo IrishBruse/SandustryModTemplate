@@ -33,11 +33,10 @@ You do not copy files into the game folder by hand. `npm run dev` and `npm run b
 
 ## Sample mods
 
-Copy a folder from [`examples/`](../examples/) into `src/<your-mod>/`. [`hello-world`](../examples/hello-world/) is the smallest.
+Start from [`src/template/`](../src/template/). Copy a folder from [`examples/`](../examples/) into `src/<your-mod>/` when you want that sample.
 
 | Group   | Folder                                                    | What it shows                                              |
 | ------- | --------------------------------------------------------- | ---------------------------------------------------------- |
-| —       | [`hello-world`](../examples/hello-world/)                 | Toast on load — good copy target                           |
 | UI      | [`overlay-hotkey`](../examples/ui/overlay-hotkey/)        | React overlay + Tailwind (**Alt+E**)                       |
 | UI      | [`management-button`](../examples/ui/management-button/)  | Management-column row                                      |
 | UI      | [`input-binding`](../examples/ui/input-binding/)          | `registerBinding` + `getDisplayKey`                        |
@@ -49,10 +48,11 @@ Copy a folder from [`examples/`](../examples/) into `src/<your-mod>/`. [`hello-w
 | API     | [`settings`](../examples/api/settings/)                   | All `configSchema` types (`boolean` / `number` / `choice`) |
 | Games   | [`retro-game`](../examples/games/retro-game/)             | Retro Console demo                                         |
 
-The debug companion in `src/` (not a copy target for new mods):
+Mods in `src/`:
 
 | Folder                             | What it shows                                                                 |
 | ---------------------------------- | ----------------------------------------------------------------------------- |
+| [`template`](../src/template/)     | Starter mod. Toast on load. Change `id` / `name` / `author` in `mod.ts`       |
 | [`hot-reload`](../src/hot-reload/) | Dev companion. Debug installs it; `npm run build` stages it. Do not copy this |
 
 ## Files in a mod folder
@@ -76,7 +76,7 @@ Add these when you need them:
 | `ui/`                        | React overlays                                                                                      |
 | Feature folders              | Other source files (`health/`, `capture/`, …). Keep tests next to the file they test                |
 | `mod/`                       | Static files copied into the output folder                                                          |
-| `package.json`               | Optional. npm packages for this mod only. Run `npm install` in that folder yourself |
+| `package.json`               | Optional. npm packages for this mod only. Run `npm install` in that folder yourself                 |
 | `README.md` / `CHANGELOG.md` | Repo docs only. Publish reads `CHANGELOG.md` for Steam change notes; builds do not copy these files |
 | `workshop/`                  | Workshop assets (`workshop.json`, previews, `workshop.md`, `screenshots/`)                          |
 

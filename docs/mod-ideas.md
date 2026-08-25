@@ -6,13 +6,13 @@ Sandustry is a **falling-sand factory game**. You excavate terrain, move powders
 
 ## Reference mods in this repo
 
-| Mod                                                       | What it shows                                           |
-| --------------------------------------------------------- | ------------------------------------------------------- |
-| [`content-machine`](../examples/content/content-machine/) | Full loop: two elements, one structure, `addProcessor`  |
-| [`custom-element`](../examples/content/custom-element/)   | One powder element and a paint binding                  |
-| [`overlay-hotkey`](../examples/ui/overlay-hotkey/)        | React overlay and hotkey                            |
-| [`settings`](../examples/api/settings/)                   | `configSchema` settings                             |
-| [`retro-game`](../examples/games/retro-game/)             | Retro Console mini-game                                 |
+| Mod                                                       | What it shows                                          |
+| --------------------------------------------------------- | ------------------------------------------------------ |
+| [`content-machine`](../examples/content/content-machine/) | Full loop: two elements, one structure, `addProcessor` |
+| [`custom-element`](../examples/content/custom-element/)   | One powder element and a paint binding                 |
+| [`overlay-hotkey`](../examples/ui/overlay-hotkey/)        | React overlay and hotkey                               |
+| [`settings`](../examples/api/settings/)                   | `configSchema` settings                                |
+| [`retro-game`](../examples/games/retro-game/)             | Retro Console mini-game                                |
 
 Vanilla already has sand, water, lava, fire, steam, gold, petalium, seeds, growers, pipes, pumps, filters, drones, guns, energy, signals, and a large tech tree. See [`ElementType`](api/sandkit/enums/enumerations/ElementType.md), [`StructureType`](api/sandkit/enums/enumerations/StructureType.md), and [`Tech`](api/sandkit/enums/enumerations/Tech.md).
 

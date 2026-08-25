@@ -13,7 +13,7 @@ Call `isEnabled` yourself when a mod must respect **Mod enabled**. The build wra
 | Release | `npm run build`                               | Staged (`build/hot-reload/`)  | Bundled (`onDispose` registry) | Omitted        |
 | Dev     | `npm run dev`, `--watch`, `--game`, `--debug` | Installed (`mods/hot-reload`) | Bundled                        | Included       |
 
-`--mod hello-world` on a debug build still installs **hot-reload**. `--mod hot-reload` builds only that folder. `npm run publish` never lists the companion.
+`--mod template` on a debug build still installs **hot-reload**. `--mod hot-reload` builds only that folder. `npm run publish` never lists the companion.
 
 `__MOD_DEBUG__` is `true` in dev builds and `false` in release.
 
@@ -115,8 +115,8 @@ Use `clearLog(modId)` from `@modkit/log` to clear a log file by hand. `clearLog`
 
 ```ts
 console.log("my-feature", payload);
-// DevTools: [example.hello-world] my-feature {…}
-// logs/example.hello-world.log (debug only): [example.hello-world] my-feature {…}
+// DevTools: [author.template] my-feature {…}
+// logs/author.template.log (debug only): [author.template] my-feature {…}
 ```
 
 The shim uses `globalThis.console` internally so it does not recurse.
@@ -135,7 +135,7 @@ The shim uses `globalThis.console` internally so it does not recurse.
 ## Wiring
 
 ```ts
-// examples/hello-world/main.ts
+// src/template/main.ts
 const api = sandkit.api;
-api.ui.toast("Hello World loaded", {});
+api.ui.toast("Template loaded", {});
 ```

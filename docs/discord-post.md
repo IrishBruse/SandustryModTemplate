@@ -17,7 +17,7 @@ npm run dev
 ```
 
 1. Press **F5** in VS Code, or run `npm run sandustry`.
-2. Copy `examples/hello-world/` to `src/<your-mod>/` and set `id`, `name`, `author`, and `description` in `mod.ts`.
+2. Edit `src/template/` (`mod.ts`: `id`, `name`, `author`, `description`). Copy that folder to `src/<your-mod>/` for a second mod.
 
 # Features
 

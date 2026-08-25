@@ -38,22 +38,23 @@ Then launch the game:
 
 Restart the game after you save a file.
 
-In game, **Alt+E** opens the overlay sample (`examples/overlay-hotkey`).
+In game, look for the toast **Template loaded**. **Alt+E** opens the overlay sample (`examples/overlay-hotkey`).
 
 ## Your own mod
 
-1. Copy `examples/hello-world/` to `src/<your-mod>/`.
-2. Edit that folder’s `mod.ts` (`id`, `name`, `author`).
+1. Open `src/template/`.
+2. Set `id`, `name`, and `author` in `mod.ts`.
 3. Edit `main.ts`. Put extra source in feature folders, not next to `main.ts`.
+4. Copy `src/template/` to `src/<your-mod>/` when you want a second mod.
 
 Do not import files from another mod folder. Shared code goes in `modkit/`.
 
 ## Commands
 
-| Command             | Effect                                    |
-| ------------------- | ----------------------------------------- |
+| Command             | Effect                                       |
+| ------------------- | -------------------------------------------- |
 | `npm run setup`     | Check the machine and link `dist/` / `logs/` |
-| `npm run dev`       | Watch `src/` mods                         |
-| `npm run sandustry` | Start the game (no build)                 |
+| `npm run dev`       | Watch `src/` mods                            |
+| `npm run sandustry` | Start the game (no build)                    |
 
 More: [Folder layout](layout.md), [Builds](builds.md), [Troubleshooting](troubleshooting.md).

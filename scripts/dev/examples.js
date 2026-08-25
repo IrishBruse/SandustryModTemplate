@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Watch every examples/<name>/ mod (no TTY picker).
- * Usage: npm run examples [-- --mod hello-world]
+ * Usage: npm run examples [-- --mod overlay-hotkey]
  */
 import { spawn } from "node:child_process";
 import { dirname, join } from "node:path";

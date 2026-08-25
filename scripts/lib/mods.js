@@ -212,7 +212,7 @@ export function parseModFilters(argv) {
     if (arg === "--mod") {
       const value = argv[i + 1];
       if (!value || value.startsWith("-")) {
-        throw new Error("--mod requires a folder name (for example --mod hello-world)");
+        throw new Error("--mod requires a folder name (for example --mod template)");
       }
       filters.push(value);
       i += 1;
@@ -220,7 +220,7 @@ export function parseModFilters(argv) {
     }
     if (arg.startsWith("--mod=")) {
       const value = arg.slice("--mod=".length).trim();
-      if (!value) throw new Error("--mod requires a folder name (for example --mod=hello-world)");
+      if (!value) throw new Error("--mod requires a folder name (for example --mod=template)");
       filters.push(value);
     }
   }

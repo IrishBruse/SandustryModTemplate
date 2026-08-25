@@ -14,7 +14,7 @@ npm run setup
 npm run dev
 ```
 
-Then **F5** in VS Code (or `npm run sandustry`). In game, **Alt+E** opens the overlay sample.
+Then **F5** in VS Code (or `npm run sandustry`). In game, look for **Template loaded**. **Alt+E** opens the overlay sample.
 
 **Windows:** if setup cannot find the game, set `SANDUSTRY` to `Sandustry.exe`. PowerShell:
 
@@ -26,10 +26,10 @@ More: [Quick start](https://ethanconneely.com/SandustryModTemplate/#/quick-start
 
 ## Commands
 
-| Command             | Effect                                              |
-| ------------------- | --------------------------------------------------- |
-| `npm run setup`     | Check install, extract game source, link folders    |
-| `npm run dev`       | Watch `src/` mods                                   |
-| `npm run build`     | Release build to `build/<modinfo.id>/`              |
-| `npm run publish`   | Release build, then Steam Workshop upload           |
-| `npm run sandustry` | Start the game (no build)                           |
+| Command             | Effect                                           |
+| ------------------- | ------------------------------------------------ |
+| `npm run setup`     | Check install, extract game source, link folders |
+| `npm run dev`       | Watch `src/` mods                                |
+| `npm run build`     | Release build to `build/<modinfo.id>/`           |
+| `npm run publish`   | Release build, then Steam Workshop upload        |
+| `npm run sandustry` | Start the game (no build)                        |

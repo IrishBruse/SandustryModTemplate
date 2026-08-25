@@ -1,8 +1,6 @@
 # Example mods
 
-Copy a folder here to `src/<your-mod>/` when you start a real mod. Each leaf folder is a separate game mod.
-
-[`hello-world`](hello-world/) is the smallest copy target. Other samples are grouped by topic.
+Copy a folder here to `src/<your-mod>/` when you want that sample. Start a new mod from [`src/template/`](../src/template/). Each leaf folder is a separate game mod.
 
 ## UI
 

@@ -15,7 +15,7 @@ TypeScript template for [Sandustry](https://store.steampowered.com/app/2764460/S
 
 1. Clone, then `npm install` and `npm run setup`.
 2. Run `npm run dev`, then **F5** (or `npm run sandustry`).
-3. Press **Alt+E** in game.
+3. Look for **Template loaded**, or press **Alt+E**.
 
 **Windows:** if setup cannot find the game, set `SANDUSTRY` (see [Troubleshooting](troubleshooting.md)).
 

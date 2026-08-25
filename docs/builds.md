@@ -57,7 +57,7 @@ npm run setup            # check install, extract sandustry/, link dist/ and log
 npm run dev              # watch all src/ mods
 npm run dev:pick         # TTY picker; last choice pre-selected
 npm run dev -- --mod overlay-hotkey
-npm run dev -- --mod overlay-hotkey --mod hello-world
+npm run dev -- --mod overlay-hotkey --mod template
 npm run build            # release all src/ mods to build/<modinfo.id>/
 npm run build -- --mod overlay-hotkey
 npm run build -- --examples
