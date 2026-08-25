@@ -80,8 +80,11 @@ function resolveSourcemap() {
 
 const sourcemap = resolveSourcemap();
 
+// Release staging still builds discovered `hot-reload` under `build/`.
+// OS installs only get it when the debug kit is on (`npm run dev`).
 const mods = await loadMods(args, {
   includeDebugKit,
+  stageDebugCompanion: releaseBuild,
 });
 if (releaseBuild) {
   for (const mod of mods) {
@@ -706,7 +709,7 @@ async function watchOne(mod) {
 }
 
 if (watch) {
-  startLogServer();
+  if (modDebug) startLogServer();
   for (const mod of mods) {
     await watchOne(mod);
   }

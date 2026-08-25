@@ -6,6 +6,7 @@
     "setup": "node scripts/setup/setup.js",
     "build": "node scripts/build/esbuild.config.mjs",
     "dev": "node scripts/dev/dev.js",
+    "dev:release": "node scripts/dev/dev.js --no-debug",
     "dev:pick": "node scripts/dev/dev.js --pick",
     "examples": "node scripts/dev/examples.js",
     "typecheck": "node scripts/typecheck/typecheck.js",

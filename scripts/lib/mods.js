@@ -253,11 +253,12 @@ export function parseModFilter(argv) {
 
 /**
  * @param {string[]} [argv]
- * @param {{ includeDebugKit?: boolean }} [options]
+ * @param {{ includeDebugKit?: boolean; stageDebugCompanion?: boolean }} [options]
  * @returns {Promise<LoadedMod[]>}
  */
 export async function loadMods(argv = process.argv.slice(2), options = {}) {
   const includeDebugKit = options.includeDebugKit === true;
+  const stageDebugCompanion = options.stageDebugCompanion === true;
   const modRoots = resolveModRoots(argv);
   const discovered = discoverMods({ roots: modRoots });
   const allDiscovered = modRoots.length === MOD_ROOTS.length ? discovered : discoverMods();
@@ -293,6 +294,10 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
     if (debugMod && !selected.some((mod) => mod.folder === DEBUG_MOD_FOLDER)) {
       selected = [...selected, debugMod];
     }
+  } else if (!stageDebugCompanion && !filters.includes(DEBUG_MOD_FOLDER)) {
+    // OS install without debug kit (e.g. `npm run dev:release`): omit companion
+    // unless `--mod hot-reload`. Release staging keeps it when discovered under src/.
+    selected = selected.filter((mod) => mod.folder !== DEBUG_MOD_FOLDER);
   }
 
   /** @type {LoadedMod[]} */

@@ -8,10 +8,11 @@ Call `isEnabled` yourself when a mod must respect **Mod enabled**. The build wra
 
 ## When it is installed
 
-| Build   | Command                                       | `src/hot-reload` mod          | `@modkit/debug`                | `debugPatches` |
-| ------- | --------------------------------------------- | ----------------------------- | ------------------------------ | -------------- |
-| Release | `npm run build`                               | Staged (`build/hot-reload/`)  | Bundled (`onDispose` registry) | Omitted        |
-| Dev     | `npm run dev`, `--watch`, `--game`, `--debug` | Installed (`mods/hot-reload`) | Bundled                        | Included       |
+| Build         | Command                                       | `src/hot-reload` mod          | `@modkit/debug`                | `debugPatches` |
+| ------------- | --------------------------------------------- | ----------------------------- | ------------------------------ | -------------- |
+| Release       | `npm run build`                               | Staged (`build/hot-reload/`)  | Bundled (`onDispose` registry) | Omitted        |
+| Dev           | `npm run dev`, `--watch`, `--game`, `--debug` | Installed (`mods/hot-reload`) | Bundled                        | Included       |
+| Release watch | `npm run dev:release` / `--no-debug`          | Not installed                 | Release stubs                  | Omitted        |
 
 `--mod template` on a debug build still installs **hot-reload**. `--mod hot-reload` builds only that folder. `npm run publish` never lists the companion.
 

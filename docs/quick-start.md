@@ -51,10 +51,11 @@ Do not import files from another mod folder. Shared code goes in `modkit/`.
 
 ## Commands
 
-| Command             | Effect                                       |
-| ------------------- | -------------------------------------------- |
-| `npm run setup`     | Check the machine and link `dist/` / `logs/` |
-| `npm run dev`       | Watch `src/` mods                            |
-| `npm run sandustry` | Start the game (no build)                    |
+| Command               | Effect                                       |
+| --------------------- | -------------------------------------------- |
+| `npm run setup`       | Check the machine and link `dist/` / `logs/` |
+| `npm run dev`         | Watch `src/` mods (debug)                    |
+| `npm run dev:release` | Watch without debug / `hot-reload`           |
+| `npm run sandustry`   | Start the game (no build)                    |
 
 More: [Folder layout](layout.md), [Builds](builds.md), [Troubleshooting](troubleshooting.md).

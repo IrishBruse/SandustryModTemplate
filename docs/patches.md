@@ -81,4 +81,5 @@ Do not edit `dist/<modinfo.id>/patches.json` by hand. Change the `patches` expor
 ```bash
 npm run build          # release — no debugPatches
 npm run dev            # debug — includes debugPatches
+npm run dev:release    # watch release — no debugPatches
 ```

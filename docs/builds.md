@@ -4,13 +4,14 @@ The game runs `main.js` as a script body (`new Function`). `sandkit` is already 
 
 ## Debug vs release
 
-| Command              | Debug helpers                                                    | `debugPatches` | Output                                                           |
-| -------------------- | ---------------------------------------------------------------- | -------------- | ---------------------------------------------------------------- |
-| `npm run build`      | Real `onDispose` registry; stage all `src/` (incl. `hot-reload`) | Omitted        | `build/<modinfo.id>/` only (no OS mods folder, no `dist/` links) |
-| `npm run dev`        | Included; install `src/hot-reload`                               | Included       | OS mods folder while watching; removed when the watch stops      |
-| `--game` / `--debug` | Included; install `src/hot-reload`                               | Included       | Game mods folder                                                 |
+| Command               | Debug helpers                                                    | `debugPatches` | Output                                                           |
+| --------------------- | ---------------------------------------------------------------- | -------------- | ---------------------------------------------------------------- |
+| `npm run build`       | Real `onDispose` registry; stage all `src/` (incl. `hot-reload`) | Omitted        | `build/<modinfo.id>/` only (no OS mods folder, no `dist/` links) |
+| `npm run dev`         | Included; install `src/hot-reload`                               | Included       | OS mods folder while watching; removed when the watch stops      |
+| `npm run dev:release` | Omitted; no `hot-reload`, no sourcemaps                          | Omitted        | OS mods folder while watching (same cleanup as `dev`)            |
+| `--game` / `--debug`  | Included; install `src/hot-reload`                               | Included       | Game mods folder                                                 |
 
-`--no-debug` forces a release-style bundle even when watch or game flags are set. `--mod <folder>` builds one mod folder (repeat `--mod` for several). Debug builds (`npm run dev`, `--game`, `--debug`) install to the OS mods folder (`dist/` links there) unless you pass only `--mod hot-reload`. `npm run build` and `npm run dev` discover every `src/*/modinfo.ts` (including `hot-reload`). Use `npm run examples` or `npm run build -- --examples` for `examples/*/modinfo.ts`. `npm run publish` never lists the companion.
+`--no-debug` forces a release-style bundle even when watch or game flags are set (`npm run dev:release` uses this). `--mod <folder>` builds one mod folder (repeat `--mod` for several). Debug builds (`npm run dev`, `--game`, `--debug`) install to the OS mods folder (`dist/` links there) unless you pass only `--mod hot-reload`. `npm run build` and `npm run dev` discover every `src/*/modinfo.ts` (including `hot-reload`). Use `npm run examples` or `npm run build -- --examples` for `examples/*/modinfo.ts`. `npm run publish` never lists the companion.
 
 Debug builds emit **inline** source maps on `main.js` (needed for `new Function` eval). Use `--sourcemap` to force maps on a release build, or `--no-sourcemap` to omit them from a debug build.
 
@@ -54,7 +55,8 @@ In game:
 
 ```bash
 npm run setup            # check install, extract sandustry/, link dist/ and logs/ (one time)
-npm run dev              # watch all src/ mods
+npm run dev              # watch all src/ mods (debug + sourcemaps)
+npm run dev:release      # watch without debug helpers, sourcemaps, or hot-reload
 npm run dev:pick         # TTY picker; last choice pre-selected
 npm run dev -- --mod overlay-hotkey
 npm run dev -- --mod overlay-hotkey --mod template
