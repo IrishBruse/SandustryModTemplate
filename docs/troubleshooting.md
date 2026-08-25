@@ -1,6 +1,8 @@
 # Troubleshooting
 
-**`npm run setup` fails** — Fix each `FAIL` line, then run `npm run setup` again. Common checks: Node 24, root `npm install`, `modkit/types/`, Sandustry binary / `SANDUSTRY`, Steam **[mods]** beta, and `sandkit` in the game asar.
+**`npm run setup` fails** — Fix each `FAIL` line, then run `npm run setup` again.
+
+**Setup fails with missing `node_modules` in a mod folder** — That mod has its own `package.json`. Run `npm install` inside that folder. Root `npm install` does not do this.
 
 **Mods do not load** — Opt into the Steam beta: Library → Sandustry → Properties → Betas → select `mods`. Run `npm run setup` to confirm the asar has `sandkit`.
 
@@ -51,8 +53,8 @@ Default probe includes `%ProgramFiles(x86)%\Steam` and `%ProgramFiles%\Steam`, p
 
 **`npm run publish` hangs after a successful upload** — SteamCMD used to keep the `Steam>` prompt because it inherited the terminal. Publish now closes stdin and stops SteamCMD if it does not exit. See [Workshop publish](builds.md#workshop-publish).
 
-**`npm run publish` fails to download SteamCMD** — Publish fetches the official Valve installer into `~/.cache/sandustry-steamcmd/` when that install is missing. Check the network, or unpack SteamCMD yourself from the [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD) page into that folder. See [Workshop publish](builds.md#workshop-publish).
+**`npm run publish` fails to download SteamCMD** — Publish fetches the official Valve installer into the dedicated cache when that install is missing (`~/.cache/sandustry-steamcmd/` on Linux / macOS, `%LOCALAPPDATA%\sandustry-steamcmd\` on Windows). Check the network, or unpack SteamCMD yourself from the [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD) page into that folder. See [Workshop publish](builds.md#workshop-publish).
 
-**`npm run publish` fails with "No cached credentials"** — SteamCMD login is separate from the Steam client (credentials live under `~/.cache/sandustry-steamcmd/`). On a TTY, publish prompts for password / Steam Guard once, then uploads. Without a TTY, run `~/.cache/sandustry-steamcmd/steamcmd.sh +login <account>` once (use the item owner), then publish again. Full SteamCMD output is in `.tmp/steamcmd-publish.log`.
+**`npm run publish` fails with "No cached credentials"** — SteamCMD login is separate from the Steam client (credentials live under the dedicated cache `home/` folder). On a TTY, publish prompts for password / Steam Guard once, then uploads. Without a TTY, run that cache’s `steamcmd.sh` (Linux / macOS) or `steamcmd.exe` (Windows) with `+login <account>` once (use the item owner), then publish again. Full SteamCMD output is in `.tmp/steamcmd-publish.log`.
 
 **Types missing** — Pull the latest template. Sandkit API declarations live in `modkit/types/`. See [modkit/types/README.md](../modkit/types/README.md).

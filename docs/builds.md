@@ -82,16 +82,21 @@ Renderer attach loads source maps from scripts named `sandkit-workshop://<modId>
 
 ## Workshop publish
 
-`npm run publish` uses [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD). It uses a **dedicated** install under `~/.cache/sandustry-steamcmd/` (downloads Valve’s official archive on first use). It does **not** use the Steam client’s `steamcmd` or Debian `/usr/games/steamcmd`, which share `~/.local/share/Steam` and clear the login cache when Steam runs.
+`npm run publish` uses [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD). It uses a **dedicated** install (downloads Valve’s official archive on first use):
 
-Log into the Steam client as the Workshop item owner first (so publish can read your account name). SteamCMD keeps a **separate** credential cache under `~/.cache/sandustry-steamcmd/home/` (a private `HOME` for SteamCMD). The first publish prompts for your Steam password (and Steam Guard if needed), then caches it. Later publishes reuse that cache with short status lines. Full SteamCMD output goes to `.tmp/steamcmd-publish.log`.
+- Linux / macOS: `~/.cache/sandustry-steamcmd/`
+- Windows: `%LOCALAPPDATA%\sandustry-steamcmd\`
+
+It does **not** use the Steam client’s `steamcmd` or Debian `/usr/games/steamcmd`, which share `~/.local/share/Steam` and clear the login cache when Steam runs.
+
+Log into the Steam client as the Workshop item owner first (so publish can read your account name). SteamCMD keeps a **separate** credential cache under `home/` in that folder (a private `HOME` / `USERPROFILE` for SteamCMD). The first publish prompts for your Steam password (and Steam Guard if needed), then caches it. Later publishes reuse that cache with short status lines. Full SteamCMD output goes to `.tmp/steamcmd-publish.log`.
 
 In a terminal, `npm run publish` shows an arrow-key list of **`src/` mods** (not `examples/`), then a confirm step (Upload / Cancel).
 
 ```bash
 npm run publish
-npm run publish -- --mod selection-capture
-npm run publish -- --mod selection-capture --yes
+npm run publish -- --mod <folder>
+npm run publish -- --mod <folder> --yes
 ```
 
 The command runs `npm run build` for that folder. The bundle lands in `build/<modinfo.id>/` (Workshop staging). Staging gets the release bundle plus `workshop.json` and preview images only. `README.md`, `CHANGELOG.md`, and `workshop/screenshots/` stay in the repo. SteamCMD uploads from `build/<modinfo.id>/`. `workshop/workshop.md` supplies the Steam description in Markdown; `npm run publish` converts it to Steam BBCode at upload time. `npm run build` and `npm run dev` also copy only `workshop.json` and preview images, and remove leftover `README.md`, `CHANGELOG.md`, and `screenshots/` from the game folder.

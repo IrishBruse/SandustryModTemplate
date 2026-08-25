@@ -1,5 +1,7 @@
 # Instant Pick Block
 
+Workshop: [Instant Pick Block](https://steamcommunity.com/sharedfiles/filedetails/?id=3789565734).
+
 Replaces vanilla **Picker** (default **F**) with Minecraft-style pick block. Vanilla pick logic runs unchanged; a bundle patch fakes a left click when the mod is on.
 
 ## Controls
@@ -22,16 +24,8 @@ Rebind under **Options → Controls → Pick Block**.
 
 ## Workshop
 
-1. Add [`workshop/workshop.md`](workshop/workshop.md) and [`workshop/preview.png`](workshop/preview.png) (or `preview.gif`).
-2. Publish:
 
-```bash
-npm run publish -- --mod pick-block
-```
-
-On the **first** publish, SteamCMD creates the Workshop item (`publishedfileid` `0`) and writes `workshop/workshop.json` with the new item id. Later runs update that item.
-
-SteamCMD uploads from `build/irishbruse.pick-block/` using `workshop.md` for the listing description and [`CHANGELOG.md`](CHANGELOG.md) for change notes at `modinfo.version` (`0.1.0`). See [Workshop publish](../../docs/builds.md#workshop-publish).
+`npm run publish` uploads from `build/` with [`workshop.json`](workshop/workshop.json) and **preview.png** (or **preview.gif**). It uses a dedicated [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD) cache. [`workshop.md`](workshop/workshop.md) supplies the Steam description. `README.md`, `CHANGELOG.md`, and [`screenshots/`](workshop/screenshots/) stay in the repo. Change notes for Steam come from `CHANGELOG.md` at upload time.
 
 ## Changelog
 

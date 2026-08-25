@@ -1,4 +1,6 @@
-# Pixel-perfect Screenshot and GIF recorder
+# Screenshot and GIF recorder
+
+Workshop: [Screenshot and GIF recorder](https://steamcommunity.com/sharedfiles/filedetails/?id=3787806696).
 
 Pixel-perfect PNG and GIF of your **C** selection.
 
@@ -50,7 +52,9 @@ While the panel is open, a **blue** outline shows the PNG/GIF crop. During GIF c
 
 This mod is published on the Steam Workshop: [Pixel-perfect Screenshot and GIF recorder](https://steamcommunity.com/sharedfiles/filedetails/?id=3787806696).
 
-`npm run publish` uploads from `build/` with [`workshop.json`](workshop/workshop.json) and **preview.gif** (or **preview.png**). It uses a dedicated [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD) under `~/.cache/sandustry-steamcmd/`. [`workshop.md`](workshop/workshop.md) supplies the Steam description. `README.md`, `CHANGELOG.md`, and [`screenshots/`](workshop/screenshots/) stay in the repo. Change notes for Steam come from `CHANGELOG.md` at upload time.
+This mod has its own `package.json`. After a clone, run `npm install` in `src/selection-capture/` (root `npm install` does not).
+
+`npm run publish` uploads from `build/` with [`workshop.json`](workshop/workshop.json) and **preview.gif** (or **preview.png**). It uses a dedicated [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD) cache. [`workshop.md`](workshop/workshop.md) supplies the Steam description. `README.md`, `CHANGELOG.md`, and [`screenshots/`](workshop/screenshots/) stay in the repo. Change notes for Steam come from `CHANGELOG.md` at upload time.
 
 ## Changelog
 

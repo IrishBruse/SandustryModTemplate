@@ -9,6 +9,7 @@ import { spawnSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
+import { npmCli } from "../lib/npm-cli.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const DOCS_SCRIPTS = join(ROOT, "scripts/docs");
@@ -19,9 +20,10 @@ const CONFIG = join(DOCS_SCRIPTS, "typedoc.json");
 function ensureDocsDeps() {
   if (existsSync(TYPEDOC)) return;
   console.log("Installing docs generator deps in scripts/docs/ …");
-  const install = spawnSync("npm", ["install", "--no-audit", "--no-fund"], {
+  const install = spawnSync(npmCli(), ["install", "--no-audit", "--no-fund"], {
     cwd: DOCS_SCRIPTS,
     stdio: "inherit",
+    windowsHide: true,
   });
   if (install.status !== 0) process.exit(install.status ?? 1);
 }

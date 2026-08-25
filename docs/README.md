@@ -13,9 +13,11 @@ TypeScript template for [Sandustry](https://store.steampowered.com/app/2764460/S
 
 ## Get started
 
-1. Clone the repo, then `npm install` and `npm run setup`.
+1. Clone, then `npm install` and `npm run setup`.
 2. Run `npm run dev`, then **F5** (or `npm run sandustry`).
-3. Press **Alt+E** in game for the overlay sample.
+3. Press **Alt+E** in game.
+
+**Windows:** if setup cannot find the game, set `SANDUSTRY` (see [Troubleshooting](troubleshooting.md)).
 
 Full steps: **[Quick start](quick-start.md)**.
 
@@ -27,7 +29,7 @@ Full steps: **[Quick start](quick-start.md)**.
 | `npm run dev`       | Watch all src/ mods; remove owned mods when the watch stops                  |
 | `npm run dev:pick`  | Same as `dev`, with a TTY picker first                                       |
 | `npm run build`     | Release all src/ mods to `build/<modinfo.id>/` (Workshop staging)            |
-| `npm run publish`   | Runs `npm run build`, then SteamCMD upload (`~/.cache/sandustry-steamcmd/`)  |
+| `npm run publish`   | Runs `npm run build`, then SteamCMD upload (dedicated OS cache)              |
 | `npm run typecheck` | TypeScript check                                                             |
 | `npm run test`      | Node tests (`src/**/*.test.ts`)                                              |
 | `npm run docs`      | Regenerate API reference (`docs:api`), then serve Docsify on `docs/`         |

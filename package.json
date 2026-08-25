@@ -10,7 +10,6 @@
     "examples": "node scripts/dev/examples.js",
     "typecheck": "node scripts/typecheck/typecheck.js",
     "test": "node scripts/test/test.js",
-    "postinstall": "node scripts/mod-install/install-mod-deps.js",
     "lint": "npm run typecheck && oxlint && oxfmt --check",
     "lint:fix": "oxlint --fix && oxfmt",
     "docs": "npm run docs:api && docsify serve docs",

@@ -1,32 +1,111 @@
 /**
  * Dedicated SteamCMD install + quiet Workshop upload helpers.
- * Prefer ~/.cache/sandustry-steamcmd/ so credentials do not share the desktop Steam tree.
+ * Linux/macOS: ~/.cache/sandustry-steamcmd/
+ * Windows: %LOCALAPPDATA%\sandustry-steamcmd\
+ * Credentials stay in a private home under that folder (not the desktop Steam tree).
  */
 import { spawn, spawnSync } from "node:child_process";
 import { chmodSync, existsSync, mkdirSync, unlinkSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
-import { dirname, join } from "node:path";
+import { dirname, join, posix, win32 } from "node:path";
 
 export const STEAMCMD_DOCS = "https://developer.valvesoftware.com/wiki/SteamCMD";
 
 const IS_WIN = process.platform === "win32";
 
-/** Stable install + credential cache (not the desktop Steam client tree). */
-export function steamCmdCacheDir() {
-  return join(homedir(), ".cache", "sandustry-steamcmd");
+/** @param {string} [platform] */
+function pathApi(platform = process.platform) {
+  return platform === "win32" ? win32 : posix;
 }
 
-/** Fake HOME so SteamCMD does not write sentry files into the desktop Steam tree. */
-export function steamCmdHomeDir() {
-  return join(steamCmdCacheDir(), "home");
+/**
+ * @typedef {{ platform?: NodeJS.Platform, env?: NodeJS.ProcessEnv, home?: string }} SteamCmdPathOptions
+ */
+
+/**
+ * Split an absolute Windows path into HOMEDRIVE + HOMEPATH.
+ * @param {string} absPath
+ * @returns {{ HOMEDRIVE: string, HOMEPATH: string }}
+ */
+export function windowsHomeDriveAndPath(absPath) {
+  const normalized = win32.normalize(String(absPath).replaceAll("/", "\\"));
+  const match = /^([A-Za-z]:)(.*)$/.exec(normalized);
+  if (!match) {
+    const path = normalized.startsWith("\\") ? normalized : `\\${normalized}`;
+    return { HOMEDRIVE: "C:", HOMEPATH: path || "\\" };
+  }
+  return {
+    HOMEDRIVE: match[1],
+    HOMEPATH: match[2] || "\\",
+  };
+}
+
+/**
+ * Stable install + credential cache (not the desktop Steam client tree).
+ * @param {SteamCmdPathOptions} [options]
+ */
+export function steamCmdCacheDir({
+  platform = process.platform,
+  env = process.env,
+  home = homedir(),
+} = {}) {
+  const { join: joinPath } = pathApi(platform);
+  if (platform === "win32") {
+    const localAppData = env.LOCALAPPDATA?.trim();
+    const base = localAppData || joinPath(home, "AppData", "Local");
+    return joinPath(base, "sandustry-steamcmd");
+  }
+  return joinPath(home, ".cache", "sandustry-steamcmd");
+}
+
+/**
+ * Private home so SteamCMD does not write sentry files into the desktop Steam tree.
+ * @param {SteamCmdPathOptions} [options]
+ */
+export function steamCmdHomeDir(options) {
+  const platform = options?.platform ?? process.platform;
+  const { join: joinPath } = pathApi(platform);
+  return joinPath(steamCmdCacheDir(options), "home");
+}
+
+/**
+ * Env overlay for a SteamCMD child. Does not create directories.
+ * Linux/macOS: HOME. Windows: USERPROFILE, HOMEDRIVE, HOMEPATH, APPDATA, LOCALAPPDATA.
+ * @param {SteamCmdPathOptions} [options]
+ * @returns {NodeJS.ProcessEnv}
+ */
+export function steamCmdProcessEnv({
+  platform = process.platform,
+  env = process.env,
+  home = homedir(),
+} = {}) {
+  const steamHome = steamCmdHomeDir({ platform, env, home });
+  if (platform === "win32") {
+    const { HOMEDRIVE, HOMEPATH } = windowsHomeDriveAndPath(steamHome);
+    return {
+      ...env,
+      HOME: steamHome,
+      USERPROFILE: steamHome,
+      HOMEDRIVE,
+      HOMEPATH,
+      LOCALAPPDATA: win32.join(steamHome, "AppData", "Local"),
+      APPDATA: win32.join(steamHome, "AppData", "Roaming"),
+    };
+  }
+  return { ...env, HOME: steamHome };
 }
 
 /**
  * @returns {NodeJS.ProcessEnv}
  */
 function steamCmdEnv() {
-  mkdirSync(steamCmdHomeDir(), { recursive: true });
-  return { ...process.env, HOME: steamCmdHomeDir() };
+  const steamHome = steamCmdHomeDir();
+  mkdirSync(steamHome, { recursive: true });
+  if (IS_WIN) {
+    mkdirSync(win32.join(steamHome, "AppData", "Local"), { recursive: true });
+    mkdirSync(win32.join(steamHome, "AppData", "Roaming"), { recursive: true });
+  }
+  return steamCmdProcessEnv();
 }
 
 /**
@@ -46,22 +125,23 @@ export function steamCmdPublishLogPath(repoRoot) {
 }
 
 /**
+ * @param {NodeJS.Platform} [platform]
  * @returns {{ url: string, archiveName: string } | null}
  */
-export function officialSteamCmdArchive() {
-  if (IS_WIN) {
+export function officialSteamCmdArchive(platform = process.platform) {
+  if (platform === "win32") {
     return {
       url: "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip",
       archiveName: "steamcmd.zip",
     };
   }
-  if (process.platform === "darwin") {
+  if (platform === "darwin") {
     return {
       url: "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_osx.tar.gz",
       archiveName: "steamcmd_osx.tar.gz",
     };
   }
-  if (process.platform === "linux") {
+  if (platform === "linux") {
     return {
       url: "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz",
       archiveName: "steamcmd_linux.tar.gz",
@@ -72,11 +152,17 @@ export function officialSteamCmdArchive() {
 
 /**
  * Binary names relative to an install root.
+ * @param {NodeJS.Platform} [platform]
  * @returns {string[]}
  */
-function steamCmdBinaryNames() {
-  if (IS_WIN) return ["steamcmd.exe", join("steamcmd", "steamcmd.exe")];
-  return ["steamcmd.sh", join("steamcmd", "steamcmd.sh"), join("steamcmd", "linux64", "steamcmd")];
+export function steamCmdBinaryNames(platform = process.platform) {
+  const { join: joinPath } = pathApi(platform);
+  if (platform === "win32") return ["steamcmd.exe", joinPath("steamcmd", "steamcmd.exe")];
+  return [
+    "steamcmd.sh",
+    joinPath("steamcmd", "steamcmd.sh"),
+    joinPath("steamcmd", "linux64", "steamcmd"),
+  ];
 }
 
 /**
@@ -114,7 +200,7 @@ function extractSteamCmdArchive(dir, archive) {
   const args = archive.endsWith(".zip")
     ? ["-xf", archive, "-C", dir]
     : ["-xzf", archive, "-C", dir];
-  const unpacked = spawnSync("tar", args, { stdio: "pipe" });
+  const unpacked = spawnSync("tar", args, { stdio: "pipe", windowsHide: true });
   if (unpacked.status !== 0) {
     const err = unpacked.stderr ? String(unpacked.stderr) : "";
     throw new Error(
@@ -134,6 +220,7 @@ export function bootstrapSteamCmd(bin, { quiet = true } = {}) {
     env: steamCmdEnv(),
     stdio: quiet ? "pipe" : "inherit",
     timeout: 180_000,
+    windowsHide: quiet,
   });
   if (result.status !== 0 && result.status !== 7) {
     throw new Error(
@@ -143,7 +230,7 @@ export function bootstrapSteamCmd(bin, { quiet = true } = {}) {
 }
 
 /**
- * Ensure a dedicated SteamCMD binary exists under ~/.cache/sandustry-steamcmd/.
+ * Ensure a dedicated SteamCMD binary exists under the OS cache dir.
  * @param {string} repoRoot
  * @param {{ log?: (msg: string) => void }} [options]
  * @returns {Promise<string>}
@@ -184,9 +271,20 @@ export async function ensureDedicatedSteamCmd(repoRoot, { log = console.log } = 
   return bin;
 }
 
-/** True when workshop_build_item finished (not the earlier login "Success."). */
+/**
+ * True when workshop_build_item finished.
+ * Updates often print "Success." with no "workshop" word; login uses "OK", not "Success.".
+ */
 export function workshopUploadFinished(out) {
-  return /workshop/i.test(out) && /success\./i.test(out);
+  if (!/Success\./i.test(out)) return false;
+  return (
+    /Committing update/i.test(out) ||
+    /Uploading content/i.test(out) ||
+    /Preparing content/i.test(out) ||
+    /Preparing update/i.test(out) ||
+    /Create new workshop item/i.test(out) ||
+    /workshop/i.test(out)
+  );
 }
 
 export function workshopUploadSucceeded(out) {
@@ -305,6 +403,7 @@ export function runSteamCmd(bin, args, options = {}) {
       cwd: dirname(bin),
       env: steamCmdEnv(),
       stdio: ["pipe", "pipe", "pipe"],
+      windowsHide: true,
     });
     try {
       child.stdin.end();
@@ -428,7 +527,7 @@ export function runSteamCmdInteractiveLogin(bin, account) {
     console.log("");
     console.log(`SteamCMD has no cached login for ${account}.`);
     console.log("Enter your Steam password (and Steam Guard code if asked).");
-    console.log("Credentials stay under ~/.cache/sandustry-steamcmd/ (not the Steam client).");
+    console.log(`Credentials stay under ${steamCmdCacheDir()} (not the Steam client).`);
     console.log("");
     const child = spawn(bin, ["+login", account, "+quit"], {
       cwd: dirname(bin),

@@ -75,11 +75,11 @@ Add these when you need them:
 | File                         | Role                                                                                                |
 | ---------------------------- | --------------------------------------------------------------------------------------------------- |
 | `worker.ts`                  | Worker entry at the mod root. The build writes `worker.js`                                          |
-| `patches.ts`                 | Optional patch list. Re-export `patches` from `mod.ts`. Pick Block uses this.                       |
+| `patches.ts`                 | Optional patch list. Re-export `patches` from `mod.ts`.                                             |
 | `ui/`                        | React overlays                                                                                      |
 | Feature folders              | Other source files (`health/`, `capture/`, …). Keep tests next to the file they test                |
 | `mod/`                       | Static files copied into the output folder                                                          |
-| `package.json`               | npm packages for this mod only                                                                      |
+| `package.json`               | Optional. npm packages for this mod only. Run `npm install` in that folder yourself |
 | `README.md` / `CHANGELOG.md` | Repo docs only. Publish reads `CHANGELOG.md` for Steam change notes; builds do not copy these files |
 | `workshop/`                  | Workshop assets (`workshop.json`, previews, `workshop.md`, `screenshots/`)                          |
 

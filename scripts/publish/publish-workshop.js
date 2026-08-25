@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * Release-build mods, then upload to Steam Workshop with SteamCMD.
- * Uses a dedicated SteamCMD under ~/.cache/sandustry-steamcmd/ (not the desktop Steam tree).
+ * Uses a dedicated SteamCMD cache (not the desktop Steam tree).
  * Usage: npm run publish
- *        npm run publish -- --mod selection-capture
- *        npm run publish -- --mod selection-capture --yes
+ *        npm run publish -- --mod <folder>
+ *        npm run publish -- --mod <folder> --yes
  */
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -17,6 +17,7 @@ import {
   probeSteamCmdLogin,
   runSteamCmdInteractiveLogin,
   runWorkshopUpload,
+  steamCmdCacheDir,
   steamCmdNeedsCachedLogin,
   steamCmdPublishLogPath,
   workshopUploadSucceeded,
@@ -193,7 +194,7 @@ function failWorkshopUpload(folder, account, steamCmd, out, logPath) {
         `SteamCMD has no cached credentials for ${account}.`,
         `Log in once, then run npm run publish again:`,
         `  ${steamCmd} +login ${account}`,
-        `Credentials are stored under ~/.cache/sandustry-steamcmd/ (not the Steam client).`,
+        `Credentials are stored under ${steamCmdCacheDir()} (not the Steam client).`,
         `Full SteamCMD log: ${logPath}`,
       ].join("\n"),
     );
@@ -465,10 +466,14 @@ if (!confirmed) {
 }
 
 console.log("Release build…");
-const build = spawnSync("npm", ["run", "build", "--", "--mod", selected.folder], {
-  stdio: "inherit",
-  cwd: ROOT,
-});
+const build = spawnSync(
+  process.execPath,
+  [join(ROOT, "scripts/build/esbuild.config.mjs"), "--mod", selected.folder],
+  {
+    stdio: "inherit",
+    cwd: ROOT,
+  },
+);
 if (build.status !== 0) process.exit(build.status ?? 1);
 
 selected.outDir = publishStagingDir(selected.gameId);
