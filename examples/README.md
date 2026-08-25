@@ -12,11 +12,12 @@ Copy a folder here to `src/<your-mod>/` when you want that sample. Start a new m
 
 ## Content
 
-| Folder                                        | What it shows                                   |
-| --------------------------------------------- | ----------------------------------------------- |
-| [`custom-element`](content/custom-element/)   | Register an element and paint at the mouse cell |
-| [`mod-assets`](content/mod-assets/)           | Static `mod/` files + `assets.getUrl`           |
-| [`content-machine`](content/content-machine/) | Elements + structure + processor loop           |
+| Folder                                            | What it shows                                     |
+| ------------------------------------------------- | ------------------------------------------------- |
+| [`custom-element`](content/custom-element/)       | Register an element and paint at the mouse cell   |
+| [`collector-element`](content/collector-element/) | Collectable element + Collector admission patches |
+| [`mod-assets`](content/mod-assets/)               | Static `mod/` files + `assets.getUrl`             |
+| [`content-machine`](content/content-machine/)     | Elements + structure + processor loop             |
 
 ## API
 
