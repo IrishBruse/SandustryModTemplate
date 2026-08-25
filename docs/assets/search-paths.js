@@ -196,5 +196,5 @@ window.SMT_SEARCH_PATHS = [
   "/ui/shortcut-bar-divider",
   "/ui/shortcut-bar-item",
   "/ui/shortcut-chip",
-  "/ui/ui-box"
+  "/ui/ui-box",
 ];

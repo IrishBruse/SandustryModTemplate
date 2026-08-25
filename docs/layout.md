@@ -50,10 +50,10 @@ Start from [`src/template/`](../src/template/). Copy a folder from [`examples/`]
 
 Mods in `src/`:
 
-| Folder                                  | What it shows                                                                 |
-| --------------------------------------- | ----------------------------------------------------------------------------- |
-| [`template`](../src/template/)          | Starter mod. Toast on load. Change `id` / `name` / `author` in `modinfo.ts`   |
-| [`hot-reload`](hot-reload/) | Dev companion. Debug installs it; `npm run build` stages it. Do not copy this |
+| Folder                         | What it shows                                                                 |
+| ------------------------------ | ----------------------------------------------------------------------------- |
+| [`template`](../src/template/) | Starter mod. Toast on load. Change `id` / `name` / `author` in `modinfo.ts`   |
+| [`hot-reload`](hot-reload/)    | Dev companion. Debug installs it; `npm run build` stages it. Do not copy this |
 
 ## Files in a mod folder
 

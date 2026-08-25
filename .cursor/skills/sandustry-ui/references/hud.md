@@ -8,12 +8,12 @@ Resources: **Credits**, **Fluxite**, **Energy** (icon + count).
 
 Collapse chevron, then rows:
 
-| Label | Badge | Overlay |
-| --- | --- | --- |
-| Toolbox | Tab | [toolbox.md](toolbox.md) |
-| Building | Q | [building.md](building.md) |
-| Research | T | [research.md](research.md) |
-| Upgrades | U | [upgrades.md](upgrades.md) |
+| Label    | Badge | Overlay                    |
+| -------- | ----- | -------------------------- |
+| Toolbox  | Tab   | [toolbox.md](toolbox.md)   |
+| Building | Q     | [building.md](building.md) |
+| Research | T     | [research.md](research.md) |
+| Upgrades | U     | [upgrades.md](upgrades.md) |
 
 Extra rows: `registerManagementMenuButton` ([kit.md](kit.md)).
 
