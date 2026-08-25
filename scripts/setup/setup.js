@@ -24,7 +24,7 @@ import {
 } from "node:fs";
 import { dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { asarRelPath } from "../lib/asar-path.js";
+import { asarExtractPath, asarRelPath } from "../lib/asar-path.js";
 import {
   linkDirectory,
   samePath,
@@ -224,7 +224,7 @@ function extractGameSource(listed) {
 
     const dest = join(SOURCE_DEST, relPath);
     mkdirSync(dirname(dest), { recursive: true });
-    writeFileSync(dest, extractFile(ASAR, relPath));
+    writeFileSync(dest, extractFile(ASAR, asarExtractPath(entry)));
     count += 1;
   }
 
