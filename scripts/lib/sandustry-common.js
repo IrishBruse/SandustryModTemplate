@@ -102,14 +102,16 @@ function sleepSync(ms) {
 
 /** @param {string} port */
 function isDebugPortOpenSync(port) {
-  try {
-    execSync(`curl -sf --max-time 0.5 http://127.0.0.1:${port}/json/version`, {
-      stdio: "ignore",
-    });
-    return true;
-  } catch {
-    return false;
-  }
+  // Node fetch — no curl (missing or aliased on some Windows shells).
+  const result = spawnSync(
+    process.execPath,
+    [
+      "-e",
+      `fetch("http://127.0.0.1:${port}/json/version").then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))`,
+    ],
+    { stdio: "ignore", windowsHide: true, timeout: 2000 },
+  );
+  return result.status === 0;
 }
 
 /** @param {string} rendererPort @param {number} [timeoutMs] */
@@ -205,9 +207,10 @@ export function sandustryBuildMod(
   if (!modDebug) args.push("--no-debug");
   args.push(...extraArgs);
 
-  const result = spawnSync("node", args, {
+  const result = spawnSync(process.execPath, args, {
     stdio: "inherit",
     cwd: root,
+    windowsHide: true,
   });
   if (result.status !== 0) process.exit(result.status ?? 1);
 }

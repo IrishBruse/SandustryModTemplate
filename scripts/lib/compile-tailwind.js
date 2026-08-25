@@ -1,7 +1,7 @@
 import postcss from "postcss";
 import tailwindcss from "tailwindcss";
 import { readFileSync } from "node:fs";
-import { dirname, isAbsolute, join, sep } from "node:path";
+import { dirname, isAbsolute, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
@@ -25,18 +25,33 @@ export function readModkitOptionsCss() {
 /** Docs canvas source — not a mod file, so mods stay isolated. */
 export const PREVIEW_TAILWIND_CSS = join(ROOT, "docs/ui/canvas/_preview/tailwind.css");
 
+/** Windows drive path or UNC, even when this process runs on POSIX (unit tests). */
+function isWindowsAbsolute(p) {
+  return /^[A-Za-z]:[\\/]/.test(p) || p.startsWith("\\\\");
+}
+
+/** True for host-absolute paths and Windows-shaped absolutes. */
+function isFsAbsolute(p) {
+  return isAbsolute(p) || isWindowsAbsolute(p) || p.startsWith("/");
+}
+
 /**
- * esbuild namespace imports appear as `namespace:/absolute/path` in metafile keys.
+ * Resolve an esbuild metafile input key to a filesystem path.
+ * Keys may be plain paths or `namespace:path` (for example `modkit-css:C:\\…\\tailwind.css`).
+ * Do not treat a Windows drive letter (`C:`) as an esbuild namespace.
  * @param {string} key
  * @param {string} root
+ * @returns {string}
  */
-function metafileInputPath(key, root) {
-  let abs = isAbsolute(key) ? key : join(root, key);
-  const colon = abs.indexOf(":");
-  if (colon > 0 && abs.startsWith("/", colon + 1)) {
-    abs = abs.slice(colon + 1);
+export function metafileInputPath(key, root) {
+  const ns = /^([A-Za-z_][\w-]*):(.*)$/.exec(key);
+  if (ns && ns[1].length > 1) {
+    const rest = ns[2];
+    if (rest && isFsAbsolute(rest)) return rest;
+    if (rest) return join(root, rest);
   }
-  return abs;
+  if (isFsAbsolute(key)) return key;
+  return join(root, key);
 }
 
 /**
@@ -85,7 +100,7 @@ export function bundledContentFiles(metafile, root) {
   for (const key of Object.keys(metafile.inputs)) {
     const abs = metafileInputPath(key, root);
     if (!/\.(ts|tsx|js|jsx)$/.test(abs)) continue;
-    if (abs.includes(`${sep}node_modules${sep}`)) continue;
+    if (/[/\\]node_modules[/\\]/.test(abs)) continue;
     files.push(abs);
   }
   return files;

@@ -17,11 +17,12 @@ const modArgs = await pickDevModArgs(extra, { skipPicker: true, roots: ["example
 console.log(styleText(["bold", "cyan"], "Watching examples/ mods"));
 
 const child = spawn(
-  "node",
+  process.execPath,
   [join(ROOT, "scripts/build/esbuild.config.mjs"), "--watch", ...modArgs, ...extra],
   {
     stdio: "inherit",
     cwd: ROOT,
+    windowsHide: true,
   },
 );
 

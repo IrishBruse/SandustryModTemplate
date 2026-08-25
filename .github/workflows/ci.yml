@@ -27,6 +27,9 @@ jobs:
       - run: npm test
       - run: npm run lint
       - run: npm run build
+      # Builds a mod that imports @modkit/ui/tailwind.css (metafile namespace paths).
+      - name: Build Tailwind example
+        run: npm run build -- --examples --mod overlay-hotkey
       - name: npm run setup (Windows)
         if: runner.os == 'Windows'
         env:

@@ -206,7 +206,11 @@ function modkitCssTextPlugin(getTailwindCss) {
     name: "modkit-css-text",
     setup(build) {
       build.onLoad({ filter: /.*/, namespace: MODKIT_CSS_NAMESPACE }, (args) => {
-        if (OPTIONS_CSS_FILTER.test(args.path) || args.path.endsWith("options/options.css")) {
+        if (
+          OPTIONS_CSS_FILTER.test(args.path) ||
+          args.path.endsWith("options/options.css") ||
+          args.path.endsWith("options\\options.css")
+        ) {
           return {
             contents: readModkitOptionsCss(),
             loader: "text",
