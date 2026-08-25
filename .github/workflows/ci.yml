@@ -10,8 +10,22 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  lint-and-test:
+    name: Lint and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+
+  build:
     name: ${{ matrix.os }}
+    needs: lint-and-test
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -24,8 +38,6 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npm test
-      - run: npm run lint
       - run: npm run build
       # Builds a mod that imports @modkit/ui/tailwind.css (metafile namespace paths).
       - name: Build Tailwind example
