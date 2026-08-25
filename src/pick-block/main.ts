@@ -2,8 +2,6 @@ import { isEnabled } from "@modkit/utils";
 
 const api = sandkit.api;
 
-console.log("Loaded");
-
 function apply() {
   const enabled = isEnabled(api);
   console.log(enabled ? "enabled" : "disabled");
@@ -12,5 +10,6 @@ function apply() {
 }
 
 apply();
+api.settings.onChange(apply);
 
 console.log("loaded — Picker picks instantly (default F)");

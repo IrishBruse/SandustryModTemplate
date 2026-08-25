@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1
+
+### Fixed
+
+- Pressing **Picker** over empty ground no longer starts placing.
+
 ## 1.0.0
 
 ### Added
