@@ -18,4 +18,4 @@ function registerExampleRow() {
 
 registerExampleRow();
 
-console.log(`${reloaded ? "reloaded" : "loaded"} — Example row under Upgrades`);
+console.log("loaded — Example row under Upgrades");

@@ -25,4 +25,4 @@ function registerUi() {
 installTailwind();
 registerUi();
 
-console.log(`${reloaded ? "reloaded" : "loaded"} — Alt+E toggles the overlay`);
+console.log("loaded — Alt+E toggles the overlay");

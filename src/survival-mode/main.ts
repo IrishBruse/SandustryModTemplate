@@ -38,4 +38,4 @@ function boot() {
 
 api.events.on("game:ready", boot);
 
-console.log(`${reloaded ? "reloaded" : "loaded"} — jump velocity ${JUMP_VELOCITY}`);
+console.log(`loaded — jump velocity ${JUMP_VELOCITY}`);

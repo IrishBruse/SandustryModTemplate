@@ -14,4 +14,4 @@ void fetch(INFO_URL)
     console.warn(`${modinfo.id} failed to load info.json`, error);
   });
 
-console.log(`${reloaded ? "reloaded" : "loaded"} — badge at ${BADGE_URL}`);
+console.log(`loaded — badge at ${BADGE_URL}`);

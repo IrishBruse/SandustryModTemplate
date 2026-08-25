@@ -100,6 +100,4 @@ api.events.on("game:ready", () => {
   api.ui.toast("Content Machine — build the Flake Converter from the hotbar", {});
 });
 
-console.log(
-  `${reloaded ? "reloaded" : "loaded"} — ${STRUCTURE_ID} converts ${INPUT_ID} → ${OUTPUT_ID}`,
-);
+console.log(`loaded — ${STRUCTURE_ID} converts ${INPUT_ID} → ${OUTPUT_ID}`);

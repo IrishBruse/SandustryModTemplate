@@ -18,4 +18,4 @@ api.events.on("frame:render", () => {
   lastLogAt = now;
 });
 
-console.log(`${reloaded ? "reloaded" : "loaded"} — listening for game:ready and frame:render`);
+console.log("loaded — listening for game:ready and frame:render");

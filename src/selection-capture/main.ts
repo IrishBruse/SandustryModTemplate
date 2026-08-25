@@ -27,4 +27,4 @@ safe(() => {
   registerUi();
 });
 
-console.log(`${reloaded ? "reloaded" : "loaded"} — C then F7 (PNG or GIF)`);
+console.log("loaded — C then F7 (PNG or GIF)");

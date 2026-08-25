@@ -49,4 +49,4 @@ function registerNoiseTest() {
 
 registerNoiseTest();
 
-console.log(`${reloaded ? "reloaded" : "loaded"} — open Retro Console for Noise Test`);
+console.log("loaded — open Retro Console for Noise Test");

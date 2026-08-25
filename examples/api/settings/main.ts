@@ -42,4 +42,4 @@ api.settings.onChange(() => {
   notify(`Settings changed — ${formatSnapshot(next)}`, next);
 });
 
-console.log(`${reloaded ? "reloaded" : "loaded"} — edit Options → Mods → ${modinfo.name}`);
+console.log(`loaded — edit Options → Mods → ${modinfo.name}`);
