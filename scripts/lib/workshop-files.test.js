@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
@@ -31,19 +31,6 @@ Body with **bold**.
   assert.match(bbcode, /\[h2\]Section\[\/h2\]/);
   assert.match(bbcode, /\[olist\]\n\[\*\]First\n\[\*\]Second\n\[\/olist\]/);
   assert.match(bbcode, /\[list\]\n\[\*\]Bullet\n\[\/list\]/);
-});
-
-test("pick-block workshop.md converts to Steam BBCode", () => {
-  const converted = workshopDescriptionText(join(ROOT, "src/pick-block"));
-  assert.ok(converted);
-  assert.match(converted, /^\[h1\]Instant Pick Block\[\/h1\]/);
-  assert.match(converted, /\[b\]Picker\[\/b\]/);
-  assert.match(converted, /Options → Controls → Pick Block/);
-});
-
-test("selection-capture workshop.md mentions the 1 MB GIF cap", () => {
-  const text = readFileSync(join(ROOT, "src/selection-capture/workshop/workshop.md"), "utf8");
-  assert.match(text, /1 MB GIF cap/i);
 });
 
 test("findWorkshopLinkIssues flags markdown links and raw URLs", () => {

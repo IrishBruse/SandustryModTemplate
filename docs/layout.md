@@ -49,14 +49,11 @@ Copy a folder from [`examples/`](../examples/) into `src/<your-mod>/`. [`hello-w
 | API     | [`settings`](../examples/api/settings/)                   | All `configSchema` types (`boolean` / `number` / `choice`) |
 | Games   | [`retro-game`](../examples/games/retro-game/)             | Retro Console demo                                         |
 
-Shipped mods in `src/` (not copy targets for new mods):
+The debug companion in `src/` (not a copy target for new mods):
 
-| Folder                                           | What it shows                                                                 |
-| ------------------------------------------------ | ----------------------------------------------------------------------------- |
-| [`selection-capture`](../src/selection-capture/) | Screenshot / GIF recorder (**C**, **F7**)                                     |
-| [`survival-mode`](../src/survival-mode/)         | Health HUD, hazards, fall damage, grounded walking                            |
-| [`pick-block`](../src/pick-block/)               | Instant pick block on **Picker** (default **F**)                              |
-| [`hot-reload`](../src/hot-reload/)               | Dev companion. Debug installs it; `npm run build` stages it. Do not copy this |
+| Folder                             | What it shows                                                                 |
+| ---------------------------------- | ----------------------------------------------------------------------------- |
+| [`hot-reload`](../src/hot-reload/) | Dev companion. Debug installs it; `npm run build` stages it. Do not copy this |
 
 ## Files in a mod folder
 

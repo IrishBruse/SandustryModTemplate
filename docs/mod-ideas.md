@@ -10,8 +10,8 @@ Sandustry is a **falling-sand factory game**. You excavate terrain, move powders
 | --------------------------------------------------------- | ------------------------------------------------------- |
 | [`content-machine`](../examples/content/content-machine/) | Full loop: two elements, one structure, `addProcessor`  |
 | [`custom-element`](../examples/content/custom-element/)   | One powder element and a paint binding                  |
-| [`survival-mode`](../src/survival-mode/)                  | Gameplay rules through hooks (health, gravity, hazards) |
-| [`selection-capture`](../src/selection-capture/)          | QoL overlay, settings, input bindings                   |
+| [`overlay-hotkey`](../examples/ui/overlay-hotkey/)        | React overlay and hotkey                            |
+| [`settings`](../examples/api/settings/)                   | `configSchema` settings                             |
 | [`retro-game`](../examples/games/retro-game/)             | Retro Console mini-game                                 |
 
 Vanilla already has sand, water, lava, fire, steam, gold, petalium, seeds, growers, pipes, pumps, filters, drones, guns, energy, signals, and a large tech tree. See [`ElementType`](api/sandkit/enums/enumerations/ElementType.md), [`StructureType`](api/sandkit/enums/enumerations/StructureType.md), and [`Tech`](api/sandkit/enums/enumerations/Tech.md).
@@ -113,7 +113,7 @@ This connects world generation to factory content.
 
 ### Hardcore and limited lives
 
-Extend [`survival-mode`](../src/survival-mode/) patterns: finite respawns, stronger hazard zones, food or health from petalium or mod crops. Use [`hooks`](api/sandkit/api/namespaces/hooks/README.md) for input and movement. Use `sandkit.react` for HUD.
+Extend hook-based gameplay: finite respawns, stronger hazard zones, food or health from petalium or mod crops. Use [`hooks`](api/sandkit/api/namespaces/hooks/README.md) for input and movement. Use `sandkit.react` for HUD.
 
 ### Scenario and challenge maps
 
@@ -126,13 +126,13 @@ Examples:
 
 ### Light combat and defense
 
-Register [`projectiles`](api/sandkit/api/namespaces/projectiles/README.md) and [`items`](api/sandkit/api/namespaces/items/README.md) for a turret that consumes gold flakes. Use [`triggers`](api/sandkit/api/namespaces/triggers/README.md) to spawn gloom from map edges. Keep scope small. Sandustry is not a tower-defense game, but light pressure can work with survival-mode installed.
+Register [`projectiles`](api/sandkit/api/namespaces/projectiles/README.md) and [`items`](api/sandkit/api/namespaces/items/README.md) for a turret that consumes gold flakes. Use [`triggers`](api/sandkit/api/namespaces/triggers/README.md) to spawn gloom from map edges. Keep scope small. Sandustry is not a tower-defense game, but light pressure can work with a health/hazard mod installed.
 
 ## Tier 4 — Polish and meta
 
 These extend the game without new factory loops:
 
-- **Blueprint library** — save and load structure selections (build on [`selection-capture`](../src/selection-capture/) patterns)
+- **Blueprint library** — save and load structure selections (overlay + input bindings, see [`overlay-hotkey`](../examples/ui/overlay-hotkey/) and [`input-binding`](../examples/ui/input-binding/))
 - **Production dashboard** — overlay that counts elements on a filter line ([`ui.overlays.register`](api/sandkit/api/namespaces/ui/namespaces/overlays/README.md))
 - **Retro Console games** — more [`registerRetroGame`](../examples/games/retro-game/) titles tied to in-world unlocks
 - **Sound and music boxes** — expand vanilla SoundBox with mod samples through [`sound`](api/sandkit/api/namespaces/sound/README.md)

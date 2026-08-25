@@ -39,4 +39,4 @@ Reset tint to `0xffffff` when the effect ends so later frames do not keep the co
 
 - This is **main-thread only** (`main.js`). Workers do not have the renderer session.
 - Prefer `sandkit.api.sprites` helpers when you attach **mod-owned** sprites to the player.
-- Survival Mode uses this path for fire and lava hazard tinting. See [`src/survival-mode/hazards/playerSpriteEffect.ts`](../../src/survival-mode/hazards/playerSpriteEffect.ts).
+- Gameplay mods can use this path for hazard tinting (fire, lava).

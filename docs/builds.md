@@ -62,7 +62,7 @@ npm run build            # release all src/ mods to build/<modinfo.id>/
 npm run build -- --mod overlay-hotkey
 npm run build -- --examples
 npm run publish          # npm run build + SteamCMD Workshop upload
-npm run publish -- --mod selection-capture
+npm run publish -- --mod <folder>
 npm run typecheck
 npm run test
 npm run sandustry        # stop + launch (no build; keep npm run dev for the bundle)
