@@ -20,7 +20,7 @@ Cross-links: **sandustry-internals** `references/probe.md`, **sandustry-ui** for
 - Read `__debug.config.cellSize`, `chunkSize`, `useMultithreading`, `obstacleBreakpoint`.
 - Read one `shared.sim.cellIds[y * width + x]` and decode with id ranges in `grid-chunks.md`.
 - Read scalar fields from `shared.sim.elementData.*[elementIndex]` for one index.
-- Read one `shared.wallData.data[i]`, `shared.shadowMap.data[i]`, `shared.waterPresenceZones[zoneIndex]`.
+- Read one `shared.wallData.data[i]`, `shared.shadowMap.data[i]`, `shared.waterPresenceZones[zoneIndex]` (see `sim-stats.md` for zone math).
 - Coarse stride scans (for example step 40) for counts, not full grid dumps.
 - `__debug.getSchedulingMode()`.
 

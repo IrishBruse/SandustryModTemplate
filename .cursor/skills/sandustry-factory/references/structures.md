@@ -14,7 +14,7 @@ World structures live in `store.structures[]`. Spatial index: `session.cache.str
 | `color`  | Hex tint (coloring tool), e.g. `"#00ffff"`                                          |
 | `frame`  | Boolean frame overlay on foundations                                                |
 
-Live save sample: 872 structures, 10 `queued`, fields `color`, `data`, `filter`, `frame`, `queued`, `type`, `x`, `y`.
+Live save sample: **872** structures (2025-08 probe), 10 `queued`, fields `color`, `data`, `filter`, `frame`, `queued`, `type`, `x`, `y`. Signal types on belt: `signalButton`, `signalToggle`, `signalGate`, etc.
 
 ## `sandkit.api.structures` (live keys)
 

@@ -16,8 +16,8 @@ Subset of `sandkit.state.session` used for player, tools, and building probes. F
 | `movementSpeedMultiplier`                | Session movement scale           |
 | `overrideCamera`, `lerpCamera`           | Scripted camera                  |
 | `zoomLevel`                              | Zoom factor                      |
-| `reconMode`                              | Recon drone active               |
-| `sprintBoost`                            | Sprint meter (object)            |
+| `reconMode`                              | Recon drone active (`false` when idle) |
+| `sprintBoost`                            | `{ meter: 0-1, recharging: boolean }` — live idle: `{ meter: 1, recharging: false }` |
 | `windows.building`, `windows.blueprints` | Management overlays open         |
 
 ## `store` (player branch)

@@ -13,6 +13,8 @@ Public mods only get `api-signals.md`. Full runtime is engine-internal (`Jd.Q` i
 
 Built at init. Live counts on this save: **17** sender types, **12** receiver types, **16** link buckets.
 
+**Probe note:** `senderTypes` and `receiverTypes` are **`Set`** instances. Use `.size`, not `Object.keys()` (returns `[]` on Sets).
+
 | Field                                                                  | Role                                                              |
 | ---------------------------------------------------------------------- | ----------------------------------------------------------------- |
 | `links`                                                                | Map keyed `"senderX,senderY"` -> `{ x, y, on }[]` receiver cells. |

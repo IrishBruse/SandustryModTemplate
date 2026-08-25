@@ -26,6 +26,25 @@ Triggers / foliage / cheats / Hide UI / Verify Positions / Codex / Copy API Mark
 
 Story steps this save: establish_wet_sand_processing, establish_burnt_residue_processing, investigate_anomaly, retrieve_void_orb, establish_peak_energy, secure_stratacore, resume_factory_expansion, produce_auralite, saturate_aura_field, authorize_aura_expansion.
 
+## Screenshot / GIF recorder
+
+Overlay (not a Debug tab). A11y title **SCREENSHOT AND GIF RECORDER**. Opens from in-game tooling (exact menu path not walked; panel can sit over HUD during play).
+
+| Control | Notes |
+| ------- | ----- |
+| Structure pick | **C** — select structure bounds for capture |
+| Frames | spinbutton, default 120 |
+| Ticks / frame | 1–30, default 1 |
+| Block padding | 0–32 extra structure margin |
+| Countdown | 0–10 s before GIF start |
+| Greenscreen | toggle |
+| Show mouse | toggle (default on) |
+| GIF size limit | dropdown, default **No limit** |
+| Record GIF | button + **F8** hotkey |
+| Screenshot | **Copy PNG** |
+
+Do not click **Record** or change capture settings unless the user asked (starts capture / countdown).
+
 Quick Save/Load Position and Game. Creatures: Voidgrazer, Lumling, Redweaver, Voltblub, Shinelet.
 
 ## Audio

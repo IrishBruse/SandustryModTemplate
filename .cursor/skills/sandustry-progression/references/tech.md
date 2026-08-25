@@ -6,7 +6,7 @@ Public API: `sandkit.api.tech`. Types: `modkit/types/sandkit/api/tech.d.ts`. UI 
 
 | Method                                              | Role                                                                                                                                       |
 | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `getDefinitionById(techId)`                         | Return definition. Works for numeric string ids (`"1"`) and string ids (`"fluxEmanator"`). Camel names like `"shaker"` return `undefined`. |
+| `getDefinitionById(techId)`                         | Return definition. Numeric string ids (`"1"`) and mod string ids (`"fluxEmanator"`) work. Common slugs like `"conveyor"`, `"hover"`, `"signalGate"` return **`null`** on live — use enum numeric strings or registered mod ids. |
 | `isLockedById(techId)`                              | `true` when locked. Id may be `string` or `number` (`sandkit.enums.Tech`).                                                                 |
 | `setLockedById(techId, locked)`                     | Write lock flag into `store.lockedTechs`.                                                                                                  |
 | `addDefinition`, `updateDefinition`, `registerNode` | Mod registration.                                                                                                                          |
@@ -29,7 +29,7 @@ Engine twin (state first): `sandkit.engine.api.tech` with `getDefinition`, `isLo
 - Value `false`: explicitly unlocked (cheat/debug paths).
 - Missing key: fall back to static definition `locked`.
 
-Live sample keys: `hover`, `sprintBoost`, `shaker`, `fluxEmanator`, `voidOrb`, string mod tech ids, and numeric `"108"`.
+Live end-game save (2025-08): **70** keys — **2** with value `true` (locked), **68** with `false` (explicit unlock). Missing key falls back to definition `locked`.
 
 ## Definitions
 

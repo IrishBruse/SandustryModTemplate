@@ -3,7 +3,8 @@
 Not walked or not fully confirmed in the 0.5.2 MCP pass:
 
 - Full `SignalTargetPayloadV1` typing in `signals.d.ts` (live payload is `{ combined, inputCount, onCount }`).
-- Every vanilla `registerSenderType` / receiver handler (17 / 12 counts only).
+- Every vanilla `registerSenderType` / receiver handler id list (counts confirmed: **17** senders, **12** receivers via `Set.size`).
+- Link bucket shape confirmed: key `"senderX,senderY"` → `[{ x, y, on }]` (16 buckets on probe save).
 - `energyType` multi-network mod example on a live save.
 - `sandkit.api.energy.addAtCell` return value edge cases (partial fill).
 - Worker-thread energy network simulation details.

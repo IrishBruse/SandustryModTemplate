@@ -7,7 +7,7 @@ Progression-related keys on `sandkit.state.store`. Full bag list: **sandustry-in
 | Key                | Type                                 | Role                                                                  |
 | ------------------ | ------------------------------------ | --------------------------------------------------------------------- |
 | `player.tech`      | `{ [id]: boolean }`                  | Researched tech nodes                                                 |
-| `lockedTechs`      | `{ [id]: boolean }`                  | Per-save tech locks                                                   |
+| `lockedTechs`      | `{ [id]: boolean }`                  | Per-save tech locks (live: **70** keys; `true` = locked, `false` = unlocked) |
 | `upgrades`         | nested `level` / `availableLevel`    | Tool upgrade state                                                    |
 | `discoveries`      | `{ elements[], terrains[] }`         | Discovery log ids                                                     |
 | `progression`      | `{ upgradesUnlocked, dungeons }`     | Meta progression flags                                                |

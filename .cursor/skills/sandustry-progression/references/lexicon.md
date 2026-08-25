@@ -23,7 +23,9 @@ session.windows.lexicon: { open: boolean }
 
 ## Compile timing
 
-`compiled` is `false` until the lexicon builder runs (first open or lazy init). Live probe before open: `compiled: false`, `entries.length: 0`. After open, entries include all core tech nodes, items, upgrades, discovered elements, and mod misc entries.
+`compiled` is `false` until the lexicon builder runs (first open or lazy init). On loaded end-game saves it may already be **`compiled: true`** with a full `entries[]` before you open the window (live probe: thousands of entries, elements/tech/items/upgrades).
+
+Before first compile: `compiled: false`, `entries.length: 0`.
 
 ## Relation to discoveries
 

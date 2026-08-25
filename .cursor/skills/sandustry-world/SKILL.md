@@ -37,4 +37,5 @@ Open **one** file that matches the branch.
 | `store.world`, horizon, fixtures          | [references/store-world.md](references/store-world.md)             |
 | Wall, heat, shadows, foliage (engine)     | [references/wall-heat-foliage.md](references/wall-heat-foliage.md) |
 | Workers, scheduling, chunk flags          | [references/workers.md](references/workers.md)                     |
+| idStats, overflowPool, water zones        | [references/sim-stats.md](references/sim-stats.md)                 |
 | Not confirmed yet                         | [references/gaps.md](references/gaps.md)                           |

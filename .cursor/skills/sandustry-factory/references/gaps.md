@@ -2,8 +2,8 @@
 
 Not walked or not confirmed in this 0.5.2 pass:
 
-- `store.queue` item samples (empty on probe save)
-- `store.pipes` / `pumpsCache` instance dumps (no pipes placed)
+- `store.queue` item samples (empty on probe save — **confirmed** len 0)
+- `store.pipes` / `pumpsCache` instance dumps (no pipes placed — **confirmed** len 0)
 - Non-zero `shared.authorization.data` zone layouts (only zone `0` sampled)
 - Full weighted refinery recipe tables per machine id
 - `structures.registerPlacementConfig` live field schemas per structure

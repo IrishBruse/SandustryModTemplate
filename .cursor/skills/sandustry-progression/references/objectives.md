@@ -22,6 +22,8 @@ Default chain after init (`research_hover` removed in live mid-game saves):
 4. `find_artifact`
 5. Plus side goals from research branches (`burn_residue`, `melt_ice`, ...)
 
+Live end-game save (2025-08 probe): only **`active`** secondary cards remain — `build_conveyor_under_water`, `find_fluxite`, `burn_residue`, `melt_ice` (all `completed: false`). Primary story line ("Investigate Anomaly") is driven outside this array (HUD title **SIGNAL DETECTED**).
+
 ## Registered ids (core)
 
 | Id                                                          | Auto-check                                 | Notes                    |

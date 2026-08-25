@@ -8,3 +8,4 @@ Not walked in the 0.5.2 MCP pass:
 - Lexicon / Codex (Debug -> Game -> Codex)
 - Vanilla workshop Mods screen (pause Mods was the template inspector)
 - Tech tree node names (a11y tree is checkmarks only)
+- **Screenshot and GIF Recorder** panel (visible when open; a11y labels "SCREENSHOT AND GIF RECORDER", Record F8, structure pick with **C**)

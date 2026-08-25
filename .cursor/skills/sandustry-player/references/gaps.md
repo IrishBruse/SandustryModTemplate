@@ -3,8 +3,6 @@
 Not walked in the 0.5.2 player pass:
 
 - Per-tool runtime state (Shovel dig radius, Copier source, Digger recall, Teleporter targets, Hauler route) beyond hotbar `AssetRef`
-- `session.sprintBoost` meter fields
-- `session.reconMode` internals
 - Deck (`session.input.mode !== "kbm"`) cursor and tab flow
 - Worker-thread player helpers (`sandkit.api.player` on sim/manager workers)
 - Full `abilities[].attributes` matrix per `ItemId`
