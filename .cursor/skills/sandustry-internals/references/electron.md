@@ -6,15 +6,15 @@ Bridge object: `window.electron`.
 
 ## Sync (startup-safe)
 
-| Method | IPC |
-| ------ | --- |
-| `getPlatformSync()` | `get-platform-sync` - this session `"steam"` |
-| `getIsSteamDeckSync()` | `get-is-steam-deck-sync` |
-| `getPreferredSystemLanguagesSync()` | `get-preferred-system-languages-sync` |
-| `getLastPlayedGameSync()` | `get-last-played-game-sync` - JSON string `{ id }` |
-| `saveExistsSync(id)` | `save-exists-sync` |
-| `getSettingsSync()` | `get-settings-sync` |
-| `isFilePatchingActiveSync()` | `is-file-patching-active-sync` - true when patch protocol has patched sources |
+| Method                              | IPC                                                                           |
+| ----------------------------------- | ----------------------------------------------------------------------------- |
+| `getPlatformSync()`                 | `get-platform-sync` - `"steam"` / `"msstore"` / `"gog"`                       |
+| `getIsSteamDeckSync()`              | `get-is-steam-deck-sync`                                                      |
+| `getPreferredSystemLanguagesSync()` | `get-preferred-system-languages-sync`                                         |
+| `getLastPlayedGameSync()`           | `get-last-played-game-sync` - JSON string `{ id }`                            |
+| `saveExistsSync(id)`                | `save-exists-sync`                                                            |
+| `getSettingsSync()`                 | `get-settings-sync`                                                           |
+| `isFilePatchingActiveSync()`        | `is-file-patching-active-sync` - true when patch protocol has patched sources |
 
 `getSystemInfo()` is **local** (no IPC): `platform`, `arch`, `electronVersion`, `chromeVersion`, `nodeVersion`.
 
@@ -33,4 +33,4 @@ Bridge object: `window.electron`.
 
 ## File patching
 
-Steam only. `sandustry-patch` privileged scheme. `setupProtocolInterceptor` in `main.js` runs when `workshopPatches.length > 0`. `isFilePatchingActiveSync` is true when interceptor is up **and** patched source map is non-empty. This session: **true**.
+Steam only. `sandustry-patch` privileged scheme. `setupProtocolInterceptor` in `main.js` runs when `workshopPatches.length > 0`. `isFilePatchingActiveSync` is true when interceptor is up **and** patched source map is non-empty.

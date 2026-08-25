@@ -1,6 +1,6 @@
 # Probe
 
-Capture: `sandustry-mcp` on CDP `:9222`. Scripts must be JSON-serializable. Skip DOM wait on reads.
+Read-only inspection of live host objects. Return JSON-serializable data only.
 
 ## Safe
 
@@ -11,7 +11,6 @@ Capture: `sandustry-mcp` on CDP `:9222`. Scripts must be JSON-serializable. Skip
 ## Unsafe (needs user ask)
 
 - Any `ipcRenderer.invoke` that writes disk or Steam (save, settings, workshop, achievements, quit).
-- `electron.openDevTools()` - drops an IDE debugger attach.
 - `sandkit.engine.api.game.load|save|start`.
 - Engine mutators (`factory.unlockNextTier`, `drones.spawn`, `teleportZones.teleportPlayerTo`, `queue.process`, `wall.setWallDataAt`).
 - `__debug.admin.run`, `__debug.moveCamera`, `__debug.setSchedulingMode`, `__debug.ensureQueuedStructuresAreBuilt`.

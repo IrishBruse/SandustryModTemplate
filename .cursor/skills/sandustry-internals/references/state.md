@@ -2,13 +2,11 @@
 
 `sandkit.state` keys: `environment`, `sandkit`, `session`, `shared`, `store`. Stubs in `modkit/types/sandkit/engine/state.d.ts` are thinner than live.
 
-This session: `sandkit.sandkit.gameReady === true`. `environment.context === 1`. `environment.multithreading` is `{ simulation }`.
-
 ## `session` (live)
 
 action, actionLocked, ambience, animations, building, buttons, cache, camera, cheat, cinematic, colors, construction, debug, effects, explosions, externalMods, factoryProcessRates, input, lerpCamera, lexicon, lightZones, lights, mainSensorCache, mods, monitor, movementSpeedMultiplier, music, nextTickCallbacks, notifications, overrideCamera, paused, platform, prefabWorldItemCache, reconMode, rendering, resolution, runtime, saving, scale, settings, soundBox, soundEngine, sprintBoost, teleportZoneCache, timestep, triggers, ui, view, visualParticles, windows, zoomLevel.
 
-Nested (this session): `session.ui` - dialogs, discoveryPopups, hudHidden, introScreen, listeners, nextListenerId, overlays, tooltip, visible. `session.debug` - brush. `session.cheat` - bypassCosts. `paused` false, `scale` 1, `zoomLevel` 1.
+Nested: `session.ui` - dialogs, discoveryPopups, hudHidden, introScreen, listeners, nextListenerId, overlays, tooltip, visible. `session.debug` - brush. `session.cheat` - bypassCosts.
 
 ## `store` (live)
 
