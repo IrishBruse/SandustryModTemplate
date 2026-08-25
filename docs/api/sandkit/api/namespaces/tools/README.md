@@ -1,6 +1,6 @@
-# tools
+# sandkit.api.tools
 
-## Namespaces
+## Namespaces <!-- {docsify-ignore} -->
 
 | Namespace | Description |
 | ------ | ------ |

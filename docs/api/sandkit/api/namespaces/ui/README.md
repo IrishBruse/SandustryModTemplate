@@ -1,15 +1,15 @@
-# ui
+# sandkit.api.ui
 
-## Namespaces
+## Namespaces <!-- {docsify-ignore} -->
 
 | Namespace | Description |
 | ------ | ------ |
 | [overlays](api/sandkit/api/namespaces/ui/namespaces/overlays/README.md) | Overlay slot registration and updates. |
 | [navigation](api/sandkit/api/namespaces/ui/namespaces/navigation/README.md) | Controller focus and scope navigation hooks. |
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### TooltipMessageData
+### sandkit.api.ui.TooltipMessageData :id=tooltipmessagedata
 
 Defined in: [sandkit/api/ui.d.ts:128](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/ui.d.ts#L128)
 
@@ -39,7 +39,7 @@ Message body as localized text.
 
 ***
 
-### Focusable
+### sandkit.api.ui.Focusable :id=focusable
 
 Defined in: [sandkit/api/ui.d.ts:136](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/ui.d.ts#L136)
 
@@ -89,7 +89,7 @@ Move controller focus to this element.
 
 ***
 
-### FocusOptions
+### sandkit.api.ui.FocusOptions :id=focusoptions
 
 Defined in: [sandkit/api/ui.d.ts:146](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/ui.d.ts#L146)
 
@@ -201,9 +201,9 @@ Defined in: [sandkit/api/ui.d.ts:164](https://github.com/IrishBruse/SandustryMod
 
 When true, scroll the element into view on focus.
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### ComponentId
+### sandkit.api.ui.ComponentId :id=componentid
 
 ```ts
 ComponentId = ComponentId | string
@@ -215,7 +215,7 @@ Registered UI component id (built-in enum value or custom string).
 
 ***
 
-### ComponentUpdateOptions
+### sandkit.api.ui.ComponentUpdateOptions :id=componentupdateoptions
 
 ```ts
 ComponentUpdateOptions = Record<string, unknown>
@@ -227,7 +227,7 @@ Component-specific update payload passed to [update](#update).
 
 ***
 
-### TooltipData
+### sandkit.api.ui.TooltipData :id=tooltipdata
 
 ```ts
 TooltipData = TooltipMessageData
@@ -237,9 +237,9 @@ Defined in: [sandkit/api/ui.d.ts:125](https://github.com/IrishBruse/SandustryMod
 
 Tooltip payload shown near the cursor or UI target.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### update()
+### sandkit.api.ui.update() :id=update
 
 ```ts
 update(componentId: ComponentId, options?: ComponentUpdateOptions): void
@@ -269,7 +269,7 @@ Component-specific update payload.
 
 ***
 
-### openPauseMenu()
+### sandkit.api.ui.openPauseMenu() :id=openpausemenu
 
 ```ts
 openPauseMenu(): void
@@ -285,7 +285,7 @@ Open the pause menu.
 
 ***
 
-### showTooltip()
+### sandkit.api.ui.showTooltip() :id=showtooltip
 
 ```ts
 showTooltip(data: TooltipMessageData): void
@@ -309,7 +309,7 @@ Tooltip type and localized content.
 
 ***
 
-### alert()
+### sandkit.api.ui.alert() :id=alert
 
 ```ts
 alert(message: LocalizedText, title?: LocalizedText): Promise<void>
@@ -341,7 +341,7 @@ Promise that resolves when the user dismisses the dialog.
 
 ***
 
-### confirm()
+### sandkit.api.ui.confirm() :id=confirm
 
 ```ts
 confirm(message: LocalizedText, title?: LocalizedText): Promise<boolean>
@@ -373,7 +373,7 @@ Promise that resolves with true when confirmed, or false when cancelled.
 
 ***
 
-### prompt()
+### sandkit.api.ui.prompt() :id=prompt
 
 ```ts
 prompt(message: LocalizedText, defaultValue?: string, placeholder?: LocalizedText, title?: LocalizedText, allowCopy?: boolean): Promise<string | null>
@@ -423,7 +423,7 @@ Promise that resolves with entered text, or null when cancelled.
 
 ***
 
-### inject()
+### sandkit.api.ui.inject() :id=inject
 
 ```ts
 inject(componentId: ComponentId, component: ComponentType<Record<string, never>>): () => void
@@ -453,20 +453,20 @@ Function that unmounts the injected component.
 
 () => `void`
 
-## References
+## References <!-- {docsify-ignore} -->
 
-### toast
+### sandkit.api.ui.toast :id=toast
 
 Re-exports [toast](api/worker/namespaces/ui/README.md#toast)
 
 ***
 
-### LocalizedText
+### sandkit.api.ui.LocalizedText :id=localizedtext
 
 Re-exports [LocalizedText](api/worker/namespaces/ui/README.md#localizedtext)
 
 ***
 
-### ToastOptions
+### sandkit.api.ui.ToastOptions :id=toastoptions
 
 Re-exports [ToastOptions](api/worker/namespaces/ui/README.md#toastoptions)

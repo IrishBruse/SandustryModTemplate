@@ -1,4 +1,4 @@
-# shadows
+# sandkit.engine.api.shadows
 
 **`Internal`**
 
@@ -8,9 +8,9 @@
 Methods use loose stubs; signatures may take game state as the first argument.
 Engine methods pass game state as the first argument (args[0]); remaining entries are method-specific.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### refresh()
+### sandkit.engine.api.shadows.refresh() :id=refresh
 
 ```ts
 refresh(...args: unknown[]): unknown
@@ -34,7 +34,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### refreshRadius()
+### sandkit.engine.api.shadows.refreshRadius() :id=refreshradius
 
 ```ts
 refreshRadius(...args: unknown[]): unknown
@@ -58,7 +58,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### refreshRect()
+### sandkit.engine.api.shadows.refreshRect() :id=refreshrect
 
 ```ts
 refreshRect(...args: unknown[]): unknown

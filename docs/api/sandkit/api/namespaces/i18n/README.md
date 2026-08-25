@@ -1,11 +1,11 @@
-# i18n
+# sandkit.api.i18n
 
 `sandkit.api.i18n` — translations, locales, and display strings for mods.
 Main thread only.
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### I18nNumberFormatOptions
+### sandkit.api.i18n.I18nNumberFormatOptions :id=i18nnumberformatoptions
 
 Defined in: [sandkit/api/i18n.d.ts:87](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/i18n.d.ts#L87)
 
@@ -49,9 +49,9 @@ Defined in: [sandkit/api/i18n.d.ts:93](https://github.com/IrishBruse/SandustryMo
 
 When true, use grouping separators.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### t()
+### sandkit.api.i18n.t() :id=t
 
 ```ts
 t(key: string, params?: Record<string, string | number>): string
@@ -81,7 +81,7 @@ Placeholder values for the key template.
 
 ***
 
-### register()
+### sandkit.api.i18n.register() :id=register
 
 ```ts
 register(locale: string, translations: Record<string, string>): void
@@ -111,7 +111,7 @@ Map of keys to translated strings.
 
 ***
 
-### getLocale()
+### sandkit.api.i18n.getLocale() :id=getlocale
 
 ```ts
 getLocale(): string
@@ -127,7 +127,7 @@ Returns the active locale code.
 
 ***
 
-### hasTranslation()
+### sandkit.api.i18n.hasTranslation() :id=hastranslation
 
 ```ts
 hasTranslation(key: string, locale?: string): boolean
@@ -157,7 +157,7 @@ Optional locale; defaults to the active locale.
 
 ***
 
-### setLocale()
+### sandkit.api.i18n.setLocale() :id=setlocale
 
 ```ts
 setLocale(locale: string): Promise<void>
@@ -181,7 +181,7 @@ Locale code to activate.
 
 ***
 
-### getLanguages()
+### sandkit.api.i18n.getLanguages() :id=getlanguages
 
 ```ts
 getLanguages(): object[]
@@ -197,7 +197,7 @@ Returns metadata for all known languages.
 
 ***
 
-### getAvailableLocales()
+### sandkit.api.i18n.getAvailableLocales() :id=getavailablelocales
 
 ```ts
 getAvailableLocales(): string[]
@@ -213,7 +213,7 @@ Returns locale codes that have registered translations.
 
 ***
 
-### formatNumber()
+### sandkit.api.i18n.formatNumber() :id=formatnumber
 
 ```ts
 formatNumber(value: number, options?: I18nNumberFormatOptions): string
@@ -243,7 +243,7 @@ Intl-style number format options.
 
 ***
 
-### key()
+### sandkit.api.i18n.key() :id=key
 
 ```ts
 key(...parts: string[]): string
@@ -267,7 +267,7 @@ Key segments joined with `.`.
 
 ***
 
-### getName()
+### sandkit.api.i18n.getName() :id=getname
 
 ```ts
 getName(definition: object): string
@@ -297,7 +297,7 @@ Object with `nameKey` or `name`.
 
 ***
 
-### getDescription()
+### sandkit.api.i18n.getDescription() :id=getdescription
 
 ```ts
 getDescription(definition: object): string
@@ -327,7 +327,7 @@ Object with `descriptionKey` or `description`.
 
 ***
 
-### translatable()
+### sandkit.api.i18n.translatable() :id=translatable
 
 ```ts
 translatable(key: string, fallback: string): object
@@ -375,7 +375,7 @@ fallback: string
 
 ***
 
-### setGlobal()
+### sandkit.api.i18n.setGlobal() :id=setglobal
 
 ```ts
 setGlobal(key: string, value: string | (() => string)): void
@@ -405,7 +405,7 @@ Static string or function that returns the current value.
 
 ***
 
-### getGlobal()
+### sandkit.api.i18n.getGlobal() :id=getglobal
 
 ```ts
 getGlobal(key: string): string | undefined
@@ -429,7 +429,7 @@ Global helper key.
 
 ***
 
-### clearGlobal()
+### sandkit.api.i18n.clearGlobal() :id=clearglobal
 
 ```ts
 clearGlobal(key: string): void
@@ -453,7 +453,7 @@ Global helper key.
 
 ***
 
-### getGlobals()
+### sandkit.api.i18n.getGlobals() :id=getglobals
 
 ```ts
 getGlobals(): Record<string, string>
@@ -469,7 +469,7 @@ Returns all global translation helper values.
 
 ***
 
-### formatKeyForDisplay()
+### sandkit.api.i18n.formatKeyForDisplay() :id=formatkeyfordisplay
 
 ```ts
 formatKeyForDisplay(keyCode: string): string

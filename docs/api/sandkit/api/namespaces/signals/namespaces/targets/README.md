@@ -1,10 +1,10 @@
-# targets
+# sandkit.api.signals.targets
 
 Signal target registration for structure types.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### register()
+### sandkit.api.signals.targets.register() :id=register
 
 ```ts
 register(structureTypeOrId: unknown, apply: (structure: unknown, payload: unknown) => void): void

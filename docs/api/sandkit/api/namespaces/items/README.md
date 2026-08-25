@@ -1,11 +1,11 @@
-# items
+# sandkit.api.items
 
 `sandkit.api.items` — register custom inventory items and query active items.
 Main thread only.
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### ItemDefinition
+### sandkit.api.items.ItemDefinition :id=itemdefinition
 
 Defined in: [sandkit/api/items.d.ts:7](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/items.d.ts#L7)
 
@@ -73,9 +73,9 @@ Called after the item is rendered each frame.
 
 `void`
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### ModItem
+### sandkit.api.items.ModItem :id=moditem
 
 ```ts
 ModItem = unknown
@@ -87,7 +87,7 @@ Runtime item instance (not yet typed in declarations).
 
 ***
 
-### ItemType
+### sandkit.api.items.ItemType :id=itemtype
 
 ```ts
 ItemType = unknown
@@ -97,9 +97,9 @@ Defined in: [sandkit/api/items.d.ts:48](https://github.com/IrishBruse/SandustryM
 
 Item type id (not yet typed in declarations).
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### register()
+### sandkit.api.items.register() :id=register
 
 ```ts
 register(definition: ItemDefinition): void
@@ -123,7 +123,7 @@ Item id, handlers, and display metadata.
 
 ***
 
-### updateDefinition()
+### sandkit.api.items.updateDefinition() :id=updatedefinition
 
 ```ts
 updateDefinition(itemId: string, partial: Partial<ItemDefinition>): void
@@ -153,7 +153,7 @@ Fields to merge into the definition.
 
 ***
 
-### getDefinitionById()
+### sandkit.api.items.getDefinitionById() :id=getdefinitionbyid
 
 ```ts
 getDefinitionById(itemId: string): ItemDefinition<unknown, unknown> | undefined
@@ -177,7 +177,7 @@ Registered item id.
 
 ***
 
-### createFromId()
+### sandkit.api.items.createFromId() :id=createfromid
 
 ```ts
 createFromId(itemId: string): unknown
@@ -201,7 +201,7 @@ Registered item id.
 
 ***
 
-### getActive()
+### sandkit.api.items.getActive() :id=getactive
 
 ```ts
 getActive(): ItemDefinition<unknown, unknown> | undefined
@@ -217,7 +217,7 @@ Returns the item definition for the active hotbar slot.
 
 ***
 
-### isActiveById()
+### sandkit.api.items.isActiveById() :id=isactivebyid
 
 ```ts
 isActiveById(itemId: string | number, itemType?: unknown): boolean

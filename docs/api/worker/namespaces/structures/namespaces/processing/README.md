@@ -1,10 +1,10 @@
-# processing
+# sandkit.api.structures.processing (worker)
 
 Structure processing enablement checks.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### isEnabledAt()
+### sandkit.api.structures.processing.isEnabledAt() (worker) :id=isenabledat
 
 ```ts
 isEnabledAt(...args: CellCoordinates): boolean

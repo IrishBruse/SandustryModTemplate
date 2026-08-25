@@ -1,4 +1,4 @@
-# wall
+# sandkit.engine.api.wall
 
 **`Internal`**
 
@@ -8,9 +8,9 @@
 Methods use loose stubs; signatures may take game state as the first argument.
 Engine methods pass game state as the first argument (args[0]); remaining entries are method-specific.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### getPaletteData()
+### sandkit.engine.api.wall.getPaletteData() :id=getpalettedata
 
 ```ts
 getPaletteData(...args: unknown[]): unknown
@@ -34,7 +34,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getWallDataAt()
+### sandkit.engine.api.wall.getWallDataAt() :id=getwalldataat
 
 ```ts
 getWallDataAt(...args: unknown[]): unknown
@@ -58,7 +58,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getWallDataSize()
+### sandkit.engine.api.wall.getWallDataSize() :id=getwalldatasize
 
 ```ts
 getWallDataSize(...args: unknown[]): unknown
@@ -82,7 +82,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### setWallDataAt()
+### sandkit.engine.api.wall.setWallDataAt() :id=setwalldataat
 
 ```ts
 setWallDataAt(...args: unknown[]): unknown

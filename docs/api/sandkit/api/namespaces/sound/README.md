@@ -1,8 +1,8 @@
-# sound
+# sandkit.api.sound
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### SoundHandle
+### sandkit.api.sound.SoundHandle :id=soundhandle
 
 Defined in: [sandkit/api/sound.d.ts:45](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/sound.d.ts#L45)
 
@@ -26,7 +26,7 @@ Stop this sound instance.
 
 ***
 
-### SoundLayer
+### sandkit.api.sound.SoundLayer :id=soundlayer
 
 Defined in: [sandkit/api/sound.d.ts:51](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/sound.d.ts#L51)
 
@@ -82,7 +82,7 @@ Playback rate for this layer.
 
 ***
 
-### SoundOptions
+### sandkit.api.sound.SoundOptions :id=soundoptions
 
 Defined in: [sandkit/api/sound.d.ts:64](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/sound.d.ts#L64)
 
@@ -170,7 +170,7 @@ Minimum ms between plays with the same rateLimitKey.
 
 ***
 
-### SoundLayersOptions
+### sandkit.api.sound.SoundLayersOptions :id=soundlayersoptions
 
 Defined in: [sandkit/api/sound.d.ts:81](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/sound.d.ts#L81)
 
@@ -230,9 +230,9 @@ Defined in: [sandkit/api/sound.d.ts:89](https://github.com/IrishBruse/SandustryM
 
 Minimum ms between plays with the same rateLimitKey.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### play()
+### sandkit.api.sound.play() :id=play
 
 ```ts
 play(soundId: string, options?: SoundOptions): SoundHandle
@@ -262,7 +262,7 @@ Volume, position, playback rate, and rate-limit options.
 
 ***
 
-### playActive()
+### sandkit.api.sound.playActive() :id=playactive
 
 ```ts
 playActive(soundId: string, options?: SoundOptions): SoundHandle
@@ -292,7 +292,7 @@ Volume, position, playback rate, and rate-limit options.
 
 ***
 
-### playLayers()
+### sandkit.api.sound.playLayers() :id=playlayers
 
 ```ts
 playLayers(layers: SoundLayer[], options?: SoundLayersOptions): SoundHandle[]
@@ -322,7 +322,7 @@ Shared position, volume, and rate-limit options for all layers.
 
 ***
 
-### calculateDistanceOptionsAtWorld()
+### sandkit.api.sound.calculateDistanceOptionsAtWorld() :id=calculatedistanceoptionsatworld
 
 ```ts
 calculateDistanceOptionsAtWorld(worldX: number, worldY: number, baseVolume?: number): SoundOptions
@@ -358,7 +358,7 @@ Base volume before distance attenuation.
 
 ***
 
-### stopById()
+### sandkit.api.sound.stopById() :id=stopbyid
 
 ```ts
 stopById(soundId: string): void
@@ -382,7 +382,7 @@ Registered sound identifier to stop.
 
 ***
 
-### stopActive()
+### sandkit.api.sound.stopActive() :id=stopactive
 
 ```ts
 stopActive(): void
@@ -398,7 +398,7 @@ Stop the active sound channel.
 
 ***
 
-### stopAll()
+### sandkit.api.sound.stopAll() :id=stopall
 
 ```ts
 stopAll(): void

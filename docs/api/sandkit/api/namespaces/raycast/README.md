@@ -1,8 +1,8 @@
-# raycast
+# sandkit.api.raycast
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### castFromWorld()
+### sandkit.api.raycast.castFromWorld() :id=castfromworld
 
 ```ts
 castFromWorld(startWorldX: number, startWorldY: number, angle: number, maxDistance: number): Vector2 & object | null

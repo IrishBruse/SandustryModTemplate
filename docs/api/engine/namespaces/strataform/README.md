@@ -1,4 +1,4 @@
-# strataform
+# sandkit.engine.api.strataform
 
 **`Internal`**
 
@@ -8,9 +8,9 @@
 Methods use loose stubs; signatures may take game state as the first argument.
 Engine methods pass game state as the first argument (args[0]); remaining entries are method-specific.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### getDefaultConfig()
+### sandkit.engine.api.strataform.getDefaultConfig() :id=getdefaultconfig
 
 ```ts
 getDefaultConfig(...args: unknown[]): unknown
@@ -34,7 +34,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getRegisteredTypes()
+### sandkit.engine.api.strataform.getRegisteredTypes() :id=getregisteredtypes
 
 ```ts
 getRegisteredTypes(...args: unknown[]): unknown
@@ -58,7 +58,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### registerType()
+### sandkit.engine.api.strataform.registerType() :id=registertype
 
 ```ts
 registerType(...args: unknown[]): unknown
@@ -82,7 +82,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### trigger()
+### sandkit.engine.api.strataform.trigger() :id=trigger
 
 ```ts
 trigger(...args: unknown[]): unknown
@@ -106,7 +106,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### triggerByType()
+### sandkit.engine.api.strataform.triggerByType() :id=triggerbytype
 
 ```ts
 triggerByType(...args: unknown[]): unknown

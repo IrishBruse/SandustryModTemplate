@@ -1,4 +1,4 @@
-# engine
+# sandkit.engine
 
 **`Internal`**
 
@@ -13,7 +13,7 @@ surface still differs by runtime.
 These declarations are best-effort stubs. There is no guarantee they are
 complete or correct.
 
-## Namespaces
+## Namespaces <!-- {docsify-ignore} -->
 
 | Namespace | Description |
 | ------ | ------ |
@@ -54,9 +54,9 @@ complete or correct.
 | [wall](api/engine/namespaces/wall/README.md) | `sandkit.engine.api.wall` — wall tile palette and cell data. |
 | [workerLocal](api/engine/namespaces/workerLocal/README.md) | `sandkit.engine.api.workerLocal` — per-worker ephemeral key-value storage. |
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### SandkitEngine
+### sandkit.engine.SandkitEngine :id=sandkitengine
 
 Defined in: [sandkit/engine/index.d.ts:132](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/engine/index.d.ts#L132)
 
@@ -87,7 +87,7 @@ Defined in: [sandkit/engine/index.d.ts:134](https://github.com/IrishBruse/Sandus
 
 ***
 
-### RetroConsoleDisplay
+### sandkit.engine.RetroConsoleDisplay :id=retroconsoledisplay
 
 Defined in: [sandkit/engine/retro-console.d.ts:14](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/engine/retro-console.d.ts#L14)
 
@@ -165,7 +165,7 @@ Set one pixel in the framebuffer.
 
 ***
 
-### RetroConsoleInput
+### sandkit.engine.RetroConsoleInput :id=retroconsoleinput
 
 Defined in: [sandkit/engine/retro-console.d.ts:24](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/engine/retro-console.d.ts#L24)
 
@@ -193,7 +193,7 @@ Defined in: [sandkit/engine/retro-console.d.ts:26](https://github.com/IrishBruse
 
 ***
 
-### RetroConsoleGameOptions
+### sandkit.engine.RetroConsoleGameOptions :id=retroconsolegameoptions
 
 Defined in: [sandkit/engine/retro-console.d.ts:30](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/engine/retro-console.d.ts#L30)
 
@@ -221,7 +221,7 @@ Defined in: [sandkit/engine/retro-console.d.ts:32](https://github.com/IrishBruse
 
 ***
 
-### RetroConsoleGame
+### sandkit.engine.RetroConsoleGame :id=retroconsolegame
 
 Defined in: [sandkit/engine/retro-console.d.ts:36](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/engine/retro-console.d.ts#L36)
 
@@ -337,7 +337,7 @@ Handle player input when provided.
 
 ***
 
-### RetroConsoleApi
+### sandkit.engine.RetroConsoleApi :id=retroconsoleapi
 
 Defined in: [sandkit/engine/retro-console.d.ts:49](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/engine/retro-console.d.ts#L49)
 
@@ -373,9 +373,9 @@ Register a Retro Console mini-game.
 
 `void`
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### SandkitEngineApi
+### sandkit.engine.SandkitEngineApi :id=sandkitengineapi
 
 ```ts
 SandkitEngineApi = object
@@ -1082,7 +1082,7 @@ Defined in: [sandkit/engine/index.d.ts:121](https://github.com/IrishBruse/Sandus
 
 ***
 
-### RetroConsolePixel
+### sandkit.engine.RetroConsolePixel :id=retroconsolepixel
 
 ```ts
 RetroConsolePixel = boolean | number
@@ -1096,7 +1096,7 @@ Pixel value for the Retro Console framebuffer.
 
 ***
 
-### SandkitState
+### sandkit.engine.SandkitState :id=sandkitstate
 
 ```ts
 SandkitState = object

@@ -1,4 +1,4 @@
-# augments
+# sandkit.engine.api.augments
 
 **`Internal`**
 
@@ -8,9 +8,9 @@
 Methods use loose stubs; signatures may take game state as the first argument.
 Engine methods pass game state as the first argument (args[0]); remaining entries are method-specific.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### getDigLevel()
+### sandkit.engine.api.augments.getDigLevel() :id=getdiglevel
 
 ```ts
 getDigLevel(...args: unknown[]): unknown
@@ -34,7 +34,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getGunLevel()
+### sandkit.engine.api.augments.getGunLevel() :id=getgunlevel
 
 ```ts
 getGunLevel(...args: unknown[]): unknown
@@ -58,7 +58,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getPhaseLevel()
+### sandkit.engine.api.augments.getPhaseLevel() :id=getphaselevel
 
 ```ts
 getPhaseLevel(...args: unknown[]): unknown
@@ -82,7 +82,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getRocketAmmoLevel()
+### sandkit.engine.api.augments.getRocketAmmoLevel() :id=getrocketammolevel
 
 ```ts
 getRocketAmmoLevel(...args: unknown[]): unknown
@@ -106,7 +106,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getRocketReloadLevel()
+### sandkit.engine.api.augments.getRocketReloadLevel() :id=getrocketreloadlevel
 
 ```ts
 getRocketReloadLevel(...args: unknown[]): unknown
@@ -130,7 +130,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getSprintCapLevel()
+### sandkit.engine.api.augments.getSprintCapLevel() :id=getsprintcaplevel
 
 ```ts
 getSprintCapLevel(...args: unknown[]): unknown
@@ -154,7 +154,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### hasBigDig()
+### sandkit.engine.api.augments.hasBigDig() :id=hasbigdig
 
 ```ts
 hasBigDig(...args: unknown[]): unknown
@@ -178,7 +178,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### hasBulletSpeed()
+### sandkit.engine.api.augments.hasBulletSpeed() :id=hasbulletspeed
 
 ```ts
 hasBulletSpeed(...args: unknown[]): unknown
@@ -202,7 +202,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### hasBulletTracer()
+### sandkit.engine.api.augments.hasBulletTracer() :id=hasbullettracer
 
 ```ts
 hasBulletTracer(...args: unknown[]): unknown
@@ -226,7 +226,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### hasKickstartBoost()
+### sandkit.engine.api.augments.hasKickstartBoost() :id=haskickstartboost
 
 ```ts
 hasKickstartBoost(...args: unknown[]): unknown
@@ -250,7 +250,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### hasPhaseDash()
+### sandkit.engine.api.augments.hasPhaseDash() :id=hasphasedash
 
 ```ts
 hasPhaseDash(...args: unknown[]): unknown
@@ -274,7 +274,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### hasPhaseDashCharge()
+### sandkit.engine.api.augments.hasPhaseDashCharge() :id=hasphasedashcharge
 
 ```ts
 hasPhaseDashCharge(...args: unknown[]): unknown
@@ -298,7 +298,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### hasRideBoost()
+### sandkit.engine.api.augments.hasRideBoost() :id=hasrideboost
 
 ```ts
 hasRideBoost(...args: unknown[]): unknown
@@ -322,7 +322,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### hasRocketDamage()
+### sandkit.engine.api.augments.hasRocketDamage() :id=hasrocketdamage
 
 ```ts
 hasRocketDamage(...args: unknown[]): unknown
@@ -346,7 +346,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### hasRocketWarhead()
+### sandkit.engine.api.augments.hasRocketWarhead() :id=hasrocketwarhead
 
 ```ts
 hasRocketWarhead(...args: unknown[]): unknown
@@ -370,7 +370,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### hasSprintPower()
+### sandkit.engine.api.augments.hasSprintPower() :id=hassprintpower
 
 ```ts
 hasSprintPower(...args: unknown[]): unknown
@@ -394,7 +394,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### hasTripleShot()
+### sandkit.engine.api.augments.hasTripleShot() :id=hastripleshot
 
 ```ts
 hasTripleShot(...args: unknown[]): unknown

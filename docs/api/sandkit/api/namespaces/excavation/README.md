@@ -1,11 +1,11 @@
-# excavation
+# sandkit.api.excavation
 
 `sandkit.api.excavation` — register custom excavation tool dig profiles.
 Main thread only.
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### ExcavationProfileDefinitionV1
+### sandkit.api.excavation.ExcavationProfileDefinitionV1 :id=excavationprofiledefinitionv1
 
 Defined in: [sandkit/api/excavation.d.ts:14](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/excavation.d.ts#L14)
 
@@ -45,7 +45,7 @@ Optional profile-specific excavation flags.
 
 ***
 
-### ExcavationProfileOptions
+### sandkit.api.excavation.ExcavationProfileOptions :id=excavationprofileoptions
 
 Defined in: [sandkit/api/excavation.d.ts:24](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/excavation.d.ts#L24)
 
@@ -111,9 +111,9 @@ Defined in: [sandkit/api/excavation.d.ts:32](https://github.com/IrishBruse/Sandu
 
 Clamped to 0–1000 when set.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### registerProfile()
+### sandkit.api.excavation.registerProfile() :id=registerprofile
 
 ```ts
 registerProfile(id: string, definition: ExcavationProfileDefinitionV1): void

@@ -1,8 +1,8 @@
-# utils
+# sandkit.api.utils
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### getDistance()
+### sandkit.api.utils.getDistance() :id=getdistance
 
 ```ts
 getDistance(pointA: Vector2, pointB: Vector2): number
@@ -32,7 +32,7 @@ Second point.
 
 ***
 
-### getDirection()
+### sandkit.api.utils.getDirection() :id=getdirection
 
 ```ts
 getDirection(pointA: Vector2, pointB: Vector2): Vector2
@@ -62,7 +62,7 @@ Target point.
 
 ***
 
-### getAngle()
+### sandkit.api.utils.getAngle() :id=getangle
 
 ```ts
 getAngle(pointA: Vector2, pointB: Vector2): number
@@ -92,7 +92,7 @@ Target point.
 
 ***
 
-### getCoordinatesBetweenPoints()
+### sandkit.api.utils.getCoordinatesBetweenPoints() :id=getcoordinatesbetweenpoints
 
 ```ts
 getCoordinatesBetweenPoints(pointA: Vector2, pointB: Vector2): Vector2[]

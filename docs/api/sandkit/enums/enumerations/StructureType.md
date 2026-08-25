@@ -1,12 +1,12 @@
-# Enumeration: StructureType
+# sandkit.enums.StructureType
 
 Defined in: [sandkit/enums/index.d.ts:258](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/enums/index.d.ts#L258)
 
 Built-in structure type ids.
 
-## Enumeration Members
+## Enumeration Members <!-- {docsify-ignore} -->
 
-### ConveyorLeft
+### sandkit.enums.StructureType.ConveyorLeft :id=conveyorleft
 
 ```ts
 ConveyorLeft: 1
@@ -16,7 +16,7 @@ Defined in: [sandkit/enums/index.d.ts:259](https://github.com/IrishBruse/Sandust
 
 ***
 
-### ConveyorRight
+### sandkit.enums.StructureType.ConveyorRight :id=conveyorright
 
 ```ts
 ConveyorRight: 2
@@ -26,7 +26,7 @@ Defined in: [sandkit/enums/index.d.ts:260](https://github.com/IrishBruse/Sandust
 
 ***
 
-### ShakerLeft
+### sandkit.enums.StructureType.ShakerLeft :id=shakerleft
 
 ```ts
 ShakerLeft: 3
@@ -36,7 +36,7 @@ Defined in: [sandkit/enums/index.d.ts:261](https://github.com/IrishBruse/Sandust
 
 ***
 
-### ShakerRight
+### sandkit.enums.StructureType.ShakerRight :id=shakerright
 
 ```ts
 ShakerRight: 4
@@ -46,7 +46,7 @@ Defined in: [sandkit/enums/index.d.ts:262](https://github.com/IrishBruse/Sandust
 
 ***
 
-### LauncherUp
+### sandkit.enums.StructureType.LauncherUp :id=launcherup
 
 ```ts
 LauncherUp: 5
@@ -56,7 +56,7 @@ Defined in: [sandkit/enums/index.d.ts:263](https://github.com/IrishBruse/Sandust
 
 ***
 
-### LauncherLeft
+### sandkit.enums.StructureType.LauncherLeft :id=launcherleft
 
 ```ts
 LauncherLeft: 6
@@ -66,7 +66,7 @@ Defined in: [sandkit/enums/index.d.ts:264](https://github.com/IrishBruse/Sandust
 
 ***
 
-### LauncherRight
+### sandkit.enums.StructureType.LauncherRight :id=launcherright
 
 ```ts
 LauncherRight: 7
@@ -76,7 +76,7 @@ Defined in: [sandkit/enums/index.d.ts:265](https://github.com/IrishBruse/Sandust
 
 ***
 
-### SplitterLeft
+### sandkit.enums.StructureType.SplitterLeft :id=splitterleft
 
 ```ts
 SplitterLeft: 8
@@ -86,7 +86,7 @@ Defined in: [sandkit/enums/index.d.ts:266](https://github.com/IrishBruse/Sandust
 
 ***
 
-### SplitterRight
+### sandkit.enums.StructureType.SplitterRight :id=splitterright
 
 ```ts
 SplitterRight: 9
@@ -96,7 +96,7 @@ Defined in: [sandkit/enums/index.d.ts:267](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Dropper
+### sandkit.enums.StructureType.Dropper :id=dropper
 
 ```ts
 Dropper: 10
@@ -106,7 +106,7 @@ Defined in: [sandkit/enums/index.d.ts:268](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Foundation
+### sandkit.enums.StructureType.Foundation :id=foundation
 
 ```ts
 Foundation: 11
@@ -116,7 +116,7 @@ Defined in: [sandkit/enums/index.d.ts:269](https://github.com/IrishBruse/Sandust
 
 ***
 
-### FoundationAngledLeft
+### sandkit.enums.StructureType.FoundationAngledLeft :id=foundationangledleft
 
 ```ts
 FoundationAngledLeft: 12
@@ -126,7 +126,7 @@ Defined in: [sandkit/enums/index.d.ts:270](https://github.com/IrishBruse/Sandust
 
 ***
 
-### FoundationTriangleLeftDel
+### sandkit.enums.StructureType.FoundationTriangleLeftDel :id=foundationtriangleleftdel
 
 ```ts
 FoundationTriangleLeftDel: 13
@@ -136,7 +136,7 @@ Defined in: [sandkit/enums/index.d.ts:271](https://github.com/IrishBruse/Sandust
 
 ***
 
-### FoundationAngledRight
+### sandkit.enums.StructureType.FoundationAngledRight :id=foundationangledright
 
 ```ts
 FoundationAngledRight: 14
@@ -146,7 +146,7 @@ Defined in: [sandkit/enums/index.d.ts:272](https://github.com/IrishBruse/Sandust
 
 ***
 
-### FoundationTriangleRightDel
+### sandkit.enums.StructureType.FoundationTriangleRightDel :id=foundationtrianglerightdel
 
 ```ts
 FoundationTriangleRightDel: 15
@@ -156,7 +156,7 @@ Defined in: [sandkit/enums/index.d.ts:273](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Collector
+### sandkit.enums.StructureType.Collector :id=collector
 
 ```ts
 Collector: 16
@@ -166,7 +166,7 @@ Defined in: [sandkit/enums/index.d.ts:274](https://github.com/IrishBruse/Sandust
 
 ***
 
-### FilterLeft
+### sandkit.enums.StructureType.FilterLeft :id=filterleft
 
 ```ts
 FilterLeft: 17
@@ -176,7 +176,7 @@ Defined in: [sandkit/enums/index.d.ts:275](https://github.com/IrishBruse/Sandust
 
 ***
 
-### FilterRight
+### sandkit.enums.StructureType.FilterRight :id=filterright
 
 ```ts
 FilterRight: 18
@@ -186,7 +186,7 @@ Defined in: [sandkit/enums/index.d.ts:276](https://github.com/IrishBruse/Sandust
 
 ***
 
-### SlidingFoundation
+### sandkit.enums.StructureType.SlidingFoundation :id=slidingfoundation
 
 ```ts
 SlidingFoundation: 19
@@ -196,7 +196,7 @@ Defined in: [sandkit/enums/index.d.ts:277](https://github.com/IrishBruse/Sandust
 
 ***
 
-### VelocitySoaker
+### sandkit.enums.StructureType.VelocitySoaker :id=velocitysoaker
 
 ```ts
 VelocitySoaker: 20
@@ -206,7 +206,7 @@ Defined in: [sandkit/enums/index.d.ts:278](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Grower
+### sandkit.enums.StructureType.Grower :id=grower
 
 ```ts
 Grower: 21
@@ -216,7 +216,7 @@ Defined in: [sandkit/enums/index.d.ts:279](https://github.com/IrishBruse/Sandust
 
 ***
 
-### SoundBox
+### sandkit.enums.StructureType.SoundBox :id=soundbox
 
 ```ts
 SoundBox: 22
@@ -226,7 +226,7 @@ Defined in: [sandkit/enums/index.d.ts:280](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Pipe
+### sandkit.enums.StructureType.Pipe :id=pipe
 
 ```ts
 Pipe: 23
@@ -236,7 +236,7 @@ Defined in: [sandkit/enums/index.d.ts:281](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Pump
+### sandkit.enums.StructureType.Pump :id=pump
 
 ```ts
 Pump: 24
@@ -246,7 +246,7 @@ Defined in: [sandkit/enums/index.d.ts:282](https://github.com/IrishBruse/Sandust
 
 ***
 
-### LiquidVent
+### sandkit.enums.StructureType.LiquidVent :id=liquidvent
 
 ```ts
 LiquidVent: 25
@@ -256,7 +256,7 @@ Defined in: [sandkit/enums/index.d.ts:283](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Light
+### sandkit.enums.StructureType.Light :id=light
 
 ```ts
 Light: 26
@@ -266,7 +266,7 @@ Defined in: [sandkit/enums/index.d.ts:284](https://github.com/IrishBruse/Sandust
 
 ***
 
-### FluxEmanator
+### sandkit.enums.StructureType.FluxEmanator :id=fluxemanator
 
 ```ts
 FluxEmanator: 27

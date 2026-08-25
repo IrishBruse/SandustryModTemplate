@@ -1,11 +1,11 @@
-# fire
+# sandkit.api.fire
 
 `sandkit.api.fire` — ignite and burn elements at grid cells.
 Main thread only.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### canBurnElementAtCell()
+### sandkit.api.fire.canBurnElementAtCell() :id=canburnelementatcell
 
 ```ts
 canBurnElementAtCell(...args: CellCoordinates): boolean
@@ -27,7 +27,7 @@ Returns true when the element at the cell can burn.
 
 ***
 
-### burnElementAtCellWhenIdle()
+### sandkit.api.fire.burnElementAtCellWhenIdle() :id=burnelementatcellwhenidle
 
 ```ts
 burnElementAtCellWhenIdle(...args: CellCoordinates): void
@@ -49,7 +49,7 @@ Queues a burn at the cell when the simulation is idle.
 
 ***
 
-### burnElementAtCell()
+### sandkit.api.fire.burnElementAtCell() :id=burnelementatcell
 
 ```ts
 burnElementAtCell(...args: CellCoordinates): boolean

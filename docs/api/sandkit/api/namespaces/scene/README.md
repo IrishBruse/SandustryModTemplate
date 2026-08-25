@@ -1,8 +1,8 @@
-# scene
+# sandkit.api.scene
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### getActive()
+### sandkit.api.scene.getActive() :id=getactive
 
 ```ts
 getActive(): Scene
@@ -16,8 +16,8 @@ Return the active scene.
 
 [`Scene`](api/sandkit/enums/enumerations/Scene.md)
 
-## References
+## References <!-- {docsify-ignore} -->
 
-### Scene
+### sandkit.api.scene.Scene :id=scene
 
 Re-exports [Scene](api/sandkit/enums/enumerations/Scene.md)

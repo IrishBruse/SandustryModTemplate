@@ -1,10 +1,10 @@
-# vfx
+# sandkit.api.lights.vfx
 
 Short-lived visual effect lights.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### createAtWorld()
+### sandkit.api.lights.vfx.createAtWorld() :id=createatworld
 
 ```ts
 createAtWorld(worldX: number, worldY: number, options?: TemporaryLightOptions): object
@@ -46,7 +46,7 @@ index: number | null
 
 ***
 
-### removeById()
+### sandkit.api.lights.vfx.removeById() :id=removebyid
 
 ```ts
 removeById(lightId: number): void

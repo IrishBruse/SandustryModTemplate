@@ -1,4 +1,4 @@
-# ui
+# sandkit.api.ui (worker)
 
 **`Internal`**
 
@@ -8,9 +8,9 @@ Main thread adds richer UI APIs on top of this shape.
 
  Base namespace reused by main and worker declarations.
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### I18nTextKey
+### sandkit.api.ui.I18nTextKey (worker) :id=i18ntextkey
 
 Defined in: [shared/api/ui.d.ts:23](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/api/ui.d.ts#L23)
 
@@ -40,7 +40,7 @@ Values merged into the translated string.
 
 ***
 
-### I18nTranslatable
+### sandkit.api.ui.I18nTranslatable (worker) :id=i18ntranslatable
 
 Defined in: [shared/api/ui.d.ts:31](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/api/ui.d.ts#L31)
 
@@ -74,7 +74,7 @@ Defined in: [shared/api/ui.d.ts:34](https://github.com/IrishBruse/SandustryModTe
 
 ***
 
-### ToastOptions
+### sandkit.api.ui.ToastOptions (worker) :id=toastoptions
 
 Defined in: [shared/api/ui.d.ts:38](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/api/ui.d.ts#L38)
 
@@ -124,9 +124,9 @@ Defined in: [shared/api/ui.d.ts:52](https://github.com/IrishBruse/SandustryModTe
 
 Visual style applied to the toast body.
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### LocalizedText
+### sandkit.api.ui.LocalizedText (worker) :id=localizedtext
 
 ```ts
 LocalizedText = string | I18nTextKey | I18nTranslatable
@@ -136,9 +136,9 @@ Defined in: [shared/api/ui.d.ts:17](https://github.com/IrishBruse/SandustryModTe
 
 Plain text, translation key object, or i18n translatable value.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### toast()
+### sandkit.api.ui.toast() (worker) :id=toast
 
 ```ts
 toast(message: LocalizedText, options?: ToastOptions): void

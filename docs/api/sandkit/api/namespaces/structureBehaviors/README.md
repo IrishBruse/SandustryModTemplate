@@ -1,8 +1,8 @@
-# structureBehaviors
+# sandkit.api.structureBehaviors
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### registerConveyorType()
+### sandkit.api.structureBehaviors.registerConveyorType() :id=registerconveyortype
 
 ```ts
 registerConveyorType(structureId: string, options?: object): void
@@ -54,7 +54,7 @@ Transport offset, velocity, distance, and run direction.
 
 ***
 
-### registerLauncherType()
+### sandkit.api.structureBehaviors.registerLauncherType() :id=registerlaunchertype
 
 ```ts
 registerLauncherType(definition: object): void

@@ -1,8 +1,8 @@
-# triggers
+# sandkit.api.triggers
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### MainTriggerDefinition
+### sandkit.api.triggers.MainTriggerDefinition :id=maintriggerdefinition
 
 Defined in: [sandkit/api/triggers.d.ts:17](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/triggers.d.ts#L17)
 
@@ -40,9 +40,9 @@ Called each time the trigger fires.
 
 `void`
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### register()
+### sandkit.api.triggers.register() :id=register
 
 ```ts
 register(triggerId: string, definition: MainTriggerDefinition): void

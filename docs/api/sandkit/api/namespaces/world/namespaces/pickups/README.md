@@ -1,10 +1,10 @@
-# pickups
+# sandkit.api.world.pickups
 
 World item spawn, pickup, and lookup.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### spawnAtWorld()
+### sandkit.api.world.pickups.spawnAtWorld() :id=spawnatworld
 
 ```ts
 spawnAtWorld(type: WorldItemType, worldX: number, worldY: number, data?: Record<string, unknown>, light?: WorldItemLight): WorldItem
@@ -54,7 +54,7 @@ The spawned world item instance.
 
 ***
 
-### destroy()
+### sandkit.api.world.pickups.destroy() :id=destroy
 
 ```ts
 destroy(worldItem: WorldItem): void
@@ -78,7 +78,7 @@ World item returned from spawn or lookup helpers.
 
 ***
 
-### pickUp()
+### sandkit.api.world.pickups.pickUp() :id=pickup
 
 ```ts
 pickUp(worldItem: WorldItem): boolean
@@ -104,7 +104,7 @@ True when the item was collected.
 
 ***
 
-### getAll()
+### sandkit.api.world.pickups.getAll() :id=getall
 
 ```ts
 getAll(): WorldItem[]
@@ -120,7 +120,7 @@ Return all active world pickups.
 
 ***
 
-### getById()
+### sandkit.api.world.pickups.getById() :id=getbyid
 
 ```ts
 getById(worldItemId: number): WorldItem | undefined

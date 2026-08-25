@@ -1,8 +1,8 @@
-# workers
+# sandkit.api.workers
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### setPostUpdateEnabled()
+### sandkit.api.workers.setPostUpdateEnabled() :id=setpostupdateenabled
 
 ```ts
 setPostUpdateEnabled(enabled: boolean): void

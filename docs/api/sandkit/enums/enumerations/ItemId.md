@@ -1,12 +1,12 @@
-# Enumeration: ItemId
+# sandkit.enums.ItemId
 
 Defined in: [sandkit/enums/index.d.ts:153](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/enums/index.d.ts#L153)
 
 Built-in hotbar item ids.
 
-## Enumeration Members
+## Enumeration Members <!-- {docsify-ignore} -->
 
-### Shovel
+### sandkit.enums.ItemId.Shovel :id=shovel
 
 ```ts
 Shovel: 1
@@ -16,7 +16,7 @@ Defined in: [sandkit/enums/index.d.ts:154](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Grabber
+### sandkit.enums.ItemId.Grabber :id=grabber
 
 ```ts
 Grabber: 2
@@ -26,7 +26,7 @@ Defined in: [sandkit/enums/index.d.ts:155](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Demolisher
+### sandkit.enums.ItemId.Demolisher :id=demolisher
 
 ```ts
 Demolisher: 3
@@ -36,7 +36,7 @@ Defined in: [sandkit/enums/index.d.ts:156](https://github.com/IrishBruse/Sandust
 
 ***
 
-### GrapplingHook
+### sandkit.enums.ItemId.GrapplingHook :id=grapplinghook
 
 ```ts
 GrapplingHook: 4
@@ -46,7 +46,7 @@ Defined in: [sandkit/enums/index.d.ts:157](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Vacuum
+### sandkit.enums.ItemId.Vacuum :id=vacuum
 
 ```ts
 Vacuum: 5
@@ -56,7 +56,7 @@ Defined in: [sandkit/enums/index.d.ts:158](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Gun
+### sandkit.enums.ItemId.Gun :id=gun
 
 ```ts
 Gun: 6
@@ -66,7 +66,7 @@ Defined in: [sandkit/enums/index.d.ts:159](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Copier
+### sandkit.enums.ItemId.Copier :id=copier
 
 ```ts
 Copier: 7
@@ -76,7 +76,7 @@ Defined in: [sandkit/enums/index.d.ts:160](https://github.com/IrishBruse/Sandust
 
 ***
 
-### RocketLauncher
+### sandkit.enums.ItemId.RocketLauncher :id=rocketlauncher
 
 ```ts
 RocketLauncher: 8
@@ -86,7 +86,7 @@ Defined in: [sandkit/enums/index.d.ts:161](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Digger
+### sandkit.enums.ItemId.Digger :id=digger
 
 ```ts
 Digger: 9
@@ -96,7 +96,7 @@ Defined in: [sandkit/enums/index.d.ts:162](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Shotgun
+### sandkit.enums.ItemId.Shotgun :id=shotgun
 
 ```ts
 Shotgun: 10
@@ -106,7 +106,7 @@ Defined in: [sandkit/enums/index.d.ts:163](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Teleporter
+### sandkit.enums.ItemId.Teleporter :id=teleporter
 
 ```ts
 Teleporter: 11
@@ -116,7 +116,7 @@ Defined in: [sandkit/enums/index.d.ts:164](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Flamethrower
+### sandkit.enums.ItemId.Flamethrower :id=flamethrower
 
 ```ts
 Flamethrower: 12
@@ -126,7 +126,7 @@ Defined in: [sandkit/enums/index.d.ts:165](https://github.com/IrishBruse/Sandust
 
 ***
 
-### PipeRemover
+### sandkit.enums.ItemId.PipeRemover :id=piperemover
 
 ```ts
 PipeRemover: 13
@@ -136,7 +136,7 @@ Defined in: [sandkit/enums/index.d.ts:166](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Hauler
+### sandkit.enums.ItemId.Hauler :id=hauler
 
 ```ts
 Hauler: 14
@@ -146,7 +146,7 @@ Defined in: [sandkit/enums/index.d.ts:167](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Cryoblaster
+### sandkit.enums.ItemId.Cryoblaster :id=cryoblaster
 
 ```ts
 Cryoblaster: 15
@@ -156,7 +156,7 @@ Defined in: [sandkit/enums/index.d.ts:168](https://github.com/IrishBruse/Sandust
 
 ***
 
-### MegaShotgun
+### sandkit.enums.ItemId.MegaShotgun :id=megashotgun
 
 ```ts
 MegaShotgun: 16

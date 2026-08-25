@@ -1,12 +1,12 @@
-# Enumeration: ActionState
+# sandkit.enums.ActionState
 
 Defined in: [sandkit/enums/index.d.ts:17](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/enums/index.d.ts#L17)
 
 Phases of a held or repeated player action.
 
-## Enumeration Members
+## Enumeration Members <!-- {docsify-ignore} -->
 
-### Start
+### sandkit.enums.ActionState.Start :id=start
 
 ```ts
 Start: 1
@@ -16,7 +16,7 @@ Defined in: [sandkit/enums/index.d.ts:18](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### Active
+### sandkit.enums.ActionState.Active :id=active
 
 ```ts
 Active: 2
@@ -26,7 +26,7 @@ Defined in: [sandkit/enums/index.d.ts:19](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### End
+### sandkit.enums.ActionState.End :id=end
 
 ```ts
 End: 3

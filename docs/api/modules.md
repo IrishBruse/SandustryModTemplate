@@ -1,6 +1,6 @@
-# Sandkit API
+# Sandkit API modules
 
-## Modules
+## Modules <!-- {docsify-ignore} -->
 
 | Module | Description |
 | ------ | ------ |

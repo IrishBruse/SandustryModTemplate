@@ -1,4 +1,4 @@
-# structures
+# sandkit.api.structures (worker)
 
 **`Internal`**
 
@@ -6,15 +6,15 @@ Shared `sandkit.api.structures` base — structure lookup and mutation.
 
  Base namespace reused by main and worker declarations.
 
-## Namespaces
+## Namespaces <!-- {docsify-ignore} -->
 
 | Namespace | Description |
 | ------ | ------ |
 | [processing](api/worker/namespaces/structures/namespaces/processing/README.md) | Structure processing enablement checks. |
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### StructureData
+### sandkit.api.structures.StructureData (worker) :id=structuredata
 
 Defined in: [shared/api/structures.d.ts:115](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/api/structures.d.ts#L115)
 
@@ -46,7 +46,7 @@ Defined in: [shared/api/structures.d.ts:117](https://github.com/IrishBruse/Sandu
 
 ***
 
-### Structure
+### sandkit.api.structures.Structure (worker) :id=structure
 
 Defined in: [shared/api/structures.d.ts:122](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/api/structures.d.ts#L122)
 
@@ -92,9 +92,9 @@ optional data?: StructureData
 
 Defined in: [shared/api/structures.d.ts:126](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/api/structures.d.ts#L126)
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### StructureType
+### sandkit.api.structures.StructureType (worker) :id=structuretype
 
 ```ts
 StructureType = string | number
@@ -104,9 +104,9 @@ Defined in: [shared/api/structures.d.ts:131](https://github.com/IrishBruse/Sandu
 
 Numeric or string structure type discriminator.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### forEachOfType()
+### sandkit.api.structures.forEachOfType() (worker) :id=foreachoftype
 
 ```ts
 forEachOfType(structureTypeOrId: StructureType, callback: (structure: Structure) => void): void
@@ -136,7 +136,7 @@ Called once per matching structure instance.
 
 ***
 
-### getAtCell()
+### sandkit.api.structures.getAtCell() (worker) :id=getatcell
 
 ```ts
 getAtCell(...args: CellCoordinates): Structure | null
@@ -158,7 +158,7 @@ Return the structure at a cell, or null when none.
 
 ***
 
-### getDefinitionByType()
+### sandkit.api.structures.getDefinitionByType() (worker) :id=getdefinitionbytype
 
 ```ts
 getDefinitionByType(structureType: StructureType): any
@@ -182,7 +182,7 @@ Structure type value or string id.
 
 ***
 
-### getTypeFromId()
+### sandkit.api.structures.getTypeFromId() (worker) :id=gettypefromid
 
 ```ts
 getTypeFromId(structureId: string): StructureType
@@ -206,7 +206,7 @@ Structure string id.
 
 ***
 
-### hasBuiltAtCell()
+### sandkit.api.structures.hasBuiltAtCell() (worker) :id=hasbuiltatcell
 
 ```ts
 hasBuiltAtCell(...args: CellCoordinates): boolean
@@ -228,7 +228,7 @@ Return true when a completed structure occupies the cell.
 
 ***
 
-### isType()
+### sandkit.api.structures.isType() (worker) :id=istype
 
 ```ts
 isType(structure: Structure | null, structureId: string): boolean
@@ -258,7 +258,7 @@ Structure string id to compare.
 
 ***
 
-### isTypeAtCell()
+### sandkit.api.structures.isTypeAtCell() (worker) :id=istypeatcell
 
 ```ts
 isTypeAtCell(...args: [number, number, string]): boolean
@@ -280,7 +280,7 @@ Return true when the cell structure matches the given id.
 
 ***
 
-### setSpritesheetIndex()
+### sandkit.api.structures.setSpritesheetIndex() (worker) :id=setspritesheetindex
 
 ```ts
 setSpritesheetIndex(structure: Structure, index: number): void
@@ -310,7 +310,7 @@ Spritesheet frame index.
 
 ***
 
-### setSpritesheetIndexAtCell()
+### sandkit.api.structures.setSpritesheetIndexAtCell() (worker) :id=setspritesheetindexatcell
 
 ```ts
 setSpritesheetIndexAtCell(...args: [number, number, number]): void
@@ -332,7 +332,7 @@ Set spritesheet frame index for the structure at a cell.
 
 ***
 
-### setSpritesheetIndexByValue()
+### sandkit.api.structures.setSpritesheetIndexByValue() (worker) :id=setspritesheetindexbyvalue
 
 ```ts
 setSpritesheetIndexByValue(structure: Structure, value: number, thresholds: number[]): void
@@ -368,7 +368,7 @@ Ascending threshold values.
 
 ***
 
-### setSpritesheetIndexByValueAtCell()
+### sandkit.api.structures.setSpritesheetIndexByValueAtCell() (worker) :id=setspritesheetindexbyvalueatcell
 
 ```ts
 setSpritesheetIndexByValueAtCell(...args: [number, number, number, number[]]): void
@@ -390,7 +390,7 @@ Same as [setSpritesheetIndexByValue](#setspritesheetindexbyvalue) for the struct
 
 ***
 
-### update()
+### sandkit.api.structures.update() (worker) :id=update
 
 ```ts
 update(structure: Structure, options?: object): void
@@ -422,7 +422,7 @@ When `propagateToWorkers` is true, sync to worker threads.
 
 ***
 
-### setData()
+### sandkit.api.structures.setData() (worker) :id=setdata
 
 ```ts
 setData(structure: Structure, partial: any, options?: object): void

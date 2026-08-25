@@ -1,10 +1,10 @@
-# persistent
+# sandkit.api.lights.persistent
 
 Lights that persist in the world save.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### createAtWorld()
+### sandkit.api.lights.persistent.createAtWorld() :id=createatworld
 
 ```ts
 createAtWorld(worldX: number, worldY: number, options?: PersistentLightOptions): unknown
@@ -40,7 +40,7 @@ Brightness, size, color, and persistence options.
 
 ***
 
-### removeAtWorld()
+### sandkit.api.lights.persistent.removeAtWorld() :id=removeatworld
 
 ```ts
 removeAtWorld(worldX: number, worldY: number): void
@@ -70,7 +70,7 @@ World Y coordinate in pixels.
 
 ***
 
-### fadeAtWorld()
+### sandkit.api.lights.persistent.fadeAtWorld() :id=fadeatworld
 
 ```ts
 fadeAtWorld(worldX: number, worldY: number, durationMs?: number): void
@@ -106,7 +106,7 @@ Fade duration in milliseconds.
 
 ***
 
-### markDirty()
+### sandkit.api.lights.persistent.markDirty() :id=markdirty
 
 ```ts
 markDirty(): void

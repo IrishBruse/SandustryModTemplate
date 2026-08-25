@@ -1,14 +1,14 @@
-# shared
+# sandkit.api.shared
 
-## Namespaces
+## Namespaces <!-- {docsify-ignore} -->
 
 | Namespace | Description |
 | ------ | ------ |
 | [buffers](api/sandkit/api/namespaces/shared/namespaces/buffers/README.md) | Shared buffer create and lookup. |
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### SharedArray
+### sandkit.api.shared.SharedArray :id=sharedarray
 
 ```ts
 SharedArray = Uint8Array | Uint16Array | Uint32Array | Int8Array | Int16Array | Int32Array | Float32Array | Float64Array
@@ -23,7 +23,7 @@ returns the matching `*Array` constructor for the configured type.
 
 ***
 
-### SharedArrayType
+### sandkit.api.shared.SharedArrayType :id=sharedarraytype
 
 ```ts
 SharedArrayType = "uint8" | "uint16" | "uint32" | "int8" | "int16" | "int32" | "float32" | "float64"

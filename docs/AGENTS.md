@@ -27,6 +27,8 @@ Avoid:
 - Change JSDoc in `modkit/types/**/*.d.ts`, then run `npm run docs:api`.
 - Main docs sidebar links to **Sandkit API** only (`api/README.md`). The API tree uses [`api/_sidebar.md`](api/_sidebar.md), generated with the reference (commit this file so the API sidebar works before a full regen).
 - Other files under `docs/api/` are generated; run `npm run docs:api` before `npm run docs` or publishing the docs site.
+- The generator also writes [`assets/search-paths.js`](assets/search-paths.js) (every docs page, including nested API files). Docsify search uses that list. Do not edit it by hand.
+- API headings are rewritten to runtime names (`sandkit.api.settings.get()`) so search results are readable. Do not put those qualified titles back into the `.d.ts` files.
 
 ## Site pages and code-side links
 

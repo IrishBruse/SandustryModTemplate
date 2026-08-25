@@ -1,11 +1,11 @@
-# action
+# sandkit.api.action
 
 `sandkit.api.action` — active hotbar action and custom handler data.
 Main thread only.
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### Action
+### sandkit.api.action.Action :id=action
 
 ```ts
 Action = AssetRef
@@ -15,9 +15,9 @@ Defined in: [sandkit/api/action.d.ts:9](https://github.com/IrishBruse/SandustryM
 
 Hotbar action asset reference.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### getActive()
+### sandkit.api.action.getActive() :id=getactive
 
 ```ts
 getActive(): AssetRef
@@ -35,7 +35,7 @@ Active hotbar action reference.
 
 ***
 
-### getSelected()
+### sandkit.api.action.getSelected() :id=getselected
 
 ```ts
 getSelected(): AssetRef
@@ -53,7 +53,7 @@ Selected hotbar action reference.
 
 ***
 
-### setCustomData()
+### sandkit.api.action.setCustomData() :id=setcustomdata
 
 ```ts
 setCustomData<Input>(data: Input): void

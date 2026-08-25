@@ -1,10 +1,10 @@
-# navigation
+# sandkit.api.ui.navigation
 
 Controller focus and scope navigation hooks.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### useFocusable()
+### sandkit.api.ui.navigation.useFocusable() :id=usefocusable
 
 ```ts
 useFocusable<T>(options: FocusOptions): Focusable<T>
@@ -36,7 +36,7 @@ Ref, focus state, and a focus helper.
 
 ***
 
-### useFocusScope()
+### sandkit.api.ui.navigation.useFocusScope() :id=usefocusscope
 
 ```ts
 useFocusScope(options: object): void
@@ -78,7 +78,7 @@ Scope id, priority, default focus, and back handler.
 
 ***
 
-### controllerFocusClass()
+### sandkit.api.ui.navigation.controllerFocusClass() :id=controllerfocusclass
 
 ```ts
 controllerFocusClass(focused: boolean): string

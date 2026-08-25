@@ -1,8 +1,8 @@
-# schedule
+# sandkit.api.schedule
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### nextTick()
+### sandkit.api.schedule.nextTick() :id=nexttick
 
 ```ts
 nextTick(callback: () => void): void

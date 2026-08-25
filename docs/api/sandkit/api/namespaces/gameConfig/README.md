@@ -1,11 +1,11 @@
-# gameConfig
+# sandkit.api.gameConfig
 
 `sandkit.api.gameConfig` — read merged game configuration values.
 Main thread only.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### get()
+### sandkit.api.gameConfig.get() :id=get
 
 ```ts
 get(key: string): JsonValueV1 | undefined
@@ -29,7 +29,7 @@ Game config key (merged defaults and overrides).
 
 ***
 
-### getAll()
+### sandkit.api.gameConfig.getAll() :id=getall
 
 ```ts
 getAll(): JsonObjectV1

@@ -1,8 +1,8 @@
-# upgrades
+# sandkit.api.upgrades
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### UpgradeDefinition
+### sandkit.api.upgrades.UpgradeDefinition :id=upgradedefinition
 
 Defined in: [sandkit/api/upgrades.d.ts:40](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/upgrades.d.ts#L40)
 
@@ -86,7 +86,7 @@ optional oneOff?: boolean
 
 ***
 
-### UpgradeCategoryDefinition
+### sandkit.api.upgrades.UpgradeCategoryDefinition :id=upgradecategorydefinition
 
 Defined in: [sandkit/api/upgrades.d.ts:56](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/upgrades.d.ts#L56)
 
@@ -120,9 +120,9 @@ Defined in: [sandkit/api/upgrades.d.ts:60](https://github.com/IrishBruse/Sandust
 
 Display name translation key.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### registerCategory()
+### sandkit.api.upgrades.registerCategory() :id=registercategory
 
 ```ts
 registerCategory(definition: UpgradeCategoryDefinition): void
@@ -146,7 +146,7 @@ Category id and display metadata.
 
 ***
 
-### register()
+### sandkit.api.upgrades.register() :id=register
 
 ```ts
 register(definition: UpgradeDefinition): void
@@ -170,7 +170,7 @@ Item id, upgrade id, costs, and level metadata.
 
 ***
 
-### updateDefinition()
+### sandkit.api.upgrades.updateDefinition() :id=updatedefinition
 
 ```ts
 updateDefinition(itemId: string, upgradeId: string, partial: Partial<UpgradeDefinition>): void
@@ -206,7 +206,7 @@ Fields to merge into the definition.
 
 ***
 
-### getLevelById()
+### sandkit.api.upgrades.getLevelById() :id=getlevelbyid
 
 ```ts
 getLevelById(itemId: string, upgradeId: string): number
@@ -236,7 +236,7 @@ Upgrade id within the item.
 
 ***
 
-### getAvailableLevelById()
+### sandkit.api.upgrades.getAvailableLevelById() :id=getavailablelevelbyid
 
 ```ts
 getAvailableLevelById(itemId: string, upgradeId: string): number

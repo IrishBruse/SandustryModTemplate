@@ -1,16 +1,16 @@
-# buildings
+# sandkit.api.player.buildings
 
 Player building unlock helpers.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### unlockByType()
+### sandkit.api.player.buildings.unlockByType() :id=unlockbytype
 
 ```ts
 unlockByType(structureId: string): void
 ```
 
-Defined in: [sandkit/api/player.d.ts:80](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/player.d.ts#L80)
+Defined in: [sandkit/api/player.d.ts:82](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/player.d.ts#L82)
 
 Unlock a structure type for building.
 

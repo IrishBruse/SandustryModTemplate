@@ -1,14 +1,14 @@
-# signals
+# sandkit.api.signals
 
-## Namespaces
+## Namespaces <!-- {docsify-ignore} -->
 
 | Namespace | Description |
 | ------ | ------ |
 | [targets](api/sandkit/api/namespaces/signals/namespaces/targets/README.md) | Signal target registration for structure types. |
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### StructureType
+### sandkit.api.signals.StructureType :id=structuretype
 
 ```ts
 StructureType = unknown
@@ -20,7 +20,7 @@ Structure type id or enum value.
 
 ***
 
-### Structure
+### sandkit.api.signals.Structure :id=structure
 
 ```ts
 Structure = unknown
@@ -32,7 +32,7 @@ Structure instance in the world.
 
 ***
 
-### SignalTargetPayloadV1
+### sandkit.api.signals.SignalTargetPayloadV1 :id=signaltargetpayloadv1
 
 ```ts
 SignalTargetPayloadV1 = unknown

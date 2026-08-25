@@ -1,11 +1,11 @@
-# grid
+# sandkit.api.grid
 
 `sandkit.api.grid` — iterate cells in rectangular and circular regions.
 Main thread only.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### forEachCellInRect()
+### sandkit.api.grid.forEachCellInRect() :id=foreachcellinrect
 
 ```ts
 forEachCellInRect(...args: number, number, number, number, (...args: [CellCoordinates) => void]): void
@@ -27,7 +27,7 @@ Calls the callback for each cell in a rectangle.
 
 ***
 
-### forEachCellInCircle()
+### sandkit.api.grid.forEachCellInCircle() :id=foreachcellincircle
 
 ```ts
 forEachCellInCircle(centerCellX: number, centerCellY: number, radius: number, callback: (...args: CellCoordinates) => void): void

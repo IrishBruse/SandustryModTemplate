@@ -1,8 +1,8 @@
-# patterns
+# sandkit.api.patterns
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### PatternExcavateOptions
+### sandkit.api.patterns.PatternExcavateOptions :id=patternexcavateoptions
 
 ```ts
 PatternExcavateOptions = ExcavateOptions
@@ -12,9 +12,9 @@ Defined in: [sandkit/api/patterns.d.ts:31](https://github.com/IrishBruse/Sandust
 
 Options for pattern-based excavation. Same shape as [shared.api.world.ExcavateOptions](api/worker/namespaces/world/README.md#excavateoptions).
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### createCircle()
+### sandkit.api.patterns.createCircle() :id=createcircle
 
 ```ts
 createCircle(size: number): number[][]
@@ -40,7 +40,7 @@ Square matrix with `1` inside the circle and `0` outside.
 
 ***
 
-### excavateAtCell()
+### sandkit.api.patterns.excavateAtCell() :id=excavateatcell
 
 ```ts
 excavateAtCell(...args: [number, number, number[][], Vector2, number, ExcavateOptions]): void

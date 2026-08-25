@@ -1,4 +1,4 @@
-# worker
+# sandkit.api.worker (worker)
 
 **`Internal`**
 
@@ -9,9 +9,9 @@ Worker thread only.
  Base shape reused by [WorkerSandkitApi](api/worker/README.md#workersandkitapi). Not the same as
 main-thread APIs.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### getIndex()
+### sandkit.api.worker.getIndex() (worker) :id=getindex
 
 ```ts
 getIndex(): number
@@ -29,7 +29,7 @@ Worker index (`0` … `getCount() - 1`).
 
 ***
 
-### getCount()
+### sandkit.api.worker.getCount() (worker) :id=getcount
 
 ```ts
 getCount(): number

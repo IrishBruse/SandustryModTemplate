@@ -1,12 +1,12 @@
-# Enumeration: BuildingClearance
+# sandkit.enums.BuildingClearance
 
 Defined in: [sandkit/enums/index.d.ts:48](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/enums/index.d.ts#L48)
 
 Result of a build placement check.
 
-## Enumeration Members
+## Enumeration Members <!-- {docsify-ignore} -->
 
-### Available
+### sandkit.enums.BuildingClearance.Available :id=available
 
 ```ts
 Available: 1
@@ -16,7 +16,7 @@ Defined in: [sandkit/enums/index.d.ts:49](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### FullyBlocked
+### sandkit.enums.BuildingClearance.FullyBlocked :id=fullyblocked
 
 ```ts
 FullyBlocked: 2
@@ -26,7 +26,7 @@ Defined in: [sandkit/enums/index.d.ts:50](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### PartiallyBlocked
+### sandkit.enums.BuildingClearance.PartiallyBlocked :id=partiallyblocked
 
 ```ts
 PartiallyBlocked: 3
@@ -36,7 +36,7 @@ Defined in: [sandkit/enums/index.d.ts:51](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### CanBeReplaced
+### sandkit.enums.BuildingClearance.CanBeReplaced :id=canbereplaced
 
 ```ts
 CanBeReplaced: 4

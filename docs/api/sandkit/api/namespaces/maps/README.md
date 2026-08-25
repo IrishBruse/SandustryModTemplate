@@ -1,8 +1,8 @@
-# maps
+# sandkit.api.maps
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### AvailableMapV1
+### sandkit.api.maps.AvailableMapV1 :id=availablemapv1
 
 Defined in: [sandkit/api/maps.d.ts:26](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/maps.d.ts#L26)
 
@@ -36,9 +36,9 @@ Defined in: [sandkit/api/maps.d.ts:30](https://github.com/IrishBruse/SandustryMo
 
 Display name or translation key.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### getAvailable()
+### sandkit.api.maps.getAvailable() :id=getavailable
 
 ```ts
 getAvailable(): readonly Readonly<AvailableMapV1>[]
@@ -54,7 +54,7 @@ readonly `Readonly`\<[`AvailableMapV1`](#availablemapv1)\>[]
 
 ***
 
-### start()
+### sandkit.api.maps.start() :id=start
 
 ```ts
 start(mapId: string): boolean
@@ -76,14 +76,14 @@ Custom map identifier.
 
 `boolean`
 
-## References
+## References <!-- {docsify-ignore} -->
 
-### getActive
+### sandkit.api.maps.getActive :id=getactive
 
 Re-exports [getActive](api/worker/namespaces/maps/README.md#getactive)
 
 ***
 
-### ActiveMapV1
+### sandkit.api.maps.ActiveMapV1 :id=activemapv1
 
 Re-exports [ActiveMapV1](api/worker/namespaces/maps/README.md#activemapv1)

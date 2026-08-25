@@ -1,4 +1,4 @@
-# matters
+# sandkit.engine.api.matters
 
 **`Internal`**
 
@@ -8,9 +8,9 @@
 Methods use loose stubs; signatures may take game state as the first argument.
 Engine methods pass game state as the first argument (args[0]); remaining entries are method-specific.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### getMatterTypeFromId()
+### sandkit.engine.api.matters.getMatterTypeFromId() :id=getmattertypefromid
 
 ```ts
 getMatterTypeFromId(...args: unknown[]): unknown
@@ -34,7 +34,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### register()
+### sandkit.engine.api.matters.register() :id=register
 
 ```ts
 register(...args: unknown[]): unknown
@@ -58,7 +58,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### runSolidUpdate()
+### sandkit.engine.api.matters.runSolidUpdate() :id=runsolidupdate
 
 ```ts
 runSolidUpdate(...args: unknown[]): unknown

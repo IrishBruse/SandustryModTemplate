@@ -1,8 +1,8 @@
-# processing
+# sandkit.api.processing
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### WeightedRecipeOutput
+### sandkit.api.processing.WeightedRecipeOutput :id=weightedrecipeoutput
 
 Defined in: [sandkit/api/processing.d.ts:30](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/processing.d.ts#L30)
 
@@ -32,7 +32,7 @@ Output probability from 0 to 1.
 
 ***
 
-### PlanterBoxRecipeDefinitionV1
+### sandkit.api.processing.PlanterBoxRecipeDefinitionV1 :id=planterboxrecipedefinitionv1
 
 Defined in: [sandkit/api/processing.d.ts:38](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/processing.d.ts#L38)
 
@@ -72,7 +72,7 @@ Success chance from 0 to 1. Default 1.
 
 ***
 
-### ShakerRecipeDefinitionV1
+### sandkit.api.processing.ShakerRecipeDefinitionV1 :id=shakerrecipedefinitionv1
 
 Defined in: [sandkit/api/processing.d.ts:48](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/processing.d.ts#L48)
 
@@ -112,7 +112,7 @@ Weighted outputs ejected downward.
 
 ***
 
-### KineticPressRecipeDefinitionV1
+### sandkit.api.processing.KineticPressRecipeDefinitionV1 :id=kineticpressrecipedefinitionv1
 
 Defined in: [sandkit/api/processing.d.ts:58](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/processing.d.ts#L58)
 
@@ -150,9 +150,9 @@ Defined in: [sandkit/api/processing.d.ts:64](https://github.com/IrishBruse/Sandu
 
 Weighted outputs produced by the press.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### registerGrower()
+### sandkit.api.processing.registerGrower() :id=registergrower
 
 ```ts
 registerGrower(definition: PlanterBoxRecipeDefinitionV1): void
@@ -176,7 +176,7 @@ Grower input/output recipe.
 
 ***
 
-### registerShaker()
+### sandkit.api.processing.registerShaker() :id=registershaker
 
 ```ts
 registerShaker(definition: ShakerRecipeDefinitionV1): void
@@ -200,7 +200,7 @@ Shaker input and weighted outputs.
 
 ***
 
-### registerKineticPress()
+### sandkit.api.processing.registerKineticPress() :id=registerkineticpress
 
 ```ts
 registerKineticPress(definition: KineticPressRecipeDefinitionV1): void

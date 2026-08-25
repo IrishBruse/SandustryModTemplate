@@ -1,4 +1,4 @@
-# player
+# sandkit.api.player (worker)
 
 **`Internal`**
 
@@ -6,9 +6,9 @@ Shared `sandkit.api.player` base — player position and collision queries.
 
  Base namespace reused by main and worker declarations.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### getWorldPosition()
+### sandkit.api.player.getWorldPosition() (worker) :id=getworldposition
 
 ```ts
 getWorldPosition(): Vector2
@@ -26,7 +26,7 @@ World position as `{ x, y }` in pixels.
 
 ***
 
-### isCollidingWithCell()
+### sandkit.api.player.isCollidingWithCell() (worker) :id=iscollidingwithcell
 
 ```ts
 isCollidingWithCell(...args: CellCoordinates): boolean
@@ -50,7 +50,7 @@ True when the player overlaps the cell.
 
 ***
 
-### isWithinRadiusOfCell()
+### sandkit.api.player.isWithinRadiusOfCell() (worker) :id=iswithinradiusofcell
 
 ```ts
 isWithinRadiusOfCell(...args: [number, number, number]): boolean

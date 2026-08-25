@@ -1,4 +1,4 @@
-# prefabulator
+# sandkit.engine.api.prefabulator
 
 **`Internal`**
 
@@ -8,9 +8,9 @@
 Methods use loose stubs; signatures may take game state as the first argument.
 Engine methods pass game state as the first argument (args[0]); remaining entries are method-specific.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### localizeBlueprintStructures()
+### sandkit.engine.api.prefabulator.localizeBlueprintStructures() :id=localizeblueprintstructures
 
 ```ts
 localizeBlueprintStructures(...args: unknown[]): unknown
@@ -34,7 +34,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### serializeBlueprintStructures()
+### sandkit.engine.api.prefabulator.serializeBlueprintStructures() :id=serializeblueprintstructures
 
 ```ts
 serializeBlueprintStructures(...args: unknown[]): unknown

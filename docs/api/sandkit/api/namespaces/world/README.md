@@ -1,14 +1,14 @@
-# world
+# sandkit.api.world
 
-## Namespaces
+## Namespaces <!-- {docsify-ignore} -->
 
 | Namespace | Description |
 | ------ | ------ |
 | [pickups](api/sandkit/api/namespaces/world/namespaces/pickups/README.md) | World item spawn, pickup, and lookup. |
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### WorldItemLight
+### sandkit.api.world.WorldItemLight :id=worlditemlight
 
 Defined in: [sandkit/api/world.d.ts:88](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/world.d.ts#L88)
 
@@ -48,7 +48,7 @@ RGB or RGBA color components in 0–1 range.
 
 ***
 
-### WorldItem
+### sandkit.api.world.WorldItem :id=worlditem
 
 Defined in: [sandkit/api/world.d.ts:98](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/world.d.ts#L98)
 
@@ -96,9 +96,9 @@ data: Record<string, unknown>
 
 Defined in: [sandkit/api/world.d.ts:103](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/world.d.ts#L103)
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### WorldItemType
+### sandkit.api.world.WorldItemType :id=worlditemtype
 
 ```ts
 WorldItemType = WorldItemType
@@ -108,9 +108,9 @@ Defined in: [sandkit/api/world.d.ts:85](https://github.com/IrishBruse/SandustryM
 
 World pickup type discriminator.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### runWhenSimulationIdle()
+### sandkit.api.world.runWhenSimulationIdle() :id=runwhensimulationidle
 
 ```ts
 runWhenSimulationIdle(callback: () => void): void
@@ -134,7 +134,7 @@ Function invoked on the main thread when workers are idle.
 
 ***
 
-### revealFogAtCell()
+### sandkit.api.world.revealFogAtCell() :id=revealfogatcell
 
 ```ts
 revealFogAtCell(...args: CellCoordinates): void
@@ -156,7 +156,7 @@ Reveal fog of war at a cell.
 
 ***
 
-### redrawAroundCellWhenIdle()
+### sandkit.api.world.redrawAroundCellWhenIdle() :id=redrawaroundcellwhenidle
 
 ```ts
 redrawAroundCellWhenIdle(...args: [number, number, number]): void
@@ -176,38 +176,38 @@ Request redraw around a cell when simulation is idle.
 
 `void`
 
-## References
+## References <!-- {docsify-ignore} -->
 
-### getCellIdAtCell
+### sandkit.api.world.getCellIdAtCell :id=getcellidatcell
 
 Re-exports [getCellIdAtCell](api/worker/namespaces/world/README.md#getcellidatcell)
 
 ***
 
-### isCellEmptyAtCell
+### sandkit.api.world.isCellEmptyAtCell :id=iscellemptyatcell
 
 Re-exports [isCellEmptyAtCell](api/worker/namespaces/world/README.md#iscellemptyatcell)
 
 ***
 
-### isTerrainAtCell
+### sandkit.api.world.isTerrainAtCell :id=isterrainatcell
 
 Re-exports [isTerrainAtCell](api/worker/namespaces/world/README.md#isterrainatcell)
 
 ***
 
-### reportActivityAtCell
+### sandkit.api.world.reportActivityAtCell :id=reportactivityatcell
 
 Re-exports [reportActivityAtCell](api/worker/namespaces/world/README.md#reportactivityatcell)
 
 ***
 
-### excavateAtCell
+### sandkit.api.world.excavateAtCell :id=excavateatcell
 
 Re-exports [excavateAtCell](api/worker/namespaces/world/README.md#excavateatcell)
 
 ***
 
-### ExcavateOptions
+### sandkit.api.world.ExcavateOptions :id=excavateoptions
 
 Re-exports [ExcavateOptions](api/worker/namespaces/world/README.md#excavateoptions)

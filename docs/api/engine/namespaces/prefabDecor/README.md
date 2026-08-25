@@ -1,4 +1,4 @@
-# prefabDecor
+# sandkit.engine.api.prefabDecor
 
 **`Internal`**
 
@@ -8,9 +8,9 @@
 Methods use loose stubs; signatures may take game state as the first argument.
 Engine methods pass game state as the first argument (args[0]); remaining entries are method-specific.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### getPlacementByName()
+### sandkit.engine.api.prefabDecor.getPlacementByName() :id=getplacementbyname
 
 ```ts
 getPlacementByName(...args: unknown[]): unknown
@@ -34,7 +34,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### replaceDecor()
+### sandkit.engine.api.prefabDecor.replaceDecor() :id=replacedecor
 
 ```ts
 replaceDecor(...args: unknown[]): unknown

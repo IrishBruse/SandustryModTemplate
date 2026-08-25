@@ -1,8 +1,8 @@
-# settings
+# sandkit.api.settings
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### ConfigValueV1
+### sandkit.api.settings.ConfigValueV1 :id=configvaluev1
 
 ```ts
 ConfigValueV1 = string | number | boolean | null
@@ -12,9 +12,9 @@ Defined in: [sandkit/api/settings.d.ts:23](https://github.com/IrishBruse/Sandust
 
 Settings field value shape.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### get()
+### sandkit.api.settings.get() :id=get
 
 ```ts
 get(fieldId: string): ConfigValueV1 | undefined
@@ -38,7 +38,7 @@ Settings field identifier.
 
 ***
 
-### getAll()
+### sandkit.api.settings.getAll() :id=getall
 
 ```ts
 getAll(): Readonly<Record<string, ConfigValueV1>>
@@ -54,7 +54,7 @@ Return all settings as a read-only map.
 
 ***
 
-### onChange()
+### sandkit.api.settings.onChange() :id=onchange
 
 ```ts
 onChange(callback: (values: Readonly<Record<string, ConfigValueV1>>) => void): () => void

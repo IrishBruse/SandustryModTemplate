@@ -1,4 +1,4 @@
-# prismite
+# sandkit.engine.api.prismite
 
 **`Internal`**
 
@@ -8,9 +8,9 @@
 Methods use loose stubs; signatures may take game state as the first argument.
 Engine methods pass game state as the first argument (args[0]); remaining entries are method-specific.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### consume()
+### sandkit.engine.api.prismite.consume() :id=consume
 
 ```ts
 consume(...args: unknown[]): unknown
@@ -34,7 +34,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getAvailable()
+### sandkit.engine.api.prismite.getAvailable() :id=getavailable
 
 ```ts
 getAvailable(...args: unknown[]): unknown
@@ -58,7 +58,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getConsumed()
+### sandkit.engine.api.prismite.getConsumed() :id=getconsumed
 
 ```ts
 getConsumed(...args: unknown[]): unknown

@@ -1,4 +1,4 @@
-# maps
+# sandkit.api.maps (worker)
 
 **`Internal`**
 
@@ -6,9 +6,9 @@ Shared `sandkit.api.maps` base — active custom map metadata.
 
  Base namespace reused by main and worker declarations.
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### ActiveMapV1
+### sandkit.api.maps.ActiveMapV1 (worker) :id=activemapv1
 
 Defined in: [shared/api/maps.d.ts:18](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/api/maps.d.ts#L18)
 
@@ -84,9 +84,9 @@ optional depthLight?: unknown
 
 Defined in: [shared/api/maps.d.ts:27](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/api/maps.d.ts#L27)
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### getActive()
+### sandkit.api.maps.getActive() (worker) :id=getactive
 
 ```ts
 getActive(): Readonly<ActiveMapV1> | null

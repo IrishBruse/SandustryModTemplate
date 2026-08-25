@@ -1,4 +1,4 @@
-# blueprints
+# sandkit.engine.api.blueprints
 
 **`Internal`**
 
@@ -8,9 +8,9 @@
 Methods use loose stubs; signatures may take game state as the first argument.
 Engine methods pass game state as the first argument (args[0]); remaining entries are method-specific.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### delete()
+### sandkit.engine.api.blueprints.delete() :id=delete
 
 ```ts
 delete(...args: unknown[]): unknown
@@ -34,7 +34,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### exportAllString()
+### sandkit.engine.api.blueprints.exportAllString() :id=exportallstring
 
 ```ts
 exportAllString(...args: unknown[]): unknown
@@ -58,7 +58,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### exportString()
+### sandkit.engine.api.blueprints.exportString() :id=exportstring
 
 ```ts
 exportString(...args: unknown[]): unknown
@@ -82,7 +82,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getAll()
+### sandkit.engine.api.blueprints.getAll() :id=getall
 
 ```ts
 getAll(...args: unknown[]): unknown
@@ -106,7 +106,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### importString()
+### sandkit.engine.api.blueprints.importString() :id=importstring
 
 ```ts
 importString(...args: unknown[]): unknown
@@ -130,7 +130,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### load()
+### sandkit.engine.api.blueprints.load() :id=load
 
 ```ts
 load(...args: unknown[]): unknown
@@ -154,7 +154,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### save()
+### sandkit.engine.api.blueprints.save() :id=save
 
 ```ts
 save(...args: unknown[]): unknown

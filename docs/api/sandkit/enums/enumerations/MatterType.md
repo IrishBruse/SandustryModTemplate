@@ -1,12 +1,12 @@
-# Enumeration: MatterType
+# sandkit.enums.MatterType
 
 Defined in: [sandkit/enums/index.d.ts:221](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/enums/index.d.ts#L221)
 
 Physical behaviour category for elements (mirrors shared API enum).
 
-## Enumeration Members
+## Enumeration Members <!-- {docsify-ignore} -->
 
-### Solid
+### sandkit.enums.MatterType.Solid :id=solid
 
 ```ts
 Solid: 1
@@ -16,7 +16,7 @@ Defined in: [sandkit/enums/index.d.ts:222](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Liquid
+### sandkit.enums.MatterType.Liquid :id=liquid
 
 ```ts
 Liquid: 2
@@ -26,7 +26,7 @@ Defined in: [sandkit/enums/index.d.ts:223](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Particle
+### sandkit.enums.MatterType.Particle :id=particle
 
 ```ts
 Particle: 3
@@ -36,7 +36,7 @@ Defined in: [sandkit/enums/index.d.ts:224](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Gas
+### sandkit.enums.MatterType.Gas :id=gas
 
 ```ts
 Gas: 4
@@ -46,7 +46,7 @@ Defined in: [sandkit/enums/index.d.ts:225](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Static
+### sandkit.enums.MatterType.Static :id=static
 
 ```ts
 Static: 5
@@ -56,7 +56,7 @@ Defined in: [sandkit/enums/index.d.ts:226](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Slushy
+### sandkit.enums.MatterType.Slushy :id=slushy
 
 ```ts
 Slushy: 6
@@ -66,7 +66,7 @@ Defined in: [sandkit/enums/index.d.ts:227](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Wisp
+### sandkit.enums.MatterType.Wisp :id=wisp
 
 ```ts
 Wisp: 7
@@ -76,7 +76,7 @@ Defined in: [sandkit/enums/index.d.ts:228](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Powder
+### sandkit.enums.MatterType.Powder :id=powder
 
 ```ts
 Powder: 8

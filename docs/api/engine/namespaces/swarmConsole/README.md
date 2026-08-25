@@ -1,4 +1,4 @@
-# swarmConsole
+# sandkit.engine.api.swarmConsole
 
 **`Internal`**
 
@@ -8,9 +8,9 @@
 Methods use loose stubs; signatures may take game state as the first argument.
 Engine methods pass game state as the first argument (args[0]); remaining entries are method-specific.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### decrementConvergenceBuffer()
+### sandkit.engine.api.swarmConsole.decrementConvergenceBuffer() :id=decrementconvergencebuffer
 
 ```ts
 decrementConvergenceBuffer(...args: unknown[]): unknown
@@ -34,7 +34,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getCrystalMined()
+### sandkit.engine.api.swarmConsole.getCrystalMined() :id=getcrystalmined
 
 ```ts
 getCrystalMined(...args: unknown[]): unknown
@@ -58,7 +58,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getDiskRadiusCells()
+### sandkit.engine.api.swarmConsole.getDiskRadiusCells() :id=getdiskradiuscells
 
 ```ts
 getDiskRadiusCells(...args: unknown[]): unknown
@@ -82,7 +82,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getEntityType()
+### sandkit.engine.api.swarmConsole.getEntityType() :id=getentitytype
 
 ```ts
 getEntityType(...args: unknown[]): unknown
@@ -106,7 +106,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getNearestConvergence()
+### sandkit.engine.api.swarmConsole.getNearestConvergence() :id=getnearestconvergence
 
 ```ts
 getNearestConvergence(...args: unknown[]): unknown
@@ -130,7 +130,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getPendingConvergence()
+### sandkit.engine.api.swarmConsole.getPendingConvergence() :id=getpendingconvergence
 
 ```ts
 getPendingConvergence(...args: unknown[]): unknown
@@ -154,7 +154,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getPlacedConsoles()
+### sandkit.engine.api.swarmConsole.getPlacedConsoles() :id=getplacedconsoles
 
 ```ts
 getPlacedConsoles(...args: unknown[]): unknown
@@ -178,7 +178,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getRadiusPx()
+### sandkit.engine.api.swarmConsole.getRadiusPx() :id=getradiuspx
 
 ```ts
 getRadiusPx(...args: unknown[]): unknown
@@ -202,7 +202,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### isSpawnJammed()
+### sandkit.engine.api.swarmConsole.isSpawnJammed() :id=isspawnjammed
 
 ```ts
 isSpawnJammed(...args: unknown[]): unknown
@@ -226,7 +226,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### registerEntityType()
+### sandkit.engine.api.swarmConsole.registerEntityType() :id=registerentitytype
 
 ```ts
 registerEntityType(...args: unknown[]): unknown
@@ -250,7 +250,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### resetAllConvergenceBuffers()
+### sandkit.engine.api.swarmConsole.resetAllConvergenceBuffers() :id=resetallconvergencebuffers
 
 ```ts
 resetAllConvergenceBuffers(...args: unknown[]): unknown
@@ -274,7 +274,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### setSpawnJammed()
+### sandkit.engine.api.swarmConsole.setSpawnJammed() :id=setspawnjammed
 
 ```ts
 setSpawnJammed(...args: unknown[]): unknown

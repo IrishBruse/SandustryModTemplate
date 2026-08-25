@@ -1,18 +1,18 @@
-# lights
+# sandkit.api.lights
 
 `sandkit.api.lights` — temporary VFX lights and persistent world lights.
 Main thread only.
 
-## Namespaces
+## Namespaces <!-- {docsify-ignore} -->
 
 | Namespace | Description |
 | ------ | ------ |
 | [vfx](api/sandkit/api/namespaces/lights/namespaces/vfx/README.md) | Short-lived visual effect lights. |
 | [persistent](api/sandkit/api/namespaces/lights/namespaces/persistent/README.md) | Lights that persist in the world save. |
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### PersistentLightOptions
+### sandkit.api.lights.PersistentLightOptions :id=persistentlightoptions
 
 Defined in: [sandkit/api/lights.d.ts:54](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/lights.d.ts#L54)
 
@@ -56,9 +56,9 @@ Defined in: [sandkit/api/lights.d.ts:60](https://github.com/IrishBruse/Sandustry
 
 RGBA color components.
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### TemporaryLightOptions
+### sandkit.api.lights.TemporaryLightOptions :id=temporarylightoptions
 
 ```ts
 TemporaryLightOptions = TemporaryLightOptions
@@ -70,7 +70,7 @@ Options for temporary VFX lights.
 
 ***
 
-### PersistentLightHandle
+### sandkit.api.lights.PersistentLightHandle :id=persistentlighthandle
 
 ```ts
 PersistentLightHandle = unknown

@@ -1,17 +1,17 @@
-# building
+# sandkit.api.building
 
 `sandkit.api.building` — structure placement and built-in structure types.
 Main thread only.
 
-## Enumerations
+## Enumerations <!-- {docsify-ignore} -->
 
 | Enumeration | Description |
 | ------ | ------ |
 | [StructureType](api/sandkit/api/namespaces/building/enumerations/StructureType.md) | Built-in structure type ids used during placement. |
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### getSnappedPositionAtCell()
+### sandkit.api.building.getSnappedPositionAtCell() :id=getsnappedpositionatcell
 
 ```ts
 getSnappedPositionAtCell(...args: CellCoordinates): Vector2
@@ -35,7 +35,7 @@ Snapped world position in pixels.
 
 ***
 
-### isBlockedAtCell()
+### sandkit.api.building.isBlockedAtCell() :id=isblockedatcell
 
 ```ts
 isBlockedAtCell(...args: CellCoordinates): boolean
@@ -59,7 +59,7 @@ True when a structure cannot be placed at the cell.
 
 ***
 
-### cancelPlacement()
+### sandkit.api.building.cancelPlacement() :id=cancelplacement
 
 ```ts
 cancelPlacement(): void
@@ -75,7 +75,7 @@ Cancel the current structure placement preview.
 
 ***
 
-### selectStructure()
+### sandkit.api.building.selectStructure() :id=selectstructure
 
 ```ts
 selectStructure(structureTypeOrId: string | StructureType): string | StructureType | null

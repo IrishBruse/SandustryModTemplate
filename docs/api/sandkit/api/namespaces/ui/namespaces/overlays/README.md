@@ -1,10 +1,10 @@
-# overlays
+# sandkit.api.ui.overlays
 
 Overlay slot registration and updates.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### register()
+### sandkit.api.ui.overlays.register() :id=register
 
 ```ts
 register(slot: string, overlayId: string, render: () => ReactNode): void
@@ -40,7 +40,7 @@ Function that returns React content.
 
 ***
 
-### unregister()
+### sandkit.api.ui.overlays.unregister() :id=unregister
 
 ```ts
 unregister(slot: string, overlayId: string): void
@@ -70,7 +70,7 @@ Overlay id passed to [register](#register).
 
 ***
 
-### update()
+### sandkit.api.ui.overlays.update() :id=update
 
 ```ts
 update(slot: string): void

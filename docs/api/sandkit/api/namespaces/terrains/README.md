@@ -1,8 +1,8 @@
-# terrains
+# sandkit.api.terrains
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### TerrainDefinition
+### sandkit.api.terrains.TerrainDefinition :id=terraindefinition
 
 Defined in: [sandkit/api/terrains.d.ts:95](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/terrains.d.ts#L95)
 
@@ -118,9 +118,9 @@ elementType: number
 chance: number
 ```
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### register()
+### sandkit.api.terrains.register() :id=register
 
 ```ts
 register(definition: TerrainDefinition): object
@@ -152,7 +152,7 @@ cellType: number
 
 ***
 
-### updateDefinition()
+### sandkit.api.terrains.updateDefinition() :id=updatedefinition
 
 ```ts
 updateDefinition(cellTypeOrId: string | number, partial: Partial<TerrainDefinition>): void
@@ -182,7 +182,7 @@ Fields to merge onto the definition.
 
 ***
 
-### createAtCellWhenIdle()
+### sandkit.api.terrains.createAtCellWhenIdle() :id=createatcellwhenidle
 
 ```ts
 createAtCellWhenIdle(...args: number, number, string | number, [TerrainMutationOptions]): void
@@ -204,7 +204,7 @@ Create terrain at a cell when simulation is idle.
 
 ***
 
-### replaceAtCellWhenIdle()
+### sandkit.api.terrains.replaceAtCellWhenIdle() :id=replaceatcellwhenidle
 
 ```ts
 replaceAtCellWhenIdle(...args: number, number, string | number, [TerrainMutationOptions]): void
@@ -226,7 +226,7 @@ Replace terrain at a cell when simulation is idle.
 
 ***
 
-### removeAtCellWhenIdle()
+### sandkit.api.terrains.removeAtCellWhenIdle() :id=removeatcellwhenidle
 
 ```ts
 removeAtCellWhenIdle(...args: number, number, [TerrainMutationOptions]): void
@@ -248,7 +248,7 @@ Remove terrain at a cell when simulation is idle.
 
 ***
 
-### setHpAtCellWhenIdle()
+### sandkit.api.terrains.setHpAtCellWhenIdle() :id=sethpatcellwhenidle
 
 ```ts
 setHpAtCellWhenIdle(...args: [number, number, number]): void
@@ -270,7 +270,7 @@ Set terrain hit points at a cell when simulation is idle.
 
 ***
 
-### setHpAtCell()
+### sandkit.api.terrains.setHpAtCell() :id=sethpatcell
 
 ```ts
 setHpAtCell(...args: [number, number, number]): boolean
@@ -292,68 +292,68 @@ Set terrain hit points at a cell immediately.
 
 True when hp changed or the terrain was removed.
 
-## References
+## References <!-- {docsify-ignore} -->
 
-### getTypeFromId
+### sandkit.api.terrains.getTypeFromId :id=gettypefromid
 
 Re-exports [getTypeFromId](api/worker/namespaces/terrains/README.md#gettypefromid)
 
 ***
 
-### getTypeAtCell
+### sandkit.api.terrains.getTypeAtCell :id=gettypeatcell
 
 Re-exports [getTypeAtCell](api/worker/namespaces/terrains/README.md#gettypeatcell)
 
 ***
 
-### getDataAtCell
+### sandkit.api.terrains.getDataAtCell :id=getdataatcell
 
 Re-exports [getDataAtCell](api/worker/namespaces/terrains/README.md#getdataatcell)
 
 ***
 
-### isAtCell
+### sandkit.api.terrains.isAtCell :id=isatcell
 
 Re-exports [isAtCell](api/worker/namespaces/terrains/README.md#isatcell)
 
 ***
 
-### isTypeAtCell
+### sandkit.api.terrains.isTypeAtCell :id=istypeatcell
 
 Re-exports [isTypeAtCell](api/worker/namespaces/terrains/README.md#istypeatcell)
 
 ***
 
-### isCellIdTerrain
+### sandkit.api.terrains.isCellIdTerrain :id=iscellidterrain
 
 Re-exports [isCellIdTerrain](api/worker/namespaces/terrains/README.md#iscellidterrain)
 
 ***
 
-### damageAtCell
+### sandkit.api.terrains.damageAtCell :id=damageatcell
 
 Re-exports [damageAtCell](api/worker/namespaces/terrains/README.md#damageatcell)
 
 ***
 
-### createAtCell
+### sandkit.api.terrains.createAtCell :id=createatcell
 
 Re-exports [createAtCell](api/worker/namespaces/terrains/README.md#createatcell)
 
 ***
 
-### replaceAtCell
+### sandkit.api.terrains.replaceAtCell :id=replaceatcell
 
 Re-exports [replaceAtCell](api/worker/namespaces/terrains/README.md#replaceatcell)
 
 ***
 
-### removeAtCell
+### sandkit.api.terrains.removeAtCell :id=removeatcell
 
 Re-exports [removeAtCell](api/worker/namespaces/terrains/README.md#removeatcell)
 
 ***
 
-### TerrainMutationOptions
+### sandkit.api.terrains.TerrainMutationOptions :id=terrainmutationoptions
 
 Re-exports [TerrainMutationOptions](api/worker/namespaces/terrains/README.md#terrainmutationoptions)

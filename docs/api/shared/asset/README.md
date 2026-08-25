@@ -1,8 +1,8 @@
-# shared/asset
+# shared.asset
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### AssetRef
+### shared.asset.AssetRef :id=assetref
 
 Defined in: [shared/asset.d.ts:9](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/asset.d.ts#L9)
 

@@ -1,8 +1,8 @@
-# sprites
+# sandkit.api.sprites
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### SpriteLoadOptions
+### sandkit.api.sprites.SpriteLoadOptions :id=spriteloadoptions
 
 Defined in: [sandkit/api/sprites.d.ts:40](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/sprites.d.ts#L40)
 
@@ -26,9 +26,9 @@ Defined in: [sandkit/api/sprites.d.ts:42](https://github.com/IrishBruse/Sandustr
 
 Packed RGB tint applied after load.
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### LoadedSprite
+### sandkit.api.sprites.LoadedSprite :id=loadedsprite
 
 ```ts
 LoadedSprite = unknown
@@ -38,9 +38,9 @@ Defined in: [sandkit/api/sprites.d.ts:37](https://github.com/IrishBruse/Sandustr
 
 Loaded sprite handle (runtime texture or display object).
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### load()
+### sandkit.api.sprites.load() :id=load
 
 ```ts
 load(spriteId: string, path: string, options?: SpriteLoadOptions): Promise<void>
@@ -76,7 +76,7 @@ Optional tint and load options.
 
 ***
 
-### loadFromMod()
+### sandkit.api.sprites.loadFromMod() :id=loadfrommod
 
 ```ts
 loadFromMod(spriteId: string, relativePath: string, options?: SpriteLoadOptions): Promise<void>
@@ -112,7 +112,7 @@ Optional tint and load options.
 
 ***
 
-### getById()
+### sandkit.api.sprites.getById() :id=getbyid
 
 ```ts
 getById(spriteId: string): unknown
@@ -136,7 +136,7 @@ Sprite id from [load](#load) or [loadFromMod](#loadfrommod).
 
 ***
 
-### hideAllPlayerModSprites()
+### sandkit.api.sprites.hideAllPlayerModSprites() :id=hideallplayermodsprites
 
 ```ts
 hideAllPlayerModSprites(): void
@@ -152,7 +152,7 @@ Hide all player mod-attached sprites.
 
 ***
 
-### rotatePlayerModSprites()
+### sandkit.api.sprites.rotatePlayerModSprites() :id=rotateplayermodsprites
 
 ```ts
 rotatePlayerModSprites(angle: number): void

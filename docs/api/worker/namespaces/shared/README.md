@@ -1,4 +1,4 @@
-# shared
+# sandkit.api.shared (worker)
 
 **`Internal`**
 
@@ -12,20 +12,20 @@ Workers **require** buffers created on the main thread. Main thread only
  Worker extension of shared; not interchangeable with
 main-thread `sandkit.api.shared`.
 
-## Namespaces
+## Namespaces <!-- {docsify-ignore} -->
 
 | Namespace | Description |
 | ------ | ------ |
 | [buffers](api/worker/namespaces/shared/namespaces/buffers/README.md) | Named shared memory buffers for worker threads. |
 
-## References
+## References <!-- {docsify-ignore} -->
 
-### SharedArray
+### sandkit.api.shared.SharedArray (worker) :id=sharedarray
 
 Re-exports [SharedArray](api/sandkit/api/namespaces/shared/README.md#sharedarray)
 
 ***
 
-### SharedArrayType
+### sandkit.api.shared.SharedArrayType (worker) :id=sharedarraytype
 
 Re-exports [SharedArrayType](api/sandkit/api/namespaces/shared/README.md#sharedarraytype)

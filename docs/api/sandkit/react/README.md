@@ -1,8 +1,8 @@
-# sandkit/react
+# sandkit.react
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### SandkitReact
+### sandkit.react.SandkitReact :id=sandkitreact
 
 ```ts
 SandkitReact = object

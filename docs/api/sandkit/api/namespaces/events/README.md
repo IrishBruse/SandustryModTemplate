@@ -1,11 +1,11 @@
-# events
+# sandkit.api.events
 
 `sandkit.api.events` — subscribe to and emit named game events.
-Main thread only.
+Main thread only. The `events` object is frozen; do not replace `on` or `emit`.
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### PlayerCollisionPreparePayload
+### sandkit.api.events.PlayerCollisionPreparePayload :id=playercollisionpreparepayload
 
 Defined in: [sandkit/api/events.d.ts:23](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/events.d.ts#L23)
 
@@ -46,7 +46,7 @@ Max cells the player can step up when blocked horizontally (1–8).
 
 ***
 
-### EventPayloadMap
+### sandkit.api.events.EventPayloadMap :id=eventpayloadmap
 
 Defined in: [sandkit/api/events.d.ts:33](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/events.d.ts#L33)
 
@@ -77,6 +77,8 @@ optional dt?: number
 ```
 
 Simulation step duration in seconds.
+`0` on teleports. The event runs after collision; landing already
+zeroes `velocity.y`. Vanilla gravity is applied after this event.
 
 ###### state?
 
@@ -84,15 +86,15 @@ Simulation step duration in seconds.
 optional state?: unknown
 ```
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### EventPayload
+### sandkit.api.events.EventPayload :id=eventpayload
 
 ```ts
 EventPayload<K> = K *extends* keyof EventPayloadMap ? EventPayloadMap[K] : unknown
 ```
 
-Defined in: [sandkit/api/events.d.ts:43](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/events.d.ts#L43)
+Defined in: [sandkit/api/events.d.ts:47](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/events.d.ts#L47)
 
 Event payload type for a given event id.
 
@@ -102,9 +104,9 @@ Event payload type for a given event id.
 
 `K`
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### on()
+### sandkit.api.events.on() :id=on
 
 ```ts
 on<K>(eventId: K, callback: (payload: EventPayload<K>) => void): () => void
@@ -140,7 +142,7 @@ Called when the event is emitted.
 
 ***
 
-### emit()
+### sandkit.api.events.emit() :id=emit
 
 ```ts
 emit<K>(eventId: K, payload: EventPayload<K>): void

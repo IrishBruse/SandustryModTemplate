@@ -1,11 +1,11 @@
-# cooldown
+# sandkit.api.cooldown
 
 `sandkit.api.cooldown` — reusable cooldown timers for abilities and items.
 Main thread only.
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### Cooldown
+### sandkit.api.cooldown.Cooldown :id=cooldown
 
 Defined in: [sandkit/api/cooldown.d.ts:20](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/cooldown.d.ts#L20)
 
@@ -33,9 +33,9 @@ Defined in: [sandkit/api/cooldown.d.ts:24](https://github.com/IrishBruse/Sandust
 
 Cooldown duration in milliseconds.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### check()
+### sandkit.api.cooldown.check() :id=check
 
 ```ts
 check(cooldown: Cooldown, overrideTime?: number): boolean
@@ -65,7 +65,7 @@ Optional timestamp (ms) instead of current game time.
 
 ***
 
-### isReady()
+### sandkit.api.cooldown.isReady() :id=isready
 
 ```ts
 isReady(cooldown: Cooldown, overrideTime?: number): boolean

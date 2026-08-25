@@ -1,12 +1,12 @@
-# Enumeration: ActionType
+# sandkit.enums.ActionType
 
 Defined in: [sandkit/enums/index.d.ts:24](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/enums/index.d.ts#L24)
 
 High-level action channel (weapon, building, tool, mod).
 
-## Enumeration Members
+## Enumeration Members <!-- {docsify-ignore} -->
 
-### Weapon
+### sandkit.enums.ActionType.Weapon :id=weapon
 
 ```ts
 Weapon: 1
@@ -16,7 +16,7 @@ Defined in: [sandkit/enums/index.d.ts:25](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### Building
+### sandkit.enums.ActionType.Building :id=building
 
 ```ts
 Building: 2
@@ -26,7 +26,7 @@ Defined in: [sandkit/enums/index.d.ts:26](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### Tool
+### sandkit.enums.ActionType.Tool :id=tool
 
 ```ts
 Tool: 3
@@ -36,7 +36,7 @@ Defined in: [sandkit/enums/index.d.ts:27](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### Mod
+### sandkit.enums.ActionType.Mod :id=mod
 
 ```ts
 Mod: 4

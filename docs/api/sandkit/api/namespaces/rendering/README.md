@@ -1,8 +1,8 @@
-# rendering
+# sandkit.api.rendering
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### getDrawPositionAtCell()
+### sandkit.api.rendering.getDrawPositionAtCell() :id=getdrawpositionatcell
 
 ```ts
 getDrawPositionAtCell(...args: CellCoordinates): Vector2
@@ -24,7 +24,7 @@ Return screen draw position for a grid cell.
 
 ***
 
-### getGridMetrics()
+### sandkit.api.rendering.getGridMetrics() :id=getgridmetrics
 
 ```ts
 getGridMetrics(): object
@@ -52,7 +52,7 @@ snapGridCellSize: number
 
 ***
 
-### getOverlayViewportSize()
+### sandkit.api.rendering.getOverlayViewportSize() :id=getoverlayviewportsize
 
 ```ts
 getOverlayViewportSize(): object
@@ -80,7 +80,7 @@ height: number
 
 ***
 
-### withOverlayContext()
+### sandkit.api.rendering.withOverlayContext() :id=withoverlaycontext
 
 ```ts
 withOverlayContext<T>(callback: (context: CanvasRenderingContext2D) => T): T

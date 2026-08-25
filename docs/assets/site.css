@@ -628,3 +628,13 @@ iframe.ui-canvas {
   border: 1px solid var(--border-color, rgba(0, 0, 0, 0.18));
   border-radius: 6px;
 }
+
+.search .results-panel {
+  max-height: min(60vh, 28rem);
+  overflow: auto;
+}
+
+.search .matching-post .title {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.82rem;
+}

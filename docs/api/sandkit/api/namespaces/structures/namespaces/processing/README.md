@@ -1,10 +1,10 @@
-# processing
+# sandkit.api.structures.processing
 
 Per-structure processing enablement and registration.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### register()
+### sandkit.api.structures.processing.register() :id=register
 
 ```ts
 register(id: string, definition: StructureProcessingDefinitionV1): void
@@ -34,7 +34,7 @@ Structure type, interval, and callback.
 
 ***
 
-### setEnabledAt()
+### sandkit.api.structures.processing.setEnabledAt() :id=setenabledat
 
 ```ts
 setEnabledAt(...args: [number, number, boolean]): boolean
@@ -56,8 +56,8 @@ Enable or disable processing at a cell.
 
 True when the enabled state changed.
 
-## References
+## References <!-- {docsify-ignore} -->
 
-### isEnabledAt
+### sandkit.api.structures.processing.isEnabledAt :id=isenabledat
 
 Re-exports [isEnabledAt](api/worker/namespaces/structures/namespaces/processing/README.md#isenabledat)

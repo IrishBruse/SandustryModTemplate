@@ -1,8 +1,8 @@
-# time
+# sandkit.api.time
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### getTimeMs()
+### sandkit.api.time.getTimeMs() :id=gettimems
 
 ```ts
 getTimeMs(): number
@@ -18,7 +18,7 @@ Return elapsed game time in milliseconds.
 
 ***
 
-### getTick()
+### sandkit.api.time.getTick() :id=gettick
 
 ```ts
 getTick(): number

@@ -1,4 +1,4 @@
-# heatTransfer
+# sandkit.engine.api.heatTransfer
 
 **`Internal`**
 
@@ -8,9 +8,9 @@
 Methods use loose stubs; signatures may take game state as the first argument.
 Engine methods pass game state as the first argument (args[0]); remaining entries are method-specific.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### absorbAdjacentElements()
+### sandkit.engine.api.heatTransfer.absorbAdjacentElements() :id=absorbadjacentelements
 
 ```ts
 absorbAdjacentElements(...args: unknown[]): unknown
@@ -34,7 +34,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### addTemperature()
+### sandkit.engine.api.heatTransfer.addTemperature() :id=addtemperature
 
 ```ts
 addTemperature(...args: unknown[]): unknown
@@ -58,7 +58,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### computeDiffusedTemperatures()
+### sandkit.engine.api.heatTransfer.computeDiffusedTemperatures() :id=computediffusedtemperatures
 
 ```ts
 computeDiffusedTemperatures(...args: unknown[]): unknown
@@ -82,7 +82,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### computeEqualizedTemperature()
+### sandkit.engine.api.heatTransfer.computeEqualizedTemperature() :id=computeequalizedtemperature
 
 ```ts
 computeEqualizedTemperature(...args: unknown[]): unknown
@@ -106,7 +106,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### consumeTemperatureNear()
+### sandkit.engine.api.heatTransfer.consumeTemperatureNear() :id=consumetemperaturenear
 
 ```ts
 consumeTemperatureNear(...args: unknown[]): unknown
@@ -130,7 +130,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### ensureTemperature()
+### sandkit.engine.api.heatTransfer.ensureTemperature() :id=ensuretemperature
 
 ```ts
 ensureTemperature(...args: unknown[]): unknown
@@ -154,7 +154,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### equalizeConnected()
+### sandkit.engine.api.heatTransfer.equalizeConnected() :id=equalizeconnected
 
 ```ts
 equalizeConnected(...args: unknown[]): unknown

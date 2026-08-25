@@ -1,12 +1,12 @@
-# Enumeration: KeyBinding
+# sandkit.enums.KeyBinding
 
 Defined in: [sandkit/enums/index.d.ts:181](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/enums/index.d.ts#L181)
 
 Named input bindings (settings keys).
 
-## Enumeration Members
+## Enumeration Members <!-- {docsify-ignore} -->
 
-### OpenBuildMenu
+### sandkit.enums.KeyBinding.OpenBuildMenu :id=openbuildmenu
 
 ```ts
 OpenBuildMenu: "OpenBuildMenu"
@@ -16,7 +16,7 @@ Defined in: [sandkit/enums/index.d.ts:182](https://github.com/IrishBruse/Sandust
 
 ***
 
-### GrapplingHook
+### sandkit.enums.KeyBinding.GrapplingHook :id=grapplinghook
 
 ```ts
 GrapplingHook: "GrapplingHook"
@@ -26,7 +26,7 @@ Defined in: [sandkit/enums/index.d.ts:183](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Escape
+### sandkit.enums.KeyBinding.Escape :id=escape
 
 ```ts
 Escape: "Escape"
@@ -36,7 +36,7 @@ Defined in: [sandkit/enums/index.d.ts:184](https://github.com/IrishBruse/Sandust
 
 ***
 
-### OpenTechTree
+### sandkit.enums.KeyBinding.OpenTechTree :id=opentechtree
 
 ```ts
 OpenTechTree: "OpenTechTree"
@@ -46,7 +46,7 @@ Defined in: [sandkit/enums/index.d.ts:185](https://github.com/IrishBruse/Sandust
 
 ***
 
-### OpenInventory
+### sandkit.enums.KeyBinding.OpenInventory :id=openinventory
 
 ```ts
 OpenInventory: "OpenInventory"
@@ -56,7 +56,7 @@ Defined in: [sandkit/enums/index.d.ts:186](https://github.com/IrishBruse/Sandust
 
 ***
 
-### ReverseBuildDirection
+### sandkit.enums.KeyBinding.ReverseBuildDirection :id=reversebuilddirection
 
 ```ts
 ReverseBuildDirection: "ReverseBuildDirection"
@@ -66,7 +66,7 @@ Defined in: [sandkit/enums/index.d.ts:187](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Marquee
+### sandkit.enums.KeyBinding.Marquee :id=marquee
 
 ```ts
 Marquee: "Marquee"
@@ -76,7 +76,7 @@ Defined in: [sandkit/enums/index.d.ts:188](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Pause
+### sandkit.enums.KeyBinding.Pause :id=pause
 
 ```ts
 Pause: "Pause"
@@ -86,7 +86,7 @@ Defined in: [sandkit/enums/index.d.ts:189](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Copy
+### sandkit.enums.KeyBinding.Copy :id=copy
 
 ```ts
 Copy: "Copy"
@@ -96,7 +96,7 @@ Defined in: [sandkit/enums/index.d.ts:190](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Paste
+### sandkit.enums.KeyBinding.Paste :id=paste
 
 ```ts
 Paste: "Paste"
@@ -106,7 +106,7 @@ Defined in: [sandkit/enums/index.d.ts:191](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Flip
+### sandkit.enums.KeyBinding.Flip :id=flip
 
 ```ts
 Flip: "Flip"
@@ -116,7 +116,7 @@ Defined in: [sandkit/enums/index.d.ts:192](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Delete
+### sandkit.enums.KeyBinding.Delete :id=delete
 
 ```ts
 Delete: "Delete"
@@ -126,7 +126,7 @@ Defined in: [sandkit/enums/index.d.ts:193](https://github.com/IrishBruse/Sandust
 
 ***
 
-### PauseCamera
+### sandkit.enums.KeyBinding.PauseCamera :id=pausecamera
 
 ```ts
 PauseCamera: "PauseCamera"
@@ -136,7 +136,7 @@ Defined in: [sandkit/enums/index.d.ts:194](https://github.com/IrishBruse/Sandust
 
 ***
 
-### OpenUpgrades
+### sandkit.enums.KeyBinding.OpenUpgrades :id=openupgrades
 
 ```ts
 OpenUpgrades: "OpenUpgrades"
@@ -146,7 +146,7 @@ Defined in: [sandkit/enums/index.d.ts:195](https://github.com/IrishBruse/Sandust
 
 ***
 
-### BuildMode
+### sandkit.enums.KeyBinding.BuildMode :id=buildmode
 
 ```ts
 BuildMode: "BuildMode"
@@ -156,7 +156,7 @@ Defined in: [sandkit/enums/index.d.ts:196](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Demolish
+### sandkit.enums.KeyBinding.Demolish :id=demolish
 
 ```ts
 Demolish: "Demolish"
@@ -166,7 +166,7 @@ Defined in: [sandkit/enums/index.d.ts:197](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Hover
+### sandkit.enums.KeyBinding.Hover :id=hover
 
 ```ts
 Hover: "Hover"
@@ -176,7 +176,7 @@ Defined in: [sandkit/enums/index.d.ts:198](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Ruler
+### sandkit.enums.KeyBinding.Ruler :id=ruler
 
 ```ts
 Ruler: "Ruler"
@@ -186,7 +186,7 @@ Defined in: [sandkit/enums/index.d.ts:199](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Left
+### sandkit.enums.KeyBinding.Left :id=left
 
 ```ts
 Left: "Left"
@@ -196,7 +196,7 @@ Defined in: [sandkit/enums/index.d.ts:200](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Right
+### sandkit.enums.KeyBinding.Right :id=right
 
 ```ts
 Right: "Right"
@@ -206,7 +206,7 @@ Defined in: [sandkit/enums/index.d.ts:201](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Boost
+### sandkit.enums.KeyBinding.Boost :id=boost
 
 ```ts
 Boost: "Boost"
@@ -216,7 +216,7 @@ Defined in: [sandkit/enums/index.d.ts:202](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Descend
+### sandkit.enums.KeyBinding.Descend :id=descend
 
 ```ts
 Descend: "Descend"
@@ -226,7 +226,7 @@ Defined in: [sandkit/enums/index.d.ts:203](https://github.com/IrishBruse/Sandust
 
 ***
 
-### SprintBoost
+### sandkit.enums.KeyBinding.SprintBoost :id=sprintboost
 
 ```ts
 SprintBoost: "SprintBoost"
@@ -236,7 +236,7 @@ Defined in: [sandkit/enums/index.d.ts:204](https://github.com/IrishBruse/Sandust
 
 ***
 
-### OverrideReplaceStructures
+### sandkit.enums.KeyBinding.OverrideReplaceStructures :id=overridereplacestructures
 
 ```ts
 OverrideReplaceStructures: "OverrideReplaceStructures"
@@ -246,7 +246,7 @@ Defined in: [sandkit/enums/index.d.ts:205](https://github.com/IrishBruse/Sandust
 
 ***
 
-### QuickSave
+### sandkit.enums.KeyBinding.QuickSave :id=quicksave
 
 ```ts
 QuickSave: "QuickSave"
@@ -256,7 +256,7 @@ Defined in: [sandkit/enums/index.d.ts:206](https://github.com/IrishBruse/Sandust
 
 ***
 
-### QuickLoad
+### sandkit.enums.KeyBinding.QuickLoad :id=quickload
 
 ```ts
 QuickLoad: "QuickLoad"
@@ -266,7 +266,7 @@ Defined in: [sandkit/enums/index.d.ts:207](https://github.com/IrishBruse/Sandust
 
 ***
 
-### ToggleGameHud
+### sandkit.enums.KeyBinding.ToggleGameHud :id=togglegamehud
 
 ```ts
 ToggleGameHud: "ToggleGameHud"

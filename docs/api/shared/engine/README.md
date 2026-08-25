@@ -1,8 +1,8 @@
-# shared/engine
+# shared.engine
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### EngineFn
+### shared.engine.EngineFn :id=enginefn
 
 ```ts
 EngineFn = (...args: unknown[]) => unknown
@@ -26,7 +26,7 @@ Stub for an unresolved engine method.
 
 ***
 
-### EngineOverlapNs
+### shared.engine.EngineOverlapNs :id=engineoverlapns
 
 ```ts
 EngineOverlapNs = Record<string, EngineFn | Record<string, unknown> | unknown>

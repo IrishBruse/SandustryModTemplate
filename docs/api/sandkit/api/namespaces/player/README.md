@@ -1,15 +1,15 @@
-# player
+# sandkit.api.player
 
-## Namespaces
+## Namespaces <!-- {docsify-ignore} -->
 
 | Namespace | Description |
 | ------ | ------ |
 | [inventory](api/sandkit/api/namespaces/player/namespaces/inventory/README.md) | Player inventory helpers. |
 | [buildings](api/sandkit/api/namespaces/player/namespaces/buildings/README.md) | Player building unlock helpers. |
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### setWorldPosition()
+### sandkit.api.player.setWorldPosition() :id=setworldposition
 
 ```ts
 setWorldPosition(worldX: number, worldY: number): void
@@ -39,7 +39,7 @@ World y position in pixels.
 
 ***
 
-### setVelocity()
+### sandkit.api.player.setVelocity() :id=setvelocity
 
 ```ts
 setVelocity(velocityX: number, velocityY: number): void
@@ -69,7 +69,7 @@ Vertical velocity in pixels per second.
 
 ***
 
-### setMovementSpeedMultiplier()
+### sandkit.api.player.setMovementSpeedMultiplier() :id=setmovementspeedmultiplier
 
 ```ts
 setMovementSpeedMultiplier(multiplier: number): void
@@ -94,7 +94,7 @@ Vanilla Sprint Boost (Shift burst + meter) only runs when this value is exactly 
 
 ***
 
-### setMovementMode()
+### sandkit.api.player.setMovementMode() :id=setmovementmode
 
 ```ts
 setMovementMode(mode: "normal" | "hover"): boolean
@@ -120,15 +120,17 @@ True when the mode changes.
 
 ***
 
-### isOnGround()
+### sandkit.api.player.isOnGround() :id=isonground
 
 ```ts
 isOnGround(): boolean
 ```
 
-Defined in: [sandkit/api/player.d.ts:52](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/player.d.ts#L52)
+Defined in: [sandkit/api/player.d.ts:54](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/player.d.ts#L54)
 
 Return true when the player is on ground.
+Tests solid cells 1 pixel below the hitbox. Do not use `player.onGround`
+on the store snapshot — that flag is not updated during play.
 
 #### Returns
 
@@ -138,13 +140,13 @@ True when the player touches solid ground.
 
 ***
 
-### teleportToGround()
+### sandkit.api.player.teleportToGround() :id=teleporttoground
 
 ```ts
 teleportToGround(): void
 ```
 
-Defined in: [sandkit/api/player.d.ts:55](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/player.d.ts#L55)
+Defined in: [sandkit/api/player.d.ts:57](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/player.d.ts#L57)
 
 Move the player down until ground is found.
 
@@ -154,13 +156,13 @@ Move the player down until ground is found.
 
 ***
 
-### isWorldPositionClear()
+### sandkit.api.player.isWorldPositionClear() :id=isworldpositionclear
 
 ```ts
 isWorldPositionClear(worldX: number, worldY: number): boolean
 ```
 
-Defined in: [sandkit/api/player.d.ts:63](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/player.d.ts#L63)
+Defined in: [sandkit/api/player.d.ts:65](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/player.d.ts#L65)
 
 Return true when the world position has no collision.
 
@@ -184,20 +186,20 @@ World y position in pixels to test.
 
 True when the player hitbox fits at the position.
 
-## References
+## References <!-- {docsify-ignore} -->
 
-### getWorldPosition
+### sandkit.api.player.getWorldPosition :id=getworldposition
 
 Re-exports [getWorldPosition](api/worker/namespaces/player/README.md#getworldposition)
 
 ***
 
-### isCollidingWithCell
+### sandkit.api.player.isCollidingWithCell :id=iscollidingwithcell
 
 Re-exports [isCollidingWithCell](api/worker/namespaces/player/README.md#iscollidingwithcell)
 
 ***
 
-### isWithinRadiusOfCell
+### sandkit.api.player.isWithinRadiusOfCell :id=iswithinradiusofcell
 
 Re-exports [isWithinRadiusOfCell](api/worker/namespaces/player/README.md#iswithinradiusofcell)

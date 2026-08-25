@@ -1,12 +1,12 @@
-# Enumeration: BuildMode
+# sandkit.enums.BuildMode
 
 Defined in: [sandkit/enums/index.d.ts:42](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/enums/index.d.ts#L42)
 
 Linear vs rectangular structure placement.
 
-## Enumeration Members
+## Enumeration Members <!-- {docsify-ignore} -->
 
-### Linear
+### sandkit.enums.BuildMode.Linear :id=linear
 
 ```ts
 Linear: 1
@@ -16,7 +16,7 @@ Defined in: [sandkit/enums/index.d.ts:43](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### Rectangular
+### sandkit.enums.BuildMode.Rectangular :id=rectangular
 
 ```ts
 Rectangular: 2

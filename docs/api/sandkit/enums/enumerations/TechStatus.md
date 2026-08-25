@@ -1,12 +1,12 @@
-# Enumeration: TechStatus
+# sandkit.enums.TechStatus
 
 Defined in: [sandkit/enums/index.d.ts:404](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/enums/index.d.ts#L404)
 
 Visibility and research state of a tech node.
 
-## Enumeration Members
+## Enumeration Members <!-- {docsify-ignore} -->
 
-### Available
+### sandkit.enums.TechStatus.Available :id=available
 
 ```ts
 Available: 0
@@ -16,7 +16,7 @@ Defined in: [sandkit/enums/index.d.ts:405](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Visible
+### sandkit.enums.TechStatus.Visible :id=visible
 
 ```ts
 Visible: 1
@@ -26,7 +26,7 @@ Defined in: [sandkit/enums/index.d.ts:406](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Researched
+### sandkit.enums.TechStatus.Researched :id=researched
 
 ```ts
 Researched: 2
@@ -36,7 +36,7 @@ Defined in: [sandkit/enums/index.d.ts:407](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Unknown
+### sandkit.enums.TechStatus.Unknown :id=unknown
 
 ```ts
 Unknown: 3
@@ -46,7 +46,7 @@ Defined in: [sandkit/enums/index.d.ts:408](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Hidden
+### sandkit.enums.TechStatus.Hidden :id=hidden
 
 ```ts
 Hidden: 4

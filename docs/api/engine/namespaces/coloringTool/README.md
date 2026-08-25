@@ -1,4 +1,4 @@
-# coloringTool
+# sandkit.engine.api.coloringTool
 
 **`Internal`**
 
@@ -8,9 +8,9 @@
 Methods use loose stubs; signatures may take game state as the first argument.
 Engine methods pass game state as the first argument (args[0]); remaining entries are method-specific.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### colorStructure()
+### sandkit.engine.api.coloringTool.colorStructure() :id=colorstructure
 
 ```ts
 colorStructure(...args: unknown[]): unknown
@@ -34,7 +34,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### floodFillColor()
+### sandkit.engine.api.coloringTool.floodFillColor() :id=floodfillcolor
 
 ```ts
 floodFillColor(...args: unknown[]): unknown
@@ -58,7 +58,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getColor()
+### sandkit.engine.api.coloringTool.getColor() :id=getcolor
 
 ```ts
 getColor(...args: unknown[]): unknown
@@ -82,7 +82,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### isColorableStructure()
+### sandkit.engine.api.coloringTool.isColorableStructure() :id=iscolorablestructure
 
 ```ts
 isColorableStructure(...args: unknown[]): unknown
@@ -106,7 +106,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### isMatchColorMode()
+### sandkit.engine.api.coloringTool.isMatchColorMode() :id=ismatchcolormode
 
 ```ts
 isMatchColorMode(...args: unknown[]): unknown
@@ -130,7 +130,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### isPaintBucketMode()
+### sandkit.engine.api.coloringTool.isPaintBucketMode() :id=ispaintbucketmode
 
 ```ts
 isPaintBucketMode(...args: unknown[]): unknown
@@ -154,7 +154,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### setColor()
+### sandkit.engine.api.coloringTool.setColor() :id=setcolor
 
 ```ts
 setColor(...args: unknown[]): unknown
@@ -178,7 +178,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### toggleMatchColorMode()
+### sandkit.engine.api.coloringTool.toggleMatchColorMode() :id=togglematchcolormode
 
 ```ts
 toggleMatchColorMode(...args: unknown[]): unknown
@@ -202,7 +202,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### togglePaintBucketMode()
+### sandkit.engine.api.coloringTool.togglePaintBucketMode() :id=togglepaintbucketmode
 
 ```ts
 togglePaintBucketMode(...args: unknown[]): unknown

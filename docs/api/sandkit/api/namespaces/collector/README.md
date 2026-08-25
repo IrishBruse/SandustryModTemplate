@@ -1,11 +1,11 @@
-# collector
+# sandkit.api.collector
 
 `sandkit.api.collector` — collector structure value and pickup handling.
 Main thread only.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### getValueFromCellId()
+### sandkit.api.collector.getValueFromCellId() :id=getvaluefromcellid
 
 ```ts
 getValueFromCellId(cellId: number): number
@@ -29,7 +29,7 @@ Packed cell identifier.
 
 ***
 
-### getValueByType()
+### sandkit.api.collector.getValueByType() :id=getvaluebytype
 
 ```ts
 getValueByType(elementType: number): number
@@ -53,7 +53,7 @@ Numeric element type id.
 
 ***
 
-### isCellIdCollectable()
+### sandkit.api.collector.isCellIdCollectable() :id=iscellidcollectable
 
 ```ts
 isCellIdCollectable(cellId: number): boolean
@@ -77,7 +77,7 @@ Packed cell identifier.
 
 ***
 
-### isCellIdCollectableForSprite()
+### sandkit.api.collector.isCellIdCollectableForSprite() :id=iscellidcollectableforsprite
 
 ```ts
 isCellIdCollectableForSprite(cellId: number): boolean
@@ -101,7 +101,7 @@ Packed cell identifier.
 
 ***
 
-### notifyPickupAtCell()
+### sandkit.api.collector.notifyPickupAtCell() :id=notifypickupatcell
 
 ```ts
 notifyPickupAtCell(...args: CellCoordinates): void

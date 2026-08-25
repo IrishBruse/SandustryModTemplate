@@ -1,11 +1,11 @@
-# assets
+# sandkit.api.assets
 
 `sandkit.api.assets` — mod asset URLs and asset provider selection.
 Main thread only.
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### AssetProviderV1
+### sandkit.api.assets.AssetProviderV1 :id=assetproviderv1
 
 ```ts
 AssetProviderV1 = object
@@ -57,9 +57,9 @@ modName: string
 
 Defined in: [sandkit/api/assets.d.ts:12](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/assets.d.ts#L12)
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### getUrl()
+### sandkit.api.assets.getUrl() :id=geturl
 
 ```ts
 getUrl(relativePath: string): string
@@ -83,7 +83,7 @@ Path relative to the calling mod folder.
 
 ***
 
-### getSelectedProvider()
+### sandkit.api.assets.getSelectedProvider() :id=getselectedprovider
 
 ```ts
 getSelectedProvider(kind: string): AssetProviderV1 | null
@@ -107,7 +107,7 @@ Asset kind identifier.
 
 ***
 
-### selectProvider()
+### sandkit.api.assets.selectProvider() :id=selectprovider
 
 ```ts
 selectProvider(kind: string, providerId: string | null): boolean

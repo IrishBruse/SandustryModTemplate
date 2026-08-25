@@ -1,4 +1,4 @@
-# drones
+# sandkit.engine.api.drones
 
 **`Internal`**
 
@@ -8,9 +8,9 @@
 Methods use loose stubs; signatures may take game state as the first argument.
 Engine methods pass game state as the first argument (args[0]); remaining entries are method-specific.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### kill()
+### sandkit.engine.api.drones.kill() :id=kill
 
 ```ts
 kill(...args: unknown[]): unknown
@@ -34,7 +34,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### spawn()
+### sandkit.engine.api.drones.spawn() :id=spawn
 
 ```ts
 spawn(...args: unknown[]): unknown

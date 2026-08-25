@@ -1,8 +1,8 @@
-# reactions
+# sandkit.api.reactions
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### ContactRecipeDefinitionV1
+### sandkit.api.reactions.ContactRecipeDefinitionV1 :id=contactrecipedefinitionv1
 
 Defined in: [sandkit/api/reactions.d.ts:18](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/reactions.d.ts#L18)
 
@@ -60,9 +60,9 @@ Defined in: [sandkit/api/reactions.d.ts:28](https://github.com/IrishBruse/Sandus
 
 Contact layout requirement. Default `"any"`.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### registerContact()
+### sandkit.api.reactions.registerContact() :id=registercontact
 
 ```ts
 registerContact(definition: ContactRecipeDefinitionV1): void

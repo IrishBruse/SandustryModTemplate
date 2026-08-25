@@ -1,13 +1,13 @@
-# input
+# sandkit.api.input
 
 `sandkit.api.input` — key bindings, mouse position, and modifier keys.
 Main thread only.
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### InputBindingHandlers
+### sandkit.api.input.InputBindingHandlers :id=inputbindinghandlers
 
-Defined in: [sandkit/api/input.d.ts:70](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L70)
+Defined in: [sandkit/api/input.d.ts:72](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L72)
 
 Handlers invoked when a binding is pressed or released.
 
@@ -19,7 +19,7 @@ Handlers invoked when a binding is pressed or released.
 optional down?: () => void
 ```
 
-Defined in: [sandkit/api/input.d.ts:72](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L72)
+Defined in: [sandkit/api/input.d.ts:74](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L74)
 
 Called when the binding is pressed.
 
@@ -33,7 +33,7 @@ Called when the binding is pressed.
 optional up?: () => void
 ```
 
-Defined in: [sandkit/api/input.d.ts:74](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L74)
+Defined in: [sandkit/api/input.d.ts:76](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L76)
 
 Called when the binding is released.
 
@@ -43,9 +43,9 @@ Called when the binding is released.
 
 ***
 
-### InputBindingDefinition
+### sandkit.api.input.InputBindingDefinition :id=inputbindingdefinition
 
-Defined in: [sandkit/api/input.d.ts:78](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L78)
+Defined in: [sandkit/api/input.d.ts:80](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L80)
 
 Definition for a registered input binding.
 
@@ -63,7 +63,7 @@ Definition for a registered input binding.
 displayName: string
 ```
 
-Defined in: [sandkit/api/input.d.ts:80](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L80)
+Defined in: [sandkit/api/input.d.ts:82](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L82)
 
 Display name shown in settings.
 
@@ -73,7 +73,7 @@ Display name shown in settings.
 optional displayNameKey?: string
 ```
 
-Defined in: [sandkit/api/input.d.ts:82](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L82)
+Defined in: [sandkit/api/input.d.ts:84](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L84)
 
 i18n key for the display name (overrides displayName when set).
 
@@ -83,7 +83,7 @@ i18n key for the display name (overrides displayName when set).
 category: string
 ```
 
-Defined in: [sandkit/api/input.d.ts:84](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L84)
+Defined in: [sandkit/api/input.d.ts:86](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L86)
 
 Settings category for grouping.
 
@@ -93,13 +93,13 @@ Settings category for grouping.
 handlers: InputBindingHandlers
 ```
 
-Defined in: [sandkit/api/input.d.ts:86](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L86)
+Defined in: [sandkit/api/input.d.ts:88](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L88)
 
 Press and release handlers.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### registerBinding()
+### sandkit.api.input.registerBinding() :id=registerbinding
 
 ```ts
 registerBinding(bindingId: string, defaultKeys: string[], definition: InputBindingDefinition): string
@@ -108,8 +108,6 @@ registerBinding(bindingId: string, defaultKeys: string[], definition: InputBindi
 Defined in: [sandkit/api/input.d.ts:13](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L13)
 
 Register a key binding and return its binding id.
-
-A second `registerBinding` for the same `bindingId` replaces `sandkit.state.sandkit.keyBindings[id]`. To restore a previous engine binding (for example vanilla **Picker** after a mod override), keep the old object and assign it back to that map — do not re-register through the mod API if the original handlers expect the engine `game` argument.
 
 #### Parameters
 
@@ -139,7 +137,7 @@ The registered binding id.
 
 ***
 
-### getMouseCellPosition()
+### sandkit.api.input.getMouseCellPosition() :id=getmousecellposition
 
 ```ts
 getMouseCellPosition(): object
@@ -169,13 +167,13 @@ y: number
 
 ***
 
-### getBoundKeys()
+### sandkit.api.input.getBoundKeys() :id=getboundkeys
 
 ```ts
 getBoundKeys(bindingId: string): string[]
 ```
 
-Defined in: [sandkit/api/input.d.ts:26](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L26)
+Defined in: [sandkit/api/input.d.ts:28](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L28)
 
 Return the keys currently bound to a binding id.
 
@@ -191,17 +189,19 @@ Registered binding id.
 
 `string`[]
 
-Key code strings for the active binding.
+Key strings from settings (for example `"KeyA"` or `"Shift"`).
+Session `input.keys` is keyed by `KeyboardEvent.code`. Modifier aliases
+(`Shift`, `Alt`, `Control`, `Meta`) expand to `ShiftLeft` / `ShiftRight` and the same for the other modifiers.
 
 ***
 
-### getDisplayKey()
+### sandkit.api.input.getDisplayKey() :id=getdisplaykey
 
 ```ts
 getDisplayKey(bindingId: string, defaultLabel?: string): string
 ```
 
-Defined in: [sandkit/api/input.d.ts:34](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L34)
+Defined in: [sandkit/api/input.d.ts:36](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L36)
 
 Return a display label for the bound key.
 
@@ -227,13 +227,13 @@ Human-readable key label for UI.
 
 ***
 
-### triggerBinding()
+### sandkit.api.input.triggerBinding() :id=triggerbinding
 
 ```ts
 triggerBinding(bindingId: string): void
 ```
 
-Defined in: [sandkit/api/input.d.ts:40](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L40)
+Defined in: [sandkit/api/input.d.ts:42](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L42)
 
 Fire the binding down handler as if the key was pressed.
 
@@ -251,13 +251,13 @@ Registered binding id.
 
 ***
 
-### pressBinding()
+### sandkit.api.input.pressBinding() :id=pressbinding
 
 ```ts
 pressBinding(bindingId: string): void
 ```
 
-Defined in: [sandkit/api/input.d.ts:46](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L46)
+Defined in: [sandkit/api/input.d.ts:48](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L48)
 
 Fire the binding down handler without a matching release.
 
@@ -275,13 +275,13 @@ Registered binding id.
 
 ***
 
-### releaseBinding()
+### sandkit.api.input.releaseBinding() :id=releasebinding
 
 ```ts
 releaseBinding(bindingId: string): void
 ```
 
-Defined in: [sandkit/api/input.d.ts:52](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L52)
+Defined in: [sandkit/api/input.d.ts:54](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L54)
 
 Fire the binding up handler.
 
@@ -299,13 +299,13 @@ Registered binding id.
 
 ***
 
-### resetMouseState()
+### sandkit.api.input.resetMouseState() :id=resetmousestate
 
 ```ts
 resetMouseState(): void
 ```
 
-Defined in: [sandkit/api/input.d.ts:55](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L55)
+Defined in: [sandkit/api/input.d.ts:57](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L57)
 
 Clear internal mouse button state.
 
@@ -315,13 +315,13 @@ Clear internal mouse button state.
 
 ***
 
-### isCtrlHeld()
+### sandkit.api.input.isCtrlHeld() :id=isctrlheld
 
 ```ts
 isCtrlHeld(): boolean
 ```
 
-Defined in: [sandkit/api/input.d.ts:61](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L61)
+Defined in: [sandkit/api/input.d.ts:63](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L63)
 
 Return true when Ctrl is held.
 
@@ -333,13 +333,13 @@ True when the Ctrl modifier is down.
 
 ***
 
-### isAltHeld()
+### sandkit.api.input.isAltHeld() :id=isaltheld
 
 ```ts
 isAltHeld(): boolean
 ```
 
-Defined in: [sandkit/api/input.d.ts:67](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L67)
+Defined in: [sandkit/api/input.d.ts:69](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/input.d.ts#L69)
 
 Return true when Alt is held.
 

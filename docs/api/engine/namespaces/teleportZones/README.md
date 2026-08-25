@@ -1,4 +1,4 @@
-# teleportZones
+# sandkit.engine.api.teleportZones
 
 **`Internal`**
 
@@ -8,9 +8,9 @@
 Methods use loose stubs; signatures may take game state as the first argument.
 Engine methods pass game state as the first argument (args[0]); remaining entries are method-specific.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### add()
+### sandkit.engine.api.teleportZones.add() :id=add
 
 ```ts
 add(...args: unknown[]): unknown
@@ -34,7 +34,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getAll()
+### sandkit.engine.api.teleportZones.getAll() :id=getall
 
 ```ts
 getAll(...args: unknown[]): unknown
@@ -58,7 +58,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getAtCell()
+### sandkit.engine.api.teleportZones.getAtCell() :id=getatcell
 
 ```ts
 getAtCell(...args: unknown[]): unknown
@@ -82,7 +82,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getById()
+### sandkit.engine.api.teleportZones.getById() :id=getbyid
 
 ```ts
 getById(...args: unknown[]): unknown
@@ -106,7 +106,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### remove()
+### sandkit.engine.api.teleportZones.remove() :id=remove
 
 ```ts
 remove(...args: unknown[]): unknown
@@ -130,7 +130,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### spawnDefaultParticles()
+### sandkit.engine.api.teleportZones.spawnDefaultParticles() :id=spawndefaultparticles
 
 ```ts
 spawnDefaultParticles(...args: unknown[]): unknown
@@ -154,7 +154,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### teleportPlayerTo()
+### sandkit.engine.api.teleportZones.teleportPlayerTo() :id=teleportplayerto
 
 ```ts
 teleportPlayerTo(...args: unknown[]): unknown

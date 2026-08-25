@@ -1,4 +1,4 @@
-# queue
+# sandkit.engine.api.queue
 
 **`Internal`**
 
@@ -8,9 +8,9 @@
 Methods use loose stubs; signatures may take game state as the first argument.
 Engine methods pass game state as the first argument (args[0]); remaining entries are method-specific.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### enqueue()
+### sandkit.engine.api.queue.enqueue() :id=enqueue
 
 ```ts
 enqueue(...args: unknown[]): unknown
@@ -34,7 +34,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### enqueueInTicks()
+### sandkit.engine.api.queue.enqueueInTicks() :id=enqueueinticks
 
 ```ts
 enqueueInTicks(...args: unknown[]): unknown
@@ -58,7 +58,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### enqueueSkipTick()
+### sandkit.engine.api.queue.enqueueSkipTick() :id=enqueueskiptick
 
 ```ts
 enqueueSkipTick(...args: unknown[]): unknown
@@ -82,7 +82,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### process()
+### sandkit.engine.api.queue.process() :id=process
 
 ```ts
 process(...args: unknown[]): unknown
@@ -106,7 +106,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### registerHandler()
+### sandkit.engine.api.queue.registerHandler() :id=registerhandler
 
 ```ts
 registerHandler(...args: unknown[]): unknown
@@ -130,7 +130,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### removeByKey()
+### sandkit.engine.api.queue.removeByKey() :id=removebykey
 
 ```ts
 removeByKey(...args: unknown[]): unknown

@@ -1,4 +1,4 @@
-# factory
+# sandkit.engine.api.factory
 
 **`Internal`**
 
@@ -8,9 +8,9 @@
 Methods use loose stubs; signatures may take game state as the first argument.
 Engine methods pass game state as the first argument (args[0]); remaining entries are method-specific.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### addViabilityGold()
+### sandkit.engine.api.factory.addViabilityGold() :id=addviabilitygold
 
 ```ts
 addViabilityGold(...args: unknown[]): unknown
@@ -34,7 +34,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### canUnlockNextTier()
+### sandkit.engine.api.factory.canUnlockNextTier() :id=canunlocknexttier
 
 ```ts
 canUnlockNextTier(...args: unknown[]): unknown
@@ -58,7 +58,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### ensureProcessAtLeast()
+### sandkit.engine.api.factory.ensureProcessAtLeast() :id=ensureprocessatleast
 
 ```ts
 ensureProcessAtLeast(...args: unknown[]): unknown
@@ -82,7 +82,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### flushDeferredLevelUps()
+### sandkit.engine.api.factory.flushDeferredLevelUps() :id=flushdeferredlevelups
 
 ```ts
 flushDeferredLevelUps(...args: unknown[]): unknown
@@ -106,7 +106,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getLevel()
+### sandkit.engine.api.factory.getLevel() :id=getlevel
 
 ```ts
 getLevel(...args: unknown[]): unknown
@@ -130,7 +130,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getProcessCount()
+### sandkit.engine.api.factory.getProcessCount() :id=getprocesscount
 
 ```ts
 getProcessCount(...args: unknown[]): unknown
@@ -154,7 +154,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getProcessRate()
+### sandkit.engine.api.factory.getProcessRate() :id=getprocessrate
 
 ```ts
 getProcessRate(...args: unknown[]): unknown
@@ -178,7 +178,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### recordProcess()
+### sandkit.engine.api.factory.recordProcess() :id=recordprocess
 
 ```ts
 recordProcess(...args: unknown[]): unknown
@@ -202,7 +202,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### unlockNextTier()
+### sandkit.engine.api.factory.unlockNextTier() :id=unlocknexttier
 
 ```ts
 unlockNextTier(...args: unknown[]): unknown

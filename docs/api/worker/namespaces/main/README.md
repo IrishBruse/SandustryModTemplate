@@ -1,4 +1,4 @@
-# main
+# sandkit.api.main (worker)
 
 **`Internal`**
 
@@ -9,9 +9,9 @@ Worker thread only.
  Base shape reused by [WorkerSandkitApi](api/worker/README.md#workersandkitapi). Main thread has a
 larger `sandkit.api` surface; do not assume parity.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### emitEvent()
+### sandkit.api.main.emitEvent() (worker) :id=emitevent
 
 ```ts
 emitEvent<Payload>(eventId: string, payload: Payload): void

@@ -1,4 +1,4 @@
-# entities
+# sandkit.engine.api.entities
 
 **`Internal`**
 
@@ -8,9 +8,9 @@
 Methods use loose stubs; signatures may take game state as the first argument.
 Engine methods pass game state as the first argument (args[0]); remaining entries are method-specific.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### createLight()
+### sandkit.engine.api.entities.createLight() :id=createlight
 
 ```ts
 createLight(...args: unknown[]): unknown
@@ -34,7 +34,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getAll()
+### sandkit.engine.api.entities.getAll() :id=getall
 
 ```ts
 getAll(...args: unknown[]): unknown
@@ -58,7 +58,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getAllByType()
+### sandkit.engine.api.entities.getAllByType() :id=getallbytype
 
 ```ts
 getAllByType(...args: unknown[]): unknown
@@ -82,7 +82,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getAllTypeDefs()
+### sandkit.engine.api.entities.getAllTypeDefs() :id=getalltypedefs
 
 ```ts
 getAllTypeDefs(...args: unknown[]): unknown
@@ -106,7 +106,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getSprite()
+### sandkit.engine.api.entities.getSprite() :id=getsprite
 
 ```ts
 getSprite(...args: unknown[]): unknown
@@ -130,7 +130,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getTypeDef()
+### sandkit.engine.api.entities.getTypeDef() :id=gettypedef
 
 ```ts
 getTypeDef(...args: unknown[]): unknown
@@ -154,7 +154,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### launch()
+### sandkit.engine.api.entities.launch() :id=launch
 
 ```ts
 launch(...args: unknown[]): unknown
@@ -178,7 +178,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### registerSpawner()
+### sandkit.engine.api.entities.registerSpawner() :id=registerspawner
 
 ```ts
 registerSpawner(...args: unknown[]): unknown
@@ -202,7 +202,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### registerType()
+### sandkit.engine.api.entities.registerType() :id=registertype
 
 ```ts
 registerType(...args: unknown[]): unknown
@@ -226,7 +226,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### spawn()
+### sandkit.engine.api.entities.spawn() :id=spawn
 
 ```ts
 spawn(...args: unknown[]): unknown
@@ -250,7 +250,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### startCapture()
+### sandkit.engine.api.entities.startCapture() :id=startcapture
 
 ```ts
 startCapture(...args: unknown[]): unknown

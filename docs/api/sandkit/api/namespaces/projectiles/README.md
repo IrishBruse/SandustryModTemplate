@@ -1,8 +1,8 @@
-# projectiles
+# sandkit.api.projectiles
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### ProjectileDefinition
+### sandkit.api.projectiles.ProjectileDefinition :id=projectiledefinition
 
 Defined in: [sandkit/api/projectiles.d.ts:54](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/projectiles.d.ts#L54)
 
@@ -84,7 +84,7 @@ Optional per-projectile mutable data factory.
 
 ***
 
-### ProjectileBlueprint
+### sandkit.api.projectiles.ProjectileBlueprint :id=projectileblueprint
 
 Defined in: [sandkit/api/projectiles.d.ts:68](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/projectiles.d.ts#L68)
 
@@ -110,7 +110,7 @@ Defined in: [sandkit/api/projectiles.d.ts:70](https://github.com/IrishBruse/Sand
 
 ***
 
-### Projectile
+### sandkit.api.projectiles.Projectile :id=projectile
 
 Defined in: [sandkit/api/projectiles.d.ts:74](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/projectiles.d.ts#L74)
 
@@ -148,9 +148,9 @@ y: number
 
 Defined in: [sandkit/api/projectiles.d.ts:77](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/projectiles.d.ts#L77)
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### register()
+### sandkit.api.projectiles.register() :id=register
 
 ```ts
 register(definition: ProjectileDefinition): void
@@ -174,7 +174,7 @@ Projectile id, sprite, and runtime options factory.
 
 ***
 
-### getDefinitionById()
+### sandkit.api.projectiles.getDefinitionById() :id=getdefinitionbyid
 
 ```ts
 getDefinitionById(projectileId: string): ProjectileDefinition | undefined
@@ -198,7 +198,7 @@ Registered projectile id.
 
 ***
 
-### createBlueprintFromId()
+### sandkit.api.projectiles.createBlueprintFromId() :id=createblueprintfromid
 
 ```ts
 createBlueprintFromId(projectileId: string): ProjectileBlueprint
@@ -224,7 +224,7 @@ Blueprint passed to [spawnAtWorld](#spawnatworld).
 
 ***
 
-### getAll()
+### sandkit.api.projectiles.getAll() :id=getall
 
 ```ts
 getAll(): Projectile[]
@@ -240,7 +240,7 @@ Return all active projectiles.
 
 ***
 
-### getById()
+### sandkit.api.projectiles.getById() :id=getbyid
 
 ```ts
 getById(projectileId: number): Projectile | undefined
@@ -264,7 +264,7 @@ Runtime projectile id.
 
 ***
 
-### remove()
+### sandkit.api.projectiles.remove() :id=remove
 
 ```ts
 remove(projectile: Projectile): void
@@ -288,7 +288,7 @@ Projectile instance to remove.
 
 ***
 
-### spawnAtWorld()
+### sandkit.api.projectiles.spawnAtWorld() :id=spawnatworld
 
 ```ts
 spawnAtWorld(worldX: number, worldY: number, angle: number, blueprint: ProjectileBlueprint): Projectile

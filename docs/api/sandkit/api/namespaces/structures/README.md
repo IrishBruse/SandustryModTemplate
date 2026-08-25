@@ -1,15 +1,15 @@
-# structures
+# sandkit.api.structures
 
-## Namespaces
+## Namespaces <!-- {docsify-ignore} -->
 
 | Namespace | Description |
 | ------ | ------ |
 | [recipes](api/sandkit/api/namespaces/structures/namespaces/recipes/README.md) | Structure recipe registration by machine kind. |
 | [processing](api/sandkit/api/namespaces/structures/namespaces/processing/README.md) | Per-structure processing enablement and registration. |
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### StructureBuildMode
+### sandkit.api.structures.StructureBuildMode :id=structurebuildmode
 
 Defined in: [sandkit/api/structures.d.ts:200](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/structures.d.ts#L200)
 
@@ -35,7 +35,7 @@ Defined in: [sandkit/api/structures.d.ts:202](https://github.com/IrishBruse/Sand
 
 ***
 
-### StructureVariant
+### sandkit.api.structures.StructureVariant :id=structurevariant
 
 Defined in: [sandkit/api/structures.d.ts:206](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/structures.d.ts#L206)
 
@@ -61,7 +61,7 @@ Defined in: [sandkit/api/structures.d.ts:208](https://github.com/IrishBruse/Sand
 
 ***
 
-### StructureRender
+### sandkit.api.structures.StructureRender :id=structurerender
 
 Defined in: [sandkit/api/structures.d.ts:212](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/structures.d.ts#L212)
 
@@ -119,7 +119,7 @@ y: number
 
 ***
 
-### SandkitStructureDefinition
+### sandkit.api.structures.SandkitStructureDefinition :id=sandkitstructuredefinition
 
 Defined in: [sandkit/api/structures.d.ts:219](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/structures.d.ts#L219)
 
@@ -215,7 +215,7 @@ Defined in: [sandkit/api/structures.d.ts:229](https://github.com/IrishBruse/Sand
 
 ***
 
-### StructureBuildOptions
+### sandkit.api.structures.StructureBuildOptions :id=structurebuildoptions
 
 Defined in: [sandkit/api/structures.d.ts:234](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/structures.d.ts#L234)
 
@@ -229,7 +229,7 @@ Options passed to [buildAtCellWhenIdle](#buildatcellwhenidle).
 
 ***
 
-### StructureRemovalOptions
+### sandkit.api.structures.StructureRemovalOptions :id=structureremovaloptions
 
 Defined in: [sandkit/api/structures.d.ts:239](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/structures.d.ts#L239)
 
@@ -259,7 +259,7 @@ Skip visual teardown effects.
 
 ***
 
-### StructureBulkRemovalOptions
+### sandkit.api.structures.StructureBulkRemovalOptions :id=structurebulkremovaloptions
 
 Defined in: [sandkit/api/structures.d.ts:247](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/structures.d.ts#L247)
 
@@ -303,7 +303,7 @@ Defined in: [sandkit/api/structures.d.ts:252](https://github.com/IrishBruse/Sand
 
 ***
 
-### StructureProcessorDefinitionV1
+### sandkit.api.structures.StructureProcessorDefinitionV1 :id=structureprocessordefinitionv1
 
 Defined in: [sandkit/api/structures.d.ts:256](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/structures.d.ts#L256)
 
@@ -347,7 +347,7 @@ Synchronous callback invoked for each structure instance.
 
 ***
 
-### PlacementConfigIntegerField
+### sandkit.api.structures.PlacementConfigIntegerField :id=placementconfigintegerfield
 
 Defined in: [sandkit/api/structures.d.ts:269](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/structures.d.ts#L269)
 
@@ -405,7 +405,7 @@ Defined in: [sandkit/api/structures.d.ts:275](https://github.com/IrishBruse/Sand
 
 ***
 
-### PlacementConfigChoiceField
+### sandkit.api.structures.PlacementConfigChoiceField :id=placementconfigchoicefield
 
 Defined in: [sandkit/api/structures.d.ts:279](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/structures.d.ts#L279)
 
@@ -447,7 +447,7 @@ Defined in: [sandkit/api/structures.d.ts:283](https://github.com/IrishBruse/Sand
 
 ***
 
-### PlacementConfigDefinition
+### sandkit.api.structures.PlacementConfigDefinition :id=placementconfigdefinition
 
 Defined in: [sandkit/api/structures.d.ts:290](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/structures.d.ts#L290)
 
@@ -473,7 +473,7 @@ Defined in: [sandkit/api/structures.d.ts:292](https://github.com/IrishBruse/Sand
 
 ***
 
-### WeightedRefineryRecipeDefinitionV1
+### sandkit.api.structures.WeightedRefineryRecipeDefinitionV1 :id=weightedrefineryrecipedefinitionv1
 
 Defined in: [sandkit/api/structures.d.ts:303](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/structures.d.ts#L303)
 
@@ -499,7 +499,7 @@ Defined in: [sandkit/api/structures.d.ts:305](https://github.com/IrishBruse/Sand
 
 ***
 
-### StructureProcessingDefinitionV1
+### sandkit.api.structures.StructureProcessingDefinitionV1 :id=structureprocessingdefinitionv1
 
 Defined in: [sandkit/api/structures.d.ts:309](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/structures.d.ts#L309)
 
@@ -545,9 +545,9 @@ Defined in: [sandkit/api/structures.d.ts:312](https://github.com/IrishBruse/Sand
 
 `void`
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### PlacementConfigField
+### sandkit.api.structures.PlacementConfigField :id=placementconfigfield
 
 ```ts
 PlacementConfigField = PlacementConfigIntegerField | PlacementConfigChoiceField
@@ -559,7 +559,7 @@ Placement hotbar field definition.
 
 ***
 
-### PlanterBoxRecipeDefinitionV1
+### sandkit.api.structures.PlanterBoxRecipeDefinitionV1 :id=planterboxrecipedefinitionv1
 
 ```ts
 PlanterBoxRecipeDefinitionV1 = processing.PlanterBoxRecipeDefinitionV1
@@ -571,7 +571,7 @@ Planter box recipe definition shape.
 
 ***
 
-### ShakerRecipeDefinitionV1
+### sandkit.api.structures.ShakerRecipeDefinitionV1 :id=shakerrecipedefinitionv1
 
 ```ts
 ShakerRecipeDefinitionV1 = processing.ShakerRecipeDefinitionV1
@@ -583,7 +583,7 @@ Shaker recipe definition shape.
 
 ***
 
-### KineticPressRecipeDefinitionV1
+### sandkit.api.structures.KineticPressRecipeDefinitionV1 :id=kineticpressrecipedefinitionv1
 
 ```ts
 KineticPressRecipeDefinitionV1 = processing.KineticPressRecipeDefinitionV1
@@ -593,9 +593,9 @@ Defined in: [sandkit/api/structures.d.ts:300](https://github.com/IrishBruse/Sand
 
 Kinetic press recipe definition shape.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### addProcessor()
+### sandkit.api.structures.addProcessor() :id=addprocessor
 
 ```ts
 addProcessor(structureId: StructureType, definition: StructureProcessorDefinitionV1): void
@@ -625,7 +625,7 @@ Periodic processing interval and callback.
 
 ***
 
-### register()
+### sandkit.api.structures.register() :id=register
 
 ```ts
 register(definition: SandkitStructureDefinition, options?: object): void
@@ -657,7 +657,7 @@ When `useRawShape` is true, keep the shape matrix as-is.
 
 ***
 
-### updateDefinition()
+### sandkit.api.structures.updateDefinition() :id=updatedefinition
 
 ```ts
 updateDefinition(structureTypeOrId: StructureType, partial: Partial<SandkitStructureDefinition>, options?: object): void
@@ -695,7 +695,7 @@ When `useRawShape` is true, keep the shape matrix as-is.
 
 ***
 
-### addVariant()
+### sandkit.api.structures.addVariant() :id=addvariant
 
 ```ts
 addVariant(baseStructureTypeOrId: StructureType, variant: object, options?: object): void
@@ -739,7 +739,7 @@ Optional build-mode wiring for the variant.
 
 ***
 
-### registerPlacementConfig()
+### sandkit.api.structures.registerPlacementConfig() :id=registerplacementconfig
 
 ```ts
 registerPlacementConfig(definition: PlacementConfigDefinition): void
@@ -763,7 +763,7 @@ Hotbar placement field configuration.
 
 ***
 
-### getUnlockedTypes()
+### sandkit.api.structures.getUnlockedTypes() :id=getunlockedtypes
 
 ```ts
 getUnlockedTypes(): Set<StructureType>
@@ -779,7 +779,7 @@ Return structure types unlocked for building.
 
 ***
 
-### isBlockedByPlayerAtCell()
+### sandkit.api.structures.isBlockedByPlayerAtCell() :id=isblockedbyplayeratcell
 
 ```ts
 isBlockedByPlayerAtCell(...args: CellCoordinates): boolean
@@ -801,7 +801,7 @@ Return true when the player blocks building at the cell.
 
 ***
 
-### isLauncherAtCell()
+### sandkit.api.structures.isLauncherAtCell() :id=islauncheratcell
 
 ```ts
 isLauncherAtCell(...args: CellCoordinates): boolean
@@ -823,7 +823,7 @@ Return true when a launcher structure is at the cell.
 
 ***
 
-### isUnlockedByType()
+### sandkit.api.structures.isUnlockedByType() :id=isunlockedbytype
 
 ```ts
 isUnlockedByType(structureType: StructureType): boolean
@@ -847,7 +847,7 @@ Structure type value or string id.
 
 ***
 
-### mapValueToSpritesheetIndex()
+### sandkit.api.structures.mapValueToSpritesheetIndex() :id=mapvaluetospritesheetindex
 
 ```ts
 mapValueToSpritesheetIndex(value: number, thresholds: number[]): number
@@ -879,7 +879,7 @@ Spritesheet frame index.
 
 ***
 
-### buildAtCellWhenIdle()
+### sandkit.api.structures.buildAtCellWhenIdle() :id=buildatcellwhenidle
 
 ```ts
 buildAtCellWhenIdle(...args: number, number, string, [StructureBuildOptions]): void
@@ -901,7 +901,7 @@ Build a structure at a cell when simulation is idle.
 
 ***
 
-### removeAtCellWhenIdle()
+### sandkit.api.structures.removeAtCellWhenIdle() :id=removeatcellwhenidle
 
 ```ts
 removeAtCellWhenIdle(...args: number, number, [StructureRemovalOptions]): void
@@ -923,7 +923,7 @@ Remove a structure at a cell when simulation is idle.
 
 ***
 
-### removeBetweenCellsWhenIdle()
+### sandkit.api.structures.removeBetweenCellsWhenIdle() :id=removebetweencellswhenidle
 
 ```ts
 removeBetweenCellsWhenIdle(startCellX: number, startCellY: number, endCellX: number, endCellY: number, options?: StructureBulkRemovalOptions): void
@@ -971,7 +971,7 @@ Optional bulk-removal flags.
 
 ***
 
-### removeAtCellsWhenIdle()
+### sandkit.api.structures.removeAtCellsWhenIdle() :id=removeatcellswhenidle
 
 ```ts
 removeAtCellsWhenIdle(positions: Vector2[], options?: StructureBulkRemovalOptions): void
@@ -999,92 +999,92 @@ Optional bulk-removal flags.
 
 `void`
 
-## References
+## References <!-- {docsify-ignore} -->
 
-### forEachOfType
+### sandkit.api.structures.forEachOfType :id=foreachoftype
 
 Re-exports [forEachOfType](api/worker/namespaces/structures/README.md#foreachoftype)
 
 ***
 
-### getAtCell
+### sandkit.api.structures.getAtCell :id=getatcell
 
 Re-exports [getAtCell](api/worker/namespaces/structures/README.md#getatcell)
 
 ***
 
-### getDefinitionByType
+### sandkit.api.structures.getDefinitionByType :id=getdefinitionbytype
 
 Re-exports [getDefinitionByType](api/worker/namespaces/structures/README.md#getdefinitionbytype)
 
 ***
 
-### getTypeFromId
+### sandkit.api.structures.getTypeFromId :id=gettypefromid
 
 Re-exports [getTypeFromId](api/worker/namespaces/structures/README.md#gettypefromid)
 
 ***
 
-### hasBuiltAtCell
+### sandkit.api.structures.hasBuiltAtCell :id=hasbuiltatcell
 
 Re-exports [hasBuiltAtCell](api/worker/namespaces/structures/README.md#hasbuiltatcell)
 
 ***
 
-### isType
+### sandkit.api.structures.isType :id=istype
 
 Re-exports [isType](api/worker/namespaces/structures/README.md#istype)
 
 ***
 
-### isTypeAtCell
+### sandkit.api.structures.isTypeAtCell :id=istypeatcell
 
 Re-exports [isTypeAtCell](api/worker/namespaces/structures/README.md#istypeatcell)
 
 ***
 
-### setSpritesheetIndex
+### sandkit.api.structures.setSpritesheetIndex :id=setspritesheetindex
 
 Re-exports [setSpritesheetIndex](api/worker/namespaces/structures/README.md#setspritesheetindex)
 
 ***
 
-### setSpritesheetIndexAtCell
+### sandkit.api.structures.setSpritesheetIndexAtCell :id=setspritesheetindexatcell
 
 Re-exports [setSpritesheetIndexAtCell](api/worker/namespaces/structures/README.md#setspritesheetindexatcell)
 
 ***
 
-### setSpritesheetIndexByValue
+### sandkit.api.structures.setSpritesheetIndexByValue :id=setspritesheetindexbyvalue
 
 Re-exports [setSpritesheetIndexByValue](api/worker/namespaces/structures/README.md#setspritesheetindexbyvalue)
 
 ***
 
-### setSpritesheetIndexByValueAtCell
+### sandkit.api.structures.setSpritesheetIndexByValueAtCell :id=setspritesheetindexbyvalueatcell
 
 Re-exports [setSpritesheetIndexByValueAtCell](api/worker/namespaces/structures/README.md#setspritesheetindexbyvalueatcell)
 
 ***
 
-### update
+### sandkit.api.structures.update :id=update
 
 Re-exports [update](api/worker/namespaces/structures/README.md#update)
 
 ***
 
-### setData
+### sandkit.api.structures.setData :id=setdata
 
 Re-exports [setData](api/worker/namespaces/structures/README.md#setdata)
 
 ***
 
-### Structure
+### sandkit.api.structures.Structure :id=structure
 
 Re-exports [Structure](api/worker/namespaces/structures/README.md#structure)
 
 ***
 
-### StructureType
+### sandkit.api.structures.StructureType :id=structuretype
 
 Re-exports [StructureType](api/worker/namespaces/structures/README.md#structuretype)

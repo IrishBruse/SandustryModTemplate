@@ -6,9 +6,9 @@ Mirrors on-disk `src/sandkit/` and the host free variable: `api`, `engine`,
 `enums`, `react`, `state`. Prefer the free name `sandkit` in mod code
 (`src/global.d.ts`); do not import a value binding.
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### SandkitApi
+### sandkit.SandkitApi :id=sandkitapi
 
 ```ts
 SandkitApi = object
@@ -566,7 +566,7 @@ World cells, fog, redraw, and pickups.
 
 ***
 
-### Sandkit
+### sandkit.Sandkit :id=sandkit
 
 ```ts
 Sandkit = object
@@ -641,56 +641,56 @@ Defined in: [sandkit/index.d.ts:40](https://github.com/IrishBruse/SandustryModTe
 Game state. Same object as `sandkit.engine.state` at runtime.
 See [SandkitState](api/engine/README.md#sandkitstate).
 
-## References
+## References <!-- {docsify-ignore} -->
 
-### api
+### sandkit.api :id=api
 
 Renames and re-exports [sandkit/api](api/sandkit/api/README.md)
 
 ***
 
-### engine
+### sandkit.engine :id=engine
 
 Re-exports [engine](api/engine/README.md)
 
 ***
 
-### enums
+### sandkit.enums :id=enums
 
 Renames and re-exports [sandkit/enums](api/sandkit/enums/README.md)
 
 ***
 
-### SandkitEngine
+### sandkit.SandkitEngine :id=sandkitengine
 
 Re-exports [SandkitEngine](api/engine/README.md#sandkitengine)
 
 ***
 
-### SandkitEngineApi
+### sandkit.SandkitEngineApi :id=sandkitengineapi
 
 Re-exports [SandkitEngineApi](api/engine/README.md#sandkitengineapi)
 
 ***
 
-### RetroConsoleApi
+### sandkit.RetroConsoleApi :id=retroconsoleapi
 
 Re-exports [RetroConsoleApi](api/engine/README.md#retroconsoleapi)
 
 ***
 
-### SandkitState
+### sandkit.SandkitState :id=sandkitstate
 
 Re-exports [SandkitState](api/engine/README.md#sandkitstate)
 
 ***
 
-### SandkitEnums
+### sandkit.SandkitEnums :id=sandkitenums
 
 Re-exports [SandkitEnums](api/sandkit/enums/README.md#sandkitenums)
 
 ***
 
-### SandkitReact
+### sandkit.SandkitReact :id=sandkitreact
 
 Re-exports [SandkitReact](api/sandkit/react/README.md#sandkitreact)

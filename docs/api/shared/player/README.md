@@ -1,8 +1,8 @@
-# shared/player
+# shared.player
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### Player
+### shared.player.Player :id=player
 
 Defined in: [shared/player.d.ts:34](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L34)
 
@@ -78,9 +78,10 @@ Movement threshold accumulator used by physics.
 onGround: boolean
 ```
 
-Defined in: [shared/player.d.ts:48](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L48)
+Defined in: [shared/player.d.ts:51](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L51)
 
-True when the player is standing on ground this tick.
+Spawn flag. Live physics does not update this field.
+Use `sandkit.api.player.isOnGround()` (solid cells 1px below the hitbox).
 
 ##### speedCapOverdrive
 
@@ -88,7 +89,7 @@ True when the player is standing on ground this tick.
 speedCapOverdrive: object
 ```
 
-Defined in: [shared/player.d.ts:50](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L50)
+Defined in: [shared/player.d.ts:53](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L53)
 
 Temporary speed-cap bonuses applied on each axis.
 
@@ -170,7 +171,7 @@ releaseBonus: number
 inventory: InventoryItem[]
 ```
 
-Defined in: [shared/player.d.ts:67](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L67)
+Defined in: [shared/player.d.ts:70](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L70)
 
 Items currently held in the player inventory.
 
@@ -180,7 +181,7 @@ Items currently held in the player inventory.
 buildings: number[]
 ```
 
-Defined in: [shared/player.d.ts:69](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L69)
+Defined in: [shared/player.d.ts:72](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L72)
 
 Structure type ids the player has unlocked for building.
 
@@ -190,7 +191,7 @@ Structure type ids the player has unlocked for building.
 tech: object
 ```
 
-Defined in: [shared/player.d.ts:71](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L71)
+Defined in: [shared/player.d.ts:74](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L74)
 
 Tech tree nodes and their unlock metadata.
 
@@ -204,7 +205,7 @@ Tech tree nodes and their unlock metadata.
 lockedTechs: object
 ```
 
-Defined in: [shared/player.d.ts:101](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L101)
+Defined in: [shared/player.d.ts:104](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L104)
 
 Tech ids explicitly locked for this save.
 
@@ -218,7 +219,7 @@ Tech ids explicitly locked for this save.
 action: null
 ```
 
-Defined in: [shared/player.d.ts:103](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L103)
+Defined in: [shared/player.d.ts:106](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L106)
 
 Active world action, or null when idle.
 
@@ -228,7 +229,7 @@ Active world action, or null when idle.
 hotbar: object
 ```
 
-Defined in: [shared/player.d.ts:105](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L105)
+Defined in: [shared/player.d.ts:108](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L108)
 
 Hotbar slots, active indices, and item sprites.
 
@@ -256,7 +257,7 @@ bars: AssetRef[][]
 grapplingHook: boolean
 ```
 
-Defined in: [shared/player.d.ts:111](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L111)
+Defined in: [shared/player.d.ts:114](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L114)
 
 True when the grappling hook is equipped or active.
 
@@ -266,7 +267,7 @@ True when the grappling hook is equipped or active.
 cooldowns: object
 ```
 
-Defined in: [shared/player.d.ts:113](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L113)
+Defined in: [shared/player.d.ts:116](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L116)
 
 Cooldown timestamps for movement particles and slowdown.
 
@@ -324,7 +325,7 @@ last: number
 isHovering: boolean
 ```
 
-Defined in: [shared/player.d.ts:127](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L127)
+Defined in: [shared/player.d.ts:130](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L130)
 
 True when hover movement mode is active.
 
@@ -334,7 +335,7 @@ True when hover movement mode is active.
 weaponsMeta: object
 ```
 
-Defined in: [shared/player.d.ts:129](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L129)
+Defined in: [shared/player.d.ts:132](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L132)
 
 Per-weapon runtime metadata.
 
@@ -376,9 +377,9 @@ reloading: boolean
 
 ***
 
-### InventoryItem
+### shared.player.InventoryItem :id=inventoryitem
 
-Defined in: [shared/player.d.ts:143](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L143)
+Defined in: [shared/player.d.ts:146](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L146)
 
 One hotbar or inventory item entry.
 
@@ -390,7 +391,7 @@ One hotbar or inventory item entry.
 id: number
 ```
 
-Defined in: [shared/player.d.ts:144](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L144)
+Defined in: [shared/player.d.ts:147](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L147)
 
 ##### itemType
 
@@ -398,7 +399,7 @@ Defined in: [shared/player.d.ts:144](https://github.com/IrishBruse/SandustryModT
 itemType: number
 ```
 
-Defined in: [shared/player.d.ts:145](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L145)
+Defined in: [shared/player.d.ts:148](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L148)
 
 ##### abilities
 
@@ -406,7 +407,7 @@ Defined in: [shared/player.d.ts:145](https://github.com/IrishBruse/SandustryModT
 abilities: object[]
 ```
 
-Defined in: [shared/player.d.ts:146](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L146)
+Defined in: [shared/player.d.ts:149](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L149)
 
 ###### type
 
@@ -454,7 +455,7 @@ last: number
 nameKey: string
 ```
 
-Defined in: [shared/player.d.ts:166](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L166)
+Defined in: [shared/player.d.ts:169](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L169)
 
 ##### descriptionKey
 
@@ -462,7 +463,7 @@ Defined in: [shared/player.d.ts:166](https://github.com/IrishBruse/SandustryModT
 descriptionKey: string
 ```
 
-Defined in: [shared/player.d.ts:167](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L167)
+Defined in: [shared/player.d.ts:170](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L170)
 
 ##### categoryKey
 
@@ -470,7 +471,7 @@ Defined in: [shared/player.d.ts:167](https://github.com/IrishBruse/SandustryModT
 categoryKey: "excavation" | "utility" | "drones"
 ```
 
-Defined in: [shared/player.d.ts:168](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L168)
+Defined in: [shared/player.d.ts:171](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L171)
 
 ##### sprite?
 
@@ -478,11 +479,11 @@ Defined in: [shared/player.d.ts:168](https://github.com/IrishBruse/SandustryModT
 optional sprite?: AssetRef
 ```
 
-Defined in: [shared/player.d.ts:169](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L169)
+Defined in: [shared/player.d.ts:172](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/player.d.ts#L172)
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### CellCoordinates
+### shared.player.CellCoordinates :id=cellcoordinates
 
 ```ts
 CellCoordinates = [number, number]
@@ -496,7 +497,7 @@ Cell coordinates match `sandkit.api.*AtCell` helpers: column first, then row.
 
 ***
 
-### Vector2
+### shared.player.Vector2 :id=vector2
 
 ```ts
 Vector2 = object

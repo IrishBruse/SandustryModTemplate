@@ -1,4 +1,4 @@
-# game
+# sandkit.engine.api.game
 
 **`Internal`**
 
@@ -8,9 +8,9 @@
 Methods use loose stubs; signatures may take game state as the first argument.
 Engine methods pass game state as the first argument (args[0]); remaining entries are method-specific.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### load()
+### sandkit.engine.api.game.load() :id=load
 
 ```ts
 load(...args: unknown[]): unknown
@@ -34,7 +34,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### save()
+### sandkit.engine.api.game.save() :id=save
 
 ```ts
 save(...args: unknown[]): unknown
@@ -58,7 +58,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### start()
+### sandkit.engine.api.game.start() :id=start
 
 ```ts
 start(...args: unknown[]): unknown

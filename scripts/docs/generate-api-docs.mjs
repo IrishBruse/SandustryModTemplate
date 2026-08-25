@@ -7,13 +7,20 @@
  */
 import { spawnSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { dirname, join, normalize } from "node:path";
+import { dirname, join, normalize, relative } from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  apiPathToQualifiedName,
+  collectSearchPaths,
+  qualifyApiMarkdown,
+  renderSearchPathsScript,
+} from "./api-search.mjs";
 import { npmCli } from "../lib/npm-cli.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const DOCS_SCRIPTS = join(ROOT, "scripts/docs");
-const OUT = join(ROOT, "docs/api");
+const DOCS = join(ROOT, "docs");
+const OUT = join(DOCS, "api");
 const TYPEDOC = join(DOCS_SCRIPTS, "node_modules/typedoc/bin/typedoc");
 const CONFIG = join(DOCS_SCRIPTS, "typedoc.json");
 
@@ -45,7 +52,9 @@ if (result.status !== 0) {
 
 fixDocsifyLinks(OUT);
 highlightTypeDocSignatures(OUT);
+qualifyApiPages(OUT);
 writeApiSidebar(OUT);
+writeSearchPaths(DOCS);
 
 console.log("Wrote API docs to docs/api/");
 
@@ -174,6 +183,28 @@ function writeApiSidebar(outDir) {
   ];
 
   writeFileSync(join(outDir, "_sidebar.md"), `${lines.join("\n")}\n`);
+}
+
+function qualifyApiPages(outDir) {
+  for (const filePath of walkMarkdownFiles(outDir)) {
+    if (filePath.endsWith("_sidebar.md")) continue;
+
+    const rel = toPosixPath(filePath.slice(outDir.length + 1));
+    const qualified = apiPathToQualifiedName(rel);
+    if (!qualified) continue;
+
+    const content = readFileSync(filePath, "utf8");
+    const fixed = qualifyApiMarkdown(content, qualified);
+    if (fixed !== content) writeFileSync(filePath, fixed);
+  }
+}
+
+function writeSearchPaths(docsDir) {
+  const relFiles = walkMarkdownFiles(docsDir).map((filePath) =>
+    toPosixPath(relative(docsDir, filePath)),
+  );
+  const script = renderSearchPathsScript(collectSearchPaths(relFiles));
+  writeFileSync(join(docsDir, "assets/search-paths.js"), script);
 }
 
 function indentNamespaceLinks(outDir, modulePath, prefixPath) {

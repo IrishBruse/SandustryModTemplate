@@ -1,8 +1,8 @@
-# progression
+# sandkit.api.progression
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### ProgressionCompletionRequestV1
+### sandkit.api.progression.ProgressionCompletionRequestV1 :id=progressioncompletionrequestv1
 
 Defined in: [sandkit/api/progression.d.ts:17](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/progression.d.ts#L17)
 
@@ -26,9 +26,9 @@ Defined in: [sandkit/api/progression.d.ts:19](https://github.com/IrishBruse/Sand
 
 Progression step or quest identifier.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### complete()
+### sandkit.api.progression.complete() :id=complete
 
 ```ts
 complete(request: ProgressionCompletionRequestV1): boolean

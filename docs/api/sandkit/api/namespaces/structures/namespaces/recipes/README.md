@@ -1,10 +1,10 @@
-# recipes
+# sandkit.api.structures.recipes
 
 Structure recipe registration by machine kind.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### register()
+### sandkit.api.structures.recipes.register() :id=register
 
 #### Call Signature
 

@@ -1,11 +1,11 @@
-# energy
+# sandkit.api.energy
 
 `sandkit.api.energy` — structure energy networks, storage, and consumption.
 Main thread only.
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### EnergyRegisterTypeOptions
+### sandkit.api.energy.EnergyRegisterTypeOptions :id=energyregistertypeoptions
 
 Defined in: [sandkit/api/energy.d.ts:56](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/energy.d.ts#L56)
 
@@ -41,7 +41,7 @@ Energy type id when multiple networks exist.
 
 ***
 
-### EnergyAddOptions
+### sandkit.api.energy.EnergyAddOptions :id=energyaddoptions
 
 Defined in: [sandkit/api/energy.d.ts:65](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/energy.d.ts#L65)
 
@@ -65,9 +65,9 @@ Defined in: [sandkit/api/energy.d.ts:67](https://github.com/IrishBruse/Sandustry
 
 Energy type id when multiple networks exist.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### registerType()
+### sandkit.api.energy.registerType() :id=registertype
 
 ```ts
 registerType(structureId: string, type: "conductor" | "storage", options?: EnergyRegisterTypeOptions): void
@@ -103,7 +103,7 @@ Capacity and energy-type options for storage nodes.
 
 ***
 
-### addAtCell()
+### sandkit.api.energy.addAtCell() :id=addatcell
 
 ```ts
 addAtCell(...args: number, number, number, [EnergyAddOptions]): number
@@ -125,7 +125,7 @@ Adds energy at a cell. Returns the amount actually added.
 
 ***
 
-### consume()
+### sandkit.api.energy.consume() :id=consume
 
 ```ts
 consume(amount: number, options?: object): number
@@ -157,7 +157,7 @@ When `allOrNothing` is true, consume zero unless the full amount is available.
 
 ***
 
-### consumeExcludingNetworkAtCell()
+### sandkit.api.energy.consumeExcludingNetworkAtCell() :id=consumeexcludingnetworkatcell
 
 ```ts
 consumeExcludingNetworkAtCell(...args: [number, number, number]): number
@@ -179,7 +179,7 @@ Consumes energy from networks other than the one at the cell.
 
 ***
 
-### getNetworkAtCell()
+### sandkit.api.energy.getNetworkAtCell() :id=getnetworkatcell
 
 ```ts
 getNetworkAtCell(...args: CellCoordinates): object[]
@@ -201,7 +201,7 @@ Returns energy network nodes connected at the cell.
 
 ***
 
-### getNetworkFreeCapacityAtCell()
+### sandkit.api.energy.getNetworkFreeCapacityAtCell() :id=getnetworkfreecapacityatcell
 
 ```ts
 getNetworkFreeCapacityAtCell(...args: CellCoordinates): number

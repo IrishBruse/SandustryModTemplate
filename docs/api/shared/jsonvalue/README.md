@@ -1,8 +1,8 @@
-# shared/jsonvalue
+# shared.jsonvalue
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### JsonObjectV1
+### shared.jsonvalue.JsonObjectV1 :id=jsonobjectv1
 
 Defined in: [shared/jsonvalue.d.ts:15](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/jsonvalue.d.ts#L15)
 
@@ -16,9 +16,9 @@ Use for open-ended config bags and serialized mod data.
 [key: string]: JsonValueV1
 ```
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### JsonValueV1
+### shared.jsonvalue.JsonValueV1 :id=jsonvaluev1
 
 ```ts
 JsonValueV1 = string | number | boolean | JsonObjectV1 | JsonValueV1[] | null

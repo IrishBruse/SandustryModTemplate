@@ -1,10 +1,10 @@
-# buffers
+# sandkit.api.shared.buffers (worker)
 
 Named shared memory buffers for worker threads.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### require()
+### sandkit.api.shared.buffers.require() (worker) :id=require
 
 ```ts
 require(key: string, config: object): SharedArray
@@ -41,8 +41,8 @@ Expected array type and length for validation.
 
 [`SharedArray`](api/sandkit/api/namespaces/shared/README.md#sharedarray)
 
-## References
+## References <!-- {docsify-ignore} -->
 
-### get
+### sandkit.api.shared.buffers.get (worker) :id=get
 
 Re-exports [get](api/sandkit/api/namespaces/shared/namespaces/buffers/README.md#get)

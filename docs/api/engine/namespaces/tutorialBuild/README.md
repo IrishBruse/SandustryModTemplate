@@ -1,4 +1,4 @@
-# tutorialBuild
+# sandkit.engine.api.tutorialBuild
 
 **`Internal`**
 
@@ -8,9 +8,9 @@
 Methods use loose stubs; signatures may take game state as the first argument.
 Engine methods pass game state as the first argument (args[0]); remaining entries are method-specific.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### areAllTargetsBuilt()
+### sandkit.engine.api.tutorialBuild.areAllTargetsBuilt() :id=arealltargetsbuilt
 
 ```ts
 areAllTargetsBuilt(...args: unknown[]): unknown
@@ -34,7 +34,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### areFamilyTargetsBuilt()
+### sandkit.engine.api.tutorialBuild.areFamilyTargetsBuilt() :id=arefamilytargetsbuilt
 
 ```ts
 areFamilyTargetsBuilt(...args: unknown[]): unknown
@@ -58,7 +58,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### canPlaceAtActiveTarget()
+### sandkit.engine.api.tutorialBuild.canPlaceAtActiveTarget() :id=canplaceatactivetarget
 
 ```ts
 canPlaceAtActiveTarget(...args: unknown[]): unknown
@@ -82,7 +82,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getFoundationMoveDests()
+### sandkit.engine.api.tutorialBuild.getFoundationMoveDests() :id=getfoundationmovedests
 
 ```ts
 getFoundationMoveDests(...args: unknown[]): unknown
@@ -106,7 +106,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getFoundationMoveSources()
+### sandkit.engine.api.tutorialBuild.getFoundationMoveSources() :id=getfoundationmovesources
 
 ```ts
 getFoundationMoveSources(...args: unknown[]): unknown
@@ -130,7 +130,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getTargets()
+### sandkit.engine.api.tutorialBuild.getTargets() :id=gettargets
 
 ```ts
 getTargets(...args: unknown[]): unknown
@@ -154,7 +154,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### hasDefinition()
+### sandkit.engine.api.tutorialBuild.hasDefinition() :id=hasdefinition
 
 ```ts
 hasDefinition(...args: unknown[]): unknown
@@ -178,7 +178,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### isStepConstrained()
+### sandkit.engine.api.tutorialBuild.isStepConstrained() :id=isstepconstrained
 
 ```ts
 isStepConstrained(...args: unknown[]): unknown
@@ -202,7 +202,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### matchesFoundationMove()
+### sandkit.engine.api.tutorialBuild.matchesFoundationMove() :id=matchesfoundationmove
 
 ```ts
 matchesFoundationMove(...args: unknown[]): unknown
@@ -226,7 +226,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### matchesFoundationRemove()
+### sandkit.engine.api.tutorialBuild.matchesFoundationRemove() :id=matchesfoundationremove
 
 ```ts
 matchesFoundationRemove(...args: unknown[]): unknown
@@ -250,7 +250,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### shouldProtectActiveTargetAt()
+### sandkit.engine.api.tutorialBuild.shouldProtectActiveTargetAt() :id=shouldprotectactivetargetat
 
 ```ts
 shouldProtectActiveTargetAt(...args: unknown[]): unknown

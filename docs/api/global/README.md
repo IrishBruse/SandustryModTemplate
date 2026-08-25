@@ -1,8 +1,8 @@
 # global
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### Sandkit
+### global.Sandkit :id=sandkit
 
 ```ts
 Sandkit = Sandkit
@@ -14,7 +14,7 @@ Full shape of the ambient `sandkit` object.
 
 ***
 
-### SandkitApi
+### global.SandkitApi :id=sandkitapi
 
 ```ts
 SandkitApi = SandkitApi
@@ -26,7 +26,7 @@ Main-thread `sandkit.api` composed type. Not the worker API.
 
 ***
 
-### SandkitEngine
+### global.SandkitEngine :id=sandkitengine
 
 ```ts
 SandkitEngine = SandkitEngine
@@ -38,7 +38,7 @@ Defined in: [global.d.ts:23](https://github.com/IrishBruse/SandustryModTemplate/
 
 ***
 
-### SandkitEngineApi
+### global.SandkitEngineApi :id=sandkitengineapi
 
 ```ts
 SandkitEngineApi = SandkitEngineApi
@@ -50,7 +50,7 @@ Composed `sandkit.engine.api` namespaces.
 
 ***
 
-### SandkitState
+### global.SandkitState :id=sandkitstate
 
 ```ts
 SandkitState = SandkitState
@@ -62,7 +62,7 @@ Game state at `sandkit.state` / `sandkit.engine.state`.
 
 ***
 
-### SandkitEnums
+### global.SandkitEnums :id=sandkitenums
 
 ```ts
 SandkitEnums = SandkitEnums
@@ -74,7 +74,7 @@ Runtime enum bags at `sandkit.enums`.
 
 ***
 
-### SandkitReact
+### global.SandkitReact :id=sandkitreact
 
 ```ts
 SandkitReact = SandkitReact
@@ -86,7 +86,7 @@ Host React package at `sandkit.react`.
 
 ***
 
-### RetroConsoleApi
+### global.RetroConsoleApi :id=retroconsoleapi
 
 ```ts
 RetroConsoleApi = RetroConsoleApi
@@ -96,9 +96,9 @@ Defined in: [global.d.ts:33](https://github.com/IrishBruse/SandustryModTemplate/
 
 Retro Console API surface on supported engine namespaces.
 
-## Variables
+## Variables <!-- {docsify-ignore} -->
 
-### sandkit
+### global.sandkit :id=sandkit
 
 ```ts
 const sandkit: Sandkit

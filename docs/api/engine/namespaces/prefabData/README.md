@@ -1,4 +1,4 @@
-# prefabData
+# sandkit.engine.api.prefabData
 
 **`Internal`**
 
@@ -8,9 +8,9 @@
 Methods use loose stubs; signatures may take game state as the first argument.
 Engine methods pass game state as the first argument (args[0]); remaining entries are method-specific.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### getAll()
+### sandkit.engine.api.prefabData.getAll() :id=getall
 
 ```ts
 getAll(...args: unknown[]): unknown
@@ -34,7 +34,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getAllMetadata()
+### sandkit.engine.api.prefabData.getAllMetadata() :id=getallmetadata
 
 ```ts
 getAllMetadata(...args: unknown[]): unknown
@@ -58,7 +58,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getArtifactLocations()
+### sandkit.engine.api.prefabData.getArtifactLocations() :id=getartifactlocations
 
 ```ts
 getArtifactLocations(...args: unknown[]): unknown
@@ -82,7 +82,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getAtCell()
+### sandkit.engine.api.prefabData.getAtCell() :id=getatcell
 
 ```ts
 getAtCell(...args: unknown[]): unknown
@@ -106,7 +106,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getMetadata()
+### sandkit.engine.api.prefabData.getMetadata() :id=getmetadata
 
 ```ts
 getMetadata(...args: unknown[]): unknown

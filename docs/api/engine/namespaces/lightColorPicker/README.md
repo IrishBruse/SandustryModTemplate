@@ -1,4 +1,4 @@
-# lightColorPicker
+# sandkit.engine.api.lightColorPicker
 
 **`Internal`**
 
@@ -8,9 +8,9 @@
 Methods use loose stubs; signatures may take game state as the first argument.
 Engine methods pass game state as the first argument (args[0]); remaining entries are method-specific.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### getColor()
+### sandkit.engine.api.lightColorPicker.getColor() :id=getcolor
 
 ```ts
 getColor(...args: unknown[]): unknown

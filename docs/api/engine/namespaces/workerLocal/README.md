@@ -1,4 +1,4 @@
-# workerLocal
+# sandkit.engine.api.workerLocal
 
 **`Internal`**
 
@@ -7,9 +7,9 @@
 **Internal API.** Prefer [sandkit.api](api/sandkit/README.md#api-1) when a public method exists.
 Available on worker threads only. Values do not persist across workers.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### clear()
+### sandkit.engine.api.workerLocal.clear() :id=clear
 
 ```ts
 clear(...args: unknown[]): unknown
@@ -33,7 +33,7 @@ Worker-local context first on workers; otherwise game state first, then method-s
 
 ***
 
-### get()
+### sandkit.engine.api.workerLocal.get() :id=get
 
 ```ts
 get(...args: unknown[]): unknown
@@ -57,7 +57,7 @@ Worker-local context first on workers; otherwise game state first, then method-s
 
 ***
 
-### getOrInit()
+### sandkit.engine.api.workerLocal.getOrInit() :id=getorinit
 
 ```ts
 getOrInit(...args: unknown[]): unknown
@@ -81,7 +81,7 @@ Worker-local context first on workers; otherwise game state first, then method-s
 
 ***
 
-### set()
+### sandkit.engine.api.workerLocal.set() :id=set
 
 ```ts
 set(...args: unknown[]): unknown

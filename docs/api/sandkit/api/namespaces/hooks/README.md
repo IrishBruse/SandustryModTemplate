@@ -1,11 +1,11 @@
-# hooks
+# sandkit.api.hooks
 
 `sandkit.api.hooks` — intercept and modify internal game hook points.
 Main thread only.
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### InterceptHookMap
+### sandkit.api.hooks.InterceptHookMap :id=intercepthookmap
 
 Defined in: [sandkit/api/hooks.d.ts:22](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/hooks.d.ts#L22)
 
@@ -99,7 +99,7 @@ Defined in: [sandkit/api/hooks.d.ts:36](https://github.com/IrishBruse/SandustryM
 
 ***
 
-### HookContext
+### sandkit.api.hooks.HookContext :id=hookcontext
 
 Defined in: [sandkit/api/hooks.d.ts:40](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/hooks.d.ts#L40)
 
@@ -123,7 +123,7 @@ When called, the intercepted action is skipped.
 
 ***
 
-### HookOptions
+### sandkit.api.hooks.HookOptions :id=hookoptions
 
 Defined in: [sandkit/api/hooks.d.ts:47](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/hooks.d.ts#L47)
 
@@ -147,9 +147,9 @@ Defined in: [sandkit/api/hooks.d.ts:49](https://github.com/IrishBruse/SandustryM
 
 Run this hook before others with lower priority.
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### ModifierHookMap
+### sandkit.api.hooks.ModifierHookMap :id=modifierhookmap
 
 ```ts
 ModifierHookMap = unknown
@@ -159,9 +159,9 @@ Defined in: [sandkit/api/hooks.d.ts:45](https://github.com/IrishBruse/SandustryM
 
 Map of modifier hook ids to argument shapes (not yet typed in declarations).
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### intercept()
+### sandkit.api.hooks.intercept() :id=intercept
 
 ```ts
 intercept<K>(hookId: K, callback: (args: InterceptHookMap[K], context: HookContext) => void, options?: HookOptions): () => void
@@ -203,7 +203,7 @@ Optional priority and filter options.
 
 ***
 
-### modify()
+### sandkit.api.hooks.modify() :id=modify
 
 ```ts
 modify<K>(hookId: K, callback: (args: unknown) => void, options?: HookOptions): () => void

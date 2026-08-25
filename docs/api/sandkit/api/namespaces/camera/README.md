@@ -1,11 +1,11 @@
-# camera
+# sandkit.api.camera
 
 `sandkit.api.camera` — camera focus and follow control.
 Main thread only.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### snapToPlayer()
+### sandkit.api.camera.snapToPlayer() :id=snaptoplayer
 
 ```ts
 snapToPlayer(): void
@@ -21,7 +21,7 @@ Snap the camera to the player position.
 
 ***
 
-### setFocusAtWorld()
+### sandkit.api.camera.setFocusAtWorld() :id=setfocusatworld
 
 ```ts
 setFocusAtWorld(worldX: number, worldY: number): boolean
@@ -53,7 +53,7 @@ True when focus was applied.
 
 ***
 
-### releaseFocus()
+### sandkit.api.camera.releaseFocus() :id=releasefocus
 
 ```ts
 releaseFocus(options?: object): boolean

@@ -1,14 +1,14 @@
-# storage
+# sandkit.api.storage
 
-## Namespaces
+## Namespaces <!-- {docsify-ignore} -->
 
 | Namespace | Description |
 | ------ | ------ |
 | [local](api/sandkit/api/namespaces/storage/namespaces/local/README.md) | Local session storage without mod id scope. |
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### ensure()
+### sandkit.api.storage.ensure() :id=ensure
 
 ```ts
 ensure(modId: string): JsonObjectV1
@@ -32,7 +32,7 @@ Mod identifier (typically `modinfo.id`).
 
 ***
 
-### get()
+### sandkit.api.storage.get() :id=get
 
 ```ts
 get(modId: string, key: string): JsonValueV1 | undefined
@@ -62,7 +62,7 @@ Storage key.
 
 ***
 
-### set()
+### sandkit.api.storage.set() :id=set
 
 ```ts
 set(modId: string, key: string, value: JsonValueV1): void
@@ -98,7 +98,7 @@ JSON-serializable value.
 
 ***
 
-### remove()
+### sandkit.api.storage.remove() :id=remove
 
 ```ts
 remove(modId: string, key: string): void

@@ -1,4 +1,4 @@
-# clipboard
+# sandkit.engine.api.clipboard
 
 **`Internal`**
 
@@ -8,9 +8,9 @@
 Methods use loose stubs; signatures may take game state as the first argument.
 Engine methods pass game state as the first argument (args[0]); remaining entries are method-specific.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### activate()
+### sandkit.engine.api.clipboard.activate() :id=activate
 
 ```ts
 activate(...args: unknown[]): unknown
@@ -34,7 +34,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### clear()
+### sandkit.engine.api.clipboard.clear() :id=clear
 
 ```ts
 clear(...args: unknown[]): unknown
@@ -58,7 +58,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### get()
+### sandkit.engine.api.clipboard.get() :id=get
 
 ```ts
 get(...args: unknown[]): unknown
@@ -82,7 +82,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getHistory()
+### sandkit.engine.api.clipboard.getHistory() :id=gethistory
 
 ```ts
 getHistory(...args: unknown[]): unknown
@@ -106,7 +106,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getSignalLinks()
+### sandkit.engine.api.clipboard.getSignalLinks() :id=getsignallinks
 
 ```ts
 getSignalLinks(...args: unknown[]): unknown
@@ -130,7 +130,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### selectFromHistory()
+### sandkit.engine.api.clipboard.selectFromHistory() :id=selectfromhistory
 
 ```ts
 selectFromHistory(...args: unknown[]): unknown
@@ -154,7 +154,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### set()
+### sandkit.engine.api.clipboard.set() :id=set
 
 ```ts
 set(...args: unknown[]): unknown

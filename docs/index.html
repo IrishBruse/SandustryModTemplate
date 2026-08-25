@@ -21,6 +21,8 @@
     <script src="assets/page-toc.js"></script>
     <script src="assets/ui-canvas.js"></script>
     <script src="assets/api-sidebar-name.js"></script>
+    <script src="assets/search-rank.js"></script>
+    <script src="assets/search-paths.js"></script>
   </head>
   <body class="loading">
     <div id="app"></div>
@@ -39,9 +41,11 @@
           "ui/gallery.md": "ui/README.md",
         },
         search: {
-          placeholder: "Search",
+          paths: Array.isArray(window.SMT_SEARCH_PATHS) ? window.SMT_SEARCH_PATHS : "auto",
+          placeholder: "Search docs and API",
           noData: "No results",
           depth: 3,
+          namespace: "smt-docs-api-v1",
         },
         plugins: [
           window.smtDocsifyHeadingCopyPlugin,
@@ -49,6 +53,7 @@
           window.smtDocsifyPageTocPlugin,
           window.smtDocsifyUiCanvasPlugin,
           window.smtDocsifyApiSidebarNamePlugin,
+          window.smtDocsifySearchRankPlugin,
         ].filter(function (p) {
           return typeof p === "function";
         }),

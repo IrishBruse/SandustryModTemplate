@@ -1,12 +1,12 @@
-# Enumeration: StructureType
+# sandkit.api.building.StructureType
 
 Defined in: [sandkit/api/building.d.ts:9](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/building.d.ts#L9)
 
 Built-in structure type ids used during placement.
 
-## Enumeration Members
+## Enumeration Members <!-- {docsify-ignore} -->
 
-### ConveyorLeft
+### sandkit.api.building.StructureType.ConveyorLeft :id=conveyorleft
 
 ```ts
 ConveyorLeft: 1
@@ -18,7 +18,7 @@ Left-facing conveyor belt.
 
 ***
 
-### ConveyorRight
+### sandkit.api.building.StructureType.ConveyorRight :id=conveyorright
 
 ```ts
 ConveyorRight: 2
@@ -30,7 +30,7 @@ Right-facing conveyor belt.
 
 ***
 
-### ShakerLeft
+### sandkit.api.building.StructureType.ShakerLeft :id=shakerleft
 
 ```ts
 ShakerLeft: 3
@@ -42,7 +42,7 @@ Left-facing shaker.
 
 ***
 
-### ShakerRight
+### sandkit.api.building.StructureType.ShakerRight :id=shakerright
 
 ```ts
 ShakerRight: 4
@@ -54,7 +54,7 @@ Right-facing shaker.
 
 ***
 
-### LauncherUp
+### sandkit.api.building.StructureType.LauncherUp :id=launcherup
 
 ```ts
 LauncherUp: 5
@@ -66,7 +66,7 @@ Up-facing launcher.
 
 ***
 
-### LauncherLeft
+### sandkit.api.building.StructureType.LauncherLeft :id=launcherleft
 
 ```ts
 LauncherLeft: 6
@@ -78,7 +78,7 @@ Left-facing launcher.
 
 ***
 
-### LauncherRight
+### sandkit.api.building.StructureType.LauncherRight :id=launcherright
 
 ```ts
 LauncherRight: 7
@@ -90,7 +90,7 @@ Right-facing launcher.
 
 ***
 
-### SplitterLeft
+### sandkit.api.building.StructureType.SplitterLeft :id=splitterleft
 
 ```ts
 SplitterLeft: 8
@@ -102,7 +102,7 @@ Left-facing splitter.
 
 ***
 
-### SplitterRight
+### sandkit.api.building.StructureType.SplitterRight :id=splitterright
 
 ```ts
 SplitterRight: 9
@@ -114,7 +114,7 @@ Right-facing splitter.
 
 ***
 
-### Dropper
+### sandkit.api.building.StructureType.Dropper :id=dropper
 
 ```ts
 Dropper: 10
@@ -126,7 +126,7 @@ Dropper structure.
 
 ***
 
-### Foundation
+### sandkit.api.building.StructureType.Foundation :id=foundation
 
 ```ts
 Foundation: 11
@@ -138,7 +138,7 @@ Foundation block.
 
 ***
 
-### FoundationAngledLeft
+### sandkit.api.building.StructureType.FoundationAngledLeft :id=foundationangledleft
 
 ```ts
 FoundationAngledLeft: 12
@@ -150,7 +150,7 @@ Angled foundation facing left.
 
 ***
 
-### FoundationTriangleLeftDel
+### sandkit.api.building.StructureType.FoundationTriangleLeftDel :id=foundationtriangleleftdel
 
 ```ts
 FoundationTriangleLeftDel: 13
@@ -162,7 +162,7 @@ Left triangle foundation (deprecated id).
 
 ***
 
-### FoundationAngledRight
+### sandkit.api.building.StructureType.FoundationAngledRight :id=foundationangledright
 
 ```ts
 FoundationAngledRight: 14
@@ -174,7 +174,7 @@ Angled foundation facing right.
 
 ***
 
-### FoundationTriangleRightDel
+### sandkit.api.building.StructureType.FoundationTriangleRightDel :id=foundationtrianglerightdel
 
 ```ts
 FoundationTriangleRightDel: 15
@@ -186,7 +186,7 @@ Right triangle foundation (deprecated id).
 
 ***
 
-### Collector
+### sandkit.api.building.StructureType.Collector :id=collector
 
 ```ts
 Collector: 16
@@ -198,7 +198,7 @@ Collector structure.
 
 ***
 
-### FilterLeft
+### sandkit.api.building.StructureType.FilterLeft :id=filterleft
 
 ```ts
 FilterLeft: 17
@@ -210,7 +210,7 @@ Left-facing filter.
 
 ***
 
-### FilterRight
+### sandkit.api.building.StructureType.FilterRight :id=filterright
 
 ```ts
 FilterRight: 18
@@ -222,7 +222,7 @@ Right-facing filter.
 
 ***
 
-### SlidingFoundation
+### sandkit.api.building.StructureType.SlidingFoundation :id=slidingfoundation
 
 ```ts
 SlidingFoundation: 19
@@ -234,7 +234,7 @@ Sliding foundation block.
 
 ***
 
-### VelocitySoaker
+### sandkit.api.building.StructureType.VelocitySoaker :id=velocitysoaker
 
 ```ts
 VelocitySoaker: 20
@@ -246,7 +246,7 @@ Velocity soaker structure.
 
 ***
 
-### Grower
+### sandkit.api.building.StructureType.Grower :id=grower
 
 ```ts
 Grower: 21
@@ -258,7 +258,7 @@ Grower structure.
 
 ***
 
-### SoundBox
+### sandkit.api.building.StructureType.SoundBox :id=soundbox
 
 ```ts
 SoundBox: 22
@@ -270,7 +270,7 @@ Sound box structure.
 
 ***
 
-### Pipe
+### sandkit.api.building.StructureType.Pipe :id=pipe
 
 ```ts
 Pipe: 23
@@ -282,7 +282,7 @@ Pipe segment.
 
 ***
 
-### Pump
+### sandkit.api.building.StructureType.Pump :id=pump
 
 ```ts
 Pump: 24
@@ -294,7 +294,7 @@ Pump structure.
 
 ***
 
-### LiquidVent
+### sandkit.api.building.StructureType.LiquidVent :id=liquidvent
 
 ```ts
 LiquidVent: 25
@@ -306,7 +306,7 @@ Liquid vent structure.
 
 ***
 
-### Light
+### sandkit.api.building.StructureType.Light :id=light
 
 ```ts
 Light: 26
@@ -318,7 +318,7 @@ Light structure.
 
 ***
 
-### GloomEmitter
+### sandkit.api.building.StructureType.GloomEmitter :id=gloomemitter
 
 ```ts
 GloomEmitter: 27

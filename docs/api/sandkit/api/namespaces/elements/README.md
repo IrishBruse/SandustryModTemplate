@@ -1,17 +1,17 @@
-# elements
+# sandkit.api.elements
 
 `sandkit.api.elements` — register elements and read or change cells when idle.
 Main thread only.
 
-## Enumerations
+## Enumerations <!-- {docsify-ignore} -->
 
 | Enumeration | Description |
 | ------ | ------ |
 | [MatterType](api/sandkit/api/namespaces/elements/enumerations/MatterType.md) | Physical behaviour category for an element. |
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### InteractionStructureMetadata
+### sandkit.api.elements.InteractionStructureMetadata :id=interactionstructuremetadata
 
 Defined in: [sandkit/api/elements.d.ts:45](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/elements.d.ts#L45)
 
@@ -85,7 +85,7 @@ Require the text key to exist in the active locale.
 
 ***
 
-### ElementCreateOptions
+### sandkit.api.elements.ElementCreateOptions :id=elementcreateoptions
 
 Defined in: [shared/api/elements.d.ts:47](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/api/elements.d.ts#L47)
 
@@ -195,7 +195,7 @@ Skip collector accounting when placing the element.
 
 ***
 
-### ElementRemovalOptions
+### sandkit.api.elements.ElementRemovalOptions :id=elementremovaloptions
 
 Defined in: [shared/api/elements.d.ts:72](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/api/elements.d.ts#L72)
 
@@ -213,9 +213,9 @@ Defined in: [shared/api/elements.d.ts:74](https://github.com/IrishBruse/Sandustr
 
 Skip collector accounting when removing the element.
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### InteractionDestroyer
+### sandkit.api.elements.InteractionDestroyer :id=interactiondestroyer
 
 ```ts
 InteractionDestroyer = object
@@ -247,7 +247,7 @@ Item ids removed by this interaction (for example `"drill"`).
 
 ***
 
-### InteractionStructure
+### sandkit.api.elements.InteractionStructure :id=interactionstructure
 
 ```ts
 InteractionStructure = InteractionStructureMetadata & object
@@ -275,7 +275,7 @@ Structure ids shown in the interaction tooltip.
 
 ***
 
-### InteractionEntity
+### sandkit.api.elements.InteractionEntity :id=interactionentity
 
 ```ts
 InteractionEntity = object
@@ -307,7 +307,7 @@ Entity type ids referenced by the interaction.
 
 ***
 
-### InteractionFlammable
+### sandkit.api.elements.InteractionFlammable :id=interactionflammable
 
 ```ts
 InteractionFlammable = object
@@ -329,7 +329,7 @@ Defined in: [sandkit/api/elements.d.ts:78](https://github.com/IrishBruse/Sandust
 
 ***
 
-### InteractionMeltable
+### sandkit.api.elements.InteractionMeltable :id=interactionmeltable
 
 ```ts
 InteractionMeltable = object
@@ -351,7 +351,7 @@ Defined in: [sandkit/api/elements.d.ts:80](https://github.com/IrishBruse/Sandust
 
 ***
 
-### InteractionFreezable
+### sandkit.api.elements.InteractionFreezable :id=interactionfreezable
 
 ```ts
 InteractionFreezable = object
@@ -373,7 +373,7 @@ Defined in: [sandkit/api/elements.d.ts:82](https://github.com/IrishBruse/Sandust
 
 ***
 
-### InteractionCustom
+### sandkit.api.elements.InteractionCustom :id=interactioncustom
 
 ```ts
 InteractionCustom = InteractionStructureMetadata & object
@@ -393,7 +393,7 @@ kind: "custom"
 
 ***
 
-### Interaction
+### sandkit.api.elements.Interaction :id=interaction
 
 ```ts
 Interaction = InteractionDestroyer | InteractionStructure | InteractionEntity | InteractionFlammable | InteractionMeltable | InteractionFreezable | InteractionCustom
@@ -405,7 +405,7 @@ Union of element interaction kinds for tool and structure logic.
 
 ***
 
-### ElementType
+### sandkit.api.elements.ElementType :id=elementtype
 
 ```ts
 ElementType = number
@@ -417,7 +417,7 @@ Numeric element type handle.
 
 ***
 
-### ElementDefinition
+### sandkit.api.elements.ElementDefinition :id=elementdefinition
 
 ```ts
 ElementDefinition = object
@@ -535,9 +535,9 @@ Defined in: [shared/api/elements.d.ts:43](https://github.com/IrishBruse/Sandustr
 data: Record<PropertyKey, any>
 ```
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### getRegisteredTypes()
+### sandkit.api.elements.getRegisteredTypes() :id=getregisteredtypes
 
 ```ts
 getRegisteredTypes(): number[]
@@ -553,7 +553,7 @@ Returns all registered element type ids.
 
 ***
 
-### register()
+### sandkit.api.elements.register() :id=register
 
 ```ts
 register(definition: ElementDefinition): object
@@ -585,7 +585,7 @@ elementType: number
 
 ***
 
-### updateDefinition()
+### sandkit.api.elements.updateDefinition() :id=updatedefinition
 
 ```ts
 updateDefinition(elementTypeOrId: string | number, partial: Partial<ElementDefinition>): void
@@ -615,7 +615,7 @@ Fields to merge onto the definition.
 
 ***
 
-### addInteractionInfo()
+### sandkit.api.elements.addInteractionInfo() :id=addinteractioninfo
 
 ```ts
 addInteractionInfo(elementTypeOrId: string | number, interaction: Interaction): void
@@ -645,7 +645,7 @@ Interaction entry to append.
 
 ***
 
-### getNameByType()
+### sandkit.api.elements.getNameByType() :id=getnamebytype
 
 ```ts
 getNameByType(elementType: number): string
@@ -669,7 +669,7 @@ Numeric element type.
 
 ***
 
-### findFreeCellInStructure()
+### sandkit.api.elements.findFreeCellInStructure() :id=findfreecellinstructure
 
 ```ts
 findFreeCellInStructure(structureCellX: number, structureCellY: number, structureSize: number): Vector2 | null
@@ -707,7 +707,7 @@ Cell coordinates of a free cell, or null when none.
 
 ***
 
-### createAtCellWhenIdle()
+### sandkit.api.elements.createAtCellWhenIdle() :id=createatcellwhenidle
 
 ```ts
 createAtCellWhenIdle(...args: number, number, number, [ElementCreateOptions]): void
@@ -729,7 +729,7 @@ Creates an element at a cell when the simulation is idle.
 
 ***
 
-### replaceAtCellWhenIdle()
+### sandkit.api.elements.replaceAtCellWhenIdle() :id=replaceatcellwhenidle
 
 ```ts
 replaceAtCellWhenIdle(...args: number, number, number, [ElementCreateOptions]): void
@@ -751,7 +751,7 @@ Replaces the element at a cell when the simulation is idle.
 
 ***
 
-### removeAtCellWhenIdle()
+### sandkit.api.elements.removeAtCellWhenIdle() :id=removeatcellwhenidle
 
 ```ts
 removeAtCellWhenIdle(...args: number, number, [ElementRemovalOptions]): void
@@ -773,7 +773,7 @@ Removes the element at a cell when the simulation is idle.
 
 ***
 
-### teleportBetweenCellsWhenIdle()
+### sandkit.api.elements.teleportBetweenCellsWhenIdle() :id=teleportbetweencellswhenidle
 
 ```ts
 teleportBetweenCellsWhenIdle(fromCellX: number, fromCellY: number, toCellX: number, toCellY: number): void
@@ -815,7 +815,7 @@ Destination cell row.
 
 ***
 
-### setVelocityAtCellWhenIdle()
+### sandkit.api.elements.setVelocityAtCellWhenIdle() :id=setvelocityatcellwhenidle
 
 ```ts
 setVelocityAtCellWhenIdle(...args: number, number, [Vector2]): void
@@ -837,7 +837,7 @@ Sets particle velocity at a cell when the simulation is idle.
 
 ***
 
-### addParticleVelocityAtCellWhenIdle()
+### sandkit.api.elements.addParticleVelocityAtCellWhenIdle() :id=addparticlevelocityatcellwhenidle
 
 ```ts
 addParticleVelocityAtCellWhenIdle(...args: number, number, [Vector2, number]): void
@@ -859,7 +859,7 @@ Adds velocity to a particle at a cell when the simulation is idle.
 
 ***
 
-### convertToParticleAtCellWhenIdle()
+### sandkit.api.elements.convertToParticleAtCellWhenIdle() :id=converttoparticleatcellwhenidle
 
 ```ts
 convertToParticleAtCellWhenIdle(...args: number, number, [Vector2]): void
@@ -881,7 +881,7 @@ Converts a cell element to a particle when the simulation is idle.
 
 ***
 
-### convertFromParticleAtCellWhenIdle()
+### sandkit.api.elements.convertFromParticleAtCellWhenIdle() :id=convertfromparticleatcellwhenidle
 
 ```ts
 convertFromParticleAtCellWhenIdle(...args: CellCoordinates): void
@@ -903,7 +903,7 @@ Converts a particle back to a solid element when the simulation is idle.
 
 ***
 
-### setDataFieldAtCellWhenIdle()
+### sandkit.api.elements.setDataFieldAtCellWhenIdle() :id=setdatafieldatcellwhenidle
 
 ```ts
 setDataFieldAtCellWhenIdle(...args: [number, number, 1 | 2 | 3 | 4, number]): void
@@ -925,7 +925,7 @@ Sets a data field on the element at a cell when the simulation is idle.
 
 ***
 
-### refreshColorAtCellWhenIdle()
+### sandkit.api.elements.refreshColorAtCellWhenIdle() :id=refreshcoloratcellwhenidle
 
 ```ts
 refreshColorAtCellWhenIdle(...args: CellCoordinates): void
@@ -947,7 +947,7 @@ Refreshes the rendered color at a cell when the simulation is idle.
 
 ***
 
-### setPhysicsAtCellWhenIdle()
+### sandkit.api.elements.setPhysicsAtCellWhenIdle() :id=setphysicsatcellwhenidle
 
 ```ts
 setPhysicsAtCellWhenIdle(...args: [number, number, number]): void
@@ -969,7 +969,7 @@ Sets the physics skip mode at a cell when the simulation is idle.
 
 ***
 
-### setDurationAtCellWhenIdle()
+### sandkit.api.elements.setDurationAtCellWhenIdle() :id=setdurationatcellwhenidle
 
 ```ts
 setDurationAtCellWhenIdle(...args: [number, number, number, object]): void
@@ -991,7 +991,7 @@ Sets element duration at a cell when the simulation is idle.
 
 ***
 
-### getTypeFromId()
+### sandkit.api.elements.getTypeFromId() :id=gettypefromid
 
 ```ts
 getTypeFromId(elementId: string): number
@@ -1015,7 +1015,7 @@ Mod-registered element id.
 
 ***
 
-### getDefinitionByType()
+### sandkit.api.elements.getDefinitionByType() :id=getdefinitionbytype
 
 ```ts
 getDefinitionByType(elementType: number): ElementDefinition | undefined
@@ -1039,7 +1039,7 @@ Numeric element type.
 
 ***
 
-### getTypeAtCell()
+### sandkit.api.elements.getTypeAtCell() :id=gettypeatcell
 
 ```ts
 getTypeAtCell(...args: CellCoordinates): number | null
@@ -1061,7 +1061,7 @@ Return the raw element type at a cell (may differ from resolved type).
 
 ***
 
-### getResolvedTypeAtCell()
+### sandkit.api.elements.getResolvedTypeAtCell() :id=getresolvedtypeatcell
 
 ```ts
 getResolvedTypeAtCell(...args: CellCoordinates): number | null
@@ -1083,7 +1083,7 @@ Return the resolved element type after overlays and particles.
 
 ***
 
-### getResolvedTypeFromCellId()
+### sandkit.api.elements.getResolvedTypeFromCellId() :id=getresolvedtypefromcellid
 
 ```ts
 getResolvedTypeFromCellId(cellId: number): number | null
@@ -1107,7 +1107,7 @@ Packed cell id from [world.getCellIdAtCell](api/worker/namespaces/world/README.m
 
 ***
 
-### getInfoAtCell()
+### sandkit.api.elements.getInfoAtCell() :id=getinfoatcell
 
 ```ts
 getInfoAtCell(...args: CellCoordinates): { elementType: number; isParticle: boolean; cellId: number; elementIndex: number; } | null
@@ -1129,7 +1129,7 @@ Return element index, particle flag, and ids at a cell.
 
 ***
 
-### getMatterTypeAtCell()
+### sandkit.api.elements.getMatterTypeAtCell() :id=getmattertypeatcell
 
 ```ts
 getMatterTypeAtCell(...args: CellCoordinates): MatterType | null
@@ -1151,7 +1151,7 @@ Return the matter category at a cell, or null when empty.
 
 ***
 
-### isTypeAtCell()
+### sandkit.api.elements.isTypeAtCell() :id=istypeatcell
 
 ```ts
 isTypeAtCell(...args: [number, number, number]): boolean
@@ -1173,7 +1173,7 @@ Return true when the cell holds the given element type.
 
 ***
 
-### isFreeFallingAtCell()
+### sandkit.api.elements.isFreeFallingAtCell() :id=isfreefallingatcell
 
 ```ts
 isFreeFallingAtCell(...args: CellCoordinates): boolean
@@ -1195,7 +1195,7 @@ Return true when the element at the cell is falling.
 
 ***
 
-### getVelocityAtCell()
+### sandkit.api.elements.getVelocityAtCell() :id=getvelocityatcell
 
 ```ts
 getVelocityAtCell(...args: CellCoordinates): { x: number; y: number; } | null
@@ -1217,7 +1217,7 @@ Return per-cell velocity for moving elements.
 
 ***
 
-### getDataFieldAtCell()
+### sandkit.api.elements.getDataFieldAtCell() :id=getdatafieldatcell
 
 ```ts
 getDataFieldAtCell(...args: [number, number, 1 | 2 | 3 | 4]): number | null

@@ -1,4 +1,4 @@
-# worker
+# sandkit.api (worker)
 
 Worker-thread `sandkit.api` namespaces.
 
@@ -6,7 +6,7 @@ Prefer these declarations in `worker.js`. Type `sandkit.api` as
 [WorkerSandkitApi](#workersandkitapi). Do not assume main-thread methods exist here.
 See [sandkit.api](api/sandkit/README.md#api-1) for the main-thread public API.
 
-## Namespaces
+## Namespaces <!-- {docsify-ignore} -->
 
 | Namespace | Description |
 | ------ | ------ |
@@ -21,9 +21,9 @@ See [sandkit.api](api/sandkit/README.md#api-1) for the main-thread public API.
 | [shared](api/worker/namespaces/shared/README.md) | Worker thread only. |
 | [worker](api/worker/namespaces/worker/README.md) | Worker thread only. |
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### WorkerSandkitApi
+### sandkit.api.WorkerSandkitApi (worker) :id=workersandkitapi
 
 ```ts
 WorkerSandkitApi = object
@@ -173,38 +173,38 @@ world: world
 
 Defined in: [worker/sandkit-api.d.ts:30](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/worker/sandkit-api.d.ts#L30)
 
-## References
+## References <!-- {docsify-ignore} -->
 
-### collector
+### sandkit.api.collector (worker) :id=collector
 
 Re-exports [collector](api/sandkit/api/namespaces/collector/README.md)
 
 ***
 
-### fire
+### sandkit.api.fire (worker) :id=fire
 
 Re-exports [fire](api/sandkit/api/namespaces/fire/README.md)
 
 ***
 
-### hooks
+### sandkit.api.hooks (worker) :id=hooks
 
 Re-exports [hooks](api/sandkit/api/namespaces/hooks/README.md)
 
 ***
 
-### patterns
+### sandkit.api.patterns (worker) :id=patterns
 
 Re-exports [patterns](api/sandkit/api/namespaces/patterns/README.md)
 
 ***
 
-### random
+### sandkit.api.random (worker) :id=random
 
 Re-exports [random](api/sandkit/api/namespaces/random/README.md)
 
 ***
 
-### utils
+### sandkit.api.utils (worker) :id=utils
 
 Re-exports [utils](api/sandkit/api/namespaces/utils/README.md)

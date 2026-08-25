@@ -1,4 +1,4 @@
-# world
+# sandkit.api.world (worker)
 
 **`Internal`**
 
@@ -8,9 +8,9 @@ Main thread adds idle scheduling and fog helpers on top of this shape.
 
  Base namespace reused by main and worker declarations.
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### ExcavateOptions
+### sandkit.api.world.ExcavateOptions (worker) :id=excavateoptions
 
 Defined in: [shared/api/world.d.ts:51](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/api/world.d.ts#L51)
 
@@ -88,9 +88,9 @@ Defined in: [shared/api/world.d.ts:65](https://github.com/IrishBruse/SandustryMo
 
 Extra drill-tier damage when [fromDrill](#fromdrill) is true. Clamped to 0–1000.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### getCellIdAtCell()
+### sandkit.api.world.getCellIdAtCell() (worker) :id=getcellidatcell
 
 ```ts
 getCellIdAtCell(...args: CellCoordinates): number
@@ -114,7 +114,7 @@ Packed cell id for the cell.
 
 ***
 
-### isCellEmptyAtCell()
+### sandkit.api.world.isCellEmptyAtCell() (worker) :id=iscellemptyatcell
 
 ```ts
 isCellEmptyAtCell(...args: CellCoordinates): boolean
@@ -136,7 +136,7 @@ Return true when the cell has no element or terrain content.
 
 ***
 
-### isTerrainAtCell()
+### sandkit.api.world.isTerrainAtCell() (worker) :id=isterrainatcell
 
 ```ts
 isTerrainAtCell(...args: CellCoordinates): boolean
@@ -158,7 +158,7 @@ Return true when the cell holds terrain (not an element).
 
 ***
 
-### reportActivityAtCell()
+### sandkit.api.world.reportActivityAtCell() (worker) :id=reportactivityatcell
 
 ```ts
 reportActivityAtCell(...args: CellCoordinates): void
@@ -180,7 +180,7 @@ Mark the cell active for simulation this tick.
 
 ***
 
-### excavateAtCell()
+### sandkit.api.world.excavateAtCell() (worker) :id=excavateatcell
 
 ```ts
 excavateAtCell(...args: number, number, [Vector2, number, ExcavateOptions]): void

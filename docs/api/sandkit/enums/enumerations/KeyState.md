@@ -1,12 +1,12 @@
-# Enumeration: KeyState
+# sandkit.enums.KeyState
 
 Defined in: [sandkit/enums/index.d.ts:212](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/enums/index.d.ts#L212)
 
 Key transition state for input polling.
 
-## Enumeration Members
+## Enumeration Members <!-- {docsify-ignore} -->
 
-### Up
+### sandkit.enums.KeyState.Up :id=up
 
 ```ts
 Up: 1
@@ -16,7 +16,7 @@ Defined in: [sandkit/enums/index.d.ts:213](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Down
+### sandkit.enums.KeyState.Down :id=down
 
 ```ts
 Down: 2
@@ -26,7 +26,7 @@ Defined in: [sandkit/enums/index.d.ts:214](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Pressed
+### sandkit.enums.KeyState.Pressed :id=pressed
 
 ```ts
 Pressed: 3
@@ -36,7 +36,7 @@ Defined in: [sandkit/enums/index.d.ts:215](https://github.com/IrishBruse/Sandust
 
 ***
 
-### Released
+### sandkit.enums.KeyState.Released :id=released
 
 ```ts
 Released: 4
@@ -46,7 +46,7 @@ Defined in: [sandkit/enums/index.d.ts:216](https://github.com/IrishBruse/Sandust
 
 ***
 
-### All
+### sandkit.enums.KeyState.All :id=all
 
 ```ts
 All: 5

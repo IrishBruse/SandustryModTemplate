@@ -1,11 +1,11 @@
-# discoveries
+# sandkit.api.discoveries
 
 `sandkit.api.discoveries` — unlock element and terrain entries in the discovery log.
 Main thread only.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### addElementByType()
+### sandkit.api.discoveries.addElementByType() :id=addelementbytype
 
 ```ts
 addElementByType(elementType: number): void
@@ -29,7 +29,7 @@ Numeric element type id.
 
 ***
 
-### addTerrainByType()
+### sandkit.api.discoveries.addTerrainByType() :id=addterrainbytype
 
 ```ts
 addTerrainByType(terrainType: number): void

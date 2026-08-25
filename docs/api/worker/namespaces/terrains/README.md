@@ -1,4 +1,4 @@
-# terrains
+# sandkit.api.terrains (worker)
 
 **`Internal`**
 
@@ -6,9 +6,9 @@ Shared `sandkit.api.terrains` base — terrain type lookup and cell mutation.
 
  Base namespace reused by main and worker declarations.
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### TerrainMutationOptions
+### sandkit.api.terrains.TerrainMutationOptions (worker) :id=terrainmutationoptions
 
 Defined in: [shared/api/terrains.d.ts:87](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/api/terrains.d.ts#L87)
 
@@ -26,9 +26,9 @@ Defined in: [shared/api/terrains.d.ts:89](https://github.com/IrishBruse/Sandustr
 
 Skip shadow updates around the changed cell.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### getTypeFromId()
+### sandkit.api.terrains.getTypeFromId() (worker) :id=gettypefromid
 
 ```ts
 getTypeFromId(terrainId: string): number
@@ -54,7 +54,7 @@ Numeric terrain cell type.
 
 ***
 
-### getTypeAtCell()
+### sandkit.api.terrains.getTypeAtCell() (worker) :id=gettypeatcell
 
 ```ts
 getTypeAtCell(...args: CellCoordinates): number | null
@@ -76,7 +76,7 @@ Return the terrain cell type at a cell, or null when none.
 
 ***
 
-### getDataAtCell()
+### sandkit.api.terrains.getDataAtCell() (worker) :id=getdataatcell
 
 ```ts
 getDataAtCell(...args: CellCoordinates): { cellType: number; hp: number | null; } | null
@@ -100,7 +100,7 @@ Cell type and hp, or null when the cell is not terrain.
 
 ***
 
-### isAtCell()
+### sandkit.api.terrains.isAtCell() (worker) :id=isatcell
 
 ```ts
 isAtCell(...args: CellCoordinates): boolean
@@ -122,7 +122,7 @@ Return true when any terrain occupies the cell.
 
 ***
 
-### isTypeAtCell()
+### sandkit.api.terrains.isTypeAtCell() (worker) :id=istypeatcell
 
 ```ts
 isTypeAtCell(...args: [number, number, string]): boolean
@@ -144,7 +144,7 @@ Return true when the cell terrain matches the given id.
 
 ***
 
-### isCellIdTerrain()
+### sandkit.api.terrains.isCellIdTerrain() (worker) :id=iscellidterrain
 
 ```ts
 isCellIdTerrain(cellId: number): boolean
@@ -168,7 +168,7 @@ Packed cell id from [world.getCellIdAtCell](api/worker/namespaces/world/README.m
 
 ***
 
-### damageAtCell()
+### sandkit.api.terrains.damageAtCell() (worker) :id=damageatcell
 
 ```ts
 damageAtCell(...args: [number, number, number]): void
@@ -190,7 +190,7 @@ Apply damage to terrain at a cell.
 
 ***
 
-### createAtCell()
+### sandkit.api.terrains.createAtCell() (worker) :id=createatcell
 
 ```ts
 createAtCell(...args: number, number, string | number, [TerrainMutationOptions]): void
@@ -212,7 +212,7 @@ Place terrain at an empty cell.
 
 ***
 
-### replaceAtCell()
+### sandkit.api.terrains.replaceAtCell() (worker) :id=replaceatcell
 
 ```ts
 replaceAtCell(...args: number, number, string | number, [TerrainMutationOptions]): void
@@ -234,7 +234,7 @@ Replace existing terrain at a cell.
 
 ***
 
-### removeAtCell()
+### sandkit.api.terrains.removeAtCell() (worker) :id=removeatcell
 
 ```ts
 removeAtCell(...args: number, number, [TerrainMutationOptions]): void

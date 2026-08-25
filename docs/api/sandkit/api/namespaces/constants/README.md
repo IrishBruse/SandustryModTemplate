@@ -1,8 +1,8 @@
-# constants
+# sandkit.api.constants
 
-## Variables
+## Variables <!-- {docsify-ignore} -->
 
-### physics
+### sandkit.api.constants.physics :id=physics
 
 ```ts
 const physics: Readonly<{ normal: 0; skip: 1; aggressiveSkip: 2; }>

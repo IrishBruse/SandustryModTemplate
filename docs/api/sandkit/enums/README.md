@@ -1,6 +1,6 @@
-# sandkit/enums
+# sandkit.enums
 
-## Enumerations
+## Enumerations <!-- {docsify-ignore} -->
 
 | Enumeration | Description |
 | ------ | ------ |
@@ -27,9 +27,9 @@
 | [TechStatus](api/sandkit/enums/enumerations/TechStatus.md) | Visibility and research state of a tech node. |
 | [WorldItemType](api/sandkit/enums/enumerations/WorldItemType.md) | Pickups and interactable world items. |
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### SandkitEnums
+### sandkit.enums.SandkitEnums :id=sandkitenums
 
 ```ts
 SandkitEnums = object

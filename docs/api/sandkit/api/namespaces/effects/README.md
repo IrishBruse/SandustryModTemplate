@@ -1,11 +1,11 @@
-# effects
+# sandkit.api.effects
 
 `sandkit.api.effects` — visual effects, particles, lights, and lasers at world positions.
 Main thread only.
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### LaserEffectOptions
+### sandkit.api.effects.LaserEffectOptions :id=lasereffectoptions
 
 Defined in: [sandkit/api/effects.d.ts:46](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/effects.d.ts#L46)
 
@@ -55,7 +55,7 @@ When true, draws a glow around the beam.
 
 ***
 
-### LaserEffectHandle
+### sandkit.api.effects.LaserEffectHandle :id=lasereffecthandle
 
 Defined in: [sandkit/api/effects.d.ts:58](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/effects.d.ts#L58)
 
@@ -79,7 +79,7 @@ Removes the laser from the scene.
 
 ***
 
-### DistortionEffectOptions
+### sandkit.api.effects.DistortionEffectOptions :id=distortioneffectoptions
 
 Defined in: [sandkit/api/effects.d.ts:64](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/effects.d.ts#L64)
 
@@ -139,7 +139,7 @@ RGBA color components for the effect.
 
 ***
 
-### EffectOptions
+### sandkit.api.effects.EffectOptions :id=effectoptions
 
 Defined in: [shared/api/effects.d.ts:35](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/api/effects.d.ts#L35)
 
@@ -173,7 +173,7 @@ Defined in: [shared/api/effects.d.ts:38](https://github.com/IrishBruse/Sandustry
 
 ***
 
-### TemporaryLightOptions
+### sandkit.api.effects.TemporaryLightOptions :id=temporarylightoptions
 
 Defined in: [shared/api/effects.d.ts:41](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/api/effects.d.ts#L41)
 
@@ -283,7 +283,7 @@ Dedupe key when the light pool is full or dedup is enabled.
 
 ***
 
-### ParticleEffectOptions
+### sandkit.api.effects.ParticleEffectOptions :id=particleeffectoptions
 
 Defined in: [shared/api/effects.d.ts:58](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/api/effects.d.ts#L58)
 
@@ -413,9 +413,9 @@ optional damp?: number
 
 Defined in: [shared/api/effects.d.ts:74](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/api/effects.d.ts#L74)
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### createDistortionWaveAtWorld()
+### sandkit.api.effects.createDistortionWaveAtWorld() :id=createdistortionwaveatworld
 
 ```ts
 createDistortionWaveAtWorld(worldX: number, worldY: number, options?: DistortionEffectOptions): void
@@ -451,7 +451,7 @@ Style, duration, radius, intensity, and color.
 
 ***
 
-### createLaserAtWorld()
+### sandkit.api.effects.createLaserAtWorld() :id=createlaseratworld
 
 ```ts
 createLaserAtWorld(startWorldX: number, startWorldY: number, endWorldX: number, endWorldY: number, options?: LaserEffectOptions): LaserEffectHandle
@@ -499,7 +499,7 @@ Width, brightness, color, and glow options.
 
 ***
 
-### removeLightById()
+### sandkit.api.effects.removeLightById() :id=removelightbyid
 
 ```ts
 removeLightById(lightId: number): void
@@ -523,7 +523,7 @@ Light index from [createLightAtWorld](#createlightatworld).
 
 ***
 
-### createLightAtWorld()
+### sandkit.api.effects.createLightAtWorld() :id=createlightatworld
 
 ```ts
 createLightAtWorld(worldX: number, worldY: number, options?: TemporaryLightOptions): object
@@ -565,7 +565,7 @@ index: number | null
 
 ***
 
-### createParticlesAtWorld()
+### sandkit.api.effects.createParticlesAtWorld() :id=createparticlesatworld
 
 ```ts
 createParticlesAtWorld(worldX: number, worldY: number, options?: ParticleEffectOptions): void
@@ -601,7 +601,7 @@ Count, velocity, colour, and lifetime settings.
 
 ***
 
-### createEffectAtWorld()
+### sandkit.api.effects.createEffectAtWorld() :id=createeffectatworld
 
 ```ts
 createEffectAtWorld(effectId: "heatWave", worldX: number, worldY: number, options?: EffectOptions): void

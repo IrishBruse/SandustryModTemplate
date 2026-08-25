@@ -1,8 +1,8 @@
-# tech
+# sandkit.api.tech
 
-## Interfaces
+## Interfaces <!-- {docsify-ignore} -->
 
-### TechDefinition
+### sandkit.api.tech.TechDefinition :id=techdefinition
 
 Defined in: [sandkit/api/tech.d.ts:48](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/tech.d.ts#L48)
 
@@ -38,7 +38,7 @@ Description translation key.
 
 ***
 
-### TechGridPosition
+### sandkit.api.tech.TechGridPosition :id=techgridposition
 
 Defined in: [sandkit/api/tech.d.ts:56](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/tech.d.ts#L56)
 
@@ -62,9 +62,9 @@ y: number
 
 Defined in: [sandkit/api/tech.d.ts:58](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/api/tech.d.ts#L58)
 
-## Type Aliases
+## Type Aliases <!-- {docsify-ignore} -->
 
-### TechGridId
+### sandkit.api.tech.TechGridId :id=techgridid
 
 ```ts
 TechGridId = string | number
@@ -74,9 +74,9 @@ Defined in: [sandkit/api/tech.d.ts:46](https://github.com/IrishBruse/SandustryMo
 
 Tech grid node id.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### getDefinitionById()
+### sandkit.api.tech.getDefinitionById() :id=getdefinitionbyid
 
 ```ts
 getDefinitionById(techId: string): TechDefinition | undefined
@@ -100,7 +100,7 @@ Tech entry identifier.
 
 ***
 
-### updateDefinition()
+### sandkit.api.tech.updateDefinition() :id=updatedefinition
 
 ```ts
 updateDefinition(techId: string, updates: Partial<TechDefinition>): void
@@ -130,7 +130,7 @@ Fields to merge into the definition.
 
 ***
 
-### addDefinition()
+### sandkit.api.tech.addDefinition() :id=adddefinition
 
 ```ts
 addDefinition(techId: string, definition: TechDefinition): void
@@ -160,7 +160,7 @@ Full tech definition to register.
 
 ***
 
-### registerNode()
+### sandkit.api.tech.registerNode() :id=registernode
 
 ```ts
 registerNode(techId: TechGridId, definition: TechDefinition, options: object): TechGridPosition
@@ -202,7 +202,7 @@ Parent node id and optional preferred grid position.
 
 ***
 
-### isLockedById()
+### sandkit.api.tech.isLockedById() :id=islockedbyid
 
 ```ts
 isLockedById(techId: string | number): boolean
@@ -226,7 +226,7 @@ Tech entry id (string or numeric enum).
 
 ***
 
-### setLockedById()
+### sandkit.api.tech.setLockedById() :id=setlockedbyid
 
 ```ts
 setLockedById(techId: string | number, locked: boolean): void

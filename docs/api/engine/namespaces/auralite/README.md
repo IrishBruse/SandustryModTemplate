@@ -1,4 +1,4 @@
-# auralite
+# sandkit.engine.api.auralite
 
 **`Internal`**
 
@@ -8,9 +8,9 @@
 Methods use loose stubs; signatures may take game state as the first argument.
 Engine methods pass game state as the first argument (args[0]); remaining entries are method-specific.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### ensureProducedAtLeast()
+### sandkit.engine.api.auralite.ensureProducedAtLeast() :id=ensureproducedatleast
 
 ```ts
 ensureProducedAtLeast(...args: unknown[]): unknown
@@ -34,7 +34,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getProduced()
+### sandkit.engine.api.auralite.getProduced() :id=getproduced
 
 ```ts
 getProduced(...args: unknown[]): unknown

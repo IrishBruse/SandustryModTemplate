@@ -1,11 +1,11 @@
-# sandkit/api
+# sandkit.api
 
 Main-thread `sandkit.api` barrel.
 
 Re-exports all namespaces available as `sandkit.api.*` on the main thread.
 Prefer these methods over [sandkit.engine](api/sandkit/README.md#engine-1) when both exist.
 
-## Namespaces
+## Namespaces <!-- {docsify-ignore} -->
 
 | Namespace | Description |
 | ------ | ------ |
@@ -21,7 +21,7 @@ Prefer these methods over [sandkit.engine](api/sandkit/README.md#engine-1) when 
 | [effects](api/sandkit/api/namespaces/effects/README.md) | `sandkit.api.effects` — visual effects, particles, lights, and lasers at world positions. Main thread only. |
 | [elements](api/sandkit/api/namespaces/elements/README.md) | `sandkit.api.elements` — register elements and read or change cells when idle. Main thread only. |
 | [energy](api/sandkit/api/namespaces/energy/README.md) | `sandkit.api.energy` — structure energy networks, storage, and consumption. Main thread only. |
-| [events](api/sandkit/api/namespaces/events/README.md) | `sandkit.api.events` — subscribe to and emit named game events. Main thread only. |
+| [events](api/sandkit/api/namespaces/events/README.md) | `sandkit.api.events` — subscribe to and emit named game events. Main thread only. The `events` object is frozen; do not replace `on` or `emit`. |
 | [excavation](api/sandkit/api/namespaces/excavation/README.md) | `sandkit.api.excavation` — register custom excavation tool dig profiles. Main thread only. |
 | [fire](api/sandkit/api/namespaces/fire/README.md) | `sandkit.api.fire` — ignite and burn elements at grid cells. Main thread only. |
 | [gameConfig](api/sandkit/api/namespaces/gameConfig/README.md) | `sandkit.api.gameConfig` — read merged game configuration values. Main thread only. |
@@ -64,8 +64,8 @@ Prefer these methods over [sandkit.engine](api/sandkit/README.md#engine-1) when 
 | [workers](api/sandkit/api/namespaces/workers/README.md) | - |
 | [world](api/sandkit/api/namespaces/world/README.md) | - |
 
-## References
+## References <!-- {docsify-ignore} -->
 
-### SandkitApi
+### sandkit.api.SandkitApi :id=sandkitapi
 
 Re-exports [SandkitApi](api/sandkit/README.md#sandkitapi)

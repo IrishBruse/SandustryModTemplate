@@ -1,12 +1,12 @@
-# Enumeration: CellType
+# sandkit.enums.CellType
 
 Defined in: [sandkit/enums/index.d.ts:56](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/sandkit/enums/index.d.ts#L56)
 
 Terrain / special cell kinds in the simulation grid.
 
-## Enumeration Members
+## Enumeration Members <!-- {docsify-ignore} -->
 
-### Empty
+### sandkit.enums.CellType.Empty :id=empty
 
 ```ts
 Empty: 0
@@ -16,7 +16,7 @@ Defined in: [sandkit/enums/index.d.ts:57](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### Element
+### sandkit.enums.CellType.Element :id=element
 
 ```ts
 Element: 1
@@ -26,7 +26,7 @@ Defined in: [sandkit/enums/index.d.ts:58](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### Dirt
+### sandkit.enums.CellType.Dirt :id=dirt
 
 ```ts
 Dirt: 2
@@ -36,7 +36,7 @@ Defined in: [sandkit/enums/index.d.ts:59](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### SporeSoil
+### sandkit.enums.CellType.SporeSoil :id=sporesoil
 
 ```ts
 SporeSoil: 3
@@ -46,7 +46,7 @@ Defined in: [sandkit/enums/index.d.ts:60](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### Fog
+### sandkit.enums.CellType.Fog :id=fog
 
 ```ts
 Fog: 4
@@ -56,7 +56,7 @@ Defined in: [sandkit/enums/index.d.ts:61](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### FogJetpackBlock
+### sandkit.enums.CellType.FogJetpackBlock :id=fogjetpackblock
 
 ```ts
 FogJetpackBlock: 5
@@ -66,7 +66,7 @@ Defined in: [sandkit/enums/index.d.ts:62](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### FogWater
+### sandkit.enums.CellType.FogWater :id=fogwater
 
 ```ts
 FogWater: 6
@@ -76,7 +76,7 @@ Defined in: [sandkit/enums/index.d.ts:63](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### FreezingIceSoil
+### sandkit.enums.CellType.FreezingIceSoil :id=freezingicesoil
 
 ```ts
 FreezingIceSoil: 7
@@ -86,7 +86,7 @@ Defined in: [sandkit/enums/index.d.ts:64](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### Divider
+### sandkit.enums.CellType.Divider :id=divider
 
 ```ts
 Divider: 8
@@ -96,7 +96,7 @@ Defined in: [sandkit/enums/index.d.ts:65](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### Grass
+### sandkit.enums.CellType.Grass :id=grass
 
 ```ts
 Grass: 9
@@ -106,7 +106,7 @@ Defined in: [sandkit/enums/index.d.ts:66](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### Moss
+### sandkit.enums.CellType.Moss :id=moss
 
 ```ts
 Moss: 10
@@ -116,7 +116,7 @@ Defined in: [sandkit/enums/index.d.ts:67](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### GoldSoil
+### sandkit.enums.CellType.GoldSoil :id=goldsoil
 
 ```ts
 GoldSoil: 11
@@ -126,7 +126,7 @@ Defined in: [sandkit/enums/index.d.ts:68](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### Petal
+### sandkit.enums.CellType.Petal :id=petal
 
 ```ts
 Petal: 12
@@ -136,7 +136,7 @@ Defined in: [sandkit/enums/index.d.ts:69](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### FogLava
+### sandkit.enums.CellType.FogLava :id=foglava
 
 ```ts
 FogLava: 13
@@ -146,7 +146,7 @@ Defined in: [sandkit/enums/index.d.ts:70](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### Fluxite
+### sandkit.enums.CellType.Fluxite :id=fluxite
 
 ```ts
 Fluxite: 14
@@ -156,7 +156,7 @@ Defined in: [sandkit/enums/index.d.ts:71](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### Block
+### sandkit.enums.CellType.Block :id=block
 
 ```ts
 Block: 15
@@ -166,7 +166,7 @@ Defined in: [sandkit/enums/index.d.ts:72](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### SlidingBlock
+### sandkit.enums.CellType.SlidingBlock :id=slidingblock
 
 ```ts
 SlidingBlock: 16
@@ -176,7 +176,7 @@ Defined in: [sandkit/enums/index.d.ts:73](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### SlidingBlockLeft
+### sandkit.enums.CellType.SlidingBlockLeft :id=slidingblockleft
 
 ```ts
 SlidingBlockLeft: 17
@@ -186,7 +186,7 @@ Defined in: [sandkit/enums/index.d.ts:74](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### SlidingBlockRight
+### sandkit.enums.CellType.SlidingBlockRight :id=slidingblockright
 
 ```ts
 SlidingBlockRight: 18
@@ -196,7 +196,7 @@ Defined in: [sandkit/enums/index.d.ts:75](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### ConveyorLeft
+### sandkit.enums.CellType.ConveyorLeft :id=conveyorleft
 
 ```ts
 ConveyorLeft: 19
@@ -206,7 +206,7 @@ Defined in: [sandkit/enums/index.d.ts:76](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### ConveyorRight
+### sandkit.enums.CellType.ConveyorRight :id=conveyorright
 
 ```ts
 ConveyorRight: 20
@@ -216,7 +216,7 @@ Defined in: [sandkit/enums/index.d.ts:77](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### ShakerLeft
+### sandkit.enums.CellType.ShakerLeft :id=shakerleft
 
 ```ts
 ShakerLeft: 21
@@ -226,7 +226,7 @@ Defined in: [sandkit/enums/index.d.ts:78](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### ShakerRight
+### sandkit.enums.CellType.ShakerRight :id=shakerright
 
 ```ts
 ShakerRight: 22
@@ -236,7 +236,7 @@ Defined in: [sandkit/enums/index.d.ts:79](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### Stone
+### sandkit.enums.CellType.Stone :id=stone
 
 ```ts
 Stone: 23
@@ -246,7 +246,7 @@ Defined in: [sandkit/enums/index.d.ts:80](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### VelocitySoaker
+### sandkit.enums.CellType.VelocitySoaker :id=velocitysoaker
 
 ```ts
 VelocitySoaker: 24
@@ -256,7 +256,7 @@ Defined in: [sandkit/enums/index.d.ts:81](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### Ice
+### sandkit.enums.CellType.Ice :id=ice
 
 ```ts
 Ice: 25
@@ -266,7 +266,7 @@ Defined in: [sandkit/enums/index.d.ts:82](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### Grower
+### sandkit.enums.CellType.Grower :id=grower
 
 ```ts
 Grower: 26
@@ -276,7 +276,7 @@ Defined in: [sandkit/enums/index.d.ts:83](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### NascentWater
+### sandkit.enums.CellType.NascentWater :id=nascentwater
 
 ```ts
 NascentWater: 27
@@ -286,7 +286,7 @@ Defined in: [sandkit/enums/index.d.ts:84](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### SandiumSoil
+### sandkit.enums.CellType.SandiumSoil :id=sandiumsoil
 
 ```ts
 SandiumSoil: 28
@@ -296,7 +296,7 @@ Defined in: [sandkit/enums/index.d.ts:85](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### Obsidian
+### sandkit.enums.CellType.Obsidian :id=obsidian
 
 ```ts
 Obsidian: 29
@@ -306,7 +306,7 @@ Defined in: [sandkit/enums/index.d.ts:86](https://github.com/IrishBruse/Sandustr
 
 ***
 
-### Crackstone
+### sandkit.enums.CellType.Crackstone :id=crackstone
 
 ```ts
 Crackstone: 30

@@ -1,10 +1,10 @@
-# buffers
+# sandkit.api.shared.buffers
 
 Shared buffer create and lookup.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### create()
+### sandkit.api.shared.buffers.create() :id=create
 
 ```ts
 create(key: string, config: object): SharedArray
@@ -40,7 +40,7 @@ Typed array kind and element count.
 
 ***
 
-### get()
+### sandkit.api.shared.buffers.get() :id=get
 
 ```ts
 get(key: string): SharedArray | undefined

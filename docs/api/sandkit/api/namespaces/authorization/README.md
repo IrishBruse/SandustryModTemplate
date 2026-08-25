@@ -1,11 +1,11 @@
-# authorization
+# sandkit.api.authorization
 
 `sandkit.api.authorization` — player permission checks for build, grab, and tools.
 Main thread only.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### canBuildAtCell()
+### sandkit.api.authorization.canBuildAtCell() :id=canbuildatcell
 
 ```ts
 canBuildAtCell(...args: CellCoordinates): boolean
@@ -29,7 +29,7 @@ True when building is allowed in the authorization zone.
 
 ***
 
-### canGrabAtCell()
+### sandkit.api.authorization.canGrabAtCell() :id=cangrabatcell
 
 ```ts
 canGrabAtCell(...args: CellCoordinates): boolean
@@ -53,7 +53,7 @@ True when grabbing is allowed in the authorization zone.
 
 ***
 
-### canUseTool()
+### sandkit.api.authorization.canUseTool() :id=canusetool
 
 ```ts
 canUseTool(player: Player, isFlamethrower?: boolean): boolean
@@ -85,7 +85,7 @@ True when tool use is allowed for the player.
 
 ***
 
-### canUseToolAtCell()
+### sandkit.api.authorization.canUseToolAtCell() :id=canusetoolatcell
 
 ```ts
 canUseToolAtCell(...args: [number, number, boolean]): boolean
@@ -109,7 +109,7 @@ True when tool use is allowed at the cell.
 
 ***
 
-### getZoneIdAtCell()
+### sandkit.api.authorization.getZoneIdAtCell() :id=getzoneidatcell
 
 ```ts
 getZoneIdAtCell(...args: CellCoordinates): number
@@ -133,7 +133,7 @@ Numeric zone id for the cell.
 
 ***
 
-### getPlayerZoneId()
+### sandkit.api.authorization.getPlayerZoneId() :id=getplayerzoneid
 
 ```ts
 getPlayerZoneId(): number

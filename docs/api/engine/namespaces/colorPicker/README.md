@@ -1,4 +1,4 @@
-# colorPicker
+# sandkit.engine.api.colorPicker
 
 **`Internal`**
 
@@ -8,7 +8,7 @@
 Methods use loose stubs; signatures may take game state as the first argument.
 Engine methods pass game state as the first argument (args[0]); remaining entries are method-specific.
 
-## Variables
+## Variables <!-- {docsify-ignore} -->
 
 ### CYCLE\_COLOR
 
@@ -56,9 +56,9 @@ Defined in: [sandkit/engine/api/colorPicker.d.ts:18](https://github.com/IrishBru
 
 Sentinel value for a random palette color.
 
-## Functions
+## Functions <!-- {docsify-ignore} -->
 
-### closePalette()
+### sandkit.engine.api.colorPicker.closePalette() :id=closepalette
 
 ```ts
 closePalette(...args: unknown[]): unknown
@@ -82,7 +82,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getActivePalette()
+### sandkit.engine.api.colorPicker.getActivePalette() :id=getactivepalette
 
 ```ts
 getActivePalette(...args: unknown[]): unknown
@@ -106,7 +106,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getCycleColor()
+### sandkit.engine.api.colorPicker.getCycleColor() :id=getcyclecolor
 
 ```ts
 getCycleColor(...args: unknown[]): unknown
@@ -130,7 +130,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### getRandomColor()
+### sandkit.engine.api.colorPicker.getRandomColor() :id=getrandomcolor
 
 ```ts
 getRandomColor(...args: unknown[]): unknown
@@ -154,7 +154,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### hexToRgba()
+### sandkit.engine.api.colorPicker.hexToRgba() :id=hextorgba
 
 ```ts
 hexToRgba(...args: unknown[]): unknown
@@ -178,7 +178,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### renderColorButton()
+### sandkit.engine.api.colorPicker.renderColorButton() :id=rendercolorbutton
 
 ```ts
 renderColorButton(...args: unknown[]): unknown
@@ -202,7 +202,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### renderColorSection()
+### sandkit.engine.api.colorPicker.renderColorSection() :id=rendercolorsection
 
 ```ts
 renderColorSection(...args: unknown[]): unknown
@@ -226,7 +226,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### renderPalette()
+### sandkit.engine.api.colorPicker.renderPalette() :id=renderpalette
 
 ```ts
 renderPalette(...args: unknown[]): unknown
@@ -250,7 +250,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### rgbaToHex()
+### sandkit.engine.api.colorPicker.rgbaToHex() :id=rgbatohex
 
 ```ts
 rgbaToHex(...args: unknown[]): unknown
@@ -274,7 +274,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### setActivePalette()
+### sandkit.engine.api.colorPicker.setActivePalette() :id=setactivepalette
 
 ```ts
 setActivePalette(...args: unknown[]): unknown
@@ -298,7 +298,7 @@ Game state first, then method-specific arguments.
 
 ***
 
-### togglePalette()
+### sandkit.engine.api.colorPicker.togglePalette() :id=togglepalette
 
 ```ts
 togglePalette(...args: unknown[]): unknown
