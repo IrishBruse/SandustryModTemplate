@@ -39,6 +39,4 @@ api.input.registerBinding(BINDING_PAINT, ["KeyP"], {
 
 api.ui.toast("Custom Element loaded — press P at the mouse cell", {});
 
-console.log(
-  `loaded — ${ELEMENT_ID} type ${elementType}, binding ${BINDING_PAINT}`,
-);
+console.log(`loaded — ${ELEMENT_ID} type ${elementType}, binding ${BINDING_PAINT}`);
