@@ -10,7 +10,7 @@ export const modinfo = defineModInfo({
   entry: "main.js",
   author: "IrishBruse",
   description:
-    "Dev companion: DevTools, auto-load save, disable autosave, F3 overlay. Debug builds install it; release stages build/hot-reload/.",
+    "Dev companion: watch local mods, DevTools, auto-load save, disable autosave, F3 overlay. Debug builds install it; release stages build/hot-reload/.",
   dependencies: [],
   loadOrder: -2147483648,
   configSchema: {
@@ -43,6 +43,12 @@ export const modinfo = defineModInfo({
       default: false,
       labelKey: "Disable autosave",
       descriptionKey: "Stop session autosave. Manual saves still work.",
+    },
+    watchLocalMods: {
+      type: "boolean",
+      default: true,
+      labelKey: "Watch local mods",
+      descriptionKey: "Re-eval other mods' main.js when the file changes. Not workers or patches.",
     },
     // Dev tools
     openDevTools: {
