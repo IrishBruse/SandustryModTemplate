@@ -32,4 +32,4 @@ Copy a folder here to `src/<your-mod>/` when you want that sample. Start a new m
 | --------------------------------- | ------------------ |
 | [`retro-game`](games/retro-game/) | Retro Console demo |
 
-The debug companion lives under [`../src/hot-reload/`](../src/hot-reload/) (debug install / release staging). Do not copy it as a starting mod.
+The hot-reload companion docs live under [`../docs/hot-reload/`](../docs/hot-reload/) (debug install / release staging). Do not copy that mod as a starting sample.

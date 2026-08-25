@@ -50,10 +50,10 @@ Start from [`src/template/`](../src/template/). Copy a folder from [`examples/`]
 
 Mods in `src/`:
 
-| Folder                             | What it shows                                                                 |
-| ---------------------------------- | ----------------------------------------------------------------------------- |
-| [`template`](../src/template/)     | Starter mod. Toast on load. Change `id` / `name` / `author` in `modinfo.ts`   |
-| [`hot-reload`](../src/hot-reload/) | Dev companion. Debug installs it; `npm run build` stages it. Do not copy this |
+| Folder                                  | What it shows                                                                 |
+| --------------------------------------- | ----------------------------------------------------------------------------- |
+| [`template`](../src/template/)          | Starter mod. Toast on load. Change `id` / `name` / `author` in `modinfo.ts`   |
+| [`hot-reload`](hot-reload/) | Dev companion. Debug installs it; `npm run build` stages it. Do not copy this |
 
 ## Files in a mod folder
 
@@ -69,29 +69,29 @@ Keep extra TypeScript out of the mod root. Only `modinfo.ts`, `main.ts`, optiona
 
 Add these when you need them:
 
-| File                         | Role                                                                                                |
-| ---------------------------- | --------------------------------------------------------------------------------------------------- |
-| `worker.ts`                  | Worker entry at the mod root. The build writes `worker.js`                                          |
-| `patches.ts`                 | Optional patch list. Re-export `patches` from `modinfo.ts`.                                         |
-| `ui/`                        | React overlays                                                                                      |
-| Feature folders              | Other source files (`health/`, `capture/`, …). Keep tests next to the file they test                |
-| `mod/`                       | Static files copied into the output folder                                                          |
-| `package.json`               | Optional. npm packages for this mod only. Run `npm install` in that folder yourself                 |
-| `README.md` / `CHANGELOG.md` | Repo docs only. Publish reads `CHANGELOG.md` for Steam change notes; builds do not copy these files |
-| `workshop/`                  | Workshop assets (`workshop.json`, previews, `workshop.md`, `screenshots/`)                          |
+| File                         | Role                                                                                       |
+| ---------------------------- | ------------------------------------------------------------------------------------------ |
+| `worker.ts`                  | Worker entry at the mod root. The build writes `worker.js`                                 |
+| `patches.ts`                 | Optional patch list. Re-export `patches` from `modinfo.ts`.                                |
+| `ui/`                        | React overlays                                                                             |
+| Feature folders              | Other source files (`health/`, `capture/`, …). Keep tests next to the file they test       |
+| `mod/`                       | Static files copied into the output folder                                                 |
+| `package.json`               | Optional. npm packages for this mod only. Run `npm install` in that folder yourself        |
+| `docs/`                      | Optional. For site pages, symlink to `docs/<name>/`. Builds do not copy this folder        |
+| `README.md` / `CHANGELOG.md` | Short pointer or Steam notes. Publish reads `CHANGELOG.md`; builds do not copy these files |
+| `workshop/`                  | Workshop assets (`workshop.json`, previews, `workshop.md`, `screenshots/`)                 |
 
 ## What you import
 
 Import `@modkit/*` and files in your own folder only.
 
-| Import                                        | From                                                                            |
-| --------------------------------------------- | ------------------------------------------------------------------------------- |
-| `@modkit/modinfo`                             | `defineModInfo` / `definePatches`                                               |
-| `@modkit/react` / JSX                         | Runtime React from `sandkit.react`                                              |
-| `@modkit/debug`                               | `onDispose` for extra cleanup. No-op until a reload wrap sets the active mod id |
-| `@modkit/utils`                               | `safe`, `isEnabled`, `inGame`, `registerRetroGame`                              |
-| `@modkit/ui`                                  | Shared React UI components                                                      |
-| `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix                           |
+| Import                                        | From                                                  |
+| --------------------------------------------- | ----------------------------------------------------- |
+| `@modkit/modinfo`                             | `defineModInfo` / `definePatches`                     |
+| `@modkit/react` / JSX                         | Runtime React from `sandkit.react`                    |
+| `@modkit/utils`                               | `safe`, `isEnabled`, `inGame`, `registerRetroGame`    |
+| `@modkit/ui`                                  | Shared React UI components                            |
+| `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix |
 
 Sandkit API types live in `modkit/types/`. Layout mirrors the live object (`sandkit/api`, `sandkit/engine/api`, …). Ambient `sandkit` is in [`modkit/types/global.d.ts`](../modkit/types/global.d.ts); `WorkerSandkitApi` is in [`modkit/ambient.d.ts`](../modkit/ambient.d.ts).
 

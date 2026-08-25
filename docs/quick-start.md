@@ -36,7 +36,7 @@ Then launch the game:
 - **F5** in VS Code, or
 - `npm run sandustry`
 
-Restart the game after you save a file.
+Keep `npm run dev` running. Save a file. The hot-reload companion re-evals renderer `main.js` when **Watch local mods** is on. Restart the game for workers and patches.
 
 In game, look for the toast **Template loaded**. **Alt+E** opens the overlay sample (`examples/overlay-hotkey`).
 

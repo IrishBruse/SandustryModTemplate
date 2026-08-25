@@ -32,7 +32,7 @@ registerManagementMenuButton({
 | `onClick` | `() => void` | —       | Click handler.                                                       |
 | `active`  | `boolean`    | `true`  | When false, the row is removed.                                      |
 
-Returns a dispose function. Call it to remove the row by hand. Hot reload tracks that dispose automatically.
+Returns a dispose function. Call it to remove the row by hand.
 
 Rows stack under Upgrades in registration order. Each row root is placed as a **direct sibling** of the vanilla column rows (same as Toolbox / Building). The first register injects a host overlay; the last dispose removes it.
 

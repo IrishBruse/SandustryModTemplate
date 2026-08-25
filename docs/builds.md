@@ -4,22 +4,38 @@ The game runs `main.js` as a script body (`new Function`). `sandkit` is already 
 
 ## Debug vs release
 
-| Command               | Debug helpers                                                    | `debugPatches` | Output                                                           |
-| --------------------- | ---------------------------------------------------------------- | -------------- | ---------------------------------------------------------------- |
-| `npm run build`       | Real `onDispose` registry; stage all `src/` (incl. `hot-reload`) | Omitted        | `build/<modinfo.id>/` only (no OS mods folder, no `dist/` links) |
-| `npm run dev`         | Included; install `src/hot-reload`                               | Included       | OS mods folder while watching; removed when the watch stops      |
-| `npm run dev:release` | Omitted; no `hot-reload`, no sourcemaps                          | Omitted        | OS mods folder while watching (same cleanup as `dev`)            |
-| `--game` / `--debug`  | Included; install `src/hot-reload`                               | Included       | Game mods folder                                                 |
+| Command               | Debug helpers                           | `debugPatches` | Output                                                           |
+| --------------------- | --------------------------------------- | -------------- | ---------------------------------------------------------------- |
+| `npm run build`       | Stage all `src/` (incl. `hot-reload`)   | Omitted        | `build/<modinfo.id>/` only (no OS mods folder, no `dist/` links) |
+| `npm run dev`         | Included; install `src/hot-reload`      | Included       | OS mods folder while watching; removed when the watch stops      |
+| `npm run dev:release` | Omitted; no `hot-reload`, no sourcemaps | Omitted        | OS mods folder while watching (same cleanup as `dev`)            |
+| `--game` / `--debug`  | Included; install `src/hot-reload`      | Included       | Game mods folder                                                 |
 
 `--no-debug` forces a release-style bundle even when watch or game flags are set (`npm run dev:release` uses this). `--mod <folder>` builds one mod folder (repeat `--mod` for several). Debug builds (`npm run dev`, `--game`, `--debug`) install to the OS mods folder (`dist/` links there) unless you pass only `--mod hot-reload`. `npm run build` and `npm run dev` discover every `src/*/modinfo.ts` (including `hot-reload`). Use `npm run examples` or `npm run build -- --examples` for `examples/*/modinfo.ts`. `npm run publish` never lists the companion.
 
 Debug builds emit **inline** source maps on `main.js` (needed for `new Function` eval). Use `--sourcemap` to force maps on a release build, or `--no-sourcemap` to omit them from a debug build.
 
-Session debug helpers (DevTools, auto-load last save, disable autosave, F3) live on the **debug** companion. Settings are on that mod only. See [modkit/debug.md](modkit/debug.md).
+Session debug helpers (DevTools, auto-load last save, disable autosave, F3, watch reload) live on the **hot-reload** companion. Settings are on that mod only. See [Hot Reload](hot-reload/).
 
 `__MOD_DEBUG__` is `true` in dev builds and `false` in release. All builds inject `console.ts` so bare `console.*` calls get a `[modId]` prefix. File logging to `logs/<mod-id>.log` runs in debug builds only.
 
-See [modkit/debug.md](modkit/debug.md) for what debug helpers do at runtime.
+## File logging (`console`)
+
+All builds inject [`modkit/internal/esbuild/console.ts`](../modkit/internal/esbuild/console.ts) via esbuild [`inject`](https://esbuild.github.io/api/#inject). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code get a `[modId]` prefix in DevTools. `__MOD_ID__` comes from that mod's `modinfo.ts` at build time. Debug builds add `console.ts` to the source map `ignoreList` so DevTools and VS Code skip the shim when linking console output and breakpoints to your mod files.
+
+Debug builds also `POST` those lines to `http://127.0.0.1:19147/log` while `npm run dev` is up ([`scripts/dev/log-server.js`](../scripts/dev/log-server.js)). Lines append to `logs/<modinfo.id>.log` (workspace `logs/` → OS sandustry logs: `~/.config/sandustry/logs` or `%APPDATA%/sandustry/logs`). Use `createLogger` from `@modkit/log` when you want a custom bracket tag.
+
+Use `clearLog(modId)` from `@modkit/log` to clear a log file by hand. `clearLog` aborts after 500 ms if F5 / CDP stalls the POST.
+
+```ts
+console.log("my-feature", payload);
+// DevTools: [author.template] my-feature {…}
+// logs/author.template.log (debug only): [author.template] my-feature {…}
+```
+
+The shim uses `globalThis.console` internally so it does not recurse.
+
+See [Hot Reload](hot-reload/) for what the companion does at runtime.
 
 ## Tailwind CSS
 
@@ -27,7 +43,7 @@ The game ships Tailwind **v3.4.19** inside `bundle.js`. That stylesheet is purge
 
 Sandkit loads `main.js` only. There is no CSS file in the mod manifest. The build still has to insert a `<style>` tag. Import shared `@modkit/ui/tailwind.css` from the mod entry. Import `@modkit/ui/options.css` only when you use `OptionsSlider` / `OptionsSliderRow`. The kit re-exports those React components from `modkit/ui/options/index.ts` so esbuild does not pick `options.css` instead. The build inlines CSS as text (no `main.css` in the mod folder). The compiled Tailwind sheet is **only the utilities this bundle uses**: esbuild lists the source files it packed, then Tailwind scans those files. Unused `modkit/ui` components do not add CSS. Mods that never import those files skip the compile.
 
-The insert lives in [examples/ui/overlay-hotkey/main.ts](../examples/ui/overlay-hotkey/main.ts) (`style#<mod-id>-tailwind`). Restart the game after a Tailwind change so the new sheet loads.
+The insert lives in [examples/ui/overlay-hotkey/main.ts](../examples/ui/overlay-hotkey/main.ts) (`style#<mod-id>-tailwind`). A renderer hot reload re-inserts the sheet when that code runs again. Restart the game if the overlay does not update.
 
 Do not enable Tailwind preflight. The game already resets `*, ::before, ::after`. A second preflight can change the HUD.
 
@@ -74,11 +90,11 @@ npm run ui:previews      # compile preview CSS, then screenshot preview.html
 
 When `npm run dev` stops (Ctrl+C, terminal close, or process exit), it removes the OS mod folders this template built in that watch session. The `dist/` link stays. Use `npm run build` when you want mods to stay installed.
 
-`npm run dev` watches every `src/*/modinfo.ts` mod. Use `npm run dev:pick` for a keyboard picker before the watch starts. **All mods** is the first row. Mods are grouped under **src** (including the **debug** companion). Type to filter the list, **Space** toggles mods, **Enter** confirms (All, checked mods, or the highlighted mod). Your last choice is saved under `.tmp/dev-mod-selection.json` and pre-selected next time. Pass `--mod` to skip the picker. Non-TTY `dev:pick` watches all mods.
+`npm run dev` watches every `src/*/modinfo.ts` mod. Use `npm run dev:pick` for a keyboard picker before the watch starts. **All mods** is the first row. Mods are grouped under **src** (including the **hot-reload** companion). Type to filter the list, **Space** toggles mods, **Enter** confirms (All, checked mods, or the highlighted mod). Your last choice is saved under `.tmp/dev-mod-selection.json` and pre-selected next time. Pass `--mod` to skip the picker. Non-TTY `dev:pick` watches all mods.
 
 **F5** (VS Code `Sandustry` launch) stops any running game, launches with `--remote-debugging-port`, waits until CDP `:9222` responds, then attaches the debugger to the **renderer** (where mods run). It does not rebuild the mod — keep `npm run dev` running for the bundle and file logs. **Restart** in the debugger toolbar kills that Electron process and starts a new one, then the renderer attach reconnects — a page reload does not restart workers or re-apply patches. If attach fails or ports linger, press F5 again or run the **sandustry:stop** task.
 
-The watch rebuilds when you save a file in the bundle graph (mod sources and imported `modkit/` files), `modinfo.ts`, or static files under `mod/`. A Tailwind CSS change queues a second rebuild after the current one finishes, so the next save is not dropped. Restart the game to load the new `main.js`. The watch does not notify the game.
+The watch rebuilds when you save a file in the bundle graph (mod sources and imported `modkit/` files), `modinfo.ts`, or static files under `mod/`. A Tailwind CSS change queues a second rebuild after the current one finishes, so the next save is not dropped. With **Watch local mods** on, the hot-reload companion re-evals renderer `main.js`. Restart the game for `worker.js` and `patches.json`.
 
 Renderer attach loads source maps from scripts named `sandkit-workshop://<modId>/main.js` (and from the OS mods folder / `dist/`). Debug builds rewrite inline maps to `file://` sources, add a sandkit loader line offset, set matching `sourceURL`, and mark injected `console.ts` as ignore-listed so console output and breakpoints resolve to mod source instead of the console shim. Do not press **F12** while the IDE debugger is attached — Electron DevTools steals that session. Keep **Open DevTools on load** off under F5 for the same reason.
 

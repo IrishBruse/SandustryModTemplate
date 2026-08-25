@@ -5,10 +5,11 @@ Shared kit for Sandustry mods. It includes:
 - **React runtime** — `sandkit.react` wired through `modkit/internal/esbuild/react.ts` and JSX runtimes
 - **Utils** — small helpers (`safe`, settings, scene checks, retro console registration)
 - **UI** — shared React components under `modkit/ui/`. Live canvases and PNGs live under `docs/ui/canvas/` (`npm run ui:css` / `ui:previews`).
-- **Debug companion** — mod `src/hot-reload` (DevTools, auto-load last save, F3). There is no in-game reload yet. `console` → file log is still an esbuild inject.
 - **Modinfo helpers** — `defineModInfo` / `definePatches` with colocated manifest and patch types
 
 Mods import this folder through the `@modkit/*` path alias. The game still loads a single bundled `main.js` (esbuild IIFE). Do not emit `import` / `export` in the output.
+
+The **hot-reload** companion is a mod, not part of this kit. See [Hot Reload](../hot-reload/).
 
 Sibling mods (for example `sandustry-doom-mod`) can use a symlink to this folder instead of a copy.
 
@@ -19,7 +20,6 @@ Sibling mods (for example `sandustry-doom-mod`) can use a symlink to this folder
 | React and JSX      | [react.md](react.md)                 |
 | Utils              | [utils.md](utils.md)                 |
 | Mod `configSchema` | [config-schema.md](config-schema.md) |
-| Debug companion    | [debug.md](debug.md)                 |
 | UI components      | [../ui/README.md](../ui/README.md)   |
 | Bundle patches     | [../patches.md](../patches.md)       |
 

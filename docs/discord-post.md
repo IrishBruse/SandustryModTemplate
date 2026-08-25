@@ -37,7 +37,7 @@ The game CSS is purged, so extra classes have no rules. The build compiles only 
 Run `npm run dev`. Save a file. Restart the game to load the new bundle.
 
 **Debug helpers:**
-Debug builds install the **debug** companion (`src/hot-reload`). It adds F12 DevTools, auto-load save, and console globals. `npm run build` omits that mod.
+Debug builds install the **hot-reload** companion (`src/hot-reload`). It adds F12 DevTools, auto-load save, and console globals. `npm run build` stages that mod; `npm run publish` does not list it.
 
 **Typed `modinfo.ts`:**
 One file per mod for the manifest and patches. Each `src/<mod-name>/` folder with a `modinfo.ts` is a separate game mod.

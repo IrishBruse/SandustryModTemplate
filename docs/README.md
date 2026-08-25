@@ -7,8 +7,8 @@ TypeScript template for [Sandustry](https://store.steampowered.com/app/2764460/S
 - **[Multi-mod](layout.md)** — One repo, many mods. Each `src/<name>/` or `examples/<name>/` with a `modinfo.ts` builds to its own game folder.
 - **[TypeScript](modkit/types/README.md)** — Sandkit API types in `modkit/types/`.
 - **[React HUD](modkit/react.md)** — JSX via `sandkit.react`, plus the [UI kit gallery](ui/README.md).
-- **[Watch rebuild](builds.md)** — `npm run dev` writes `main.js`. Restart the game to load it.
-- **[Debug helpers](modkit/debug.md)** — companion mod: F12 DevTools, auto-load last save, F3.
+- **[Watch rebuild](builds.md)** — `npm run dev` writes `main.js`. The hot-reload companion re-evals the renderer bundle.
+- **[Hot Reload](hot-reload/)** — companion mod: F12 DevTools, auto-load last save, F3, in-game `main.js` reload.
 - **[Typed `modinfo.ts`](layout.md)** — Manifest and [patches](patches.md) in one file per mod.
 
 ## Get started

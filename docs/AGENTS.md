@@ -11,7 +11,7 @@ Use **ASD-STE100 Simplified Technical English**:
 - Prefer lists. Use a markdown table only when the table stays narrow.
 - Prefer concrete paths, commands, and UI labels over vague wording.
 - Prefer **bold** for key terms and UI labels. Do not bold whole sentences.
-- Link related pages with relative paths (`layout.md`, `modkit/debug.md`).
+- Link related pages with relative paths (`layout.md`, `hot-reload/`).
 - Match the tone of nearby pages. Do not invent a new voice.
 
 Avoid:
@@ -27,6 +27,19 @@ Avoid:
 - Change JSDoc in `modkit/types/**/*.d.ts`, then run `npm run docs:api`.
 - Main docs sidebar links to **Sandkit API** only (`api/README.md`). The API tree uses [`api/_sidebar.md`](api/_sidebar.md), generated with the reference (commit this file so the API sidebar works before a full regen).
 - Other files under `docs/api/` are generated; run `npm run docs:api` before `npm run docs` or publishing the docs site.
+
+## Site pages and code-side links
+
+Keep the real Markdown under `docs/` so Docsify can serve it. Do not put a symlink inside `docs/` that points outside that tree.
+
+When a kit or mod needs a `docs/` folder next to the code, make that folder a symlink into `docs/`:
+
+- [`modkit/docs`](../modkit/docs/) → `docs/modkit/`
+- [`src/hot-reload/docs`](../src/hot-reload/docs/) → `docs/hot-reload/`
+
+Write kit pages in [`docs/modkit/`](modkit/). Write companion pages in [`docs/hot-reload/`](hot-reload/). Do not put companion pages under `docs/modkit/`.
+
+Mods that are not on the site may keep a real `src/<name>/docs/` folder. Builds do not copy `docs/` folders.
 
 ## Sample mod READMEs (`examples/*/README.md`)
 
@@ -46,7 +59,7 @@ Each shipped mod may keep `src/<name>/CHANGELOG.md`. `npm run publish` sends the
 - Write for **players**, not developers.
 - Say what changed in play (controls, options, feel, fixes you can notice).
 - Do **not** mention patches, APIs, file paths, internals, or implementation unless that detail changes how the mod plays.
-- Keep technical notes in the mod `README.md` or template docs instead.
+- Keep technical notes in that mod's `docs/` folder, or in `docs/<name>/` when the site has a page. Do not put mod-specific pages under `docs/modkit/`.
 
 ### `Changelog.md`
 
