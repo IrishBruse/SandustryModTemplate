@@ -1,55 +1,120 @@
 # Patch definitions
 
-Define patches with `definePatches` and export them from that mod's `modinfo.ts`. You can keep the list in `patches.ts` at the mod root and re-export it. The build writes `patches.json` into that mod's output folder. The game loader applies those patches to Sandustry JavaScript files (for example `js/bundle.js`).
+Patches are exact (or regex) rewrites of Sandustry JavaScript under `js/`. The loader applies `patches.json` at **mod load**. Renderer hot reload does **not** re-apply them. Restart the game after you change a patch.
 
-Patch shapes live in [`modkit/modinfo.ts`](../modkit/modinfo.ts).
+Prefer the Sandkit API first. Use a patch only when the public API cannot do the job.
 
-## When to use patches
+Keep each `find` / `code` string small. Set `expectedMatches`. Re-test after every game update — minified bundle text moves.
 
-Prefer the Sandkit API first. Use patches only when the public API cannot do the job.
+Patch `code` runs **outside** the game bundle IIFE. Put shared runtime helpers on `globalThis` when patch code must call them.
 
-Patches are string rewrites on minified game code. Keep each patch small, set `expectedMatches`, and test after every game update — bundle text can change and break `find` strings.
-
-Patch `code` runs outside the game bundle IIFE. Put shared runtime helpers on `globalThis` if patch code needs them.
+Types: [`modkit/modinfo.ts`](../modkit/modinfo.ts). Manifest: [`modinfo.ts`](modinfo.md). Canonical multi-file example: [`examples/content/collector-element/patches.ts`](../examples/content/collector-element/patches.ts).
 
 ## Layout
 
-| Export / source                                      | Role                                              |
-| ---------------------------------------------------- | ------------------------------------------------- |
-| `patches` in that mod's `modinfo.ts`                 | Production patches (always written)               |
-| `debugPatches` in that mod's `modinfo.ts` (optional) | Extra debug-only patches (dev / `--debug` builds) |
+Define the list with `definePatches`. Export it from that mod's `modinfo.ts`. You may keep the array in `patches.ts` at the mod root and re-export it.
 
-Release builds (`npm run build`) omit `debugPatches`. Dev builds (`npm run dev`, `--game` / `--debug`) include them. Auto-load last save is a settings-gated runtime helper on the hot-reload companion ([docs](hot-reload/)), not a game-file patch.
+| Export         | When it is written                                |
+| -------------- | ------------------------------------------------- |
+| `patches`      | Always (`patches.json`)                           |
+| `debugPatches` | Dev / `--debug` only. Merged **after** `patches`. |
 
-Other mods may keep patches in `modinfo.ts` or `patches.ts`. The hot-reload companion has no patches.
+Release (`npm run build`, `npm run dev:release`) omits `debugPatches`. Dev (`npm run dev`) includes both.
+
+The hot-reload companion has no patches. Auto-load last save is a runtime helper on that companion, not a file patch.
+
+The browser bundle stubs `@modkit/patches` so patch payloads stay out of `main.js`.
+
+## Build validation
+
+`scripts/lib/build-patches.js` checks each patch before it writes JSON:
+
+- `id` is a non-empty string and unique in the written list
+- `file` matches `js/<name>.js` (one folder, `.js` only)
+- `operation` is `insertBefore`, `replace`, or `wrap`
+- `expectedMatches` is an integer
+- exactly one of `find` (non-empty string) or `regex` (`{ pattern, flags? }`)
+- `replace` / `insertBefore` need non-empty `code`
+- `wrap` needs `before` and `after` strings
+
+The game loader also fails the mod if the live match count is not `expectedMatches`.
+
+Do not edit `dist/<modinfo.id>/patches.json` by hand. Change the export and rebuild.
+
+```bash
+npm run build          # release — no debugPatches
+npm run dev            # debug — patches + debugPatches
+npm run dev:release    # watch release — no debugPatches
+```
 
 ## Fields
 
-| Field              | Role                                                                |
-| ------------------ | ------------------------------------------------------------------- |
-| `id`               | Unique patch id (required)                                          |
-| `file`             | Target file under `js/` (required)                                  |
-| `find`             | Exact match string (required unless `regex`)                        |
-| `expectedMatches`  | Match count; load fails if it differs (required)                    |
-| `operation`        | `replace`, `insertBefore`, or `wrap`                                |
-| `code`             | Replacement / insert body (`replace` and `insertBefore`)            |
-| `regex`            | `{ pattern, flags? }` instead of `find`                             |
-| `atomicGroup`      | Optional group name; all patches in the group succeed or none apply |
-| `before` / `after` | Required when `operation` is `wrap`                                 |
+| Field              | Role                                                                                                      |
+| ------------------ | --------------------------------------------------------------------------------------------------------- |
+| `id`               | Unique patch id (required)                                                                                |
+| `file`             | Target under `js/` (required). Typical: `js/bundle.js`, `js/simulation-worker.js`, `js/utility-worker.js` |
+| `find`             | Exact substring (required unless `regex`)                                                                 |
+| `regex`            | `{ pattern, flags? }` instead of `find`                                                                   |
+| `expectedMatches`  | Required match count                                                                                      |
+| `operation`        | `replace`, `insertBefore`, or `wrap`                                                                      |
+| `code`             | Body for `replace` and `insertBefore`                                                                     |
+| `before` / `after` | Required for `wrap`                                                                                       |
+| `atomicGroup`      | Optional name. Every patch in the group must apply, or none do                                            |
+
+Match with exact `find` when the text is stable. Use `regex` only when a literal match is not stable.
 
 ## Operations
 
-| Operation      | Effect                                          |
-| -------------- | ----------------------------------------------- |
-| `replace`      | Replace each match with `code`                  |
-| `insertBefore` | Insert `code` before each match                 |
-| `wrap`         | Wrap each match with `before` + match + `after` |
+### `insertBefore`
 
-Match by exact `find` when you can. Use `regex` only when the bundle text is not stable enough for a literal match.
+Insert `code` immediately before each match.
 
-Always set `expectedMatches`. The mod loader fails if the match count differs — this catches broken patches early.
+```ts
+{
+  id: "bundle-log-prefix",
+  file: "js/bundle.js",
+  find: "initializing workers",
+  operation: "insertBefore",
+  code: "[patched]",
+  expectedMatches: 1,
+}
+```
 
-## Adding a patch
+### `replace`
+
+Replace each match with `code`. The collector sample replaces a Gold / liquidGold type check with a collector-value check on **three** files, one `atomicGroup`:
+
+```ts
+{
+  id: "collector-admission-value-map-main",
+  file: "js/bundle.js",
+  find: 'const n=(e=>(null===l&&(l=s.FH.elements.getElementTypeFromId(e,"liquidGold")),l))(e);return t.type===r.RJ.Gold||t.type===n?d:f}',
+  operation: "replace",
+  code: "return s.FH.collector.getValueFromElementType(e,t.type)>0?d:f}",
+  expectedMatches: 1,
+  atomicGroup: "collector-admission-value-map",
+}
+```
+
+Copy `find` from the **current** extracted `sandustry/` bundle. Do not reuse old minified snippets after a game update.
+
+### `wrap`
+
+Wrap each match as `before` + match + `after`. Use this when you must keep the original text and add a prefix and suffix.
+
+```ts
+{
+  id: "wrap-example",
+  file: "js/bundle.js",
+  find: "/* stable marker */",
+  operation: "wrap",
+  before: "/* patched-before */",
+  after: "/* patched-after */",
+  expectedMatches: 1,
+}
+```
+
+## Adding patches
 
 ```ts
 // src/<name>/modinfo.ts
@@ -66,20 +131,15 @@ export const patches = definePatches([
   },
 ]);
 
-/** Optional — extra debug-only patches for this mod. */
+/** Extra debug-only patches for this mod. */
 export const debugPatches = definePatches([
   // ...
 ]);
 ```
 
-Auto-load last save is runtime-only on the hot-reload companion. The browser bundle stubs `@modkit/patches` so patch payloads stay out of `main.js`.
+Or keep the list in `patches.ts` and re-export:
 
-## Build output
-
-Do not edit `dist/<modinfo.id>/patches.json` by hand. Change the `patches` export and rebuild:
-
-```bash
-npm run build          # release — no debugPatches
-npm run dev            # debug — includes debugPatches
-npm run dev:release    # watch release — no debugPatches
+```ts
+// src/<name>/modinfo.ts
+export { patches } from "./patches";
 ```

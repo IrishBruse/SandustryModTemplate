@@ -156,7 +156,7 @@ window.SMT_SEARCH_PATHS = [
   "/discord-post",
   "/hot-reload/README",
   "/layout",
-  "/mod-ideas",
+  "/modinfo",
   "/modkit/config-schema",
   "/modkit/react",
   "/modkit/README",

@@ -59,11 +59,11 @@ Mods in `src/`:
 
 Every mod under `src/<name>/` or `examples/<name>/` needs these files:
 
-| File            | Role                                                                                                                                                                                                   |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `modinfo.ts`    | Manifest. Optional `patches` export (or re-export from `patches.ts`). `export const modinfo = defineModInfo(...)`. Use `modinfo.id` for the mod id. The build writes `modinfo.json` and `patches.json` |
-| `main.ts`       | Mod entry                                                                                                                                                                                              |
-| `tsconfig.json` | Isolated TypeScript project. This folder cannot see sibling mods                                                                                                                                       |
+| File            | Role                                                                                                                                                   |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `modinfo.ts`    | Manifest. See [modinfo.ts](modinfo.md). Optional `patches` export (or re-export from `patches.ts`). The build writes `modinfo.json` and `patches.json` |
+| `main.ts`       | Mod entry                                                                                                                                              |
+| `tsconfig.json` | Isolated TypeScript project. This folder cannot see sibling mods                                                                                       |
 
 Keep extra TypeScript out of the mod root. Only `modinfo.ts`, `main.ts`, optional `worker.ts`, and optional `patches.ts` may sit next to `tsconfig.json`. Put other source files in feature folders (`ui/`, `health/`, `capture/`, …).
 
@@ -72,7 +72,7 @@ Add these when you need them:
 | File                         | Role                                                                                       |
 | ---------------------------- | ------------------------------------------------------------------------------------------ |
 | `worker.ts`                  | Worker entry at the mod root. The build writes `worker.js`                                 |
-| `patches.ts`                 | Optional patch list. Re-export `patches` from `modinfo.ts`.                                |
+| `patches.ts`                 | Optional patch list. Re-export from `modinfo.ts`. See [Patches](patches.md).               |
 | `ui/`                        | React overlays                                                                             |
 | Feature folders              | Other source files (`health/`, `capture/`, …). Keep tests next to the file they test       |
 | `mod/`                       | Static files copied into the output folder                                                 |
