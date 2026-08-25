@@ -7,6 +7,7 @@
   - [Mod ideas](mod-ideas.md)
   - [Builds](builds.md)
   - [Troubleshooting](troubleshooting.md)
+  - [Hot Reload](hot-reload/)
 
 - Modkit
   - [Overview](modkit/README.md)
@@ -14,7 +15,6 @@
   - [UI kit](ui/README.md)
   - [Utils](modkit/utils.md)
   - [configSchema](modkit/config-schema.md)
-  - [Debug](modkit/debug.md)
 
 - Reference
   - [Patches](patches.md)

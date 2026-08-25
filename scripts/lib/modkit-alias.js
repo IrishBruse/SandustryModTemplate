@@ -1,10 +1,8 @@
 /**
  * Map public `@modkit/*` import paths to files under `modkit/`.
- * `@modkit/debug` resolves to `modkit/internal/debug`.
  * @param {string} rest Path after `@modkit/` (empty for `@modkit` alone)
  */
 export function modkitAliasRest(rest) {
-  if (rest === "debug") return "internal/debug";
   return rest;
 }
 
