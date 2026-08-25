@@ -7,8 +7,8 @@ TypeScript template for [Sandustry](https://store.steampowered.com/app/2764460/S
 Need **Node 24** and Sandustry with the **[mods]** beta.
 
 ```bash
-git clone https://github.com/IrishBruse/SandustryModTemplate.git <my-folder>
-cd <my-folder>
+git clone https://github.com/IrishBruse/SandustryModTemplate.git
+cd SandustryModTemplate
 npm install
 npm run setup
 npm run dev
