@@ -27,3 +27,10 @@ jobs:
       - run: npm test
       - run: npm run lint
       - run: npm run build
+      - name: npm run setup (Windows)
+        if: runner.os == 'Windows'
+        env:
+          SANDUSTRY: ${{ github.workspace }}/.tmp/ci-sandustry/Sandustry.exe
+        run: |
+          node scripts/setup/prepare-ci-game.js
+          npm run setup

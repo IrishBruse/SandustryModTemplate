@@ -111,4 +111,6 @@ Steam **change notes** come from that mod's `CHANGELOG.md` (Keep a Changelog). W
 
 Pushes, pull requests, and manual runs execute `.github/workflows/ci.yml` on **Ubuntu** and **Windows** (Node 24). Each job runs `npm ci`, `npm test`, `npm run lint`, and `npm run build`.
 
-The workflow does **not** run `npm run setup` or `npm run publish`. Those steps need the game or SteamCMD credentials.
+On **Windows**, CI also builds a fake Sandustry install under `.tmp/ci-sandustry/` (`scripts/setup/prepare-ci-game.js`), sets `SANDUSTRY`, and runs `npm run setup`. That checks Node, links, asar extract, and junctions without Steam.
+
+The workflow does **not** run `npm run publish`. Publish needs SteamCMD credentials.
