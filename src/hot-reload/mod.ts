@@ -1,8 +1,6 @@
 import { defineModInfo } from "@modkit/modinfo";
 import { AUTO_LOAD_FROM_STORAGE, AUTO_LOAD_LAST_PLAYED } from "./boot/auto-load-save";
 
-export { patches } from "./patches";
-
 export const modinfo = defineModInfo({
   manifestVersion: 1,
   id: "hot-reload",
@@ -12,7 +10,7 @@ export const modinfo = defineModInfo({
   entry: "main.js",
   author: "IrishBruse",
   description:
-    "Dev companion: DevTools, auto-load save, disable autosave, local-mod hot reload. Installed on debug builds only.",
+    "Dev companion: DevTools, auto-load save, disable autosave, F3 overlay. Debug builds install it; release stages build/hot-reload/.",
   dependencies: [],
   loadOrder: -2147483648,
   configSchema: {
@@ -21,13 +19,6 @@ export const modinfo = defineModInfo({
       default: true,
       labelKey: "Mod enabled",
       descriptionKey: "Disable helpers without removing the mod.",
-    },
-    // Hot reloading
-    watchLocalMods: {
-      type: "boolean",
-      default: false,
-      labelKey: "Watch local mods",
-      descriptionKey: "Reload local mods when files change. Skips Workshop.",
     },
     // Save auto loading
     autoLoad: {

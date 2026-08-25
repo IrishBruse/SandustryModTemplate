@@ -1,31 +1,26 @@
-import "./reload/wrap-sandkit";
 import { disableSessionAutosave } from "./boot/autosave";
 import { registerDevToolsShortcut, scheduleMainMenuBoot } from "./boot/boot-menu";
 import { settingOn } from "./boot/settings";
 import { installDebugCompanion } from "./f3/install";
 import { installModInspector } from "./mod-inspector/install";
 import { modinfo } from "./mod";
-import { logRendererReload } from "./reload/loader-health";
-import { startLocalModReload } from "./reload/local-mod-reload";
+import { isEnabled } from "modkit/utils";
 
 const api = sandkit.api;
 
-function registerSandkitGlobals(): void {
+function main() {
+  if (!isEnabled(api)) return;
+
   const { enums, react } = sandkit;
   Object.assign(globalThis, { sandkit, api, enums, react });
-}
 
-if (!reloaded) {
-  logRendererReload();
-  registerSandkitGlobals();
   if (settingOn(api, "f12DevTools")) registerDevToolsShortcut();
+  scheduleMainMenuBoot(api);
+  if (settingOn(api, "disableAutosave")) disableSessionAutosave();
+  installDebugCompanion(api, modinfo.id);
+  installModInspector(api, modinfo.id);
+
+  console.log("loaded — debug companion");
 }
-// Also run after hot reload so a settings/code fix can still navigate from the main menu.
-scheduleMainMenuBoot(api, !reloaded);
 
-if (settingOn(api, "disableAutosave")) disableSessionAutosave();
-installDebugCompanion(api, modinfo.id);
-installModInspector(api, modinfo.id);
-startLocalModReload(api);
-
-console.log(`${reloaded ? "reloaded" : "loaded"} — debug companion`);
+main();

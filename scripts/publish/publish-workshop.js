@@ -10,7 +10,7 @@ import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, basename, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadMods, parseModFilter, publishStagingDir } from "../lib/mods.js";
+import { DEBUG_MOD_FOLDER, loadMods, parseModFilter, publishStagingDir } from "../lib/mods.js";
 import { steamLibraryRoots } from "../lib/paths.js";
 import {
   ensureDedicatedSteamCmd,
@@ -439,7 +439,7 @@ try {
 
 const account = steamAccountName();
 const allMods = (await loadMods([], { includeDebugKit: false })).filter(
-  (mod) => mod.root === "src",
+  (mod) => mod.root === "src" && mod.folder !== DEBUG_MOD_FOLDER,
 );
 const selected = await pickMod(allMods);
 

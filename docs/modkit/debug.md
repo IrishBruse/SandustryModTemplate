@@ -1,23 +1,23 @@
-# Debug companion and hot reload
+# Debug companion
 
-Session debug helpers live in the **debug** companion mod ([`src/hot-reload/`](../../src/hot-reload/)). The game folder name is **`hot-reload`** (`mods/hot-reload`, from `modinfo.id`). Debug builds install it. Release builds omit it and remove a leftover `mods/hot-reload`. Manifest **`loadOrder`** is `-2147483648` so this companion runs before other local mods.
+Session debug helpers live in the **debug** companion mod ([`src/hot-reload/`](../../src/hot-reload/)). The game folder name is **`hot-reload`** (`mods/hot-reload`, from `modinfo.id`). Debug builds install it to the OS mods folder. `npm run build` stages a release bundle under `build/hot-reload/`. Manifest **`loadOrder`** is `-2147483648` so this companion runs before other local mods.
 
-The **debug** companion patches the game loader so local mods can hot-reload without esbuild inject. The loader wrapper defines free **`reloaded`**, sets the active mod id, and wraps `sandkit.api` so disposer APIs un-register on reload. Other mods do not import hot-reload helpers for normal Sandkit use. Import `onDispose` from [`@modkit/debug`](../../modkit/internal/debug/) only for extra cleanup (timers, DOM nodes, reversing player or world mutations). Release builds omit the companion and define **`reloaded`** as `false`, but still bundle real `onDispose` so hot reload can dispose when the companion is installed.
+This companion does **not** reload other mods in game. `npm run dev` rebuilds `main.js` on disk. Restart the game to load that bundle.
 
-The same main-entry rewrite also skips the entry body when **`enabled`** is false (`isEnabled`). Do not add that guard in `main.ts`. See [utils.md](utils.md).
+Call `isEnabled` yourself when a mod must respect **Mod enabled**. The build wraps the main entry in `try` / `catch` and logs failures with `console.error`. See [utils.md](utils.md).
 
 ## When it is installed
 
-| Build   | Command                                       | `src/hot-reload` mod          | `@modkit/debug`                        | `debugPatches` |
-| ------- | --------------------------------------------- | ----------------------------- | -------------------------------------- | -------------- |
-| Release | `npm run build`                               | Omitted (leftover removed)    | Bundled (`onDispose` registry)         | Omitted        |
-| Dev     | `npm run dev`, `--watch`, `--game`, `--debug` | Installed (`mods/hot-reload`) | Bundled (companion watches local mods) | Included       |
+| Build   | Command                                       | `src/hot-reload` mod          | `@modkit/debug`                | `debugPatches` |
+| ------- | --------------------------------------------- | ----------------------------- | ------------------------------ | -------------- |
+| Release | `npm run build`                               | Staged (`build/hot-reload/`)  | Bundled (`onDispose` registry) | Omitted        |
+| Dev     | `npm run dev`, `--watch`, `--game`, `--debug` | Installed (`mods/hot-reload`) | Bundled                        | Included       |
 
 `--mod hello-world` on a debug build still installs **hot-reload**. `--mod hot-reload` builds only that folder. `npm run publish` never lists the companion.
 
 `__MOD_DEBUG__` is `true` in dev builds and `false` in release.
 
-Other mods do not need to know about hot reload. The companion wraps `sandkit.api`, suppresses load toasts during re-eval, and replays `game:ready` when the world is already open. Import `onDispose` only for extra cleanup. Free `reloaded` stays available for one-shot boot work in this companion. Other developers subscribe to this companion on the Workshop. The companion does not watch other Workshop items.
+Import `onDispose` from [`@modkit/debug`](../../modkit/internal/debug/) for extra cleanup when a reload wrap is present. Without that wrap, `onDispose` does nothing.
 
 ## Companion settings
 
@@ -32,9 +32,8 @@ Settings live on the debug mod only (`src/hot-reload/mod.ts` `configSchema`). Op
 | **Start save**            | `startSave`       | Mod storage | **Last played** or **Mod storage**. **Mod storage** reads `api.storage` (`startSave`). Set the id from DevTools or another mod.               |
 | **F3 debug overlay**      | `f3Debug`         | off         | F3 toggles companion debug overlay. Vanilla Debug / Stats stay on while the mod is enabled                                                    |
 | **Disable autosave**      | `disableAutosave` | off         | Sets `session.settings.autosaveInterval` to `0`. Manual saves still work                                                                      |
-| **Watch local mods**      | `watchLocalMods`  | off         | Poll local mod folders for `main.js` / `patches.json` / `modinfo.json` / worker entry. Workshop mods are ignored                              |
 
-Turn on **Watch local mods**, **Auto-load save**, **F3 debug overlay**, **Disable autosave**, **F12**, or **Open DevTools on load** when you want those helpers.
+Turn on **Auto-load save**, **F3 debug overlay**, **Disable autosave**, **F12**, or **Open DevTools on load** when you want those helpers.
 
 ## Features
 
@@ -42,14 +41,11 @@ Turn on **Watch local mods**, **Auto-load save**, **F3 debug overlay**, **Disabl
 | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- | ----------------------------------------------------------------------------------- |
 | DevTools globals      | [`src/hot-reload/main.ts`](../../src/hot-reload/main.ts)                                                                                | Mod enabled            | `sandkit`, `api`, `enums`, `react` on `globalThis`                                  |
 | Open DevTools on load | [`boot/boot-menu.ts`](../../src/hot-reload/boot/boot-menu.ts)                                                                           | Open DevTools          | Retries until the Electron bridge is ready. Keep off under F5                       |
-| F12 opens DevTools    | [`boot/boot-menu.ts`](../../src/hot-reload/boot/boot-menu.ts)                                                                           | F12                    | Capture-phase keydown; skipped on hot-reload eval                                   |
+| F12 opens DevTools    | [`boot/boot-menu.ts`](../../src/hot-reload/boot/boot-menu.ts)                                                                           | F12                    | Capture-phase keydown                                                               |
 | Auto-load save        | [`boot/boot-menu.ts`](../../src/hot-reload/boot/boot-menu.ts) + [`boot/auto-load-save.ts`](../../src/hot-reload/boot/auto-load-save.ts) | Auto-load + Start save | Reloads with `?db_load=` for the **Start save** pick                                |
-| Disable autosave      | [`boot/autosave.ts`](../../src/hot-reload/boot/autosave.ts)                                                                             | Disable autosave       | Sets interval to `0` on load and each hot-reload eval                               |
-| Renderer hot reload   | [`reload/local-mod-reload.ts`](../../src/hot-reload/reload/local-mod-reload.ts)                                                         | Watch local mods       | Polls local folders; Workshop mods are skipped                                      |
+| Disable autosave      | [`boot/autosave.ts`](../../src/hot-reload/boot/autosave.ts)                                                                             | Disable autosave       | Sets interval to `0` on load                                                        |
 | F3 debug overlay      | [`f3/F3DebugOverlay.tsx`](../../src/hot-reload/f3/F3DebugOverlay.tsx)                                                                   | F3 debug overlay       | Minecraft-style text HUD; extensible via `registerF3Section` / `globalThis.debugF3` |
 | Mod Inspector         | [`mod-inspector/`](../../src/hot-reload/mod-inspector/)                                                                                 | Mod enabled            | Pause menu **Mods** (under **Options**) opens a blank panel. Esc closes             |
-
-Hot-reload eval skips DevTools shortcut and auto-load so those do not stack on every save. Autosave disable runs again on each hot-reload eval.
 
 ## DevTools globals
 
@@ -82,12 +78,6 @@ url.searchParams.set("db_load", saveId);
 location.assign(url.toString());
 ```
 
-**Start save** is a normal mod setting (`startSave`): **Last played** or **Mod storage**. `api.settings` is read-only and choice options are fixed in `configSchema`, so the live save list cannot live in Options. Set **Start save** to **Mod storage** (the default) and write this companion's `api.storage` key `startSave` from DevTools or another mod. **Last played** uses the same source as Continue (`getLastPlayedGameSync` / `localStorage.lastPlayedGame`). Example:
-
-```ts
-api.storage.set("irishbruse.debug", "startSave", saveId);
-```
-
 If that value is missing or the save is gone, auto-load falls back to last played.
 
 It does nothing when:
@@ -96,7 +86,6 @@ It does nothing when:
 - The session is already in-game
 - There is no resolvable save
 - Auto-load already ran this browser session (for example after you exit to the main menu and the page reloads)
-- The mod body is running from hot reload (`reloaded` is true)
 
 ## F3 debug overlay
 
@@ -116,54 +105,13 @@ registerF3Section({
 
 After boot, `globalThis.debugF3.registerSection` is the same API for DevTools experiments.
 
-## Hot reload
-
-Subscribe to the **debug** companion on the Workshop. This template's debug builds also install a local copy. The companion patches `js/external-mod-runtime.js` and polls **local** mod folders about every 400 ms. Other Workshop / subscribed mods are not watched. You do not need esbuild or `npm run dev` for that poll (file bytes on disk are enough). `npm run dev` still rebuilds this template's bundles and file logs.
-
-When **local** `main.js` bytes change:
-
-- The companion runs tracked disposers, then evaluates the new source with a wrapped `sandkit`.
-- The wrap auto-tracks function returns from `api.events.on`, `api.ui.inject`, `api.hooks.intercept` / `modify`, and `api.settings.onChange`. `api.ui.overlays.register` tracks a matching unregister.
-- Load toasts during that re-eval (and a synthetic `game:ready`) are suppressed. Action toasts in key handlers still run later.
-- If the active scene is **Game**, the wrap calls new `game:ready` listeners after the eval. Mods that only subscribe to `game:ready` boot in-world with no `reloaded` branch.
-- `onDispose` is not required for those Sandkit APIs. Use it only for extra cleanup (timers, DOM nodes, reversing mutations).
-
-When `patches.json`, `modinfo.json`, or a declared worker entry change (including this companion’s own `patches.json` / `modinfo.json`), the companion toasts **restart the game**. It stores that message in `sessionStorage` so a DevTools page reload still shows it. Patches apply in the Electron main process at process start. `location.reload()` does not re-apply them.
-
-This companion does **not** hot-eval its own `main.js` (that would tear down the poller). After you change the debug companion, **restart the game**. A page reload is not enough for patches or workers.
-
-The loader patches share an **atomic group**. All apply, or none apply. After boot, the companion checks the local-mod registry and the dispose wrap. If a hook is missing, it toasts **restart the game**. Free `reloaded` comes only from the loader patch (not esbuild). Restart the game once after you pull a loader-patch change.
-
-JavaScript cannot be unloaded. Other mods do not opt in. Use `onDispose` only when you need extra cleanup:
-
-```ts
-import { onDispose } from "@modkit/debug";
-
-onDispose(() => clearInterval(timer));
-```
-
-| Change                                                 | Result                                                                      |
-| ------------------------------------------------------ | --------------------------------------------------------------------------- |
-| Local `main.js`                                        | Run tracked disposers, wrap `sandkit`, eval, replay `game:ready` if in-game |
-| `patches.json`, `modinfo.json`, declared `workerEntry` | Toast: restart the game (page reload is not enough)                         |
-| Workshop mod files                                     | Ignored                                                                     |
-
-These stay best-effort (restart the game if they stack or throw):
-
-- `api.input.registerBinding` — no unregister in Sandkit
-- Content register (`elements`, `structures`, `items`, `i18n`, …) — no unregister
-- Timers / `addEventListener` / anonymous DOM — not Sandkit; use `onDispose` or a stable element id
-- Player / world mutations — re-apply on boot, or `onDispose` the inverse
-
-Free **`reloaded`** is true when this script body is running because a reload evaluated a new `main.js`. This companion uses it to skip DevTools and auto-load. Other mods do not need it for load toasts or `game:ready`. The loader patch defines that binding. Release builds define it as `false`.
-
 ## File logging (`console`)
 
 All builds inject [`modkit/internal/esbuild/console.ts`](../../modkit/internal/esbuild/console.ts) via esbuild [`inject`](https://esbuild.github.io/api/#inject). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code get a `[modId]` prefix in DevTools. `__MOD_ID__` comes from that mod's `mod.ts` at build time. Debug builds add `console.ts` to the source map `ignoreList` so DevTools and VS Code skip the shim when linking console output and breakpoints to your mod files.
 
 Debug builds also `POST` those lines to `http://127.0.0.1:19147/log` while `npm run dev` is up ([`scripts/dev/log-server.js`](../../scripts/dev/log-server.js)). Lines append to `logs/<modinfo.id>.log` (workspace `logs/` → OS sandustry logs: `~/.config/sandustry/logs` or `%APPDATA%/sandustry/logs`). Use `createLogger` from `@modkit/log` when you want a custom bracket tag.
 
-A renderer hot reload truncates that file via `POST /log/clear` and calls `console.clear()` so the session starts clean. Use `clearLog(modId)` from `@modkit/log` to clear by hand. `clearLog` aborts after 500 ms if F5 / CDP stalls the POST.
+Use `clearLog(modId)` from `@modkit/log` to clear a log file by hand. `clearLog` aborts after 500 ms if F5 / CDP stalls the POST.
 
 ```ts
 console.log("my-feature", payload);
@@ -173,37 +121,21 @@ console.log("my-feature", payload);
 
 The shim uses `globalThis.console` internally so it does not recurse.
 
-## Debug patches
-
-The companion rewrites `js/external-mod-runtime.js`. Definitions live in [`src/hot-reload/patches.ts`](../../src/hot-reload/patches.ts) and are re-exported from `mod.ts`.
-
-| id                           | File                         | Role                                                                                          |
-| ---------------------------- | ---------------------------- | --------------------------------------------------------------------------------------------- |
-| `local-mod-compile-reloaded` | `js/external-mod-runtime.js` | Define free `reloaded`, the active mod id, and wrap `sandkit` with `__sandkitWrapForDispose`. |
-| `local-mod-registry`         | `js/external-mod-runtime.js` | Publish local mods for polling.                                                               |
-
-These loader patches use the same `atomicGroup` (`local-mod-loader`).
-
-Sandkit freezes `sandkit`, `api`, and `api.events`. Dispose tracking wraps `sandkit` in the `new Function` body after freeze. Workshop mods are not added to the registry. See [patches.md](../patches.md) for the patch format.
-
 ## Files
 
-| Path                                                     | Role                                                                            |
-| -------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| [`src/hot-reload/`](../../src/hot-reload/)               | Companion: `mod.ts`, `main.ts`, and `patches.ts` at the root                    |
-| [`src/hot-reload/boot/`](../../src/hot-reload/boot/)     | Auto-load, DevTools boot, autosave, settings helpers                            |
-| [`src/hot-reload/reload/`](../../src/hot-reload/reload/) | Local-mod poll, hot-eval, Sandkit wrap (`wrap-sandkit.ts`), loader health       |
-| [`src/hot-reload/f3/`](../../src/hot-reload/f3/)         | F3 overlay, engine debug sync, built-in sections                                |
-| `modkit/internal/debug/index.ts`                         | `onDispose` only (bundled in all builds)                                        |
-| `modkit/internal/esbuild/debug.empty.ts`                 | Unused legacy stub (release builds no longer alias `@modkit/debug` here)        |
-| `modkit/internal/esbuild/console.ts`                     | esbuild inject: `[modId]` prefix on `console.*`; file POST in debug builds only |
+| Path                                                 | Role                                                                            |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------- |
+| [`src/hot-reload/`](../../src/hot-reload/)           | Companion: `mod.ts` and `main.ts` at the root                                   |
+| [`src/hot-reload/boot/`](../../src/hot-reload/boot/) | Auto-load, DevTools boot, autosave, settings helpers                            |
+| [`src/hot-reload/f3/`](../../src/hot-reload/f3/)     | F3 overlay, engine debug sync, built-in sections                                |
+| `modkit/internal/debug/index.ts`                     | `onDispose` (no-op until a reload wrap sets the active mod id)                  |
+| `modkit/internal/esbuild/debug.empty.ts`             | Unused legacy stub                                                              |
+| `modkit/internal/esbuild/console.ts`                 | esbuild inject: `[modId]` prefix on `console.*`; file POST in debug builds only |
 
 ## Wiring
 
 ```ts
-// examples/hello-world/main.ts — no hot-reload imports
+// examples/hello-world/main.ts
 const api = sandkit.api;
 api.ui.toast("Hello World loaded", {});
 ```
-
-The debug companion owns file watching and dispose wrapping. Release builds define `reloaded` as `false`. All builds bundle real `onDispose` from `@modkit/debug` for extra cleanup.

@@ -34,7 +34,7 @@ Then launch Sandustry:
 - **F5** in VS Code, or
 - `npm run sandustry`
 
-`npm run sandustry` only starts the game. It does not build. The watch owns the bundle. The **debug** companion hot-reloads local mods.
+`npm run sandustry` only starts the game. It does not build. The watch owns the bundle. Restart the game after a save to load the new `main.js`.
 
 With the **debug** companion installed (debug builds), turn on **Auto-load last save** to boot straight into your last played world. See [Debug](modkit/debug.md).
 
@@ -46,7 +46,7 @@ In game:
 - Toast on load — `examples/hello-world`
 - **C** then **F7** — Selection Capture (PNG / GIF)
 
-Edit a file under `src/`. Save. The mod reloads without a game restart.
+Edit a file under `src/`. Save. The watch rebuilds. Restart the game to load the new bundle.
 
 ## 4. Make your own mod
 
@@ -60,15 +60,16 @@ Rules:
 - Each `src/<name>/` or `examples/<name>/` with a `mod.ts` is a separate game mod.
 - The OS mods folder uses `modinfo.id`.
 - Import `@modkit/*` and files in your own folder only. Do not import another mod folder.
-- The debug companion hot-reloads local mods. You do not import hot-reload helpers for normal Sandkit APIs.
+- The debug companion adds DevTools, auto-load, and F3. It does not reload mods in game.
 
 ## Useful commands
 
 | Command             | Effect                                                                       |
 | ------------------- | ---------------------------------------------------------------------------- |
 | `npm run setup`     | Check install, extract game source to `sandustry/`, link `dist/` and `logs/` |
-| `npm run dev`       | Watch all mods; remove owned folders when the watch stops                    |
-| `npm run build`     | Release bundle (no debug helpers); leaves mods installed                     |
+| `npm run dev`       | Watch all src/ mods; remove owned folders when the watch stops               |
+| `npm run dev:pick`  | Same as `dev`, with a TTY picker first                                       |
+| `npm run build`     | Release all src/ mods (no debug helpers); leaves mods installed              |
 | `npm run sandustry` | Stop and launch the game (no build)                                          |
 | `npm run typecheck` | TypeScript check                                                             |
 

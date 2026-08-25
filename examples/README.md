@@ -34,4 +34,4 @@ Copy a folder here to `src/<your-mod>/` when you start a real mod. Each leaf fol
 | --------------------------------- | ------------------ |
 | [`retro-game`](games/retro-game/) | Retro Console demo |
 
-Shipped mods that are not samples live under [`../src/`](../src/): `selection-capture`, `debug` (debug builds only).
+Shipped mods that are not samples live under [`../src/`](../src/): `selection-capture`, `hot-reload` (debug install / release staging).

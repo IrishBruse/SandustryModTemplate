@@ -10,7 +10,6 @@ const SETTING_DEFAULTS: Record<string, boolean> = {
   autoLoad: false,
   f3Debug: false,
   disableAutosave: false,
-  watchLocalMods: false,
 };
 
 function boolSetting(api: SandkitApi, key: string): boolean {

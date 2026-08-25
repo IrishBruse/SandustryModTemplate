@@ -79,7 +79,7 @@ function markAutoLoadSessionDone(): void {
 /**
  * Reload with `?db_load=<saveId>` (same navigation the game uses for Continue).
  * Returns true when navigation started (the page will unload).
- * Only runs on the first mod eval in a session (`initialBoot`); not after exit to menu or hot reload.
+ * Only runs on the first mod eval in a session (`initialBoot`); not after exit to menu.
  */
 function tryAutoLoadSave(api: SandkitApi, initialBoot: boolean): boolean {
   if (inGame() || isBootQueryActive()) {
@@ -101,7 +101,6 @@ function tryAutoLoadSave(api: SandkitApi, initialBoot: boolean): boolean {
 
 /**
  * Optionally auto-load the chosen save on initial boot, then open DevTools on first load.
- * Safe to call again after hot reload (auto-load and DevTools open only when `firstLoad`).
  */
 export function scheduleMainMenuBoot(api: SandkitApi, firstLoad = true): void {
   if (firstLoad && autoLoadOn(api) && tryAutoLoadSave(api, true)) return;

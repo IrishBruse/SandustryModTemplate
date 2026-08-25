@@ -18,7 +18,7 @@ function stopBag(): StopBag {
   return g[STOP_KEY];
 }
 
-/** Kill layout loops from a previous hot-reload eval before this bundle starts. */
+/** Kill leftover layout loops before this bundle starts. */
 for (const stop of stopBag()) stop();
 stopBag().clear();
 

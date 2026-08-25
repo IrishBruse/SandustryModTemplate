@@ -167,11 +167,6 @@ function browserPatchesStubPlugin() {
   };
 }
 
-/**
- * `@modkit/debug` `onDispose` is always bundled so local hot reload can run disposers
- * even from release `main.js` when the debug companion is installed.
- */
-
 const MODKIT_CSS_NAMESPACE = "modkit-css";
 
 /** Route `@modkit/ui/*.css` away from esbuild's default CSS loader (emits `main.css` / `{}`). */
@@ -236,7 +231,6 @@ const CONSOLE_INJECT_SOURCE_SUFFIX = "modkit/internal/esbuild/console.ts";
  * Sandkit loads `main.js` via `new Function("__sandkit", body)` where `body` is:
  *   "use strict";\nconst sandkit = __sandkit;\nreturn (async () => {\n<source>\n})();\n
  * The Function header is two lines, then three body lines — five lines before `<source>`.
- * Hot eval in `src/hot-reload/reload/hot-eval.ts` and `COMPILE_CODE` in `src/hot-reload/patches.ts` must use the same wrapper.
  */
 const SANDKIT_LOADER_LINE_OFFSET = 5;
 
@@ -408,7 +402,6 @@ function bundleOptions(mod) {
     define: {
       __MOD_DEBUG__: modDebug ? "true" : "false",
       __MOD_ID__: JSON.stringify(manifestModId(mod)),
-      ...(modDebug ? {} : { reloaded: "false" }),
     },
     inject: [CONSOLE_INJECT],
     alias: {
@@ -450,7 +443,6 @@ function workerBundleOptions(mod) {
     define: {
       __MOD_DEBUG__: modDebug ? "true" : "false",
       __MOD_ID__: JSON.stringify(manifestModId(mod)),
-      reloaded: "false",
     },
     inject: [CONSOLE_INJECT],
     banner: {
@@ -538,10 +530,10 @@ function extraWatchDirs(mod) {
 
 /**
  * Main entry only (workers skip this):
- * Skip the entry body when `api.settings.get("enabled")` is false (`isEnabled`).
- * Free `reloaded` comes from the debug loader patch, not from esbuild.
+ * Wrap the entry body in try/catch so load failures log with `console.error`
+ * (modId prefix via inject). Attach watch roots for `mod.ts` and static `mod/`.
  *
- * Uses an `if` wrap (not top-level `return`) because entries with `import` are
+ * Uses a block wrap (not top-level `return`) because entries with `import` are
  * ESM and reject top-level return.
  * @param {import("./mods.js").LoadedMod} mod
  */
@@ -556,13 +548,7 @@ function mainEntryBootstrapPlugin(mod) {
         const loader = args.path.endsWith(".tsx") ? "tsx" : "ts";
         const { imports, body } = splitLeadingImports(source);
         return {
-          contents: [
-            imports,
-            `import { isEnabled } from "@modkit/utils";`,
-            `if (isEnabled(sandkit.api)) {`,
-            body,
-            `}`,
-          ]
+          contents: [imports, `try {`, body, `} catch (error) {`, `  console.error(error);`, `}`]
             .filter((part) => part.length > 0)
             .join("\n"),
           loader,
@@ -575,8 +561,8 @@ function mainEntryBootstrapPlugin(mod) {
 }
 
 /**
- * Pull leading `import` statements so the enabled gate can wrap the rest of
- * the entry (imports must stay top-level in ESM).
+ * Pull leading `import` statements so the try/catch can wrap the rest of the
+ * entry (imports must stay top-level in ESM).
  * @param {string} source
  */
 function splitLeadingImports(source) {

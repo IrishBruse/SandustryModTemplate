@@ -50,7 +50,7 @@ type OverlayLive = {
 
 /**
  * Binding handlers stay registered for the process. Keep the latest Overlay
- * methods here so a remount or hot reload does not stack a second F7 toggle.
+ * methods here so a remount does not stack a second F7 toggle.
  */
 const live: OverlayLive = (() => {
   const key = `${modinfo.id}:overlay`;

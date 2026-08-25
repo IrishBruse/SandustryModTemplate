@@ -11,7 +11,7 @@ Ship static files under `mod/` and resolve them with `assets.getUrl`.
    - `badgeUrl` — resolved URL for `mod/badge.png`
    - `info` — parsed JSON from `mod/info.json`
 
-On hot reload the toast does not show again. The console still logs asset URLs when the mod loads.
+The console still logs asset URLs when the mod loads.
 
 `npm run build` copies everything under `mod/` into the installed mod folder. You do not copy those files into the game folder by hand.
 

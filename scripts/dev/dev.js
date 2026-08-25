@@ -5,7 +5,7 @@
  *  Windows: %APPDATA%/sandustry/mods/<modinfo.id>).
  * On stop (Ctrl+C, terminal close, or child exit), remove those owned mods.
  * Usage: npm run dev [-- --mod hello-world]
- * In a TTY with no --mod, shows a keyboard mod picker (last choice pre-selected).
+ *        npm run dev:pick  — TTY mod picker (last choice pre-selected)
  */
 import { spawn } from "node:child_process";
 import { dirname, join } from "node:path";
@@ -15,8 +15,10 @@ import { removeOwnedGameMods } from "../lib/mod-path.js";
 import { pickDevModArgs } from "./pick-dev-mods.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
-const extra = process.argv.slice(2);
-const modArgs = await pickDevModArgs(extra, { roots: ["src"] });
+const raw = process.argv.slice(2);
+const pick = raw.includes("--pick");
+const extra = raw.filter((arg) => arg !== "--pick");
+const modArgs = await pickDevModArgs(extra, { roots: ["src"], skipPicker: !pick });
 
 console.log(styleText(["bold", "cyan"], "Watching src/ mods"));
 

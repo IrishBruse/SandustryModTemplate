@@ -51,12 +51,12 @@ Copy a folder from [`examples/`](../examples/) into `src/<your-mod>/`. [`hello-w
 
 Shipped mods in `src/` (not copy targets for new mods):
 
-| Folder                                           | What it shows                                       |
-| ------------------------------------------------ | --------------------------------------------------- |
-| [`selection-capture`](../src/selection-capture/) | Screenshot / GIF recorder (**C**, **F7**)           |
-| [`survival-mode`](../src/survival-mode/)         | Health HUD, hazards, fall damage, grounded walking  |
-| [`pick-block`](../src/pick-block/)               | Instant pick block on **Picker** (default **F**)    |
-| [`debug`](../src/debug/)                         | Dev companion (debug builds only). Do not copy this |
+| Folder                                           | What it shows                                                                 |
+| ------------------------------------------------ | ----------------------------------------------------------------------------- |
+| [`selection-capture`](../src/selection-capture/) | Screenshot / GIF recorder (**C**, **F7**)                                     |
+| [`survival-mode`](../src/survival-mode/)         | Health HUD, hazards, fall damage, grounded walking                            |
+| [`pick-block`](../src/pick-block/)               | Instant pick block on **Picker** (default **F**)                              |
+| [`hot-reload`](../src/hot-reload/)               | Dev companion. Debug installs it; `npm run build` stages it. Do not copy this |
 
 ## Files in a mod folder
 
@@ -65,7 +65,7 @@ Every mod under `src/<name>/` or `examples/<name>/` needs these files:
 | File            | Role                                                                                                                                                                                                   |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `mod.ts`        | Manifest. Optional `patches` export (or re-export from `patches.ts`). `export const modinfo = defineModInfo(...)`. Use `modinfo.id` for the mod id. The build writes `modinfo.json` and `patches.json` |
-| `main.ts`       | Mod entry. Debug builds get free `reloaded` from the debug companion loader patch. Release defines `reloaded` as `false`                                                                               |
+| `main.ts`       | Mod entry                                                                                                                                                                                              |
 | `tsconfig.json` | Isolated TypeScript project. This folder cannot see sibling mods                                                                                                                                       |
 
 Keep extra TypeScript out of the mod root. Only `mod.ts`, `main.ts`, optional `worker.ts`, and optional `patches.ts` may sit next to `tsconfig.json`. Put other source files in feature folders (`ui/`, `health/`, `capture/`, …).
@@ -75,7 +75,7 @@ Add these when you need them:
 | File                         | Role                                                                                                |
 | ---------------------------- | --------------------------------------------------------------------------------------------------- |
 | `worker.ts`                  | Worker entry at the mod root. The build writes `worker.js`                                          |
-| `patches.ts`                 | Optional patch list. Re-export `patches` from `mod.ts`. The debug companion uses this.              |
+| `patches.ts`                 | Optional patch list. Re-export `patches` from `mod.ts`. Pick Block uses this.                       |
 | `ui/`                        | React overlays                                                                                      |
 | Feature folders              | Other source files (`health/`, `capture/`, …). Keep tests next to the file they test                |
 | `mod/`                       | Static files copied into the output folder                                                          |
@@ -87,15 +87,15 @@ Add these when you need them:
 
 Import `@modkit/*` and files in your own folder only.
 
-| Import                                        | From                                                                                                                                |
-| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `@modkit/modinfo`                             | `defineModInfo` / `definePatches`                                                                                                   |
-| `@modkit/react` / JSX                         | Runtime React from `sandkit.react`                                                                                                  |
-| `@modkit/debug`                               | `onDispose` for extra cleanup (timers, inverse mutations). Sandkit disposers are auto-tracked when the debug companion is installed |
-| `@modkit/utils`                               | `safe`, `isEnabled`, `inGame`, `registerRetroGame`                                                                                  |
-| `@modkit/ui`                                  | Shared React UI components                                                                                                          |
-| `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix                                                                               |
+| Import                                        | From                                                                            |
+| --------------------------------------------- | ------------------------------------------------------------------------------- |
+| `@modkit/modinfo`                             | `defineModInfo` / `definePatches`                                               |
+| `@modkit/react` / JSX                         | Runtime React from `sandkit.react`                                              |
+| `@modkit/debug`                               | `onDispose` for extra cleanup. No-op until a reload wrap sets the active mod id |
+| `@modkit/utils`                               | `safe`, `isEnabled`, `inGame`, `registerRetroGame`                              |
+| `@modkit/ui`                                  | Shared React UI components                                                      |
+| `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix                           |
 
-Sandkit API types live in `modkit/types/`. Layout mirrors the live object (`sandkit/api`, `sandkit/engine/api`, …). Ambient `sandkit` is in [`modkit/types/global.d.ts`](../modkit/types/global.d.ts); `reloaded` and `WorkerSandkitApi` are in [`modkit/ambient.d.ts`](../modkit/ambient.d.ts).
+Sandkit API types live in `modkit/types/`. Layout mirrors the live object (`sandkit/api`, `sandkit/engine/api`, …). Ambient `sandkit` is in [`modkit/types/global.d.ts`](../modkit/types/global.d.ts); `WorkerSandkitApi` is in [`modkit/ambient.d.ts`](../modkit/ambient.d.ts).
 
 Commands and build output: [Builds](builds.md).

@@ -1,5 +1,5 @@
 /**
- * Interactive mod picker for `npm run dev` when stdin is a TTY and no `--mod` is passed.
+ * Interactive mod picker for `npm run dev:pick` when stdin is a TTY and no `--mod` is passed.
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";

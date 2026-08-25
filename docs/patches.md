@@ -19,9 +19,9 @@ Patch `code` runs outside the game bundle IIFE. Put shared runtime helpers on `g
 | `patches` in that mod's `mod.ts`                 | Production patches (always written)               |
 | `debugPatches` in that mod's `mod.ts` (optional) | Extra debug-only patches (dev / `--debug` builds) |
 
-Release builds (`npm run build`) omit `debugPatches`. Dev builds (`npm run dev`, `--game` / `--debug`) include them. Auto-load last save is a settings-gated runtime helper on the debug companion ([`src/debug/`](../src/debug/)), not a game-file patch.
+Release builds (`npm run build`) omit `debugPatches`. Dev builds (`npm run dev`, `--game` / `--debug`) include them. Auto-load last save is a settings-gated runtime helper on the debug companion ([`src/hot-reload/`](../src/hot-reload/)), not a game-file patch.
 
-The debug companion keeps its patches in [`src/debug/patches.ts`](../src/debug/patches.ts) and re-exports them from `mod.ts`. Other mods may keep patches in `mod.ts`.
+Other mods may keep patches in `mod.ts` or `patches.ts`. The debug companion has no patches.
 
 ## Fields
 

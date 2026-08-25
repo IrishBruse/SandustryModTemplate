@@ -28,13 +28,14 @@ Reads a boolean from `api.settings.get("enabled")`. When the setting is missing 
 
 Define custom fields in `configSchema`. See [config-schema.md](config-schema.md).
 
-The main bundle wraps the entry body so it does not run when the setting is false. Do not put an `enabled` guard in `main.ts`. Import `isEnabled` only for finer checks (for example gating a sub-feature).
-
-Workers do not get the prepend. Call `isEnabled` yourself in `worker.ts` when you need it.
+Call `isEnabled` in `main.ts` or a feature hook when the mod must respect **Mod enabled**. The build does not skip the entry for that setting. It does wrap the main entry in `try` / `catch` and logs failures with `console.error`.
 
 ```ts
 import { isEnabled } from "@modkit/utils";
 
+if (!isEnabled(api)) return;
+
+// Or gate a sub-feature:
 if (isEnabled(api) && otherFlag) {
   // ...
 }

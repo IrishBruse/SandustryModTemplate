@@ -7,7 +7,7 @@ TypeScript template for [Sandustry](https://store.steampowered.com/app/2764460/S
 - **[Multi-mod](layout.md)** — One repo, many mods. Each `src/<name>/` or `examples/<name>/` with a `mod.ts` builds to its own game folder.
 - **[TypeScript](modkit/types/README.md)** — Sandkit API types in `modkit/types/`.
 - **[React HUD](modkit/react.md)** — JSX via `sandkit.react`, plus the [UI kit gallery](ui/README.md).
-- **[Hot reload](builds.md)** — `npm run dev` reloads without a game restart.
+- **[Watch rebuild](builds.md)** — `npm run dev` writes `main.js`. Restart the game to load it.
 - **[Debug helpers](modkit/debug.md)** — companion mod: F12 DevTools, auto-load last save, F3.
 - **[Typed `mod.ts`](layout.md)** — Manifest and [patches](patches.md) in one file per mod.
 
@@ -24,8 +24,9 @@ Full steps: **[Quick start](quick-start.md)**.
 | Command             | Effect                                                                       |
 | ------------------- | ---------------------------------------------------------------------------- |
 | `npm run setup`     | Check install, extract game source to `sandustry/`, link `dist/` and `logs/` |
-| `npm run dev`       | Watch OS mods folder; remove owned mods when the watch stops                 |
-| `npm run build`     | Release to `build/<modinfo.id>/` (Workshop staging)                          |
+| `npm run dev`       | Watch all src/ mods; remove owned mods when the watch stops                  |
+| `npm run dev:pick`  | Same as `dev`, with a TTY picker first                                       |
+| `npm run build`     | Release all src/ mods to `build/<modinfo.id>/` (Workshop staging)            |
 | `npm run publish`   | Runs `npm run build`, then SteamCMD upload (`~/.cache/sandustry-steamcmd/`)  |
 | `npm run typecheck` | TypeScript check                                                             |
 | `npm run test`      | Node tests (`src/**/*.test.ts`)                                              |

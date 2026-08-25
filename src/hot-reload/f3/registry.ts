@@ -17,7 +17,7 @@ export type F3Block =
 
 const sections: F3Section[] = [];
 
-/** Register an F3 section. Returns unregister for hot reload / cleanup. */
+/** Register an F3 section. Returns unregister for cleanup. */
 export function registerF3Section(section: F3Section): () => void {
   sections.push(section);
   return () => {

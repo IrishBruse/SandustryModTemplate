@@ -102,7 +102,7 @@ api.settings.onChange((values) => {
 
 `settings.get` / `getAll` return `string | number | boolean | null` (`ConfigValueV1`). Check the type before you use the value.
 
-The build skips the entry body when **`enabled`** is false. You do not need an `enabled` guard in `main.ts`. See [utils.md](utils.md).
+Call `isEnabled` in `main.ts` when the mod must respect **Mod enabled**. The build does not skip the entry for that setting. See [utils.md](utils.md).
 
 ## Types
 

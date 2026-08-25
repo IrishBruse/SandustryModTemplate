@@ -1,5 +1,4 @@
 import { useEffect, useState, type CSSProperties } from "react";
-import { Interactive, OverlayRoot } from "@modkit/ui";
 import { isModInspectorOpen, setModInspectorOpen, subscribeModInspector } from "./state";
 
 const shellStyle: CSSProperties = {
@@ -73,20 +72,18 @@ export function ModInspectorOverlay() {
   if (!open) return null;
 
   return (
-    <OverlayRoot style={{ zIndex: 10020 }}>
-      <Interactive>
-        <div style={shellStyle} onClick={() => setModInspectorOpen(false)} role="presentation">
-          <div
-            style={panelStyle}
-            onClick={(event) => event.stopPropagation()}
-            role="dialog"
-            aria-label="Mod Inspector"
-          >
-            <div style={titleStyle}>Mod Inspector</div>
-            <p style={hintStyle}>Blank for now. Esc or click outside to close.</p>
-          </div>
+    <dialog className="top-0 left-0 w-full h-screen pointer-events-none" open>
+      <div style={shellStyle} onClick={() => setModInspectorOpen(false)} role="presentation">
+        <div
+          style={panelStyle}
+          onClick={(event) => event.stopPropagation()}
+          role="dialog"
+          aria-label="Mod Inspector"
+        >
+          <div style={titleStyle}>Mod Inspector</div>
+          <p style={hintStyle}>Blank for now. Esc or click outside to close.</p>
         </div>
-      </Interactive>
-    </OverlayRoot>
+      </div>
+    </dialog>
   );
 }

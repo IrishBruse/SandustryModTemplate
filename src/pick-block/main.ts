@@ -1,21 +1,16 @@
-import { onDispose } from "@modkit/debug";
 import { isEnabled } from "@modkit/utils";
-
-/** Read by the bundle patch in `patches.ts`. */
-const INSTANT_FLAG = "__sandkitPickBlockInstant__";
 
 const api = sandkit.api;
 
-function sync(enabled: boolean) {
-  (globalThis as unknown as Record<string, boolean | undefined>)[INSTANT_FLAG] = enabled;
-}
+console.log("Loaded");
 
 function apply() {
-  sync(isEnabled(api));
+  const enabled = isEnabled(api);
+  console.log(enabled ? "enabled" : "disabled");
+
+  (globalThis as any).__sandkitPickBlockInstant__ = enabled;
 }
 
 apply();
-api.settings.onChange(apply);
-onDispose(() => sync(false));
 
-console.log(`${reloaded ? "reloaded" : "loaded"} — Picker picks instantly (default F)`);
+console.log("loaded — Picker picks instantly (default F)");

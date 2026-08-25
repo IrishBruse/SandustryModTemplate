@@ -10,11 +10,11 @@ import { gameModDir, syncModGameFolders } from "./mod-path.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 
-/** Mod source roots relative to the repo root. */
+/** All mod source roots (discovery, isolation, setup). */
 export const MOD_ROOTS = ["src", "examples"];
 
-/** Dev watch without `--examples` only builds `src/`. */
-export const DEV_MOD_ROOTS = ["src"];
+/** Default for `npm run build` / `npm run dev` — `src/` only. */
+export const DEFAULT_MOD_ROOTS = ["src"];
 
 /**
  * @param {string[]} argv
@@ -22,11 +22,10 @@ export const DEV_MOD_ROOTS = ["src"];
  */
 export function resolveModRoots(argv) {
   if (argv.includes("--examples")) return ["examples"];
-  if (argv.includes("--watch")) return DEV_MOD_ROOTS;
-  return MOD_ROOTS;
+  return DEFAULT_MOD_ROOTS;
 }
 
-/** Companion mod folder. Debug builds install it; release builds omit it. */
+/** Companion mod folder. Debug builds install it to the OS mods folder; release still stages it under `build/`. */
 export const DEBUG_MOD_FOLDER = "hot-reload";
 
 /** Workshop staging root (`npm run build` / `npm run publish`). */
@@ -289,14 +288,7 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
     }
   }
 
-  if (!includeDebugKit) {
-    selected = selected.filter((mod) => mod.folder !== DEBUG_MOD_FOLDER);
-    if (selected.length === 0) {
-      throw new Error(
-        "src/hot-reload is omitted from release builds. Pass --debug or use npm run dev.",
-      );
-    }
-  } else {
+  if (includeDebugKit) {
     const debugMod = allDiscovered.find((mod) => mod.folder === DEBUG_MOD_FOLDER);
     if (debugMod && !selected.some((mod) => mod.folder === DEBUG_MOD_FOLDER)) {
       selected = [...selected, debugMod];
@@ -354,7 +346,7 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
 /**
  * Link `dist/` to the OS mods folder and create each game mod folder.
  * Stale game folders are removed only when a src folder is gone, not when `--mod` filters the build.
- * Release builds omit `src/hot-reload` from keepFolders so leftover debug companion folders are removed.
+ * Non-debug installs omit `src/hot-reload` from keepFolders so leftover companion folders are removed.
  * @param {string} repoRoot
  * @param {LoadedMod[]} mods
  * @param {{ includeDebugKit?: boolean }} [options]

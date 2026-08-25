@@ -29,14 +29,12 @@ Under **Options → Mods → Survival Mode**:
 - **Mod enabled** — turn all survival rules off.
 - **Max step cells** — ledge step height when walking (default **3**).
 
-## Dev / hot reload
+## Dev
 
-Use the dev watcher (debug build — required for hot reload):
+Use the dev watcher:
 
 ```bash
 npm run dev -- --mod survival-mode
 ```
 
-On reload, the console should show `reloaded — jump velocity -380`.
-
-`npm run build` without `--debug` still defines `reloaded` as `false` at compile time. Use `npm run dev` or `npm run build -- --mod survival-mode --debug` for dev.
+Restart the game after a save. The console should show `loaded — jump velocity -380`.
