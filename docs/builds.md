@@ -106,3 +106,9 @@ The command runs `npm run build` for that folder. The bundle lands in `build/<mo
 **`workshop.md` syntax:** `#` / `##` headings, `**bold**`, numbered lists (`1.`), and bullet lists (`-`). Do not add links or raw URLs — Steam Workshop virus scan rejects them and publish will fail. Legacy `workshop.txt` (raw BBCode) still works if you keep it instead.
 
 Steam **change notes** come from that mod's `CHANGELOG.md` (Keep a Changelog). Write them for players: what changed in play, not how it was built. `npm run publish` uses the `##` section that matches `modinfo.version` (for example `## 0.2.0` or `## [0.2.0] - 2026-08-22`). If that heading is missing, it uses `## Unreleased` and warns you to rename the heading to the version. If there is no changelog, it sends the version string. The confirm step prints the full Steam change-notes text before Upload / Cancel.
+
+## GitHub Actions
+
+Pushes, pull requests, and manual runs execute `.github/workflows/ci.yml` on **Ubuntu** and **Windows** (Node 24). Each job runs `npm ci`, `npm test`, `npm run lint`, and `npm run build`.
+
+The workflow does **not** run `npm run setup` or `npm run publish`. Those steps need the game or SteamCMD credentials.

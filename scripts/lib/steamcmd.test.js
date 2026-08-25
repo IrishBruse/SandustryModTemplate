@@ -198,4 +198,5 @@ test("npmCli uses npm.cmd on Windows", () => {
   assert.equal(npmCli("win32"), "npm.cmd");
   assert.equal(npmCli("linux"), "npm");
   assert.equal(npmCli("darwin"), "npm");
+  assert.equal(npmCli(), process.platform === "win32" ? "npm.cmd" : "npm");
 });
