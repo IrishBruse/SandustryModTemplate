@@ -2,7 +2,7 @@
   var MAIN_NAME = "Sandustry Mod Template";
   var API_NAME = "Sandkit API";
   var MAIN_LINK = "#/";
-  var API_LINK = "#/api/README";
+  var API_LINK = "#/api/modules";
 
   function isApiRoute(route) {
     var path = (route && route.path) || location.hash.slice(1) || "/";

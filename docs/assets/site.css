@@ -156,8 +156,16 @@ html[data-smt-docs-theme="dark"] ::-webkit-scrollbar-button {
   color: var(--sidebar-link-color-active, var(--theme-color));
   font-weight: 600;
 }
-/* Top-level lone sidebar items wrap the link in <p>; Docsify core only styles li.active > a. */
-.sidebar-nav li.active a.page-link {
+/* Active page link only — not nested children under an active parent. */
+.sidebar-nav li.active > a.page-link,
+.sidebar-nav li.active > p > a.page-link {
+  color: var(--sidebar-link-color-active, var(--theme-color));
+}
+.sidebar-nav li.active ul a.page-link {
+  color: var(--sidebar-link-color, var(--color-text));
+}
+.sidebar-nav li.active ul li.active > a.page-link,
+.sidebar-nav li.active ul li.active > p > a.page-link {
   color: var(--sidebar-link-color-active, var(--theme-color));
 }
 .sidebar-toggle,
@@ -637,4 +645,147 @@ iframe.ui-canvas {
 .search .matching-post .title {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 0.82rem;
+}
+
+/* Search field: fill the input row (Docsify default leaves unused vertical space). */
+.search .input-wrap {
+  display: flex;
+  align-items: stretch;
+  box-sizing: border-box;
+  min-height: 2.75rem;
+}
+
+.search input[type="search"] {
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  align-self: stretch;
+  height: auto;
+  min-height: 2.75rem;
+  margin: 0;
+  padding-block: 0.65rem;
+  padding-inline: 0.75rem 2.5rem;
+  line-height: 1.35;
+  font-size: 1rem;
+}
+
+.search .clear-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  height: auto;
+  min-height: 2.75rem;
+}
+
+/* Official API module index: larger landing + grouped namespace chips. */
+.smt-api-landing {
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+.smt-api-landing h1 {
+  font-size: clamp(1.85rem, 2.4vw + 1rem, 2.5rem);
+  margin-block: 0 0.55em;
+  line-height: 1.2;
+}
+
+.smt-api-landing h2 {
+  margin-block: 1.5em 0.55em;
+  font-size: 1.35em;
+}
+
+.smt-api-landing h3 {
+  margin-block: 1.1em 0.4em;
+  font-size: 1.05em;
+  font-weight: 600;
+  color: var(--heading-color, var(--color-text));
+}
+
+.smt-api-landing > p {
+  font-size: 1.05em;
+  margin-block: 0 1em;
+}
+
+.smt-api-landing > ul {
+  font-size: 1.08em;
+  line-height: 1.75;
+  margin-block: 0.35em 1.1em;
+}
+
+.smt-api-landing > ul > li {
+  margin-block: 0.28em;
+}
+
+.smt-api-landing code {
+  font-size: 0.95em;
+}
+
+.smt-api-landing ul.smt-api-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr));
+  align-items: start;
+  gap: 0.35rem 1.25rem;
+  list-style: none;
+  margin: 0 0 1.15em;
+  padding: 0.7rem 0.95rem;
+  border: 1px solid var(--border-color, rgba(0, 0, 0, 0.14));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--color-text, #333) 4%, var(--color-bg, #fff));
+  font-size: 0.98em;
+  line-height: 1.5;
+}
+
+.smt-api-landing ul.smt-api-group > li {
+  margin: 0;
+  padding: 0.18rem 0;
+}
+
+.smt-api-landing ul.smt-api-group > li > a {
+  font-weight: 600;
+}
+
+.smt-api-landing ul.smt-api-tree {
+  list-style: none;
+  margin: 0.05rem 0 0.15rem;
+  padding: 0 0 0 0.15rem;
+}
+
+.smt-api-landing ul.smt-api-tree li {
+  position: relative;
+  margin: 0;
+  padding: 0.02rem 0 0.02rem 0.95rem;
+}
+
+.smt-api-landing ul.smt-api-tree li::before,
+.smt-api-landing ul.smt-api-tree li::after {
+  content: "";
+  position: absolute;
+  background: color-mix(in srgb, var(--color-text, #ddd) 38%, transparent);
+  pointer-events: none;
+}
+
+/* Vertical stem */
+.smt-api-landing ul.smt-api-tree li::after {
+  left: 0.28rem;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+}
+
+/* Horizontal elbow */
+.smt-api-landing ul.smt-api-tree li::before {
+  left: 0.28rem;
+  top: 0.78em;
+  width: 0.55rem;
+  height: 1px;
+}
+
+/* Last child: stem stops at the elbow */
+.smt-api-landing ul.smt-api-tree li:last-child::after {
+  bottom: auto;
+  height: 0.78em;
+}
+
+.smt-api-landing ul.smt-api-tree a {
+  font-weight: 500;
 }

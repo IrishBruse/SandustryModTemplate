@@ -20,7 +20,7 @@ Shows every `configSchema` field type the game accepts: **boolean**, **number**,
 
 There is no free-text `string` type and no `enum` type. Use `choice` for a fixed set of string values.
 
-Full reference: [`docs/modkit/config-schema.md`](../../docs/modkit/config-schema.md).
+Full reference: [`docs/config-schema.md`](../../docs/config-schema.md).
 
 ## Copy this mod
 

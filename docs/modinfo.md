@@ -4,7 +4,7 @@ Manifest for one mod. Export `const modinfo = defineModInfo({ ... })` from `@mod
 
 The build writes `modinfo.json` into `dist/<modinfo.id>/` (and `build/<modinfo.id>/` on `npm run build`). The game folder name is **`id`**, not the repo folder and not **`name`**.
 
-Shapes: [`modkit/modinfo.ts`](../modkit/modinfo.ts). Settings UI: [configSchema](modkit/config-schema.md). Bundle rewrites: [Patches](patches.md). Layout: [Folder layout](layout.md).
+Shapes: [`modkit/modinfo.ts`](../modkit/modinfo.ts). Settings UI: [configSchema](config-schema.md). Bundle rewrites: [Patches](patches.md). Layout: [Folder layout](layout.md).
 
 Canonical starter: [`src/template/modinfo.ts`](../src/template/modinfo.ts). Settings showcase: [`examples/api/settings/`](../examples/api/settings/).
 
@@ -30,7 +30,7 @@ The build fails if `id` or `name` is missing or blank.
 | `author`           | `string`                 | Author label.                                                                                                                                   |
 | `dependencies`     | `string[]`               | Other mods by **`id`**. Empty list is fine.                                                                                                     |
 | `loadOrder`        | `number`                 | Load order. Lower runs first. Hot Reload uses `-2147483648` so it loads before other local mods.                                                |
-| `configSchema`     | object                   | Options → Mods fields. Max 64. See [configSchema](modkit/config-schema.md).                                                                     |
+| `configSchema`     | object                   | Options → Mods fields. Max 64. See [configSchema](config-schema.md).                                                                            |
 | `configOverrides`  | `Record<string, string>` | Paths under `config/`.                                                                                                                          |
 | `textureOverrides` | sheets or path strings   | Paths under `assets/`. A sheet needs `path`, `frameWidth`, `frames`, `intervalMs`.                                                              |
 | `map`              | `MapConfig`              | Custom map under `map/` (`blueprints`, `width`, `height`, `spawn`, optional unstuck / deployment / bounds / lighting / parallax / colour maps). |

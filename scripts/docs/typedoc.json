@@ -2,7 +2,6 @@
   "$schema": "https://typedoc.org/schema.json",
   "name": "Sandkit API",
   "entryPoints": [
-    "../../modkit/types/global.d.ts",
     "../../modkit/types/shared/asset.d.ts",
     "../../modkit/types/shared/engine.d.ts",
     "../../modkit/types/shared/jsonvalue.d.ts",
@@ -29,7 +28,7 @@
   "categorizeByGroup": true,
   "membersWithOwnFile": ["Class", "Enum"],
   "expandParameters": true,
-  "indexFormat": "table",
+  "indexFormat": "list",
   "gitRevision": "main",
   "validation": {
     "notDocumented": false,

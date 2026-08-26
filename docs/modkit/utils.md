@@ -26,7 +26,7 @@ const value = safe(() => api.settings.get("enabled"));
 
 Reads a boolean from `api.settings.get("enabled")`. When the setting is missing or not a boolean, it defaults to `true`.
 
-Define custom fields in `configSchema`. See [config-schema.md](config-schema.md).
+Define custom fields in `configSchema`. See [config-schema.md](../config-schema.md).
 
 Call `isEnabled` in `main.ts` or a feature hook when the mod must respect **Mod enabled**. The build does not skip the entry for that setting. It does wrap the main entry in `try` / `catch` and logs failures with `console.error`.
 

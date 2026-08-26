@@ -5,7 +5,7 @@ import { defineModInfo } from "@modkit/modinfo";
  * `boolean`, `number`, and `choice`.
  *
  * Open Options → Mods → Settings to edit these in the UI.
- * See `docs/modkit/config-schema.md`.
+ * See `docs/config-schema.md`.
  */
 export const modinfo = defineModInfo({
   manifestVersion: 1,

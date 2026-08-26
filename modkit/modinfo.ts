@@ -11,7 +11,7 @@
  * Put feature switches in `configSchema` rather than hard-coded flags.
  *
  * Game-supported field types (validated in `sandustry/workshop-mods.js`):
- * `boolean`, `number`, `choice`. See `docs/modkit/config-schema.md`.
+ * `boolean`, `number`, `choice`. See `docs/config-schema.md`.
  */
 
 /** Field types the game accepts in `configSchema`. */

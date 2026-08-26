@@ -1,0 +1,25 @@
+# sandkit.api.structures.processing (worker)
+
+Structure processing enablement checks.
+
+## Functions <!-- {docsify-ignore} -->
+
+### sandkit.api.structures.processing.isEnabledAt() (worker) :id=isenabledat
+
+```ts
+isEnabledAt(...args: CellCoordinates): boolean
+```
+
+Defined in: [shared/api/structures.d.ts:111](https://github.com/IrishBruse/SandustryModTemplate/blob/main/modkit/types/shared/api/structures.d.ts#L111)
+
+Return true when processing is enabled at the cell.
+
+#### Parameters
+
+##### args
+
+...[`CellCoordinates`](api/shared.player.md#cellcoordinates)
+
+#### Returns
+
+`boolean`

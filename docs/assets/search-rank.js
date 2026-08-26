@@ -28,7 +28,10 @@
       .toLowerCase()
       .replace(/\s+\(worker\)$/, "")
       .replace(/\(\)\s*$/, "")
-      .replace(/\s+/g, " ")
+      .replace(/[/\\]+/g, ".")
+      .replace(/[_\s]+/g, ".")
+      .replace(/\.+/g, ".")
+      .replace(/^\.+|\.+$/g, "")
       .trim();
   }
 
@@ -41,9 +44,14 @@
       : "";
   }
 
-  function scoreTitle(rawTitle, query) {
+  function displayHref(el) {
+    var link = el.querySelector("a");
+    return link ? String(link.getAttribute("href") || "") : "";
+  }
+
+  function scoreTitle(rawTitle, query, href) {
     var t = normalize(rawTitle);
-    var q = normalize(query).replace(/\s+/g, ".");
+    var q = normalize(query);
     if (!t || !q) return 0;
 
     var worker = /\(worker\)/i.test(rawTitle) ? -20 : 0;
@@ -57,6 +65,21 @@
       var dotted = q.indexOf(".") !== -1 ? 90 : 0;
       return 480 + dotted + Math.max(0, 80 - t.length) + worker;
     }
+
+    var parts = q.split(".").filter(Boolean);
+    if (parts.length > 1) {
+      var i = 0;
+      var pos = 0;
+      for (; i < parts.length; i++) {
+        var at = t.indexOf(parts[i], pos);
+        if (at === -1) break;
+        pos = at + parts[i].length;
+      }
+      if (i === parts.length) return 360 + parts.length * 20 + worker;
+    }
+
+    var path = normalize(href.replace(/^#\/?/, "").replace(/\?.*$/, ""));
+    if (path && path.indexOf(q) !== -1) return 200 + worker;
 
     return 40 + worker;
   }
@@ -77,8 +100,8 @@
     });
 
     ranked.sort(function (a, b) {
-      var sa = scoreTitle(displayTitle(a), q);
-      var sb = scoreTitle(displayTitle(b), q);
+      var sa = scoreTitle(displayTitle(a), q, displayHref(a));
+      var sb = scoreTitle(displayTitle(b), q, displayHref(b));
       if (sb !== sa) return sb - sa;
       return displayTitle(a).length - displayTitle(b).length;
     });

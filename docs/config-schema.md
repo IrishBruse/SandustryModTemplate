@@ -4,7 +4,7 @@
 
 Read values with `sandkit.api.settings.get(key)`. Subscribe with `settings.onChange`. Put feature switches here instead of hard-coded flags.
 
-Canonical showcase: [`examples/api/settings/`](../../examples/api/settings/).
+Canonical showcase: [`examples/api/settings/`](../examples/api/settings/).
 
 Game validation lives in `sandustry/workshop-mods.js` (`validateConfigSchema`). The Options UI renders the same three types.
 
@@ -102,8 +102,8 @@ api.settings.onChange((values) => {
 
 `settings.get` / `getAll` return `string | number | boolean | null` (`ConfigValueV1`). Check the type before you use the value.
 
-Call `isEnabled` in `main.ts` when the mod must respect **Mod enabled**. The build does not skip the entry for that setting. See [utils.md](utils.md).
+Call `isEnabled` in `main.ts` when the mod must respect **Mod enabled**. The build does not skip the entry for that setting. See [utils.md](modkit/utils.md).
 
 ## Types
 
-TypeScript shapes live in [`modkit/modinfo.ts`](../../modkit/modinfo.ts) (`ConfigSchema`, `ConfigSchemaField`, …). Keep them aligned with the game validator — do not add field types the game rejects.
+TypeScript shapes live in [`modkit/modinfo.ts`](../modkit/modinfo.ts) (`ConfigSchema`, `ConfigSchemaField`, …). Keep them aligned with the game validator — do not add field types the game rejects.
