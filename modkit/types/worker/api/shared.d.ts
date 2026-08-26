@@ -1,4 +1,5 @@
-import { shared } from "../../shared";
+// Aliased: this module declares its own `shared` namespace below.
+import { shared as sharedApi } from "../../shared";
 
 /**
  * Worker thread only.
@@ -28,10 +29,10 @@ export namespace shared {
      * Read an existing buffer without validating type or length.
      * @param key - Buffer name shared across threads.
      */
-    export import get = shared.api.shared.buffers.get
+    export import get = sharedApi.api.shared.buffers.get
   }
   /** Typed array backing store for a shared buffer. */
-  export import SharedArray = shared.api.shared.SharedArray
+  export import SharedArray = sharedApi.api.shared.SharedArray
   /** Discriminator for the underlying typed array kind. */
-  export import SharedArrayType = shared.api.shared.SharedArrayType
+  export import SharedArrayType = sharedApi.api.shared.SharedArrayType
 }

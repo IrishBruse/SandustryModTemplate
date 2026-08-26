@@ -7,7 +7,9 @@
  */
 import { CellCoordinates, Vector2 } from "../../shared/player";
 import { shared } from "../../shared";
-import { processing } from "./processing";
+// Aliased: `structures` declares a nested `processing` namespace that would
+// otherwise shadow this import.
+import { processing as processingApi } from "./processing";
 
 export namespace structures {
 
@@ -297,16 +299,16 @@ export namespace structures {
   }
 
   /** Planter box recipe definition shape. */
-  export type PlanterBoxRecipeDefinitionV1 = processing.PlanterBoxRecipeDefinitionV1;
+  export type PlanterBoxRecipeDefinitionV1 = processingApi.PlanterBoxRecipeDefinitionV1;
   /** Shaker recipe definition shape. */
-  export type ShakerRecipeDefinitionV1 = processing.ShakerRecipeDefinitionV1;
+  export type ShakerRecipeDefinitionV1 = processingApi.ShakerRecipeDefinitionV1;
   /** Kinetic press recipe definition shape. */
-  export type KineticPressRecipeDefinitionV1 = processing.KineticPressRecipeDefinitionV1;
+  export type KineticPressRecipeDefinitionV1 = processingApi.KineticPressRecipeDefinitionV1;
 
   /** Weighted refinery recipe definition shape. */
   export interface WeightedRefineryRecipeDefinitionV1 {
-    input: processing.WeightedRecipeOutput["elementType"];
-    outputs: processing.WeightedRecipeOutput[];
+    input: processingApi.WeightedRecipeOutput["elementType"];
+    outputs: processingApi.WeightedRecipeOutput[];
   }
 
   /** Custom structure processing definition shape. */

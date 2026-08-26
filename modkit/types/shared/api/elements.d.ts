@@ -1,6 +1,6 @@
-import type { ElementType as ElementTypeEnum } from "../../../sandkit/enums/index";
+import type { ElementType as ElementTypeEnum } from "../../sandkit/enums/index";
 import type { CellCoordinates, Vector2 } from "../../shared/player";
-import type { CellId, LooseString, TaggedNumber } from "../../nominal";
+import type { CellId, LooseString, TaggedNumber } from "../nominal";
 
 /**
  * Shared `sandkit.api.elements` base — element reads and definitions.
