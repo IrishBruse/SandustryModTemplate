@@ -29,11 +29,11 @@ Nested:
 
 4×4 grid (or larger for big structures). Each cell is a **`CellType` terrain id**, not a boolean.
 
-| Value | Meaning |
-| ----- | ------- |
-| `0` | Empty — no terrain placed; sand/elements pass through |
-| `15` | Block — solid foundation tile |
-| `19` / `20` | ConveyorLeft / ConveyorRight |
+| Value          | Meaning                                                   |
+| -------------- | --------------------------------------------------------- |
+| `0`            | Empty — no terrain placed; sand/elements pass through     |
+| `15`           | Block — solid foundation tile                             |
+| `19` / `20`    | ConveyorLeft / ConveyorRight                              |
 | mod terrain id | Custom terrain from `terrains.register` (e.g. glass `45`) |
 
 - **Fully transparent (logic):** omit `shape`, or use all `0`s. Filters, lights, collectors, liquid vents use no `shape`.
