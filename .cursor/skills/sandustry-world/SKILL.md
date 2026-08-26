@@ -11,7 +11,7 @@ Types: `modkit/types/sandkit/api/{world,elements,grid,terrains,maps}.d.ts`. Enum
 
 ## Probe
 
-1. `sandustry-mcp`: `list_pages` (title **Sandustry**), then `evaluate_script` with `waitForStableDom: false`.
+1. **sandustry-mcp** attach, then `evaluate_script` with `waitForStableDom: false`.
 2. Use `__debug.state` and `__debug.config`. `sandkit` is **not** on `window`; `__debug.state === sandkit.state`.
 3. Read **one cell** or a **coarse stride** sample. Do not dump `cellIds`, `wallData.data`, or `shadowMap.data`.
 4. Done when live keys match the reference for that branch (or the gap is logged in `references/gaps.md`).
