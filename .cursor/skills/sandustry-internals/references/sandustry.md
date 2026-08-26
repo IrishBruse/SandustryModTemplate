@@ -1,6 +1,8 @@
 # Extracted `sandustry/`
 
-`package.json` version **0.5.2**. Entry `main.js`. Steamworks via `steamworks.js`.
+Setup writes versioned folders under `sandustry/<version>-<branch>/` (for example `sandustry/0.5.2-mods/`). `sandustry/current/` is a symlink to the folder from the last successful `npm run setup`. Older extracts stay on disk when you switch game version or Steam branch.
+
+Current extract (`sandustry/current/`): `package.json` version **0.5.2**, [mods] branch. Entry `main.js`. Steamworks via `steamworks.js`.
 
 ## Electron process
 
@@ -23,4 +25,4 @@ CLI: `--sandustry-locale=`, `--sandustry-gpu-pref-relaunched`. SharedArrayBuffer
 
 Workers: `js/simulation-worker.js`, `manager-worker.js`, `utility-worker.js`, `external-mod-runtime.js`, `external-mod-worker-runtime.js`. Locales under `js/locales/`. Procgen prefab `img/procgen/prefabs/*/config.json`.
 
-Pretty bundle for patch `find` strings: `sandustry/.formatted-source/bundle.js`. Copy finds from the **current** extract after a game update (`docs/patches.md`).
+Pretty bundle for patch `find` strings: `sandustry/current/.formatted-source/bundle.js`. Copy finds from the **current** extract after a game update (`docs/patches.md`).

@@ -6,7 +6,7 @@ Read values with `sandkit.api.settings.get(key)`. Subscribe with `settings.onCha
 
 Canonical showcase: [`examples/api/settings/`](../examples/api/settings/).
 
-Game validation lives in `sandustry/workshop-mods.js` (`validateConfigSchema`). The Options UI renders the same three types.
+Game validation lives in `sandustry/current/workshop-mods.js` (`validateConfigSchema`). The Options UI renders the same three types.
 
 ## Field types
 

@@ -51,7 +51,7 @@ Docs canvases use the same compiler. `npm run ui:css` writes [docs/ui/canvas/_pr
 
 ### Verify
 
-Static check against an extracted `sandustry/dist/js/bundle.js` (`npm run setup`):
+Static check against an extracted `sandustry/current/dist/js/bundle.js` (`npm run setup`):
 
 | Selector           | In the game CSS |
 | ------------------ | --------------- |
@@ -70,7 +70,7 @@ In game:
 ## Commands
 
 ```bash
-npm run setup            # check install, extract sandustry/, link dist/ and logs/ (one time)
+npm run setup            # check install, extract sandustry/<version>-<branch>/, link dist/ and logs/ (one time)
 npm run dev              # watch all src/ mods (debug + sourcemaps)
 npm run dev:release      # watch without debug helpers, sourcemaps, or hot-reload
 npm run dev:pick         # TTY picker; last choice pre-selected

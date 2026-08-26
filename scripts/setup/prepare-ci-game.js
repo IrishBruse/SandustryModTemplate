@@ -20,6 +20,10 @@ rmSync(DEST, { recursive: true, force: true });
 rmSync(ASAR_SRC, { recursive: true, force: true });
 
 mkdirSync(join(ASAR_SRC, "dist", "js"), { recursive: true });
+writeFileSync(
+  join(ASAR_SRC, "package.json"),
+  `${JSON.stringify({ name: "sandustry", version: "0.5.2" }, null, 2)}\n`,
+);
 writeFileSync(join(ASAR_SRC, "dist", "js", "bundle.js"), "// sandkit fixture for CI\n");
 writeFileSync(join(ASAR_SRC, "index.html"), "<!doctype html>\n");
 

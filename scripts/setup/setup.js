@@ -6,7 +6,8 @@
  * Sandustry binary, app.asar, Steam [mods] beta, sandkit in the extracted bundle.
  *
  * Layout:
- *   sandustry/   game JS/JSON/HTML/CSS from app.asar
+ *   sandustry/<version>-<branch>/  game JS/JSON/HTML/CSS from app.asar (e.g. 0.5.2-mods)
+ *   sandustry/current/             symlink to the folder from the last setup
  *   dist/        symlink (Linux) / junction (Windows) to sandustry mods folder
  *   logs/        symlink (Linux) / junction (Windows) to sandustry logs
  *                Linux: ~/.config/sandustry/logs
@@ -35,15 +36,25 @@ import {
 import { discoverMods, MOD_ROOTS } from "../lib/mods.js";
 import { ensureRepoDistLink } from "../lib/mod-path.js";
 import { SANDUSTRY, SANDUSTRY_DIR } from "../lib/sandustry-common.js";
+import {
+  BUNDLE_RELS,
+  ensureExtractRoot,
+  gameExtractFolderName,
+  readBundleSandkitFromAsar,
+  readGameVersionFromAsar,
+  resolveGameBranchKey,
+  sandustryExtractRoot,
+  updateCurrentExtractLink,
+  versionedExtractDir,
+} from "../lib/sandustry-extract.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const ASAR = join(SANDUSTRY_DIR, "resources/app.asar");
-const SOURCE_DEST = join(ROOT, "sandustry");
+const EXTRACT_ROOT = sandustryExtractRoot(ROOT);
 const LOGS_SRC = sandustryLogsDir();
 const LOGS_DEST = join(ROOT, "logs");
 const MODS_DIR = sandustryModsDir();
 const SANDUSTRY_APP_ID = "2764460";
-const BUNDLE_RELS = ["dist/js/bundle.js", "js/bundle.js"];
 /** Previous references/ folder (source extract, logs link, workshop copies). */
 const LEGACY_REFERENCES = join(ROOT, "references");
 
@@ -171,7 +182,7 @@ function appManifestPath(installDir) {
 }
 
 /** @param {string} acfPath */
-function steamBetaKey(acfPath) {
+function readSteamBetaKey(acfPath) {
   const text = readFileSync(acfPath, "utf8");
   const match = text.match(/"(?:BetaKey|betakey)"\s+"([^"]*)"/i);
   return match ? match[1].trim() : "";
@@ -186,7 +197,7 @@ function checkSteamModsBeta() {
     return;
   }
 
-  const beta = steamBetaKey(acf);
+  const beta = readSteamBetaKey(acf);
   if (beta.toLowerCase() === "mods") {
     ok(`Steam [mods] beta (${acf})`);
     return;
@@ -206,23 +217,34 @@ function removeLegacyReferencesDir() {
   console.log("Removed legacy references/");
 }
 
-/** @param {string[]} listed */
-function bundleRelFromListing(listed) {
-  const rels = new Set(listed.map(asarRelPath));
-  return BUNDLE_RELS.find((rel) => rels.has(rel)) ?? null;
+/**
+ * @param {string[]} listed
+ * @param {string | null | undefined} betaKey
+ * @returns {{ folderName: string; sourceDest: string; bundleRel: string | null }}
+ */
+function resolveExtractTarget(listed, betaKey) {
+  const version = readGameVersionFromAsar(ASAR, listed);
+  const bundleProbe = readBundleSandkitFromAsar(ASAR, listed);
+  const branchKey = resolveGameBranchKey(betaKey, bundleProbe?.hasSandkit ?? false);
+  const folderName = gameExtractFolderName(version, branchKey);
+  return {
+    folderName,
+    sourceDest: versionedExtractDir(EXTRACT_ROOT, folderName),
+    bundleRel: bundleProbe?.rel ?? null,
+  };
 }
 
-/** @param {string[]} listed */
-function extractGameSource(listed) {
-  rmSync(SOURCE_DEST, { recursive: true, force: true });
-  mkdirSync(SOURCE_DEST, { recursive: true });
+/** @param {string[]} listed @param {string} sourceDest */
+function extractGameSource(listed, sourceDest, folderName) {
+  rmSync(sourceDest, { recursive: true, force: true });
+  mkdirSync(sourceDest, { recursive: true });
 
   let count = 0;
   for (const entry of listed) {
     const relPath = asarRelPath(entry);
     if (!relPath || !isGameSourceFile(relPath)) continue;
 
-    const dest = join(SOURCE_DEST, relPath);
+    const dest = join(sourceDest, relPath);
     mkdirSync(dirname(dest), { recursive: true });
     writeFileSync(dest, extractFile(ASAR, asarExtractPath(entry)));
     count += 1;
@@ -230,19 +252,26 @@ function extractGameSource(listed) {
 
   if (count === 0) {
     fail("Extracted 0 game source files from app.asar.");
-    return;
+    return false;
   }
-  ok(`Extracted ${count} game source files -> sandustry/`);
+
+  const linkStatus = updateCurrentExtractLink(EXTRACT_ROOT, folderName);
+  const linkNote =
+    linkStatus === "already"
+      ? " (sandustry/current already linked)"
+      : " and linked sandustry/current";
+  ok(`Extracted ${count} game source files -> sandustry/${folderName}/${linkNote}`);
+  return true;
 }
 
-/** @param {string | null} bundleRel */
-function checkSandkitInBundle(bundleRel) {
+/** @param {string | null} bundleRel @param {string} sourceDest @param {string} folderName */
+function checkSandkitInBundle(bundleRel, sourceDest, folderName) {
   if (!bundleRel) {
     fail(`No ${BUNDLE_RELS.join(" or ")} in app.asar. Opt into the Steam [mods] beta.`);
     return;
   }
 
-  const bundlePath = join(SOURCE_DEST, bundleRel);
+  const bundlePath = join(sourceDest, bundleRel);
   if (!existsSync(bundlePath)) {
     fail(`Extracted asar is missing ${bundleRel}.`);
     return;
@@ -250,11 +279,11 @@ function checkSandkitInBundle(bundleRel) {
 
   const bundle = readFileSync(bundlePath, "utf8");
   if (bundle.includes("sandkit")) {
-    ok(`sandkit in sandustry/${bundleRel} ([mods] branch)`);
+    ok(`sandkit in sandustry/${folderName}/${bundleRel} ([mods] branch)`);
     return;
   }
   fail(
-    `sandustry/${bundleRel} has no sandkit. Opt into the Steam [mods] beta (Library → Properties → Betas).`,
+    `sandustry/${folderName}/${bundleRel} has no sandkit. Opt into the Steam [mods] beta (Library → Properties → Betas).`,
   );
 }
 
@@ -319,10 +348,14 @@ if (haveBinary) checkSteamModsBeta();
 removeLegacyReferencesDir();
 
 if (haveAsar) {
+  ensureExtractRoot(EXTRACT_ROOT);
   const listed = listPackage(ASAR, { isPack: false });
-  const bundleRel = bundleRelFromListing(listed);
-  extractGameSource(listed);
-  checkSandkitInBundle(bundleRel);
+  const acf = appManifestPath(SANDUSTRY_DIR);
+  const betaKey = acf ? readSteamBetaKey(acf) : "";
+  const target = resolveExtractTarget(listed, betaKey);
+  if (target && extractGameSource(listed, target.sourceDest, target.folderName)) {
+    checkSandkitInBundle(target.bundleRel, target.sourceDest, target.folderName);
+  }
 }
 
 ensureUserDataDirs();

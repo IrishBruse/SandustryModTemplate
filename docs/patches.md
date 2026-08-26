@@ -21,7 +21,7 @@ Define the list with `definePatches`. Export it from that mod's `modinfo.ts`. Yo
 
 Release (`npm run build`, `npm run dev:release`) omits `debugPatches`. Dev (`npm run dev`) includes both.
 
-The hot-reload companion has no patches. Auto-load last save is a runtime helper on that companion, not a file patch.
+The hot-reload companion ships **`debugPatches`** that skip outline shader build, `warmup`, and the **Compiling shaders…** splash when `localStorage["hot-reload.skipShaderRecomp"]` is `"true"` (Options → **Skip shader recompile**). Auto-load last save is a runtime helper on that companion, not a file patch.
 
 The browser bundle stubs `@modkit/patches` so patch payloads stay out of `main.js`.
 
@@ -96,7 +96,7 @@ Replace each match with `code`. The collector sample replaces a Gold / liquidGol
 }
 ```
 
-Copy `find` from the **current** extracted `sandustry/` bundle. Do not reuse old minified snippets after a game update.
+Copy `find` from the **current** extracted `sandustry/current/` bundle. Do not reuse old minified snippets after a game update.
 
 ### `wrap`
 
