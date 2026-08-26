@@ -8,7 +8,7 @@
   - [Troubleshooting](troubleshooting.md)
   - [Hot Reload](hot-reload/)
 
-- Official API
+- Sandkit API
   - [Module index](api/modules.md)
   - [Main thread](api/sandkit.api.md)
   - [Worker](api/sandkit.api.worker.md)

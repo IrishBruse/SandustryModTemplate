@@ -677,7 +677,7 @@ iframe.ui-canvas {
   min-height: 2.75rem;
 }
 
-/* Official API module index: larger landing + grouped namespace chips. */
+/* Sandkit API module index: larger landing + grouped namespace chips. */
 .smt-api-landing {
   font-size: 1.125rem;
   line-height: 1.6;

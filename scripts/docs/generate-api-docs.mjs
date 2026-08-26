@@ -281,7 +281,7 @@ function writeModuleIndex(outDir, linkMap, mainNs, workerNs, engineNs) {
     "",
     "# Sandkit API",
     "",
-    "Official Sandkit surface used by mods. Use groups below to find a namespace — the sidebar lists every page.",
+    "Sandkit namespaces used by mods. Use groups below to find a namespace. The sidebar lists every page.",
     "",
     "## Roots",
     "",
