@@ -1,17 +1,7 @@
 import { isEnabled } from "@modkit/utils";
+import { SETTING_DEFAULTS } from "./setting-defaults.ts";
 
-/**
- * Defaults when `api.settings.get` has no boolean yet.
- * Keep in sync with `configSchema` in `../modinfo.ts`.
- */
-const SETTING_DEFAULTS: Record<string, boolean> = {
-  openDevTools: false,
-  f12DevTools: false,
-  autoLoad: false,
-  f3Debug: false,
-  disableAutosave: false,
-  watchLocalMods: true,
-};
+export { SETTING_DEFAULTS };
 
 function boolSetting(api: SandkitApi, key: string): boolean {
   const value = api.settings.get(key);

@@ -1,6 +1,6 @@
 import { discoverLocalMods, readModsState } from "./discover.ts";
 import { hotEvalMain } from "./hot-eval.ts";
-import { fetchMain, shouldReload } from "./poll.ts";
+import { decideReload, fetchMain } from "./poll.ts";
 
 const POLL_MS = 500;
 
@@ -31,20 +31,17 @@ export function installLocalModReload(api: SandkitApi, selfId: string): () => vo
       const text = await fetchMain(mod.mainUrl);
       if (text == null) continue;
 
-      const applied = lastApplied.get(mod.id);
-      if (!shouldReload(applied, text)) {
+      const decision = decideReload(lastApplied.get(mod.id), pending.get(mod.id), text);
+      if (decision === "skip") {
         pending.delete(mod.id);
         continue;
       }
-
-      if (applied === undefined) {
+      if (decision === "baseline") {
         lastApplied.set(mod.id, text);
         pending.delete(mod.id);
         continue;
       }
-
-      const candidate = pending.get(mod.id);
-      if (candidate !== text) {
+      if (decision === "arm") {
         pending.set(mod.id, text);
         continue;
       }

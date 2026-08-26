@@ -14,6 +14,23 @@ export function shouldReload(prev: string | undefined, next: string): boolean {
   return prev !== next;
 }
 
+export type ReloadDecision = "skip" | "baseline" | "arm" | "reload";
+
+/**
+ * First success is a baseline. A change arms `pending`. Reload only when
+ * the next fetch equals that pending text (file write has settled).
+ */
+export function decideReload(
+  applied: string | undefined,
+  pending: string | undefined,
+  next: string,
+): ReloadDecision {
+  if (!shouldReload(applied, next)) return "skip";
+  if (applied === undefined) return "baseline";
+  if (pending !== next) return "arm";
+  return "reload";
+}
+
 export async function fetchMain(url: string): Promise<string | null> {
   try {
     const response = await fetch(cacheBust(url), { cache: "no-store" });

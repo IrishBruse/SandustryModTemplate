@@ -4,7 +4,7 @@ Dev companion mod. The game folder name is **`hot-reload`** (`mods/hot-reload`, 
 
 Manifest **`loadOrder`** is `-2147483648` so this companion runs before other local mods.
 
-When **Watch local mods** is on (default), this companion polls other mods' `main.js` and re-evals the renderer bundle after a save. It does not reload itself. Restart the game for `worker.js` and `patches.json`.
+When **Watch local mods** is on, this companion polls other mods' `main.js` and re-evals the renderer bundle after a save. It does not reload itself. Restart the game for `worker.js` and `patches.json`. Turn the setting on in **Options → Mods → hot-reload**.
 
 Settings live on this mod. Open **Options → Mods → hot-reload**.
 
@@ -29,9 +29,9 @@ Settings live on this mod. Open **Options → Mods → hot-reload**.
 | **Start save**            | `startSave`       | Mod storage | **Last played** or **Mod storage**. **Mod storage** reads `api.storage` (`startSave`). Set the id from DevTools or another mod.               |
 | **F3 debug overlay**      | `f3Debug`         | off         | F3 toggles companion debug overlay. Vanilla Debug / Stats stay on while the mod is enabled                                                    |
 | **Disable autosave**      | `disableAutosave` | off         | Sets `session.settings.autosaveInterval` to `0`. Manual saves still work                                                                      |
-| **Watch local mods**      | `watchLocalMods`  | on          | Poll other mods' `main.js` and re-eval the renderer bundle. Does not reload this companion, workers, or patches                               |
+| **Watch local mods**      | `watchLocalMods`  | off         | Poll other mods' `main.js` and re-eval the renderer bundle. Does not reload this companion, workers, or patches                               |
 
-Turn on **Auto-load save**, **F3 debug overlay**, **Disable autosave**, **F12**, or **Open DevTools on load** when you want those helpers. **Watch local mods** is on by default.
+Turn on **Watch local mods**, **Auto-load save**, **F3 debug overlay**, **Disable autosave**, **F12**, or **Open DevTools on load** when you want those helpers.
 
 ## Features
 

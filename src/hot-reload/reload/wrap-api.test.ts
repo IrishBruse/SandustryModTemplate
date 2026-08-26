@@ -42,6 +42,41 @@ test("wrapApi tracks inject and on, not toast", () => {
   runDisposers("mod-b");
 });
 
+function frozenApiHost(api: object) {
+  const target = {};
+  Object.defineProperty(target, "api", {
+    value: api,
+    writable: false,
+    configurable: false,
+    enumerable: true,
+  });
+  return target as { api: typeof api };
+}
+
+test("Proxy get that replaces api throws; wrapSandkit uses a plain copy", () => {
+  const api = Object.freeze({ n: 1 });
+  const target = frozenApiHost(api);
+  const replaced = { n: 2 };
+  const bad = new Proxy(target, {
+    get(t, p) {
+      if (p === "api") return replaced;
+      return Reflect.get(t, p);
+    },
+  });
+  assert.throws(() => bad.api, /non-configurable/);
+
+  const host = new Proxy(target, {
+    get(t, p, r) {
+      return Reflect.get(t, p, r);
+    },
+  }) as { api: { n: number } };
+  const wrapped = wrapSandkit(host, "mod-p");
+  assert.notEqual(wrapped, host);
+  assert.equal(host.api, api);
+  assert.notEqual(wrapped.api, api);
+  assert.equal((wrapped.api as { n: number }).n, 1);
+});
+
 test("wrapApi copies frozen events onto a new object", () => {
   const events = Object.freeze({
     on: () => () => {},

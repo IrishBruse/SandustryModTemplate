@@ -3,7 +3,9 @@ import test from "node:test";
 import {
   collectModIds,
   discoverLocalMods,
+  isLocalExternalMod,
   modsStateFromStore,
+  orderedModsFromSession,
   rewriteMainUrl,
 } from "./discover.ts";
 
@@ -79,4 +81,63 @@ test("modsStateFromStore reads __sandkitExternalRuntimeV1.order", () => {
     order,
   );
   assert.equal(modsStateFromStore({ items: {} }), undefined);
+});
+
+test("isLocalExternalMod requires discoveredVia local", () => {
+  assert.equal(
+    isLocalExternalMod({
+      manifest: { id: "author.template" },
+      workshop: { itemId: null, discoveredVia: ["local"] },
+    }),
+    true,
+  );
+  assert.equal(
+    isLocalExternalMod({
+      manifest: { id: "workshop.mod" },
+      workshop: { itemId: 1, discoveredVia: ["workshop"] },
+    }),
+    false,
+  );
+});
+
+test("discoverLocalMods polls local orderedMods and skips Workshop", () => {
+  const mods = discoverLocalMods("hot-reload", "file:///mods/hot-reload/main.js", [
+    {
+      manifest: { id: "hot-reload" },
+      rootUrl: "file:///mods/hot-reload/",
+      workshop: { itemId: null, discoveredVia: ["local"] },
+    },
+    {
+      manifest: { id: "author.template" },
+      rootUrl: "file:///mods/author.template/",
+      workshop: { itemId: null, discoveredVia: ["local"] },
+    },
+    {
+      manifest: { id: "workshop.mod" },
+      rootUrl: "sandkit-workshop://workshop.mod/",
+      workshop: { itemId: 99, discoveredVia: ["workshop"] },
+    },
+  ]);
+  assert.deepEqual(mods, [
+    { id: "author.template", mainUrl: "file:///mods/author.template/main.js" },
+  ]);
+});
+
+test("discoverLocalMods does not poll Workshop-only orderedMods", () => {
+  assert.deepEqual(
+    discoverLocalMods("hot-reload", "file:///mods/hot-reload/main.js", [
+      {
+        manifest: { id: "workshop.mod" },
+        rootUrl: "sandkit-workshop://workshop.mod/",
+        workshop: { itemId: 99, discoveredVia: ["workshop"] },
+      },
+    ]),
+    [],
+  );
+});
+
+test("orderedModsFromSession reads session.externalMods.orderedMods", () => {
+  const ordered = [{ manifest: { id: "author.template" } }];
+  assert.deepEqual(orderedModsFromSession({ externalMods: { orderedMods: ordered } }), ordered);
+  assert.equal(orderedModsFromSession({}), undefined);
 });
