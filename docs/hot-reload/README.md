@@ -20,17 +20,17 @@ Settings live on this mod. Open **Options → Mods → hot-reload**.
 
 ## Settings
 
-| Setting                   | Key               | Default     | Effect                                                                                                                                        |
-| ------------------------- | ----------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Mod enabled**           | `enabled`         | on          | Master switch for runtime helpers                                                                                                             |
-| **Open DevTools on load** | `openDevTools`    | off         | Open Electron DevTools on load. Keep off under F5 so the IDE debugger stays attached                                                          |
-| **F12 opens DevTools**    | `f12DevTools`     | off         | Capture-phase F12. Can disconnect an IDE debugger session                                                                                     |
-| **Auto-load save**        | `autoLoad`        | off         | On load, `location.assign` with `?db_load=<saveId>`. Skips splash and main menu. Legacy `autoBoot` prefs still count until you set `autoLoad` |
-| **Start save**            | `startSave`       | Mod storage | **Last played** or **Mod storage**. **Mod storage** reads `api.storage` (`startSave`). Set the id from DevTools or another mod.               |
-| **F3 debug overlay**      | `f3Debug`         | off         | F3 toggles companion debug overlay. Vanilla Debug / Stats stay on while the mod is enabled                                                    |
-| **Disable autosave**      | `disableAutosave` | off         | Sets `session.settings.autosaveInterval` to `0`. Manual saves still work                                                                      |
-| **Watch local mods**      | `watchLocalMods`  | off         | Poll other mods' `main.js` and re-eval the renderer bundle. Does not reload this companion, workers, or patches                               |
-| **Skip shader recompile** | `skipShaderRecomp` | off        | Skip initial outline build, post-mod regenerate, `warmup`, and the **Compiling shaders…** splash wait. Writes `localStorage`. Needs `debugPatches` (dev). Restart once after you turn it on |
+| Setting                   | Key                | Default     | Effect                                                                                                                                                                                      |
+| ------------------------- | ------------------ | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Mod enabled**           | `enabled`          | on          | Master switch for runtime helpers                                                                                                                                                           |
+| **Open DevTools on load** | `openDevTools`     | off         | Open Electron DevTools on load. Keep off under F5 so the IDE debugger stays attached                                                                                                        |
+| **F12 opens DevTools**    | `f12DevTools`      | off         | Capture-phase F12. Can disconnect an IDE debugger session                                                                                                                                   |
+| **Auto-load save**        | `autoLoad`         | off         | On load, `location.assign` with `?db_load=<saveId>`. Skips splash and main menu. Legacy `autoBoot` prefs still count until you set `autoLoad`                                               |
+| **Start save**            | `startSave`        | Mod storage | **Last played** or **Mod storage**. **Mod storage** reads `api.storage` (`startSave`). Set the id from DevTools or another mod.                                                             |
+| **F3 debug overlay**      | `f3Debug`          | off         | F3 toggles companion debug overlay. Vanilla Debug / Stats stay on while the mod is enabled                                                                                                  |
+| **Disable autosave**      | `disableAutosave`  | off         | Sets `session.settings.autosaveInterval` to `0`. Manual saves still work                                                                                                                    |
+| **Watch local mods**      | `watchLocalMods`   | off         | Poll other mods' `main.js` and re-eval the renderer bundle. Does not reload this companion, workers, or patches                                                                             |
+| **Skip shader recompile** | `skipShaderRecomp` | off         | Skip initial outline build, post-mod regenerate, `warmup`, and the **Compiling shaders…** splash wait. Writes `localStorage`. Needs `debugPatches` (dev). Restart once after you turn it on |
 
 Turn on **Watch local mods**, **Skip shader recompile**, **Auto-load save**, **F3 debug overlay**, **Disable autosave**, **F12**, or **Open DevTools on load** when you want those helpers.
 
@@ -101,7 +101,7 @@ After boot, `globalThis.debugF3.registerSection` is the same API for DevTools ex
 
 ## Watch local mods
 
-When **Watch local mods** is on, the companion polls other **local** mods' `main.js` about twice per second. It uses `session.externalMods.orderedMods` with `discoveredVia: local`. It does not poll Workshop ids from the save order list. After `npm run dev` writes a new bundle, it re-evals that renderer entry.
+When **Watch local mods** is on, the companion polls other **local** mods' `main.js` about twice per second. It uses `session.externalMods.orderedMods` with `discoveredVia: local`. It does not poll Workshop ids from the save order list. After `npm run dev` writes a new bundle, it re-evals that renderer entry with **that mod's** `sandkit` (stashed at first load as `globalThis.__sandkitByMod[id]`). It does not wrap the companion `sandkit`.
 
 Each reload runs tracked disposers first:
 
@@ -112,6 +112,8 @@ Each reload runs tracked disposers first:
 
 Hot eval wraps `api.ui.toast` so messages show the mod id and reload generation, for example `Template loaded (author.template v4)`. The console logs `reloaded <id> vN`.
 
+The starter template shows **Template inject** (top-left) and **Template hotbar** on the hotbar. `npm test` includes a live CDP case (`src/hot-reload/reload/live.test.ts`) that uses `@modkit/test` to write the installed `author.template/main.js` and check those probes. That case **skips** when Sandustry is not on `:9222`. See [Live tests](../modkit/test.md).
+
 Content `register` calls (`elements`, `structures`, `i18n`, …) have no unregister. The game updates the same id when you register again.
 
 It does not:
@@ -120,4 +122,4 @@ It does not:
 - Reload `worker.js`
 - Re-apply `patches.json`
 
-Restart the game for workers and patches.
+Restart the game for workers and patches. Restart once after a `debugPatches` change (the per-mod `sandkit` stash is a debug patch).
