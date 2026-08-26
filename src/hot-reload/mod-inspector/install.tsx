@@ -1,7 +1,10 @@
 import { ModInspectorOverlay } from "./ModInspectorOverlay";
 import { startPauseModsButton } from "./pause-mods-button";
 
-/** Pause menu **Mods** row → blank Mod Inspector overlay. */
+/**
+ * Pause menu **Dev Tools** → panel on `document.body` above pause (`z > 10010`).
+ * Main-menu **Mods** stays vanilla Workshop (`modsScreen`).
+ */
 export function installModInspector(api: SandkitApi, modId: string): void {
   startPauseModsButton();
 

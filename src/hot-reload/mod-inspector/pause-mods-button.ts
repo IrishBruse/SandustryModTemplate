@@ -1,7 +1,9 @@
 /**
- * Insert a vanilla-style **Mods** row under **Options** on the pause menu.
+ * Insert a vanilla-style **Dev Tools** row under **Options** on the pause menu.
  * Sandkit has no pause-menu hook, so this places a DOM sibling (same idea as
  * `registerManagementMenuButton`).
+ *
+ * Click opens Dev Tools (not vanilla Workshop `modsScreen`).
  */
 import { safe } from "@modkit/utils";
 import { setModInspectorOpen } from "./state";
@@ -11,6 +13,10 @@ const api = sandkit.api;
 const BTN_ATTR = "data-hot-reload-pause-mods";
 const ROW_SEL = ".w-64.mb-2.relative.group.cursor-pointer.pointer-events-auto";
 const HOOK_KEY = "__hotReloadPauseMenuOpenHooked__";
+
+/** Match vanilla pause `ZO` hover debounce (`qO = 150`). */
+const HOVER_DEBOUNCE_MS = 150;
+let lastHoverBlipAt = 0;
 
 /** Inner face classes from vanilla pause `ZO` buttons (Continue / Options / …). */
 const FACE_CLASS = [
@@ -54,12 +60,16 @@ const FACE_CLASS = [
 
 type MenuWindow = { open?: boolean };
 
+/** Vanilla pause row hover: `blip` with `ignoreMute` (not management `playbackRate`). */
 function playHover(): void {
-  safe(() => api.sound.play("blip", { playbackRate: 4, volume: 0.05 }));
+  const now = Date.now();
+  if (now - lastHoverBlipAt < HOVER_DEBOUNCE_MS) return;
+  lastHoverBlipAt = now;
+  safe(() => api.sound.play("blip", { ignoreMute: true }));
 }
 
 function playClick(): void {
-  safe(() => api.sound.play("click"));
+  safe(() => api.sound.play("click", { ignoreMute: true }));
 }
 
 function rowText(el: Element): string {
@@ -105,15 +115,16 @@ function createModsButton(): HTMLElement {
   face.style.outline = "#000 solid 1px";
 
   const first = document.createElement("span");
-  first.textContent = "M";
+  first.textContent = "D";
   const rest = document.createElement("span");
   rest.style.color = "white";
-  rest.textContent = "ods";
+  rest.textContent = "ev Tools";
   face.append(first, rest);
   root.append(face);
 
   const open = () => {
     playClick();
+    lastHoverBlipAt = Date.now();
     setModInspectorOpen(true);
   };
 
@@ -183,7 +194,7 @@ function subscribeMenuOpen(onChange: MenuOpenListener): () => void {
 }
 
 /**
- * Keep a **Mods** button under **Options** while the pause menu is open.
+ * Keep a **Dev Tools** button under **Options** while the pause menu is open.
  * Returns a dispose function.
  */
 export function startPauseModsButton(): () => void {

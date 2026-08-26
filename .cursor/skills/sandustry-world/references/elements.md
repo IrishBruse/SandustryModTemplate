@@ -32,9 +32,26 @@ Generated: `docs/api/sandkit/api/namespaces/elements/`.
 
 All schedule work when sim is idle: `createAtCellWhenIdle`, `replaceAtCellWhenIdle`, `removeAtCellWhenIdle`, `teleportBetweenCellsWhenIdle`, `setVelocityAtCellWhenIdle`, `addParticleVelocityAtCellWhenIdle`, `convertToParticleAtCellWhenIdle`, `convertFromParticleAtCellWhenIdle`, `setDataFieldAtCellWhenIdle`, `refreshColorAtCellWhenIdle`, `setPhysicsAtCellWhenIdle`, `setDurationAtCellWhenIdle`.
 
-## Live registrations
+## Live definition keys (`getDefinitionByType`)
 
-`__debug.state.sandkit.mods.elements` - **31** keys in probe (vanilla + template mods). `mods.matters` - **1** key.
+Public TypeScript lists `id`, `nameKey`, `density`, `matterType`, `colors`, `defaultDataFields`. Live configs also carry:
+
+| Key                               | Role                                                                 |
+| --------------------------------- | -------------------------------------------------------------------- |
+| `descriptionKey` / `description`  | Lexicon copy                                                         |
+| `metaColor`                       | RGB packed as `0xRRGGBB`                                             |
+| `materialId`                      | Render / sim material index                                          |
+| `hidden`                          | Hide from some UI                                                    |
+| `isGrabbable` / `isTransportable` | Grabber and conveyor                                                 |
+| `duration` / `durationRandom`     | Lifetime seconds                                                     |
+| `horizontalSpeed`                 | Sideways motion                                                      |
+| `flammable`                       | Burn output id, chance, fire duration                                |
+| `collectable.value`               | Collector gold                                                       |
+| `mixes`                           | Contact mix `{ elementType, result }`                                |
+| `interactions`                    | Tooltip kinds (`flammable`, `freezable`, …)                          |
+| `getExtraProps().data`            | Extra sim bags (Steam `energy`, Fire `temperature`, Seedling growth) |
+
+Built-in enum names: `sandkit.enums.ElementType` (`Sand` = 1 … `Basalt` = 20). String id for mods is `definition.id`; for builtins parse `nameKey` (`elements|sand|name`).
 
 ## MCP element read
 

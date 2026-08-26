@@ -29,16 +29,17 @@ Manifest id: same charset as patch id, not `__proto__` / `prototype` / `construc
 
 Each external mod record carries `workshop.discoveredVia`:
 
-| Tag          | Meaning                                                                       |
-| ------------ | ----------------------------------------------------------------------------- |
-| `local`      | App-data mods folder (developer / side-loaded)                                |
-| `subscribed` | Steam subscribed workshop item                                                |
-| `root-scan`  | Numeric folder under the Sandustry workshop content root (depot-shipped mods) |
+| Tag          | Meaning                                                                                                                          |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| `local`      | App-data mods folder (developer / side-loaded)                                                                                   |
+| `subscribed` | Steam subscribed workshop item                                                                                                   |
+| `root-scan`  | Numeric folder under the Steam workshop content root. Subscribed items often have only this tag. Depot-shipped mods also use it. |
 
 Inspector labels:
 
 - `local` → **Local**
 - `subscribed` → **Workshop**
-- `root-scan` only (no `local`, no `subscribed`) → **Core mod**
+- `root-scan` with `workshop.itemId` → **Workshop** (e.g. Laser Overcharge)
+- `root-scan` only, no item id → **Core mod**
 
 Elements from shipped mod content (not owned by a loaded external mod id) are also labeled **Core mod** in the Elements tab. Built-in enum types stay **Core**.
