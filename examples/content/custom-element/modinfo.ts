@@ -8,7 +8,7 @@ export const modinfo = defineModInfo({
   apiVersion: 1,
   entry: "main.js",
   author: "Your Name",
-  description: "Register a powder element and paint it at the mouse cell.",
+  description: "Register one powder element.",
   dependencies: [],
   loadOrder: 0,
   configSchema: {

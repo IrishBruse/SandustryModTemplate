@@ -2,6 +2,8 @@
 
 Copy a folder here to `src/<your-mod>/` when you want that sample. Start a new mod from [`src/template/`](../src/template/). Each leaf folder is a separate game mod.
 
+Workshop mod references live in `sandustry-workshop-mods/workshop/` (sibling repo).
+
 ## UI
 
 | Folder                                       | What it shows                              |
@@ -12,20 +14,33 @@ Copy a folder here to `src/<your-mod>/` when you want that sample. Start a new m
 
 ## Content
 
-| Folder                                            | What it shows                                     |
-| ------------------------------------------------- | ------------------------------------------------- |
-| [`custom-element`](content/custom-element/)       | Register an element and paint at the mouse cell   |
-| [`collector-element`](content/collector-element/) | Collectable element + Collector admission patches |
-| [`mod-assets`](content/mod-assets/)               | Static `mod/` files + `assets.getUrl`             |
-| [`content-machine`](content/content-machine/)     | Elements + structure + processor loop             |
+| Folder                                                | What it shows                               |
+| ----------------------------------------------------- | ------------------------------------------- |
+| [`custom-element`](content/custom-element/)           | `api.elements.register` for one powder      |
+| [`collectable-element`](content/collectable-element/) | `collectable.value` on a mod element        |
+| [`custom-terrain`](content/custom-terrain/)           | `api.terrains.register` for one terrain     |
+| [`element-reaction`](content/element-reaction/)       | `api.reactions.registerContact`             |
+| [`register-structure`](content/register-structure/)   | `api.structures.register` + mod sprite      |
+| [`structure-processor`](content/structure-processor/) | `api.structures.addProcessor` periodic loop |
+| [`mod-assets`](content/mod-assets/)                   | Static `mod/` files + `assets.getUrl`       |
 
 ## API
 
-| Folder                          | What it shows                         |
-| ------------------------------- | ------------------------------------- |
-| [`events`](api/events/)         | `api.events.on` subscribe and dispose |
-| [`worker-api`](api/worker-api/) | Worker-thread `sandkit.api`           |
-| [`settings`](api/settings/)     | All `configSchema` field types        |
+| Folder                                        | What it shows                                 |
+| --------------------------------------------- | --------------------------------------------- |
+| [`events`](api/events/)                       | `api.events.on("game:ready")`                 |
+| [`triggers-interval`](api/triggers-interval/) | `api.triggers.register` repeating callback    |
+| [`hooks-intercept`](api/hooks-intercept/)     | `api.hooks.intercept` + `context.cancel()`    |
+| [`schedule-idle`](api/schedule-idle/)         | `schedule.nextTick` + `runWhenSimulationIdle` |
+| [`i18n`](api/i18n/)                           | `api.i18n.register` + `i18n.t`                |
+| [`storage`](api/storage/)                     | `api.storage.ensure` in the save file         |
+| [`sprites`](api/sprites/)                     | `api.sprites.loadFromMod` + `getById`         |
+| [`ui-prompt`](api/ui-prompt/)                 | `api.ui.prompt` text dialog                   |
+| [`signal-target`](api/signal-target/)         | `api.signals.targets.register`                |
+| [`player-teleport`](api/player-teleport/)     | `api.player.setWorldPosition`                 |
+| [`collector-patches`](api/collector-patches/) | Collector admission patches (`patches.ts`)    |
+| [`worker-api`](api/worker-api/)               | Worker-thread `sandkit.api`                   |
+| [`settings`](api/settings/)                   | All `configSchema` field types                |
 
 ## Games
 

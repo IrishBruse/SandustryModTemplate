@@ -2,13 +2,13 @@ import { defineModInfo } from "@modkit/modinfo";
 
 export const modinfo = defineModInfo({
   manifestVersion: 1,
-  id: "example.events",
-  name: "Events",
+  id: "example.register-structure",
+  name: "Register Structure",
   version: "0.0.1",
   apiVersion: 1,
   entry: "main.js",
   author: "Your Name",
-  description: "Subscribe to the game:ready event.",
+  description: "Register one buildable structure with a mod sprite.",
   dependencies: [],
   loadOrder: 0,
   configSchema: {

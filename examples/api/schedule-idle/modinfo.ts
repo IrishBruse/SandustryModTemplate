@@ -2,13 +2,13 @@ import { defineModInfo } from "@modkit/modinfo";
 
 export const modinfo = defineModInfo({
   manifestVersion: 1,
-  id: "example.events",
-  name: "Events",
+  id: "example.schedule-idle",
+  name: "Schedule Idle",
   version: "0.0.1",
   apiVersion: 1,
   entry: "main.js",
   author: "Your Name",
-  description: "Subscribe to the game:ready event.",
+  description: "Defer work until the simulation is idle.",
   dependencies: [],
   loadOrder: 0,
   configSchema: {

@@ -35,18 +35,32 @@ You do not copy files into the game folder by hand. `npm run dev` and `npm run b
 
 Start from [`src/template/`](../src/template/). Copy a folder from [`examples/`](../examples/) into `src/<your-mod>/` when you want that sample.
 
-| Group   | Folder                                                    | What it shows                                              |
-| ------- | --------------------------------------------------------- | ---------------------------------------------------------- |
-| UI      | [`overlay-hotkey`](../examples/ui/overlay-hotkey/)        | React overlay + Tailwind (**Alt+E**)                       |
-| UI      | [`management-button`](../examples/ui/management-button/)  | Management-column row                                      |
-| UI      | [`input-binding`](../examples/ui/input-binding/)          | `registerBinding` + `getDisplayKey`                        |
-| Content | [`custom-element`](../examples/content/custom-element/)   | Register an element and paint at the mouse cell            |
-| Content | [`mod-assets`](../examples/content/mod-assets/)           | Static `mod/` files + `assets.getUrl`                      |
-| Content | [`content-machine`](../examples/content/content-machine/) | Elements + structure + processor loop                      |
-| API     | [`events`](../examples/api/events/)                       | `api.events.on` subscribe and dispose                      |
-| API     | [`worker-api`](../examples/api/worker-api/)               | Worker-thread `sandkit.api`                                |
-| API     | [`settings`](../examples/api/settings/)                   | All `configSchema` types (`boolean` / `number` / `choice`) |
-| Games   | [`retro-game`](../examples/games/retro-game/)             | Retro Console demo                                         |
+| Group   | Folder                                                            | What it shows                                              |
+| ------- | ----------------------------------------------------------------- | ---------------------------------------------------------- |
+| UI      | [`overlay-hotkey`](../examples/ui/overlay-hotkey/)                | React overlay + Tailwind (**Alt+E**)                       |
+| UI      | [`management-button`](../examples/ui/management-button/)          | Management-column row                                      |
+| UI      | [`input-binding`](../examples/ui/input-binding/)                  | `registerBinding` + `getDisplayKey`                        |
+| Content | [`custom-element`](../examples/content/custom-element/)           | `api.elements.register` for one powder                     |
+| Content | [`collectable-element`](../examples/content/collectable-element/) | `collectable.value` on a mod element                       |
+| Content | [`custom-terrain`](../examples/content/custom-terrain/)           | `api.terrains.register` for one terrain                    |
+| Content | [`element-reaction`](../examples/content/element-reaction/)       | `api.reactions.registerContact`                            |
+| Content | [`register-structure`](../examples/content/register-structure/)   | `api.structures.register` + mod sprite                     |
+| Content | [`structure-processor`](../examples/content/structure-processor/) | `api.structures.addProcessor` periodic loop                |
+| Content | [`mod-assets`](../examples/content/mod-assets/)                   | Static `mod/` files + `assets.getUrl`                      |
+| API     | [`events`](../examples/api/events/)                               | `api.events.on("game:ready")`                              |
+| API     | [`triggers-interval`](../examples/api/triggers-interval/)         | `api.triggers.register` repeating callback                 |
+| API     | [`hooks-intercept`](../examples/api/hooks-intercept/)             | `api.hooks.intercept` + `context.cancel()`                 |
+| API     | [`schedule-idle`](../examples/api/schedule-idle/)                 | `schedule.nextTick` + `runWhenSimulationIdle`              |
+| API     | [`i18n`](../examples/api/i18n/)                                   | `api.i18n.register` + `i18n.t`                             |
+| API     | [`storage`](../examples/api/storage/)                             | `api.storage.ensure` in the save file                      |
+| API     | [`sprites`](../examples/api/sprites/)                             | `api.sprites.loadFromMod` + `getById`                      |
+| API     | [`ui-prompt`](../examples/api/ui-prompt/)                         | `api.ui.prompt` text dialog                                |
+| API     | [`signal-target`](../examples/api/signal-target/)                 | `api.signals.targets.register`                             |
+| API     | [`player-teleport`](../examples/api/player-teleport/)             | `api.player.setWorldPosition`                              |
+| API     | [`collector-patches`](../examples/api/collector-patches/)         | Collector admission patches                                |
+| API     | [`worker-api`](../examples/api/worker-api/)                       | Worker-thread `sandkit.api`                                |
+| API     | [`settings`](../examples/api/settings/)                           | All `configSchema` types (`boolean` / `number` / `choice`) |
+| Games   | [`retro-game`](../examples/games/retro-game/)                     | Retro Console demo                                         |
 
 Mods in `src/`:
 

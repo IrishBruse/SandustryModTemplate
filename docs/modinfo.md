@@ -50,7 +50,7 @@ Example re-export from `patches.ts`:
 export { patches } from "./patches";
 ```
 
-See [`examples/content/collector-element/modinfo.ts`](../examples/content/collector-element/modinfo.ts).
+See [`examples/api/collector-patches/modinfo.ts`](../examples/api/collector-patches/modinfo.ts).
 
 ## Minimal example
 

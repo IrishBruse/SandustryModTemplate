@@ -1,14 +1,16 @@
 import { defineModInfo } from "@modkit/modinfo";
 
+export { patches } from "./patches";
+
 export const modinfo = defineModInfo({
   manifestVersion: 1,
-  id: "example.events",
-  name: "Events",
+  id: "example.collector-patches",
+  name: "Collector Patches",
   version: "0.0.1",
   apiVersion: 1,
   entry: "main.js",
   author: "Your Name",
-  description: "Subscribe to the game:ready event.",
+  description: "Patch Collector admission to allow any element with collectable value.",
   dependencies: [],
   loadOrder: 0,
   configSchema: {

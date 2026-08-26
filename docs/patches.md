@@ -8,7 +8,7 @@ Keep each `find` / `code` string small. Set `expectedMatches`. Re-test after eve
 
 Patch `code` runs **outside** the game bundle IIFE. Put shared runtime helpers on `globalThis` when patch code must call them.
 
-Types: [`modkit/modinfo.ts`](../modkit/modinfo.ts). Manifest: [`modinfo.ts`](modinfo.md). Canonical multi-file example: [`examples/content/collector-element/patches.ts`](../examples/content/collector-element/patches.ts).
+Types: [`modkit/modinfo.ts`](../modkit/modinfo.ts). Manifest: [`modinfo.ts`](modinfo.md). Canonical multi-file example: [`examples/api/collector-patches/patches.ts`](../examples/api/collector-patches/patches.ts).
 
 ## Layout
 

@@ -4,7 +4,6 @@ const api = sandkit.api;
 
 const ELEMENT_ID = `${modinfo.id}:spark-dust`;
 const NAME_KEY = `${modinfo.id}.element.name`;
-const BINDING_PAINT = `${modinfo.id}.paint`;
 
 api.i18n.register("en", {
   [NAME_KEY]: "Spark Dust",
@@ -26,17 +25,6 @@ const { elementType } = api.elements.register({
 
 api.discoveries.addElementByType(elementType);
 
-api.input.registerBinding(BINDING_PAINT, ["KeyP"], {
-  displayName: "Paint Spark Dust",
-  category: modinfo.name,
-  handlers: {
-    down: () => {
-      const cell = api.input.getMouseCellPosition();
-      api.elements.createAtCellWhenIdle(cell.x, cell.y, elementType);
-    },
-  },
-});
+api.ui.toast("Custom Element — Debug → Element → Spark Dust", {});
 
-api.ui.toast("Custom Element loaded — press P at the mouse cell", {});
-
-console.log(`loaded — ${ELEMENT_ID} type ${elementType}, binding ${BINDING_PAINT}`);
+console.log(`loaded — elements.register(${ELEMENT_ID}) type ${elementType}`);

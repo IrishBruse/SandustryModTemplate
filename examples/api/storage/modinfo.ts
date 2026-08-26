@@ -1,16 +1,14 @@
 import { defineModInfo } from "@modkit/modinfo";
 
-export { patches } from "./patches";
-
 export const modinfo = defineModInfo({
   manifestVersion: 1,
-  id: "example.collector-element",
-  name: "Collector Element",
+  id: "example.storage",
+  name: "Storage",
   version: "0.0.1",
   apiVersion: 1,
   entry: "main.js",
   author: "Your Name",
-  description: "Platinum collectable element plus Collector money-check patches.",
+  description: "Persist mod data in the save with storage.ensure.",
   dependencies: [],
   loadOrder: 0,
   configSchema: {

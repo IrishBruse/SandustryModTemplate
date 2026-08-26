@@ -2,13 +2,13 @@ import { defineModInfo } from "@modkit/modinfo";
 
 export const modinfo = defineModInfo({
   manifestVersion: 1,
-  id: "example.events",
-  name: "Events",
+  id: "example.i18n",
+  name: "I18n",
   version: "0.0.1",
   apiVersion: 1,
   entry: "main.js",
   author: "Your Name",
-  description: "Subscribe to the game:ready event.",
+  description: "Register translation strings and read them with i18n.t.",
   dependencies: [],
   loadOrder: 0,
   configSchema: {

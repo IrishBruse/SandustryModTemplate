@@ -2,13 +2,13 @@ import { defineModInfo } from "@modkit/modinfo";
 
 export const modinfo = defineModInfo({
   manifestVersion: 1,
-  id: "example.events",
-  name: "Events",
+  id: "example.collectable-element",
+  name: "Collectable Element",
   version: "0.0.1",
   apiVersion: 1,
   entry: "main.js",
   author: "Your Name",
-  description: "Subscribe to the game:ready event.",
+  description: "Register an element with a Collector payout value.",
   dependencies: [],
   loadOrder: 0,
   configSchema: {

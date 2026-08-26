@@ -16,7 +16,7 @@ Filters: All, Logistics, Production, Blocks, Economy, Lighting, Fluids, Special,
 - **Thermal:** Steam Dryer, Condenser, Snowmaker, Smelter, Thermal Buffer, Burner Belt, Pyro Dispenser
 - **Energy:** Copper Mold, Energy Siphon, Energy Connector, Florinol Battery, Power Brick, Steam Turbine
 - **Logic:** Signal Linker, Switch, Button, Sensor, Pulse Sensor, Presence Sensor, Buffer, Toggle (T-FlipFlop), AND/NAND/NOR/NOT/OR/XNOR/XOR, Signal Lamp, Repeater
-- **Misc:** short ids (collector, conveyor, filter, filterMk2, foundation, gloomEmitter, grower, heatCannon, launcher, light, liquidVent, pipe, pump, Retro Console, Game Controller, shaker, velocitySoaker) plus `trimCreativeSpawner`, `trimCreativeDeleter`, `uolkxChemicalVat`, `uolkxCentrifuge`, `uolkxReactorCore`, `uolkxTurbineSection`, `author.content-machine-example:converter`
+- **Misc:** short ids (collector, conveyor, filter, filterMk2, foundation, gloomEmitter, grower, heatCannon, launcher, light, liquidVent, pipe, pump, Retro Console, Game Controller, shaker, velocitySoaker)
 
 ## Blueprints
 

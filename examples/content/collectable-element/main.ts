@@ -4,16 +4,14 @@ const api = sandkit.api;
 
 const ELEMENT_ID = `${modinfo.id}:platinum`;
 const NAME_KEY = `${modinfo.id}.element.name`;
-const BINDING_PAINT = `${modinfo.id}.paint`;
 
-/** Collector payout — Gold is hardcoded to 1; Platinum pays 2 like liquidGold. */
+/** Collector payout — Gold is 1; Platinum pays 2 like liquidGold. */
 const COLLECTABLE_VALUE = 2;
 
 api.i18n.register("en", {
   [NAME_KEY]: "Platinum",
 });
 
-// Gold-like Solid element with a collectable value (required for mod types).
 const { elementType } = api.elements.register({
   id: ELEMENT_ID,
   nameKey: NAME_KEY,
@@ -40,19 +38,8 @@ api.elements.updateDefinition(elementType, {
 
 api.discoveries.addElementByType(elementType);
 
-api.input.registerBinding(BINDING_PAINT, ["KeyP"], {
-  displayName: "Paint Platinum",
-  category: modinfo.name,
-  handlers: {
-    down: () => {
-      const cell = api.input.getMouseCellPosition();
-      api.elements.createAtCellWhenIdle(cell.x, cell.y, elementType);
-    },
-  },
-});
-
-api.ui.toast("Platinum — Debug → Element → Elements, or press P", {});
+api.ui.toast("Collectable Element — Debug → Element → Platinum", {});
 
 console.log(
-  `Collector element — ${ELEMENT_ID} type ${elementType}, value ${api.collector.getValueByType(elementType)}`,
+  `loaded — ${ELEMENT_ID} type ${elementType}, collector value ${api.collector.getValueByType(elementType)}`,
 );
