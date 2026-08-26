@@ -159,6 +159,7 @@ window.SMT_SEARCH_PATHS = [
   "/modinfo",
   "/modkit/react",
   "/modkit/README",
+  "/modkit/test",
   "/modkit/utils",
   "/patches",
   "/player-sprite-tint",

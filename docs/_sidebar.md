@@ -21,6 +21,7 @@
   - [React](modkit/react.md)
   - [UI kit](ui/README.md)
   - [Utils](modkit/utils.md)
+  - [Live tests](modkit/test.md)
 
 - Reference
   - [modinfo.ts](modinfo.md)

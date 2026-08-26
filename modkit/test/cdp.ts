@@ -1,0 +1,133 @@
+/** Renderer CDP port used by F5 / `sandustry-vscode-launch.js`. */
+export const SANDUSTRY_CDP_PORT = "9222";
+
+const DEFAULT_TIMEOUT_MS = 8000;
+
+export async function isSandustryAvailable(port = SANDUSTRY_CDP_PORT): Promise<boolean> {
+  try {
+    const response = await fetch(`http://127.0.0.1:${port}/json/version`, {
+      signal: AbortSignal.timeout(1500),
+    });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+async function pageWebSocketUrl(port: string): Promise<string> {
+  const response = await fetch(`http://127.0.0.1:${port}/json`, {
+    signal: AbortSignal.timeout(2000),
+  });
+  if (!response.ok) throw new Error(`CDP /json failed: ${response.status}`);
+  const targets = await response.json();
+  if (!Array.isArray(targets)) throw new Error("CDP /json is not a list");
+  const page = targets.find(
+    (entry) =>
+      entry &&
+      typeof entry === "object" &&
+      entry.type === "page" &&
+      typeof entry.webSocketDebuggerUrl === "string" &&
+      typeof entry.title === "string" &&
+      /Sandustry/i.test(entry.title),
+  );
+  if (!page) throw new Error("No Sandustry page on CDP");
+  return page.webSocketDebuggerUrl;
+}
+
+type Pending = {
+  resolve: (value: unknown) => void;
+  reject: (error: Error) => void;
+  timer: ReturnType<typeof setTimeout>;
+};
+
+export class CdpConnection {
+  private nextId = 1;
+  private readonly pending = new Map<number, Pending>();
+  private readonly ws: WebSocket;
+  private readonly timeoutMs: number;
+
+  private constructor(ws: WebSocket, timeoutMs: number) {
+    this.ws = ws;
+    this.timeoutMs = timeoutMs;
+    ws.addEventListener("message", (event) => this.onMessage(event));
+    ws.addEventListener("close", () => this.rejectAll(new Error("CDP closed")));
+  }
+
+  static async connect(options?: { port?: string; timeoutMs?: number }): Promise<CdpConnection> {
+    const port = options?.port ?? SANDUSTRY_CDP_PORT;
+    const timeoutMs = options?.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+    const wsUrl = await pageWebSocketUrl(port);
+    const ws = new WebSocket(wsUrl);
+    await new Promise<void>((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error("CDP websocket timeout")), timeoutMs);
+      ws.addEventListener("open", () => {
+        clearTimeout(timer);
+        resolve();
+      });
+      ws.addEventListener("error", () => {
+        clearTimeout(timer);
+        reject(new Error("CDP websocket error"));
+      });
+    });
+    return new CdpConnection(ws, timeoutMs);
+  }
+
+  async evaluate(expression: string): Promise<unknown> {
+    const details = (await this.send("Runtime.evaluate", {
+      expression,
+      returnByValue: true,
+      awaitPromise: true,
+    })) as {
+      exceptionDetails?: { exception?: { description?: string }; text?: string };
+      result?: { value?: unknown };
+    };
+    const exception = details.exceptionDetails;
+    if (exception) {
+      throw new Error(exception.exception?.description || exception.text || "CDP exception");
+    }
+    return details.result?.value;
+  }
+
+  close(): void {
+    this.ws.close();
+  }
+
+  private send(method: string, params: Record<string, unknown>): Promise<unknown> {
+    const id = this.nextId++;
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        this.pending.delete(id);
+        reject(new Error("CDP evaluate timeout"));
+      }, this.timeoutMs);
+      this.pending.set(id, { resolve, reject, timer });
+      this.ws.send(JSON.stringify({ id, method, params }));
+    });
+  }
+
+  private onMessage(event: MessageEvent): void {
+    let msg: { id?: number; error?: { message?: string }; result?: unknown };
+    try {
+      msg = JSON.parse(String(event.data));
+    } catch {
+      return;
+    }
+    if (typeof msg.id !== "number") return;
+    const pending = this.pending.get(msg.id);
+    if (!pending) return;
+    this.pending.delete(msg.id);
+    clearTimeout(pending.timer);
+    if (msg.error) {
+      pending.reject(new Error(msg.error.message || "CDP error"));
+      return;
+    }
+    pending.resolve(msg.result);
+  }
+
+  private rejectAll(error: Error): void {
+    for (const pending of this.pending.values()) {
+      clearTimeout(pending.timer);
+      pending.reject(error);
+    }
+    this.pending.clear();
+  }
+}
