@@ -42,6 +42,64 @@ test("wrapApi tracks inject and on, not toast", () => {
   runDisposers("mod-b");
 });
 
+test("wrapApi unregisters overlays.register on reload", () => {
+  const seen: string[] = [];
+  const overlays = Object.freeze({
+    register: (slot: string, id: string) => {
+      seen.push(`reg:${slot}:${id}`);
+    },
+    unregister: (slot: string, id: string) => {
+      seen.push(`unreg:${slot}:${id}`);
+    },
+    update: () => {},
+  });
+  const api = wrapApi({ ui: { overlays } }, "mod-ov");
+  assert.notEqual(api.ui?.overlays, overlays);
+  const register = (
+    api.ui?.overlays as { register: (s: string, i: string, r: () => null) => void } | undefined
+  )?.register;
+  assert.ok(register);
+  register("hotbar", "overlay-hotkey", () => null);
+  assert.deepEqual(seen, ["reg:hotbar:overlay-hotkey"]);
+  runDisposers("mod-ov");
+  assert.deepEqual(seen, ["reg:hotbar:overlay-hotkey", "unreg:hotbar:overlay-hotkey"]);
+});
+
+test("wrapApi gates registerBinding handlers after dispose", () => {
+  const downs: string[] = [];
+  let stored: (() => void) | undefined;
+  const wrapped = wrapSandkit(
+    {
+      api: {
+        input: {
+          registerBinding: (
+            _id: string,
+            _keys: string[],
+            def: { handlers: { down: () => void }; [key: string]: unknown },
+          ) => {
+            stored = def.handlers.down;
+            return _id;
+          },
+        },
+      },
+    },
+    "mod-in",
+  );
+  const id = wrapped.api.input.registerBinding("author.input.toast", ["KeyT"], {
+    displayName: "Show toast",
+    category: "Input",
+    handlers: {
+      down: () => downs.push("a"),
+    },
+  });
+  assert.equal(id, "author.input.toast");
+  stored?.();
+  assert.deepEqual(downs, ["a"]);
+  runDisposers("mod-in");
+  stored?.();
+  assert.deepEqual(downs, ["a"]);
+});
+
 function frozenApiHost(api: object) {
   const target = {};
   Object.defineProperty(target, "api", {

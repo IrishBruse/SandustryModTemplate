@@ -101,6 +101,15 @@ After boot, `globalThis.debugF3.registerSection` is the same API for DevTools ex
 
 When **Watch local mods** is on, the companion polls other mods' `main.js` about twice per second. After `npm run dev` writes a new bundle, it re-evals that renderer entry.
 
+Each reload runs tracked disposers first:
+
+- `api.ui.inject` return functions
+- `api.ui.overlays.register` via `overlays.unregister`
+- `api.input.registerBinding` handlers (they stop after reload)
+- `api.events.on`, `api.settings.onChange`, `api.hooks.intercept` / `modify`
+
+Content `register` calls (`elements`, `structures`, `i18n`, …) have no unregister. The game updates the same id when you register again.
+
 It does not:
 
 - Reload this companion

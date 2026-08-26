@@ -74,3 +74,76 @@ test("hotEvalMain runs the template source on a frozen proxied sandkit", async (
   assert.deepEqual(seen, [["Template loaded", {}]]);
   assert.equal(Object.isFrozen(host.api), true);
 });
+
+/** Same calls as examples/ui/overlay-hotkey (inject) and overlays.register. */
+const OVERLAY_SOURCE = `
+sandkit.api.ui.inject("overlay-hotkey", function Overlay() { return null; });
+sandkit.api.ui.overlays.register("hotbar", "overlay-hotkey", function () { return null; });
+`;
+
+test("hotEvalMain disposes ui.inject and overlays.register before the next eval", async () => {
+  const seen: string[] = [];
+  const host = {
+    api: {
+      ui: {
+        inject: (id: string) => {
+          seen.push(`inject:${id}`);
+          return () => seen.push(`dispose:${id}`);
+        },
+        overlays: {
+          register: (slot: string, id: string) => {
+            seen.push(`reg:${slot}:${id}`);
+          },
+          unregister: (slot: string, id: string) => {
+            seen.push(`unreg:${slot}:${id}`);
+          },
+        },
+      },
+    },
+  };
+  await hotEvalMain("overlay-hotkey", OVERLAY_SOURCE, host);
+  await hotEvalMain("overlay-hotkey", OVERLAY_SOURCE, host);
+  assert.deepEqual(seen, [
+    "inject:overlay-hotkey",
+    "reg:hotbar:overlay-hotkey",
+    "dispose:overlay-hotkey",
+    "unreg:hotbar:overlay-hotkey",
+    "inject:overlay-hotkey",
+    "reg:hotbar:overlay-hotkey",
+  ]);
+});
+
+/** Same shape as examples/ui/input-binding registerBinding. */
+const BINDING_SOURCE = `
+sandkit.api.input.registerBinding("author.input-binding-example.toast", ["KeyT"], {
+  displayName: "Show toast",
+  category: "Input Binding",
+  handlers: { down: function () { sandkit.api._downs.push(1); } },
+});
+`;
+
+test("hotEvalMain stops prior registerBinding handlers after reload", async () => {
+  const downs: number[] = [];
+  const stored: Array<() => void> = [];
+  const host = {
+    api: {
+      _downs: downs,
+      input: {
+        registerBinding: (
+          _id: string,
+          _keys: string[],
+          def: { handlers: { down: () => void } },
+        ) => {
+          stored.push(def.handlers.down);
+          return _id;
+        },
+      },
+    },
+  };
+  await hotEvalMain("input-binding", BINDING_SOURCE, host);
+  stored[0]?.();
+  await hotEvalMain("input-binding", BINDING_SOURCE, host);
+  stored[0]?.();
+  stored[1]?.();
+  assert.deepEqual(downs, [1, 1]);
+});
