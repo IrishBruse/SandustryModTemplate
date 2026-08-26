@@ -1,7 +1,7 @@
 import { disableSessionAutosave } from "./boot/autosave";
 import { registerDevToolsShortcut, scheduleMainMenuBoot } from "./boot/boot-menu";
+import { syncFastBootPrefs } from "./boot/fast-boot";
 import { settingOn } from "./boot/settings";
-import { writeSkipShaderRecomp } from "./boot/skip-shader-recomp";
 import { installDebugCompanion } from "./f3/install";
 import { installModInspector } from "./mod-inspector/install";
 import { modinfo } from "./modinfo";
@@ -21,9 +21,9 @@ function syncLocalModReload(): void {
   }
 }
 
-/** Persist skip so the next boot skips compiles that run before this main.js. */
-function syncSkipShaderRecomp(): void {
-  writeSkipShaderRecomp(settingOn(api, "skipShaderRecomp"));
+/** Persist boot prefs so debugPatches can skip work that runs before this main.js. */
+function syncBootPatches(): void {
+  syncFastBootPrefs(api);
 }
 
 function main() {
@@ -32,7 +32,7 @@ function main() {
   const { enums, react } = sandkit;
   Object.assign(globalThis, { sandkit, api, enums, react });
 
-  syncSkipShaderRecomp();
+  syncBootPatches();
   if (settingOn(api, "f12DevTools")) registerDevToolsShortcut();
   scheduleMainMenuBoot(api);
   if (settingOn(api, "disableAutosave")) disableSessionAutosave();
@@ -40,7 +40,7 @@ function main() {
   installModInspector(api, modinfo.id);
   syncLocalModReload();
   api.settings.onChange(() => {
-    syncSkipShaderRecomp();
+    syncBootPatches();
     syncLocalModReload();
   });
 

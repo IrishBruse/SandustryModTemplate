@@ -89,26 +89,39 @@ function hasPayload(value: unknown): boolean {
   return false;
 }
 
-function ownedRegistryCounts(modId: string): ModRegistryCount[] {
+function ownedRegistryCounts(modIds: readonly string[]): Map<string, ModRegistryCount[]> {
+  const out = new Map<string, ModRegistryCount[]>();
+  for (const modId of modIds) out.set(modId, []);
   try {
     const bags = (
       sandkit.engine?.state as { sandkit?: { mods?: Record<string, unknown> } } | undefined
     )?.sandkit?.mods;
-    if (!bags || typeof bags !== "object") return [];
-    const prefix = `${modId}:`;
-    const out: ModRegistryCount[] = [];
+    if (!bags || typeof bags !== "object") return out;
+
     for (const [bag, value] of Object.entries(bags)) {
       if (!value || typeof value !== "object" || Array.isArray(value)) continue;
-      const ids = Object.keys(value as object).filter(
-        (id) => id === modId || id.startsWith(prefix),
-      );
-      if (ids.length === 0) continue;
-      out.push({ bag, count: ids.length, sample: ids.slice(0, 12) });
+      const byMod = new Map<string, string[]>();
+      for (const id of Object.keys(value as object)) {
+        for (const modId of modIds) {
+          const prefix = `${modId}:`;
+          if (id !== modId && !id.startsWith(prefix)) continue;
+          let ids = byMod.get(modId);
+          if (!ids) {
+            ids = [];
+            byMod.set(modId, ids);
+          }
+          ids.push(id);
+        }
+      }
+      for (const [modId, ids] of byMod) {
+        if (ids.length === 0) continue;
+        out.get(modId)!.push({ bag, count: ids.length, sample: ids.slice(0, 12) });
+      }
     }
-    return out;
   } catch {
-    return [];
+    /* ignore */
   }
+  return out;
 }
 
 function parseDiagnostic(entry: unknown): ModDiagnostic | null {
@@ -123,6 +136,21 @@ function parseDiagnostic(entry: unknown): ModDiagnostic | null {
 
 /** Full mod report for the Dev Tools Mods tab. */
 export function readModReport(): ModReport | null {
+  return buildModReport();
+}
+
+let reportCache: { at: number; value: ModReport | null } | null = null;
+const REPORT_CACHE_MS = 1500;
+
+function buildModReport(): ModReport | null {
+  const now = Date.now();
+  if (reportCache && now - reportCache.at < REPORT_CACHE_MS) return reportCache.value;
+  const value = buildModReportUncached();
+  reportCache = { at: now, value };
+  return value;
+}
+
+function buildModReportUncached(): ModReport | null {
   try {
     const external = (
       sandkit.engine?.state as { session?: { externalMods?: ExternalModsSession } } | undefined
@@ -142,6 +170,8 @@ export function readModReport(): ModReport | null {
     }
 
     const mods: ModReportEntry[] = [];
+    const modIds: string[] = [];
+    const rows: Array<{ index: number; row: Record<string, unknown>; id: string }> = [];
     for (let index = 0; index < ordered.length; index++) {
       const record = ordered[index];
       if (!record || typeof record !== "object") continue;
@@ -151,6 +181,17 @@ export function readModReport(): ModReport | null {
           ? (row.manifest as Record<string, unknown>)
           : {};
       const id = stringField(manifest.id) || stringField(row.id) || "?";
+      modIds.push(id);
+      rows.push({ index, row, id });
+    }
+
+    const registryByMod = ownedRegistryCounts(modIds);
+
+    for (const { index, row, id } of rows) {
+      const manifest =
+        row.manifest && typeof row.manifest === "object"
+          ? (row.manifest as Record<string, unknown>)
+          : {};
       const statusEntry = statusById.get(id);
       const { source, itemId } = workshopSource(row);
       const discoveredVia = discoveredViaFromRecord(row);
@@ -187,7 +228,7 @@ export function readModReport(): ModReport | null {
         entry: stringField(manifest.entry) || null,
         hasWorker: hasPayload(row.workerSource),
         hasEntrySource: hasPayload(row.entrySource),
-        registry: ownedRegistryCounts(id),
+        registry: registryByMod.get(id) ?? [],
       });
     }
 

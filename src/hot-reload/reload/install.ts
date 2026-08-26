@@ -15,6 +15,11 @@ function selfMainUrl(api: SandkitApi, selfId: string): string {
   return `sandkit-workshop://${selfId}/main.js`;
 }
 
+type FetchResult = {
+  mod: { id: string; mainUrl: string };
+  text: string | null;
+};
+
 /**
  * Poll sibling `main.js` files and re-eval when the text is stable and changed.
  * Does not reload this companion. First successful fetch only records a baseline.
@@ -27,10 +32,33 @@ export function installLocalModReload(api: SandkitApi, selfId: string): () => vo
   let timer: ReturnType<typeof setTimeout> | undefined;
   let stopped = false;
 
+  async function applyReload(mod: FetchResult["mod"], text: string): Promise<void> {
+    pending.delete(mod.id);
+    const host = sandkitHostForMod(mod.id);
+    if (!host) {
+      if (!missingHost.has(mod.id)) {
+        missingHost.add(mod.id);
+        console.error(`hot reload skipped for ${mod.id}: missing sandkit host`);
+      }
+      return;
+    }
+    missingHost.delete(mod.id);
+    try {
+      const generation = await hotEvalMain(mod.id, text, host);
+      lastApplied.set(mod.id, text);
+      console.log(`reloaded ${mod.id} v${generation}`);
+    } catch (error) {
+      console.error(`hot reload failed for ${mod.id}`, error);
+    }
+  }
+
   async function tick(): Promise<void> {
     const mods = discoverLocalMods(selfId, companionMain, readModsState());
-    for (const mod of mods) {
-      const text = await fetchMain(mod.mainUrl);
+    const fetched: FetchResult[] = await Promise.all(
+      mods.map(async (mod) => ({ mod, text: await fetchMain(mod.mainUrl) })),
+    );
+
+    for (const { mod, text } of fetched) {
       if (text == null) continue;
 
       const decision = decideReload(lastApplied.get(mod.id), pending.get(mod.id), text);
@@ -48,23 +76,7 @@ export function installLocalModReload(api: SandkitApi, selfId: string): () => vo
         continue;
       }
 
-      pending.delete(mod.id);
-      const host = sandkitHostForMod(mod.id);
-      if (!host) {
-        if (!missingHost.has(mod.id)) {
-          missingHost.add(mod.id);
-          console.error(`hot reload skipped for ${mod.id}: missing sandkit host`);
-        }
-        continue;
-      }
-      missingHost.delete(mod.id);
-      lastApplied.set(mod.id, text);
-      try {
-        const generation = await hotEvalMain(mod.id, text, host);
-        console.log(`reloaded ${mod.id} v${generation}`);
-      } catch (error) {
-        console.error(`hot reload failed for ${mod.id}`, error);
-      }
+      await applyReload(mod, text);
     }
   }
 

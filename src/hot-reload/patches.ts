@@ -1,4 +1,6 @@
 import { definePatches } from "@modkit/modinfo";
+import { earlyAutoLoadPatchIife } from "./boot/auto-load.ts";
+import { FAST_BOOT_STORAGE_KEY } from "./boot/fast-boot-keys.ts";
 
 /**
  * Full shader-compile skip for Options → Skip shader recompile.
@@ -6,12 +8,32 @@ import { definePatches } from "@modkit/modinfo";
  * Re-test find strings after each game update.
  */
 const SKIP = 'localStorage.getItem("hot-reload.skipShaderRecomp")==="true"';
+const FAST = `localStorage.getItem(${JSON.stringify(FAST_BOOT_STORAGE_KEY)})==="true"`;
+
+/** Redirect to ?db_load= before assets, shaders, and mods load (avoids a full double boot). */
+const EARLY_AUTO_LOAD = earlyAutoLoadPatchIife();
 
 /** Tiny passthrough — still constructs a Filter, but avoids Sn() + the huge outline GLSL compile. */
 const CHEAP_FRAG =
   "precision mediump float;varying vec2 vTextureCoord;uniform sampler2D uSampler;void main(){gl_FragColor=texture2D(uSampler,vTextureCoord);}";
 
 export const debugPatches = definePatches([
+  {
+    id: "early-auto-load-save",
+    file: "js/bundle.js",
+    find: "(async()=>{var e,t,n,a,r,o;try{await async function(){const e=(0,Rn.M5)().locale",
+    operation: "insertBefore",
+    code: EARLY_AUTO_LOAD,
+    expectedMatches: 1,
+  },
+  {
+    id: "skip-splash-on-save-load",
+    file: "js/bundle.js",
+    find: 'if(!e)if(sessionStorage.getItem("splashShown")){',
+    operation: "insertBefore",
+    code: `if(${FAST}&&new URLSearchParams(location.search).has("db_load"))try{sessionStorage.setItem("splashShown","true")}catch(e){}`,
+    expectedMatches: 1,
+  },
   {
     id: "skip-initial-outline-shader",
     file: "js/bundle.js",

@@ -31,8 +31,9 @@ Settings live on this mod. Open **Options → Mods → hot-reload**.
 | **Disable autosave**      | `disableAutosave`  | off         | Sets `session.settings.autosaveInterval` to `0`. Manual saves still work                                                                                                                    |
 | **Watch local mods**      | `watchLocalMods`   | off         | Poll other mods' `main.js` and re-eval the renderer bundle. Does not reload this companion, workers, or patches                                                                             |
 | **Skip shader recompile** | `skipShaderRecomp` | off         | Skip initial outline build, post-mod regenerate, `warmup`, and the **Compiling shaders…** splash wait. Writes `localStorage`. Needs `debugPatches` (dev). Restart once after you turn it on |
+| **Fast dev boot**         | `fastBoot`           | off         | Early auto-load redirect (no double boot), skip splash on save load, and shader skip mirror. Writes `localStorage`. Needs `debugPatches` (dev). Restart once after you turn it on            |
 
-Turn on **Watch local mods**, **Skip shader recompile**, **Auto-load save**, **F3 debug overlay**, **Disable autosave**, **F12**, or **Open DevTools on load** when you want those helpers.
+Turn on **Watch local mods**, **Skip shader recompile**, **Fast dev boot**, **Auto-load save**, **F3 debug overlay**, **Disable autosave**, **F12**, or **Open DevTools on load** when you want those helpers.
 
 ## Features
 
@@ -45,6 +46,7 @@ Turn on **Watch local mods**, **Skip shader recompile**, **Auto-load save**, **F
 - **Dev Tools** (`mod-inspector/`) — pause **Dev Tools** opens a 980×720 panel. **Mods** tab: compact loaded-mod cards with **Open** for details; save issues (missing, diagnostics, type-id drift) stay collapsed. **Elements**: family sand table. **Recipes**: placeholder.
 - **Watch local mods** (`reload/`) — poll and re-eval other mods' renderer `main.js`.
 - **Skip shader recompile** (`patches.ts`, `boot/skip-shader-recomp.ts`) — when on, `debugPatches` skip the early outline compile, post-mod regenerate, `warmup`, and the **Compiling shaders…** splash UI/wait. Preference is stored in `localStorage` so the next launch can skip work that runs before mods. Restart once after you turn it on.
+- **Fast dev boot** (`patches.ts`, `boot/fast-boot.ts`) — when on, mirrors auto-load and shader skip to `localStorage`, redirects to `?db_load=` before assets load (avoids a full double boot when **Auto-load save** is on), and skips the logo splash when the URL already has `db_load`. Restart once after you turn it on.
 
 ## DevTools globals
 

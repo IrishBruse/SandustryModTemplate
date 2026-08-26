@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { modSourceLabel } from "./mod-source";
 import { readModReport, type ModDiagnostic, type ModReportEntry } from "./mod-report";
 import { refreshTypeDrift, type TypeDriftEntry } from "./type-drift";
@@ -52,7 +52,15 @@ function yesNo(value: boolean): string {
   return value ? "yes" : "no";
 }
 
-function ModDetails({ mod, diagnostics }: { mod: ModReportEntry; diagnostics: ModDiagnostic[] }) {
+function ModDetails({
+  mod,
+  diagnostics,
+  onOpenWorkshop,
+}: {
+  mod: ModReportEntry;
+  diagnostics: ModDiagnostic[];
+  onOpenWorkshop: (itemId: string) => void;
+}) {
   const ownDiagnostics = diagnostics.filter((entry) => entry.modId === mod.id);
 
   return (
@@ -99,8 +107,7 @@ function ModDetails({ mod, diagnostics }: { mod: ModReportEntry; diagnostics: Mo
           <p className="text-gray-500 mb-1">Workshop item {mod.itemId}</p>
           <button
             type="button"
-            data-dev-tools-action="open-workshop"
-            data-dev-tools-item-id={mod.itemId}
+            onClick={() => onOpenWorkshop(mod.itemId!)}
             className="px-3 py-1.5 text-xs text-gray-300 bg-black border border-gray-600 rounded hover:text-[#ffe700] item-button-transition"
           >
             Open Workshop page
@@ -150,10 +157,14 @@ function ModCard({
   mod,
   open,
   diagnostics,
+  onToggle,
+  onOpenWorkshop,
 }: {
   mod: ModReportEntry;
   open: boolean;
   diagnostics: ModDiagnostic[];
+  onToggle: () => void;
+  onOpenWorkshop: (itemId: string) => void;
 }) {
   return (
     <div className="p-3 bg-gray-900 bg-opacity-50 rounded border border-gray-700">
@@ -170,8 +181,7 @@ function ModCard({
         <div className="flex gap-2 shrink-0">
           <button
             type="button"
-            data-dev-tools-action="toggle-mod"
-            data-dev-tools-mod-id={`${mod.order}:${mod.id}`}
+            onClick={onToggle}
             className="px-3 py-1.5 text-xs text-white bg-black border rounded-tr-lg rounded-bl-lg border-slate-200 hover:text-[#ffe700] item-button-transition"
           >
             {open ? "Close" : "Open"}
@@ -179,7 +189,9 @@ function ModCard({
         </div>
       </div>
 
-      {open ? <ModDetails mod={mod} diagnostics={diagnostics} /> : null}
+      {open ? (
+        <ModDetails mod={mod} diagnostics={diagnostics} onOpenWorkshop={onOpenWorkshop} />
+      ) : null}
     </div>
   );
 }
@@ -197,12 +209,14 @@ function SaveIssues({
   diagnostics,
   drift,
   driftFirstRun,
+  onToggle,
 }: {
   open: boolean;
   missing: string[];
   diagnostics: { code: string; modId: string | null; message: string }[];
   drift: TypeDriftEntry[];
   driftFirstRun: boolean;
+  onToggle: () => void;
 }) {
   const count = missing.length + diagnostics.length + drift.length;
   if (count === 0 && !driftFirstRun) return null;
@@ -211,7 +225,7 @@ function SaveIssues({
     <div className="mt-3 pt-3 border-t border-slate-700/40">
       <button
         type="button"
-        data-dev-tools-action="toggle-save-issues"
+        onClick={onToggle}
         className="w-full flex items-center justify-between text-left py-1"
       >
         <span className="text-[11px] uppercase tracking-wider text-amber-400">
@@ -290,7 +304,6 @@ function IssueBlock({
 }
 
 export function ModsTab() {
-  const rootRef = useRef<HTMLDivElement>(null);
   const [openModKey, setOpenModKey] = useState<string | null>(null);
   const [saveIssuesOpen, setSaveIssuesOpen] = useState(false);
   const [driftState] = useState(() => refreshTypeDrift());
@@ -307,42 +320,6 @@ export function ModsTab() {
     tick();
     const id = window.setInterval(tick, 2000);
     return () => window.clearInterval(id);
-  }, []);
-
-  // BodyPortal breaks React delegated clicks.
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-
-    function onClick(event: MouseEvent) {
-      const target = event.target as Element | null;
-      if (!target) return;
-      const actionEl = target.closest("[data-dev-tools-action]") as HTMLElement | null;
-      const action = actionEl?.getAttribute("data-dev-tools-action");
-      if (action === "toggle-mod") {
-        event.preventDefault();
-        event.stopPropagation();
-        const key = actionEl?.getAttribute("data-dev-tools-mod-id");
-        if (!key) return;
-        setOpenModKey((current) => (current === key ? null : key));
-        return;
-      }
-      if (action === "open-workshop") {
-        event.preventDefault();
-        event.stopPropagation();
-        const itemId = actionEl?.getAttribute("data-dev-tools-item-id");
-        if (itemId) openWorkshopPage(itemId);
-        return;
-      }
-      if (action === "toggle-save-issues") {
-        event.preventDefault();
-        event.stopPropagation();
-        setSaveIssuesOpen((current) => !current);
-      }
-    }
-
-    root.addEventListener("click", onClick);
-    return () => root.removeEventListener("click", onClick);
   }, []);
 
   const { drift, firstRun: driftFirstRun } = driftState;
@@ -362,7 +339,7 @@ export function ModsTab() {
   }
 
   return (
-    <div ref={rootRef} className="flex-1 min-h-0 flex flex-col">
+    <div className="flex-1 min-h-0 flex flex-col">
       <div className="shrink-0 mb-2 flex items-baseline justify-between gap-2">
         <h3 className="text-sm text-gray-300">Loaded mods ({report.mods.length})</h3>
         {patchingActive === true ? (
@@ -379,6 +356,8 @@ export function ModsTab() {
               mod={mod}
               open={openModKey === key}
               diagnostics={report.diagnostics}
+              onToggle={() => setOpenModKey((current) => (current === key ? null : key))}
+              onOpenWorkshop={openWorkshopPage}
             />
           );
         })}
@@ -389,6 +368,7 @@ export function ModsTab() {
           diagnostics={report.diagnostics}
           drift={drift}
           driftFirstRun={driftFirstRun}
+          onToggle={() => setSaveIssuesOpen((current) => !current)}
         />
       </div>
     </div>

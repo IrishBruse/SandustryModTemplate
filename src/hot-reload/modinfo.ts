@@ -1,11 +1,15 @@
 import { defineModInfo } from "@modkit/modinfo";
-import { AUTO_LOAD_FROM_STORAGE, AUTO_LOAD_LAST_PLAYED } from "./boot/auto-load-save";
+import {
+  AUTO_LOAD_FROM_STORAGE,
+  AUTO_LOAD_LAST_PLAYED,
+  COMPANION_MOD_ID,
+} from "./boot/auto-load-save";
 
 export { debugPatches } from "./patches.ts";
 
 export const modinfo = defineModInfo({
   manifestVersion: 1,
-  id: "hot-reload",
+  id: COMPANION_MOD_ID,
   name: "Hot Reload Dev Tools",
   version: "0.0.2",
   apiVersion: 1,
@@ -58,6 +62,13 @@ export const modinfo = defineModInfo({
       labelKey: "Skip shader recompile",
       descriptionKey:
         "Skip outline shaders, warmup, and the Compiling shaders splash (dev). Restart once after you turn it on.",
+    },
+    fastBoot: {
+      type: "boolean",
+      default: false,
+      labelKey: "Fast dev boot",
+      descriptionKey:
+        "Early auto-load redirect, skip splash on save load, and shader skip. Restart once after you turn it on.",
     },
     // Dev tools
     openDevTools: {

@@ -1,3 +1,6 @@
+/** Companion mod id — must match `modinfo.id` in `../modinfo.ts`. */
+export const COMPANION_MOD_ID = "hot-reload";
+
 /** Sentinel: resolve to the game's last played save at boot time. */
 export const AUTO_LOAD_LAST_PLAYED = "__last__";
 
@@ -6,13 +9,15 @@ export const AUTO_LOAD_FROM_STORAGE = "__storage__";
 
 /**
  * Storage key other mods write with
- * `api.storage.set(DEBUG_MOD_ID, START_SAVE_STORAGE_KEY, saveId)`.
- * `DEBUG_MOD_ID` must match `modinfo.id` in `../modinfo.ts`.
+ * `api.storage.set(COMPANION_MOD_ID, START_SAVE_STORAGE_KEY, saveId)`.
  */
 export const START_SAVE_STORAGE_KEY = "startSave";
 
-/** Must match `modinfo.id` in `../modinfo.ts`. */
-export const DEBUG_MOD_ID = "irishbruse.debug";
+/** Same as `COMPANION_MOD_ID` — namespace for `api.storage` on this companion. */
+export const DEBUG_MOD_ID = COMPANION_MOD_ID;
+
+/** Pre-rename companion id; read once when the current namespace is empty. */
+const LEGACY_DEBUG_MOD_ID = "irishbruse.debug";
 
 type ElectronBridge = {
   getLastPlayedGameSync?(): string | null;
@@ -20,7 +25,10 @@ type ElectronBridge = {
 };
 
 function electronBridge(): ElectronBridge | undefined {
-  return (window as Window & { electron?: ElectronBridge }).electron;
+  const root = globalThis as typeof globalThis & {
+    window?: Window & { electron?: ElectronBridge };
+  };
+  return root.window?.electron;
 }
 
 function saveExists(id: string): boolean {
@@ -62,13 +70,18 @@ export function getLastPlayedSaveId(): string | null {
   }
 }
 
-/**
- * Save id another mod stored on this companion:
- * `api.storage.set("irishbruse.debug", "startSave", saveId)`.
- */
+/** Read `startSave` from companion storage, migrating from the legacy mod id once. */
 export function getStorageSaveId(api: SandkitApi): string | null {
   api.storage.ensure(DEBUG_MOD_ID);
-  const value = api.storage.get(DEBUG_MOD_ID, START_SAVE_STORAGE_KEY);
+  let value = api.storage.get(DEBUG_MOD_ID, START_SAVE_STORAGE_KEY);
+  if (typeof value !== "string" || !value) {
+    api.storage.ensure(LEGACY_DEBUG_MOD_ID);
+    const legacy = api.storage.get(LEGACY_DEBUG_MOD_ID, START_SAVE_STORAGE_KEY);
+    if (typeof legacy === "string" && legacy) {
+      api.storage.set(DEBUG_MOD_ID, START_SAVE_STORAGE_KEY, legacy);
+      value = legacy;
+    }
+  }
   if (typeof value !== "string" || !value) return null;
   if (value === AUTO_LOAD_LAST_PLAYED || value === AUTO_LOAD_FROM_STORAGE) return null;
   if (!saveExists(value)) return null;

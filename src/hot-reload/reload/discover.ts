@@ -1,3 +1,5 @@
+import { isLocalExternalMod, parseOrderedMod } from "../mod-inspector/mod-source.ts";
+
 export type LocalMod = {
   id: string;
   mainUrl: string;
@@ -75,41 +77,17 @@ export function rewriteMainUrl(selfMainUrl: string, selfId: string, otherId: str
   return `sandkit-workshop://${otherId}/main.js`;
 }
 
-/** True when the game record was discovered as a local folder (not Workshop). */
-export function isLocalExternalMod(entry: unknown): boolean {
-  if (!entry || typeof entry !== "object") return false;
-  const workshop = (entry as { workshop?: unknown }).workshop;
-  if (!workshop || typeof workshop !== "object") return false;
-  const via = (workshop as { discoveredVia?: unknown }).discoveredVia;
-  return Array.isArray(via) && via.includes("local");
-}
-
-function idFromOrderedMod(entry: unknown): string | null {
-  if (!entry || typeof entry !== "object") return null;
-  const manifest = (entry as { manifest?: unknown }).manifest;
-  if (manifest && typeof manifest === "object") {
-    const id = (manifest as { id?: unknown }).id;
-    if (typeof id === "string" && id.length > 0) return id;
-  }
-  return idFromEntry(entry);
-}
-
 function mainUrlFromRoot(
-  rootUrl: unknown,
+  rootUrl: string | null,
   id: string,
   selfMainUrl: string,
   selfId: string,
 ): string {
-  if (typeof rootUrl === "string" && rootUrl.length > 0) {
+  if (rootUrl) {
     const base = rootUrl.endsWith("/") ? rootUrl : `${rootUrl}/`;
     return `${base}main.js`;
   }
   return rewriteMainUrl(selfMainUrl, selfId, id);
-}
-
-function isOrderedModRecord(entry: unknown): boolean {
-  if (!entry || typeof entry !== "object") return false;
-  return "manifest" in entry && "workshop" in entry;
 }
 
 /**
@@ -121,18 +99,27 @@ export function discoverLocalMods(
   selfMainUrl: string,
   modsState: unknown,
 ): LocalMod[] {
-  if (Array.isArray(modsState) && modsState.some(isOrderedModRecord)) {
-    const ids: LocalMod[] = [];
-    const seen = new Set<string>();
-    for (const entry of modsState) {
-      if (!isLocalExternalMod(entry)) continue;
-      const id = idFromOrderedMod(entry);
-      if (!id || id === selfId || seen.has(id)) continue;
-      seen.add(id);
-      const rootUrl =
-        entry && typeof entry === "object" ? (entry as { rootUrl?: unknown }).rootUrl : undefined;
-      ids.push({ id, mainUrl: mainUrlFromRoot(rootUrl, id, selfMainUrl, selfId) });
-    }
+  if (!Array.isArray(modsState)) {
+    return collectModIds(modsState, selfId).map((id) => ({
+      id,
+      mainUrl: rewriteMainUrl(selfMainUrl, selfId, id),
+    }));
+  }
+
+  const ids: LocalMod[] = [];
+  const seen = new Set<string>();
+  for (const entry of modsState) {
+    const parsed = parseOrderedMod(entry);
+    if (!parsed?.isLocal) continue;
+    if (parsed.id === selfId || seen.has(parsed.id)) continue;
+    seen.add(parsed.id);
+    ids.push({
+      id: parsed.id,
+      mainUrl: mainUrlFromRoot(parsed.rootUrl, parsed.id, selfMainUrl, selfId),
+    });
+  }
+
+  if (ids.length > 0 || modsState.some((entry) => parseOrderedMod(entry) !== null)) {
     return ids;
   }
 
@@ -141,6 +128,8 @@ export function discoverLocalMods(
     mainUrl: rewriteMainUrl(selfMainUrl, selfId, id),
   }));
 }
+
+export { isLocalExternalMod };
 
 /** Read `store.mods.__sandkitExternalRuntimeV1.order`. Not `state.sandkit.mods` (game content). */
 export function modsStateFromStore(storeMods: unknown): unknown {

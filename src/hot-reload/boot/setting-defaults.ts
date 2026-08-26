@@ -10,4 +10,5 @@ export const SETTING_DEFAULTS: Record<string, boolean> = {
   disableAutosave: false,
   watchLocalMods: false,
   skipShaderRecomp: false,
+  fastBoot: false,
 };

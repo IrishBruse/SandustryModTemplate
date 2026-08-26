@@ -42,6 +42,47 @@ export function rootUrlFromRecord(record: unknown): string | null {
   return typeof rootUrl === "string" && rootUrl.length > 0 ? rootUrl : null;
 }
 
+export type ParsedOrderedMod = {
+  id: string;
+  rootUrl: string | null;
+  isLocal: boolean;
+  discoveredVia: DiscoveredVia[];
+};
+
+function idFromRecord(entry: Record<string, unknown>): string | null {
+  const manifest = entry.manifest;
+  if (manifest && typeof manifest === "object") {
+    const id = (manifest as { id?: unknown }).id;
+    if (typeof id === "string" && id.length > 0) return id;
+  }
+  for (const key of ["id", "modId", "modName", "name"] as const) {
+    const value = entry[key];
+    if (typeof value === "string" && value.length > 0) return value;
+  }
+  return null;
+}
+
+/** Parse one `session.externalMods.orderedMods` entry. */
+export function parseOrderedMod(entry: unknown): ParsedOrderedMod | null {
+  if (!entry || typeof entry !== "object") return null;
+  if (!("manifest" in entry) || !("workshop" in entry)) return null;
+  const row = entry as Record<string, unknown>;
+  const id = idFromRecord(row);
+  if (!id) return null;
+  const discoveredVia = discoveredViaFromRecord(entry);
+  return {
+    id,
+    rootUrl: rootUrlFromRecord(entry),
+    isLocal: discoveredVia.includes("local"),
+    discoveredVia,
+  };
+}
+
+/** True when the game record was discovered as a local folder (not Workshop). */
+export function isLocalExternalMod(entry: unknown): boolean {
+  return parseOrderedMod(entry)?.isLocal ?? false;
+}
+
 /**
  * Classify an external mod record.
  * - `local` — app-data mods folder
@@ -77,13 +118,8 @@ export function externalModIdSet(): Set<string> {
     )?.session?.externalMods?.orderedMods;
     if (!Array.isArray(ordered)) return out;
     for (const entry of ordered) {
-      if (!entry || typeof entry !== "object") continue;
-      const manifest = (entry as { manifest?: unknown }).manifest;
-      const id =
-        manifest && typeof manifest === "object"
-          ? (manifest as { id?: unknown }).id
-          : (entry as { id?: unknown }).id;
-      if (typeof id === "string" && id.length > 0) out.add(id);
+      const parsed = parseOrderedMod(entry);
+      if (parsed) out.add(parsed.id);
     }
   } catch {
     /* ignore */

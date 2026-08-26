@@ -1,12 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { elementSourceLabel } from "../mod-source";
 import { contrastText, tileFillCss } from "./element-colors";
 import { listElements, type ElementRow } from "./list-elements";
 import { buildMatterGroups } from "./matter-layout";
-
-type ElementsTabProps = {
-  selectedType: number | null;
-};
 
 const TILE_COLUMNS = 8;
 const TILE_GAP = 6;
@@ -15,10 +11,12 @@ function ElementTile({
   element,
   selected,
   showMatterLabel = false,
+  onSelect,
 }: {
   element: ElementRow;
   selected: boolean;
   showMatterLabel?: boolean;
+  onSelect: (elementType: number) => void;
 }) {
   const fill = tileFillCss(element.backgroundCss);
   const ink = contrastText(fill);
@@ -26,7 +24,7 @@ function ElementTile({
   return (
     <button
       type="button"
-      data-dev-tools-element={element.elementType}
+      onClick={() => onSelect(element.elementType)}
       title={`${element.name} (${element.id})`}
       className={`
         box-border flex flex-col w-full h-full text-center border overflow-hidden
@@ -86,10 +84,12 @@ function ElementGrid({
   elements,
   selectedType,
   showMatterLabel = false,
+  onSelect,
 }: {
   elements: ElementRow[];
   selectedType: number | null;
   showMatterLabel?: boolean;
+  onSelect: (elementType: number) => void;
 }) {
   return (
     <div
@@ -105,6 +105,7 @@ function ElementGrid({
             element={element}
             selected={selectedType === element.elementType}
             showMatterLabel={showMatterLabel}
+            onSelect={onSelect}
           />
         </div>
       ))}
@@ -132,7 +133,13 @@ function copyText(text: string): boolean {
 function Copyable({ value, className }: { value: string; className?: string }) {
   return (
     <span
-      data-copy-text={value}
+      onClick={(event) => {
+        const selected = window.getSelection()?.toString() ?? "";
+        if (selected.length > 0) return;
+        event.preventDefault();
+        event.stopPropagation();
+        copyText(value);
+      }}
       title="Click to copy"
       className={`font-mono text-slate-200 cursor-pointer ${className ?? ""}`}
       style={{ userSelect: "text", WebkitUserSelect: "text" }}
@@ -175,7 +182,6 @@ function ElementDetailBar({ element }: { element: ElementRow | null }) {
 
   return (
     <div
-      data-element-details=""
       className="shrink-0 border-t border-slate-700/50 pt-2 mt-2 flex gap-3 items-start max-h-[220px]"
       style={{ userSelect: "text", WebkitUserSelect: "text" }}
     >
@@ -190,13 +196,10 @@ function ElementDetailBar({ element }: { element: ElementRow | null }) {
           borderRadius: 0,
         }}
       >
-        <span
-          data-copy-text={String(element.elementType)}
-          className="text-[11px] font-mono font-bold leading-none tabular-nums cursor-pointer"
-          title="Click to copy"
-        >
-          {element.elementType}
-        </span>
+        <Copyable
+          value={String(element.elementType)}
+          className="text-[11px] font-bold leading-none tabular-nums"
+        />
         <div className="min-w-0">
           <p className="text-[12px] font-semibold leading-tight truncate">
             <Copyable value={element.name} />
@@ -269,39 +272,10 @@ function ElementDetailBar({ element }: { element: ElementRow | null }) {
   );
 }
 
-export function ElementsTab({ selectedType }: ElementsTabProps) {
+export function ElementsTab() {
   const [query, setQuery] = useState("");
-  const searchRef = useRef<HTMLInputElement>(null);
+  const [selectedType, setSelectedType] = useState<number | null>(null);
   const elements = useMemo(() => listElements(), []);
-
-  useEffect(() => {
-    function onClick(event: MouseEvent) {
-      const selected = window.getSelection()?.toString() ?? "";
-      if (selected.length > 0) return;
-      const target = event.target as Element | null;
-      if (!target) return;
-      const hit = target.closest("[data-copy-text]") as HTMLElement | null;
-      if (!hit) return;
-      const text = hit.getAttribute("data-copy-text");
-      if (!text) return;
-      event.preventDefault();
-      event.stopPropagation();
-      copyText(text);
-    }
-
-    document.addEventListener("click", onClick, true);
-    return () => document.removeEventListener("click", onClick, true);
-  }, []);
-
-  useEffect(() => {
-    const input = searchRef.current;
-    if (!input) return;
-    function onInput() {
-      setQuery(input!.value);
-    }
-    input.addEventListener("input", onInput);
-    return () => input.removeEventListener("input", onInput);
-  }, []);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -327,11 +301,10 @@ export function ElementsTab({ selectedType }: ElementsTabProps) {
     <div className="flex-1 min-h-0 flex flex-col">
       <div className="flex items-center gap-2 mb-3 shrink-0">
         <input
-          ref={searchRef}
           type="search"
-          defaultValue=""
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
           placeholder="Search elements…"
-          data-dev-tools-element-search=""
           className="flex-1 text-[12px] px-2 py-1.5 bg-slate-900/80 border border-slate-600/50 text-white placeholder:text-slate-500"
           style={{ borderRadius: 0 }}
         />
@@ -341,7 +314,12 @@ export function ElementsTab({ selectedType }: ElementsTabProps) {
       <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden pr-1">
         {searching ? (
           <>
-            <ElementGrid elements={filtered} selectedType={selectedType} showMatterLabel />
+            <ElementGrid
+              elements={filtered}
+              selectedType={selectedType}
+              showMatterLabel
+              onSelect={setSelectedType}
+            />
             {filtered.length === 0 ? (
               <p className="text-[12px] text-slate-400 text-center py-6">No matches.</p>
             ) : null}
@@ -356,7 +334,11 @@ export function ElementsTab({ selectedType }: ElementsTabProps) {
                     ({group.elements.length})
                   </span>
                 </h3>
-                <ElementGrid elements={group.elements} selectedType={selectedType} />
+                <ElementGrid
+                  elements={group.elements}
+                  selectedType={selectedType}
+                  onSelect={setSelectedType}
+                />
               </section>
             ))}
             {matterGroups.length === 0 ? (
@@ -369,14 +351,4 @@ export function ElementsTab({ selectedType }: ElementsTabProps) {
       <ElementDetailBar element={selected} />
     </div>
   );
-}
-
-/** Resolve element type from a native click target inside the Dev Tools root. */
-export function elementTypeFromClickTarget(target: Element): number | null {
-  const el = target.closest("[data-dev-tools-element]") as HTMLElement | null;
-  if (!el) return null;
-  const raw = el.getAttribute("data-dev-tools-element");
-  if (!raw) return null;
-  const type = Number(raw);
-  return Number.isFinite(type) ? type : null;
 }

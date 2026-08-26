@@ -146,6 +146,7 @@ export function testCompanionSettings(): Record<string, unknown> {
         disableAutosave: true,
         watchLocalMods: true,
         skipShaderRecomp: true,
+        fastBoot: true,
         openDevTools: false,
         f12DevTools: false,
         f3Debug: false,

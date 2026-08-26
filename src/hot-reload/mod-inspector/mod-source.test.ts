@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { modSourceKind } from "./mod-source.ts";
+import { isLocalExternalMod, modSourceKind, parseOrderedMod } from "./mod-source.ts";
 
 test("local wins over other tags", () => {
   assert.equal(modSourceKind(["local", "root-scan"], "1"), "local");
@@ -21,4 +21,26 @@ test("root-scan without an item id is a core mod", () => {
 
 test("empty tags are unknown", () => {
   assert.equal(modSourceKind([]), "unknown");
+});
+
+test("parseOrderedMod reads local ordered mod records", () => {
+  const parsed = parseOrderedMod({
+    manifest: { id: "author.template" },
+    workshop: { discoveredVia: ["local"] },
+    rootUrl: "file:///mods/author.template",
+  });
+  assert.deepEqual(parsed, {
+    id: "author.template",
+    rootUrl: "file:///mods/author.template",
+    isLocal: true,
+    discoveredVia: ["local"],
+  });
+  assert.equal(
+    isLocalExternalMod({
+      manifest: { id: "author.template" },
+      workshop: { discoveredVia: ["local"] },
+      rootUrl: "file:///mods/author.template",
+    }),
+    true,
+  );
 });

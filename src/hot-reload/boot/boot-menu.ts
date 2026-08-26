@@ -1,19 +1,13 @@
 import { inGame } from "@modkit/utils";
 import { resolveAutoLoadSaveId } from "./auto-load-save";
+import {
+  autoLoadSessionDone,
+  buildAutoLoadUrl,
+  isBootQueryActive,
+  markAutoLoadSessionDone,
+  shouldAutoLoad,
+} from "./auto-load";
 import { autoLoadOn, settingOn } from "./settings";
-
-/** Once per browser session — skip auto-load after exit to main menu (page reload). */
-const AUTO_LOAD_SESSION_KEY = "irishbruse.debug:autoLoadDone";
-
-/** Query keys that already start a game boot (same list as the game bundle). */
-const BOOT_QUERY_KEYS = [
-  "new_game",
-  "load",
-  "db_load",
-  "file_load",
-  "custom_map",
-  "external_map",
-] as const;
 
 type ElectronBridge = {
   openDevTools(): void;
@@ -54,28 +48,6 @@ export function registerDevToolsShortcut(): void {
   );
 }
 
-/** True when the page URL already asks the game to boot a world. */
-function isBootQueryActive(): boolean {
-  const params = new URLSearchParams(window.location.search);
-  return BOOT_QUERY_KEYS.some((key) => params.has(key));
-}
-
-function autoLoadSessionDone(): boolean {
-  try {
-    return sessionStorage.getItem(AUTO_LOAD_SESSION_KEY) === "1";
-  } catch {
-    return false;
-  }
-}
-
-function markAutoLoadSessionDone(): void {
-  try {
-    sessionStorage.setItem(AUTO_LOAD_SESSION_KEY, "1");
-  } catch {
-    /* sessionStorage can throw in some embeds */
-  }
-}
-
 /**
  * Reload with `?db_load=<saveId>` (same navigation the game uses for Continue).
  * Returns true when navigation started (the page will unload).
@@ -89,13 +61,20 @@ function tryAutoLoadSave(api: SandkitApi, initialBoot: boolean): boolean {
   if (!initialBoot || autoLoadSessionDone()) return false;
 
   const saveId = resolveAutoLoadSaveId(api);
-  if (!saveId) return false;
+  if (
+    !shouldAutoLoad({
+      search: window.location.search,
+      autoLoadEnabled: autoLoadOn(api),
+      saveId,
+      sessionDone: false,
+      inGame: false,
+    })
+  ) {
+    return false;
+  }
 
   markAutoLoadSessionDone();
-  const url = new URL(window.location.href);
-  url.search = "";
-  url.searchParams.set("db_load", saveId);
-  location.assign(url.toString());
+  location.assign(buildAutoLoadUrl(saveId!).toString());
   return true;
 }
 

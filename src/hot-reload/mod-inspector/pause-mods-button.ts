@@ -6,13 +6,13 @@
  * Click opens Dev Tools (not vanilla Workshop `modsScreen`).
  */
 import { safe } from "@modkit/utils";
+import { isPauseMenuOpen, subscribeMenuOpen } from "./pause-menu";
 import { setModInspectorOpen } from "./state";
 
 const api = sandkit.api;
 
 const BTN_ATTR = "data-hot-reload-pause-mods";
 const ROW_SEL = ".w-64.mb-2.relative.group.cursor-pointer.pointer-events-auto";
-const HOOK_KEY = "__hotReloadPauseMenuOpenHooked__";
 
 /** Match vanilla pause `ZO` hover debounce (`qO = 150`). */
 const HOVER_DEBOUNCE_MS = 150;
@@ -58,8 +58,6 @@ const FACE_CLASS = [
   "pointer-events-none",
 ].join(" ");
 
-type MenuWindow = { open?: boolean };
-
 /** Vanilla pause row hover: `blip` with `ignoreMute` (not management `playbackRate`). */
 function playHover(): void {
   const now = Date.now();
@@ -74,17 +72,6 @@ function playClick(): void {
 
 function rowText(el: Element): string {
   return (el.textContent ?? "").replace(/\s+/g, " ").trim();
-}
-
-function getMenuWindow(): MenuWindow | null {
-  const state = sandkit.engine.state as
-    | { session?: { windows?: { menu?: MenuWindow } } }
-    | undefined;
-  return state?.session?.windows?.menu ?? null;
-}
-
-function isPauseMenuOpen(): boolean {
-  return getMenuWindow()?.open === true;
 }
 
 /** Options immediately followed by Exit (English pause list). */
@@ -143,54 +130,25 @@ function createModsButton(): HTMLElement {
   return root;
 }
 
+function isButtonPlaced(button: HTMLElement): boolean {
+  const pair = findOptionsExit();
+  if (!pair) return false;
+  return (
+    button.isConnected &&
+    button.nextElementSibling === pair.exit &&
+    button.parentElement === pair.exit.parentElement
+  );
+}
+
 function placeButton(button: HTMLElement): boolean {
   const pair = findOptionsExit();
   if (!pair) {
     button.remove();
     return false;
   }
-  if (button.nextElementSibling === pair.exit && button.parentElement === pair.exit.parentElement) {
-    return true;
-  }
+  if (isButtonPlaced(button)) return true;
   pair.exit.parentElement?.insertBefore(button, pair.exit);
   return button.isConnected;
-}
-
-type MenuOpenListener = (open: boolean) => void;
-
-function subscribeMenuOpen(onChange: MenuOpenListener): () => void {
-  const menu = getMenuWindow();
-  if (!menu) {
-    onChange(isPauseMenuOpen());
-    return () => {};
-  }
-
-  const bag = menu as MenuWindow & { [HOOK_KEY]?: Set<MenuOpenListener> };
-  let listeners = bag[HOOK_KEY];
-  if (!listeners) {
-    listeners = new Set();
-    bag[HOOK_KEY] = listeners;
-    let value = menu.open === true;
-    Object.defineProperty(menu, "open", {
-      configurable: true,
-      enumerable: true,
-      get() {
-        return value;
-      },
-      set(next: boolean) {
-        const v = next === true;
-        if (v === value) return;
-        value = v;
-        for (const fn of listeners!) fn(value);
-      },
-    });
-  }
-
-  listeners.add(onChange);
-  onChange(menu.open === true);
-  return () => {
-    listeners!.delete(onChange);
-  };
 }
 
 /**
@@ -200,16 +158,14 @@ function subscribeMenuOpen(onChange: MenuOpenListener): () => void {
 export function startPauseModsButton(): () => void {
   const button = createModsButton();
   let raf = 0;
-  let placed = false;
 
   const sync = () => {
     if (!isPauseMenuOpen()) {
+      cancelAnimationFrame(raf);
       button.remove();
-      placed = false;
       return;
     }
-    placed = placeButton(button);
-    if (!placed) {
+    if (!placeButton(button)) {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(sync);
     }
@@ -220,32 +176,11 @@ export function startPauseModsButton(): () => void {
     else {
       cancelAnimationFrame(raf);
       button.remove();
-      placed = false;
     }
   });
-
-  const observer = new MutationObserver(() => {
-    if (!isPauseMenuOpen()) return;
-    if (placed && button.isConnected) return;
-    sync();
-  });
-  observer.observe(document.documentElement, { childList: true, subtree: true });
-
-  const poll = window.setInterval(() => {
-    if (!isPauseMenuOpen()) {
-      if (placed || button.isConnected) {
-        button.remove();
-        placed = false;
-      }
-      return;
-    }
-    if (!placed || !button.isConnected) sync();
-  }, 500);
 
   return () => {
     stopMenu();
-    observer.disconnect();
-    window.clearInterval(poll);
     cancelAnimationFrame(raf);
     button.remove();
   };
