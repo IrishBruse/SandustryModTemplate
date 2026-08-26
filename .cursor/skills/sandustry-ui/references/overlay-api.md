@@ -6,6 +6,14 @@ Declarations: `modkit/types/sandkit/api/ui.d.ts`. Generated: `docs/api/sandkit/a
 
 `inject`, `update`, `overlays.register(slot, overlayId, render)` (slot e.g. `"hotbar"`), `unregister`, `overlays.update`, `toast`, `showTooltip`, `alert`, `confirm`, `prompt`, `openPauseMenu`. Navigation: `useFocusable`, `useFocusScope`, `controllerFocusClass`. Engine: `sandkit.engine.api.debug`.
 
+## inject
+
+`inject(id, Component)` registers a **global** overlay. The overlay id is `${modId}:${id}` (the `sandkit` for that mod supplies `modId`). Engine store: `session.ui.overlays.global[overlayId] = { render }`. The same slot+id **replaces** `render` and calls `ui.update(GlobalOverlays)`.
+
+The dispose function holds a Symbol token. A later `inject` with the same id writes a new token. The old dispose then does nothing.
+
+`overlays.register("hotbar", overlayId, render)` writes `session.ui.overlays.hotbar[overlayId]` and updates **HotbarOverlays**. Same replace-by-id rule.
+
 ## ComponentId -> screen
 
 | Id                    | Screen                         |

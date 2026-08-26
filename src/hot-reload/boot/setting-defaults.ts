@@ -9,4 +9,5 @@ export const SETTING_DEFAULTS: Record<string, boolean> = {
   f3Debug: false,
   disableAutosave: false,
   watchLocalMods: false,
+  skipShaderRecomp: false,
 };

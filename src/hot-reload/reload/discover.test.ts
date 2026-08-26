@@ -6,6 +6,7 @@ import {
   isLocalExternalMod,
   modsStateFromStore,
   orderedModsFromSession,
+  resolveModsState,
   rewriteMainUrl,
 } from "./discover.ts";
 
@@ -140,4 +141,16 @@ test("orderedModsFromSession reads session.externalMods.orderedMods", () => {
   const ordered = [{ manifest: { id: "author.template" } }];
   assert.deepEqual(orderedModsFromSession({ externalMods: { orderedMods: ordered } }), ordered);
   assert.equal(orderedModsFromSession({}), undefined);
+});
+
+test("resolveModsState does not fall back to Workshop order while orderedMods is missing", () => {
+  assert.deepEqual(resolveModsState({ externalMods: {} }), []);
+  assert.deepEqual(
+    resolveModsState({
+      externalMods: { orderedMods: [{ manifest: { id: "author.template" } }] },
+    }),
+    [{ manifest: { id: "author.template" } }],
+  );
+  assert.deepEqual(resolveModsState({}), []);
+  assert.deepEqual(resolveModsState(undefined), []);
 });

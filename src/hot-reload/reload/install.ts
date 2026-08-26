@@ -1,5 +1,6 @@
 import { discoverLocalMods, readModsState } from "./discover.ts";
 import { hotEvalMain } from "./hot-eval.ts";
+import { sandkitHostForMod } from "./host.ts";
 import { decideReload, fetchMain } from "./poll.ts";
 
 const POLL_MS = 500;
@@ -22,6 +23,7 @@ export function installLocalModReload(api: SandkitApi, selfId: string): () => vo
   const companionMain = selfMainUrl(api, selfId);
   const lastApplied = new Map<string, string>();
   const pending = new Map<string, string>();
+  const missingHost = new Set<string>();
   let timer: ReturnType<typeof setTimeout> | undefined;
   let stopped = false;
 
@@ -47,10 +49,19 @@ export function installLocalModReload(api: SandkitApi, selfId: string): () => vo
       }
 
       pending.delete(mod.id);
+      const host = sandkitHostForMod(mod.id);
+      if (!host) {
+        if (!missingHost.has(mod.id)) {
+          missingHost.add(mod.id);
+          console.error(`hot reload skipped for ${mod.id}: missing sandkit host`);
+        }
+        continue;
+      }
+      missingHost.delete(mod.id);
       lastApplied.set(mod.id, text);
       try {
-        await hotEvalMain(mod.id, text, sandkit);
-        console.log(`reloaded ${mod.id}`);
+        const generation = await hotEvalMain(mod.id, text, host);
+        console.log(`reloaded ${mod.id} v${generation}`);
       } catch (error) {
         console.error(`hot reload failed for ${mod.id}`, error);
       }

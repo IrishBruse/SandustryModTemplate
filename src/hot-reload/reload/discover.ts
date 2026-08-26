@@ -159,14 +159,27 @@ export function orderedModsFromSession(session: unknown): unknown[] | undefined 
   return Array.isArray(ordered) ? ordered : undefined;
 }
 
+/**
+ * Prefer local `orderedMods`. Return `[]` until that list is ready.
+ * Do not use store `__sandkitExternalRuntimeV1.order` — those ids are Workshop
+ * saves without local paths, and early boot would poll missing `file://` mains.
+ */
+export function resolveModsState(session: unknown): unknown {
+  if (session && typeof session === "object") {
+    const externalMods = (session as { externalMods?: unknown }).externalMods;
+    if (externalMods && typeof externalMods === "object") {
+      const ordered = (externalMods as { orderedMods?: unknown }).orderedMods;
+      return Array.isArray(ordered) ? ordered : [];
+    }
+  }
+  return [];
+}
+
 export function readModsState(): unknown {
   try {
     const session = sandkit.engine?.state?.session;
-    const ordered = orderedModsFromSession(session);
-    if (ordered) return ordered;
-    const store = sandkit.engine?.state?.store as { mods?: unknown } | undefined;
-    return modsStateFromStore(store?.mods);
+    return resolveModsState(session);
   } catch {
-    return undefined;
+    return [];
   }
 }

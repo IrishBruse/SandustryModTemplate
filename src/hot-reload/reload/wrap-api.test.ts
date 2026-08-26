@@ -20,13 +20,13 @@ test("trackDisposeReturn records function returns for that mod", () => {
   runDisposers("mod-a");
 });
 
-test("wrapApi tracks inject and on, not toast", () => {
+test("wrapApi tracks inject and on, not toast; generation annotates toast", () => {
   const host = {
     api: {
       toast: () => "no",
       ui: {
         inject: () => () => {},
-        toast: () => {},
+        toast: (message: unknown) => message,
       },
       events: {
         on: () => () => {},
@@ -37,9 +37,12 @@ test("wrapApi tracks inject and on, not toast", () => {
   assert.notEqual(wrapped, host);
   wrapped.api.ui.inject();
   wrapped.api.events.on();
-  wrapped.api.ui.toast();
+  assert.equal(wrapped.api.ui.toast("plain"), "plain");
   assert.equal(disposeLists()["mod-b"]?.length, 2);
   runDisposers("mod-b");
+
+  const hot = wrapSandkit(host, "mod-b", 4);
+  assert.equal(hot.api.ui.toast("Template loaded"), "Template loaded (mod-b v4)");
 });
 
 test("wrapApi unregisters overlays.register on reload", () => {

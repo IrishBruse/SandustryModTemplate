@@ -1,6 +1,8 @@
 import { defineModInfo } from "@modkit/modinfo";
 import { AUTO_LOAD_FROM_STORAGE, AUTO_LOAD_LAST_PLAYED } from "./boot/auto-load-save";
 
+export { debugPatches } from "./patches.ts";
+
 export const modinfo = defineModInfo({
   manifestVersion: 1,
   id: "hot-reload",
@@ -49,6 +51,13 @@ export const modinfo = defineModInfo({
       default: false,
       labelKey: "Watch local mods",
       descriptionKey: "Re-eval other mods' main.js when the file changes. Not workers or patches.",
+    },
+    skipShaderRecomp: {
+      type: "boolean",
+      default: false,
+      labelKey: "Skip shader recompile",
+      descriptionKey:
+        "Skip outline shaders, warmup, and the Compiling shaders splash (dev). Restart once after you turn it on.",
     },
     // Dev tools
     openDevTools: {
