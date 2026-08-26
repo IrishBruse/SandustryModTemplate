@@ -1,4 +1,5 @@
 import { readFileSync, writeFileSync } from "node:fs";
+import { setTimeout as sleep } from "node:timers/promises";
 import { CdpConnection } from "./cdp.ts";
 import { installedModMain, tryReadInstalledModMain } from "./paths.ts";
 import { toPageExpression } from "./serialize.ts";
@@ -25,6 +26,48 @@ export class SandustrySession {
 
   static async connect(options?: { port?: string; timeoutMs?: number }): Promise<SandustrySession> {
     return new SandustrySession(await CdpConnection.connect(options));
+  }
+
+  /**
+   * Connect and wait until `sandkit` is in the Game scene. Retries after auto-load navigation.
+   */
+  static async connectReady(options?: {
+    port?: string;
+    timeoutMs?: number;
+  }): Promise<SandustrySession> {
+    const timeoutMs = options?.timeoutMs ?? 45000;
+    const deadline = Date.now() + timeoutMs;
+    let lastError = "Sandustry renderer not ready";
+    while (Date.now() < deadline) {
+      let session: SandustrySession | undefined;
+      try {
+        session = await SandustrySession.connect(options);
+        const state = await session.evaluate(() => {
+          const sandkit = (
+            globalThis as typeof globalThis & {
+              sandkit?: {
+                api?: unknown;
+                enums?: { Scene?: { Game?: number } };
+                engine?: { state?: { store?: { scene?: { active?: number } } } };
+              };
+            }
+          ).sandkit;
+          return {
+            api: Boolean(sandkit && sandkit.api),
+            scene: sandkit?.engine?.state?.store?.scene?.active ?? null,
+            game: sandkit?.enums?.Scene?.Game ?? null,
+          };
+        });
+        if (state.api && state.game != null && state.scene === state.game) return session;
+        lastError = "Sandustry is not in the Game scene";
+        session.close();
+      } catch (error) {
+        lastError = error instanceof Error ? error.message : String(error);
+        session?.close();
+      }
+      await sleep(250);
+    }
+    throw new Error(lastError);
   }
 
   close(): void {

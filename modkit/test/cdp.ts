@@ -1,5 +1,7 @@
-/** Renderer CDP port used by F5 / `sandustry-vscode-launch.js`. */
-export const SANDUSTRY_CDP_PORT = "9222";
+import { SANDUSTRY_TEST_CDP_PORT } from "./paths.ts";
+
+/** Isolated live-test renderer CDP. F5 / Steam debug stays on :9222. */
+export const SANDUSTRY_CDP_PORT = SANDUSTRY_TEST_CDP_PORT;
 
 const DEFAULT_TIMEOUT_MS = 8000;
 

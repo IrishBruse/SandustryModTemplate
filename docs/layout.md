@@ -85,14 +85,14 @@ Add these when you need them:
 
 Import `@modkit/*` and files in your own folder only.
 
-| Import                                        | From                                                  |
-| --------------------------------------------- | ----------------------------------------------------- |
-| `@modkit/modinfo`                             | `defineModInfo` / `definePatches`                     |
-| `@modkit/react` / JSX                         | Runtime React from `sandkit.react`                    |
-| `@modkit/utils`                               | `safe`, `isEnabled`, `inGame`, `registerRetroGame`    |
-| `@modkit/test`                                | Live renderer tests. Import from `*.test.ts` only     |
-| `@modkit/ui`                                  | Shared React UI components                            |
-| `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix |
+| Import                                        | From                                                            |
+| --------------------------------------------- | --------------------------------------------------------------- |
+| `@modkit/modinfo`                             | `defineModInfo` / `definePatches`                               |
+| `@modkit/react` / JSX                         | Runtime React from `sandkit.react`                              |
+| `@modkit/utils`                               | `safe`, `isEnabled`, `inGame`, `registerRetroGame`              |
+| `@modkit/test`                                | Isolated live tests (CDP `:9223`). Import from `*.test.ts` only |
+| `@modkit/ui`                                  | Shared React UI components                                      |
+| `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix           |
 
 Sandkit API types live in `modkit/types/`. Layout mirrors the live object (`sandkit/api`, `sandkit/engine/api`, …). Ambient `sandkit` is in [`modkit/types/global.d.ts`](../modkit/types/global.d.ts); `WorkerSandkitApi` is in [`modkit/ambient.d.ts`](../modkit/ambient.d.ts).
 

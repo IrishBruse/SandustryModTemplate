@@ -1,4 +1,4 @@
 #!/usr/bin/env node
 import { runNodeTests } from "./run.js";
 
-process.exit(await runNodeTests({ visible: false }));
+process.exit(await runNodeTests({ visible: true }));

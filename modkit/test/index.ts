@@ -1,5 +1,5 @@
 /**
- * Node helpers for live Sandustry tests (CDP `:9222`).
+ * Node helpers for live Sandustry tests (isolated host, CDP `:9223`).
  * Import from `*.test.ts` only. Do not import from mod `main.ts`.
  */
 if (typeof globalThis.document !== "undefined") {
@@ -8,10 +8,20 @@ if (typeof globalThis.document !== "undefined") {
 
 export { SANDUSTRY_CDP_PORT, isSandustryAvailable } from "./cdp.ts";
 export {
+  startSandustryTestHost,
+  stopSandustryTestHost,
+  prepareSandustryTestUserData,
+  testCompanionSettings,
+  hostWindowMode,
+} from "./host.ts";
+export type { HostStartResult, HostWindowMode } from "./host.ts";
+export {
   installedModMain,
   sandustryModsDir,
+  sandustryTestUserDataDir,
   sandustryUserDataDir,
   tryReadInstalledModMain,
+  SANDUSTRY_TEST_CDP_PORT,
 } from "./paths.ts";
 export { sandustryTest } from "./sandustry-test.ts";
 export { SandustrySession } from "./session.ts";

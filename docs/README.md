@@ -43,7 +43,8 @@ Full steps: **[Quick start](quick-start.md)**.
 ### Quality
 
 - **`npm run typecheck`** — TypeScript check
-- **`npm run test`** — Node tests (`src/**/*.test.ts`, `scripts/**/*.test.js`)
+- **`npm run test`** — Node tests (`src/**/*.test.ts`, `modkit/**/*.test.ts`, `scripts/**/*.test.js`). Isolated host; headless on Windows.
+- **`npm run test:integration`** — Same tests with a visible Sandustry window (CDP `:9223`)
 - **`npm run lint`** — Typecheck, oxlint, and format check
 - **`npm run lint:fix`** — oxlint `--fix` and oxfmt
 

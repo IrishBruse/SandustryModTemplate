@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { sandustryTest } from "@modkit/test";
+import { setTimeout as sleep } from "node:timers/promises";
 
 const TEMPLATE_ID = "author.template";
 const INJECT_PROBE = "Template inject";
@@ -109,6 +110,9 @@ sandustryTest("live hot reload updates inject and hotbar probes", async (t, game
   const hotbarNext = `${HOTBAR_PROBE} ${token}`;
   const generationBefore = live.generation;
 
+  // First poller fetch is a baseline. Wait so that fetch records the original bundle.
+  await sleep(2000);
+
   await game.withModMain(TEMPLATE_ID, async (file) => {
     if (!file.original.includes(INJECT_PROBE) || !file.original.includes(HOTBAR_PROBE)) {
       t.skip("installed template bundle has no probe strings; rebuild the template");
@@ -130,7 +134,7 @@ sandustryTest("live hot reload updates inject and hotbar probes", async (t, game
         snapshot.hotbarText === hotbarNext &&
         snapshot.globalIds.includes(GLOBAL_OVERLAY_ID) &&
         !snapshot.globalIds.some((id) => id.startsWith("hot-reload:") && id.includes(TEMPLATE_ID)),
-      { timeoutMs: 8000, args: [TEMPLATE_ID], message: "hot reload probes did not update" },
+      { timeoutMs: 12000, args: [TEMPLATE_ID], message: "hot reload probes did not update" },
     );
 
     assert.ok(latest.generation > generationBefore);

@@ -1,8 +1,30 @@
 import { readFileSync } from "node:fs";
 import { homedir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
-/** Electron user-data root for Sandustry. */
+const REPO_ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
+
+/** Isolated Electron user-data for live tests. Not the Steam profile. */
+export const SANDUSTRY_TEST_CDP_PORT = "9223";
+
+export function repoRoot(): string {
+  return REPO_ROOT;
+}
+
+export function sandustryTestUserDataDir(): string {
+  return join(REPO_ROOT, ".tmp", "sandustry-test");
+}
+
+export function sandustryTestHostFile(): string {
+  return join(REPO_ROOT, ".tmp", "sandustry-test-host.json");
+}
+
+export function sandustryTestModsDir(): string {
+  return join(sandustryTestUserDataDir(), "mods");
+}
+
+/** Steam / OS Electron user-data (the running player profile). */
 export function sandustryUserDataDir(): string {
   if (process.platform === "win32") {
     const appData = process.env.APPDATA || join(homedir(), "AppData", "Roaming");
@@ -12,12 +34,12 @@ export function sandustryUserDataDir(): string {
 }
 
 export function sandustryModsDir(): string {
-  return join(sandustryUserDataDir(), "mods");
+  return sandustryTestModsDir();
 }
 
-/** Installed renderer entry for a mod id (`main.js` in the OS mods folder). */
+/** Installed renderer entry in the test user-data mods folder. */
 export function installedModMain(modId: string): string {
-  return join(sandustryModsDir(), modId, "main.js");
+  return join(sandustryTestModsDir(), modId, "main.js");
 }
 
 export function tryReadInstalledModMain(modId: string): string | null {

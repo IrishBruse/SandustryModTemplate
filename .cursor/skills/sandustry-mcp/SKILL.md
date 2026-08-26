@@ -14,10 +14,10 @@ Chrome DevTools MCP on the Sandustry Electron renderer. Domain facts stay in **s
 3. Remember `pageId`; it changes after reload, reconnect, or a new tab. Re-run `list_pages` when a call fails or the game restarted.
 4. Done when the next MCP call succeeds on that `pageId`.
 
-| Port | Instance |
-| ---- | -------- |
-| `:9222` | Player / Steam / F5 debug renderer |
-| `:9223` | Isolated test host (`.tmp/sandustry-test`, `npm test`) |
+| Port    | Instance                                                                            |
+| ------- | ----------------------------------------------------------------------------------- |
+| `:9222` | Player / Steam / F5 debug renderer                                                  |
+| `:9223` | Isolated test host (`.tmp/sandustry-test`, `npm test` / `npm run test:integration`) |
 
 Never kill Sandustry. Ask the user for a hard reload when code or mods changed.
 
@@ -36,8 +36,7 @@ Read live state with `evaluate_script`:
 () => {
   const g = globalThis;
   const sk = typeof sandkit !== "undefined" ? sandkit : g.sandkit;
-  const state =
-    sk?.engine?.state ?? sk?.state ?? g.__debug?.state ?? null;
+  const state = sk?.engine?.state ?? sk?.state ?? g.__debug?.state ?? null;
   return {
     hasSandkit: Boolean(sk?.api),
     hasDebug: Boolean(g.__debug),
