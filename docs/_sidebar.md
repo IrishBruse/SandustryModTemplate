@@ -17,5 +17,5 @@
 
 - Reference
   - [modinfo.ts](modinfo.md)
-  - [Patches](patches.md)
+  - [patches.md](patches.md)
   - [Sandkit API](api/README.md)
