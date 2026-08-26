@@ -134,7 +134,7 @@ function Copyable({ value, className }: { value: string; className?: string }) {
     <span
       data-copy-text={value}
       title="Click to copy"
-      className={`font-mono text-slate-200 cursor-text ${className ?? ""}`}
+      className={`font-mono text-slate-200 cursor-pointer ${className ?? ""}`}
       style={{ userSelect: "text", WebkitUserSelect: "text" }}
     >
       {value}
@@ -192,7 +192,7 @@ function ElementDetailBar({ element }: { element: ElementRow | null }) {
       >
         <span
           data-copy-text={String(element.elementType)}
-          className="text-[11px] font-mono font-bold leading-none tabular-nums cursor-text"
+          className="text-[11px] font-mono font-bold leading-none tabular-nums cursor-pointer"
           title="Click to copy"
         >
           {element.elementType}
