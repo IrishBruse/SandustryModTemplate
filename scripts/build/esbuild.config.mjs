@@ -397,23 +397,36 @@ function manifestModId(mod) {
 }
 
 /**
- * @param {import("./mods.js").LoadedMod} mod
+ * Shared options for main and worker browser bundles.
+ * @param {import("../lib/mods.js").LoadedMod} mod
+ * @returns {import("esbuild").BuildOptions}
  */
-function bundleOptions(mod) {
-  const outMain = join(mod.outDir, "main.js");
+function commonBundleOptions(mod) {
   return {
-    entryPoints: [mod.main],
-    outfile: outMain,
     bundle: true,
     format: "esm",
     platform: "browser",
     target: "es2020",
+    treeShaking: true,
     sourcemap,
     define: {
       __MOD_DEBUG__: modDebug ? "true" : "false",
       __MOD_ID__: JSON.stringify(manifestModId(mod)),
     },
     inject: [CONSOLE_INJECT],
+    logLevel: "info",
+  };
+}
+
+/**
+ * @param {import("../lib/mods.js").LoadedMod} mod
+ * @returns {import("esbuild").BuildOptions}
+ */
+function bundleOptions(mod) {
+  return {
+    ...commonBundleOptions(mod),
+    entryPoints: [mod.main],
+    outfile: join(mod.outDir, "main.js"),
     alias: {
       react: join(INTERNAL_ESBUILD, "react.ts"),
       "react/jsx-runtime": join(INTERNAL_ESBUILD, "jsx-runtime.ts"),
@@ -428,14 +441,14 @@ function bundleOptions(mod) {
         "// sandkit is already in scope (loader wraps the body).",
       ].join("\n"),
     },
-    logLevel: "info",
   };
 }
 
 /**
  * Worker bundle — same esm script body + free `sandkit`, no React inject.
  * Console inject prefixes every `console.*` line with `[modId]`.
- * @param {import("./mods.js").LoadedMod} mod
+ * @param {import("../lib/mods.js").LoadedMod} mod
+ * @returns {import("esbuild").BuildOptions}
  */
 function workerBundleOptions(mod) {
   const workerEntry =
@@ -443,18 +456,9 @@ function workerBundleOptions(mod) {
       ? mod.manifest.workerEntry
       : "worker.js";
   return {
+    ...commonBundleOptions(mod),
     entryPoints: [mod.worker],
     outfile: join(mod.outDir, workerEntry),
-    bundle: true,
-    format: "esm",
-    platform: "browser",
-    target: "es2020",
-    sourcemap,
-    define: {
-      __MOD_DEBUG__: modDebug ? "true" : "false",
-      __MOD_ID__: JSON.stringify(manifestModId(mod)),
-    },
-    inject: [CONSOLE_INJECT],
     banner: {
       js: [
         `// Generated — edit ${mod.repoPath}/worker.ts and run npm run dev.`,
@@ -462,7 +466,6 @@ function workerBundleOptions(mod) {
         "// sandkit is already in scope (worker-thread api).",
       ].join("\n"),
     },
-    logLevel: "info",
   };
 }
 
