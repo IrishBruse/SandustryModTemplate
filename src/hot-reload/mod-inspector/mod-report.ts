@@ -11,13 +11,6 @@ import {
 
 export type ModLoadStatus = "loaded" | "failed" | "blocked" | "unknown" | string;
 
-export type ModSchemaField = {
-  key: string;
-  type: string;
-  defaultValue: string | null;
-  label: string | null;
-};
-
 export type ModRegistryCount = {
   bag: string;
   count: number;
@@ -35,7 +28,6 @@ export type ModReportEntry = {
   error: string | null;
   dependencies: string[];
   hasSettings: boolean;
-  supportsToggle: boolean;
   itemId: string | null;
   source: string | null;
   discoveredVia: string[];
@@ -48,7 +40,6 @@ export type ModReportEntry = {
   entry: string | null;
   hasWorker: boolean;
   hasEntrySource: boolean;
-  schema: ModSchemaField[];
   registry: ModRegistryCount[];
 };
 
@@ -96,36 +87,6 @@ function hasPayload(value: unknown): boolean {
   if (Array.isArray(value)) return value.length > 0;
   if (value && typeof value === "object") return Object.keys(value).length > 0;
   return false;
-}
-
-function schemaFields(configSchema: unknown): ModSchemaField[] {
-  if (!configSchema || typeof configSchema !== "object") return [];
-  const out: ModSchemaField[] = [];
-  for (const [key, spec] of Object.entries(configSchema as Record<string, unknown>)) {
-    const row = spec && typeof spec === "object" ? (spec as Record<string, unknown>) : {};
-    const defaultRaw = row.default;
-    let defaultValue: string | null = null;
-    if (
-      typeof defaultRaw === "string" ||
-      typeof defaultRaw === "number" ||
-      typeof defaultRaw === "boolean"
-    ) {
-      defaultValue = String(defaultRaw);
-    } else if (defaultRaw != null) {
-      try {
-        defaultValue = JSON.stringify(defaultRaw);
-      } catch {
-        defaultValue = String(defaultRaw);
-      }
-    }
-    out.push({
-      key,
-      type: typeof row.type === "string" ? row.type : "?",
-      defaultValue,
-      label: typeof row.labelKey === "string" ? row.labelKey : null,
-    });
-  }
-  return out;
 }
 
 function ownedRegistryCounts(modId: string): ModRegistryCount[] {
@@ -214,8 +175,6 @@ export function readModReport(): ModReport | null {
           ? manifest.dependencies.filter((dep): dep is string => typeof dep === "string")
           : [],
         hasSettings,
-        supportsToggle:
-          hasSettings && !!(configSchema as Record<string, unknown> | undefined)?.enabled,
         itemId,
         source,
         discoveredVia: [...discoveredVia],
@@ -228,7 +187,6 @@ export function readModReport(): ModReport | null {
         entry: stringField(manifest.entry) || null,
         hasWorker: hasPayload(row.workerSource),
         hasEntrySource: hasPayload(row.entrySource),
-        schema: schemaFields(configSchema),
         registry: ownedRegistryCounts(id),
       });
     }

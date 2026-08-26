@@ -86,16 +86,7 @@ function ModDetails({ mod, diagnostics }: { mod: ModReportEntry; diagnostics: Mo
         <DetailRow label="Entry" value={mod.entry} />
         <DetailRow label="Has main.js" value={yesNo(mod.hasEntrySource)} />
         <DetailRow label="Has worker" value={yesNo(mod.hasWorker)} />
-        <DetailRow
-          label="Settings"
-          value={
-            mod.hasSettings
-              ? mod.supportsToggle
-                ? "Options → Mods · can disable"
-                : "Options → Mods"
-              : "none"
-          }
-        />
+        <DetailRow label="Settings" value={yesNo(mod.hasSettings)} />
         {mod.dependencies.length > 0 ? (
           <DetailRow label="Depends on" value={mod.dependencies.join(", ")} />
         ) : (
@@ -118,21 +109,6 @@ function ModDetails({ mod, diagnostics }: { mod: ModReportEntry; diagnostics: Mo
       ) : null}
 
       {mod.description ? <p className="text-gray-300 leading-snug">{mod.description}</p> : null}
-
-      {mod.schema.length > 0 ? (
-        <div>
-          <p className="text-gray-400 mb-1">configSchema</p>
-          <div className="space-y-0.5 font-mono text-gray-300">
-            {mod.schema.map((field) => (
-              <p key={field.key} className="break-all">
-                {field.key}: {field.type}
-                {field.defaultValue != null ? ` = ${field.defaultValue}` : ""}
-                {field.label ? ` — ${field.label}` : ""}
-              </p>
-            ))}
-          </div>
-        </div>
-      ) : null}
 
       {mod.registry.length > 0 ? (
         <div>
