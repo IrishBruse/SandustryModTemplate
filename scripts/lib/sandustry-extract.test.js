@@ -13,6 +13,7 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
+import { createPackage } from "@electron/asar";
 import {
   LEGACY_CURRENT_LINK,
   bundleHasSandkit,
@@ -20,6 +21,7 @@ import {
   gameExtractFolderName,
   isVersionedExtractFolder,
   migrateLegacyFlatExtract,
+  readBundleSandkitFromAsar,
   removeLegacyCurrentLink,
   resolveGameBranchKey,
   sandustryExtractRoot,
@@ -40,6 +42,36 @@ test("resolveGameBranchKey prefers Steam beta, then sandkit, then release", () =
 test("bundleHasSandkit detects sandkit marker", () => {
   assert.equal(bundleHasSandkit("// no kit\n"), false);
   assert.equal(bundleHasSandkit("var sandkit = {};\n"), true);
+});
+
+test("readBundleSandkitFromAsar uses listed entry paths for extractFile", async () => {
+  const root = mkdtempSync(join(tmpdir(), "sandustry-asar-"));
+  const src = join(root, "src");
+  const asarPath = join(root, "app.asar");
+  try {
+    mkdirSync(join(src, "dist", "js"), { recursive: true });
+    writeFileSync(join(src, "dist", "js", "bundle.js"), "var sandkit = {};\n");
+
+    await createPackage(src, asarPath);
+
+    const posixListed = ["/dist/js/bundle.js"];
+    assert.deepEqual(readBundleSandkitFromAsar(asarPath, posixListed), {
+      rel: "dist/js/bundle.js",
+      hasSandkit: true,
+    });
+
+    const winListed = ["\\dist\\js\\bundle.js"];
+    if (process.platform === "win32") {
+      assert.deepEqual(readBundleSandkitFromAsar(asarPath, winListed), {
+        rel: "dist/js/bundle.js",
+        hasSandkit: true,
+      });
+    } else {
+      assert.equal(readBundleSandkitFromAsar(asarPath, winListed), null);
+    }
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });
 
 test("isVersionedExtractFolder matches version-branch names", () => {

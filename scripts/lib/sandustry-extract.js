@@ -81,16 +81,18 @@ export function readGameVersionFromAsar(asarPath, listed) {
  * @returns {{ rel: string; hasSandkit: boolean } | null}
  */
 export function readBundleSandkitFromAsar(asarPath, listed) {
-  const rels = new Set(listed.map(asarRelPath));
-  const bundleRel = BUNDLE_RELS.find((rel) => rels.has(rel));
-  if (!bundleRel) return null;
+  for (const rel of BUNDLE_RELS) {
+    const listedEntry = listed.find((entry) => asarRelPath(entry) === rel);
+    if (!listedEntry) continue;
 
-  try {
-    const raw = extractFile(asarPath, asarExtractPath(bundleRel));
-    return { rel: bundleRel, hasSandkit: bundleHasSandkit(raw) };
-  } catch {
-    return null;
+    try {
+      const raw = extractFile(asarPath, asarExtractPath(listedEntry));
+      return { rel, hasSandkit: bundleHasSandkit(raw) };
+    } catch {
+      return null;
+    }
   }
+  return null;
 }
 
 /** @param {string} extractRoot @param {string} folderName */
