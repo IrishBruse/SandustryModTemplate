@@ -1,6 +1,6 @@
 # Builds
 
-The game runs `main.js` as a script body (`new Function`). `sandkit` is already in scope. The bundle must not emit `import` / `export` (esbuild IIFE).
+The game runs `main.js` as a script body (`new Function`). The loader wraps the body in an async function and puts `sandkit` in scope. Bundle with esbuild `format: "esm"` and do not export from the entry — the output must have no `import` / `export`.
 
 ## Debug vs release
 

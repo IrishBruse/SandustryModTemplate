@@ -7,7 +7,7 @@ Shared kit for Sandustry mods. It includes:
 - **UI** — shared React components under `modkit/ui/`. Live canvases and PNGs live under `docs/ui/canvas/` (`npm run ui:css` / `ui:previews`).
 - **Modinfo helpers** — `defineModInfo` / `definePatches` with colocated manifest and patch types
 
-Mods import this folder through the `@modkit/*` path alias. The game still loads a single bundled `main.js` (esbuild IIFE). Do not emit `import` / `export` in the output.
+Mods import this folder through the `@modkit/*` path alias. The game still loads a single bundled `main.js` (esbuild `esm`, no entry exports). Do not emit `import` / `export` in the output.
 
 The **hot-reload** companion is a mod, not part of this kit. See [Hot Reload](../hot-reload/).
 

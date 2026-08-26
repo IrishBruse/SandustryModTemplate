@@ -68,11 +68,11 @@ new Function("sandkit", source);
 
 esbuild settings:
 
-| Option     | Value       | Why                  |
-| ---------- | ----------- | -------------------- |
-| `format`   | `"iife"`    | Single script scope  |
-| `platform` | `"browser"` | Renderer context     |
-| `bundle`   | `true`      | One `main.js` output |
+| Option     | Value       | Why                             |
+| ---------- | ----------- | ------------------------------- |
+| `format`   | `"esm"`     | Bare script body (loader wraps) |
+| `platform` | `"browser"` | Renderer context                |
+| `bundle`   | `true`      | One `main.js` output            |
 
 The build banner states:
 

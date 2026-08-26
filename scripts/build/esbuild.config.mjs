@@ -92,7 +92,10 @@ if (releaseBuild) {
     mkdirSync(mod.outDir, { recursive: true });
     // Drop legacy `build/<folder>/` when staging moved to `build/<modinfo.id>/`.
     if (mod.folder !== mod.gameId) {
-      rmSync(join(PUBLISH_OUT_ROOT, mod.folder), { recursive: true, force: true });
+      rmSync(join(PUBLISH_OUT_ROOT, mod.folder), {
+        recursive: true,
+        force: true,
+      });
     }
   }
 } else {
@@ -402,7 +405,7 @@ function bundleOptions(mod) {
     entryPoints: [mod.main],
     outfile: outMain,
     bundle: true,
-    format: "iife",
+    format: "esm",
     platform: "browser",
     target: "es2020",
     sourcemap,
@@ -422,7 +425,7 @@ function bundleOptions(mod) {
       js: [
         `// Generated — edit ${mod.repoPath}/ and run npm run dev.`,
         "// Runs as a plain script via new Function(...). No import/export.",
-        "// sandkit is already in scope.",
+        "// sandkit is already in scope (loader wraps the body).",
       ].join("\n"),
     },
     logLevel: "info",
@@ -430,7 +433,7 @@ function bundleOptions(mod) {
 }
 
 /**
- * Worker bundle — same IIFE + free `sandkit`, no React inject.
+ * Worker bundle — same esm script body + free `sandkit`, no React inject.
  * Console inject prefixes every `console.*` line with `[modId]`.
  * @param {import("./mods.js").LoadedMod} mod
  */
@@ -443,7 +446,7 @@ function workerBundleOptions(mod) {
     entryPoints: [mod.worker],
     outfile: join(mod.outDir, workerEntry),
     bundle: true,
-    format: "iife",
+    format: "esm",
     platform: "browser",
     target: "es2020",
     sourcemap,
