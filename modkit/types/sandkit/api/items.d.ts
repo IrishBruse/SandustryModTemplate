@@ -1,3 +1,6 @@
+import type { ItemId as ItemIdEnum, ItemType as ItemTypeEnum } from "../enums/index";
+import type { LooseString, TaggedNumber } from "../../shared/nominal";
+
 /**
  * `sandkit.api.items` — register custom inventory items and query active items.
  * Main thread only.
@@ -22,17 +25,17 @@ export namespace items {
    * @param itemId - Registered item id.
    * @param partial - Fields to merge into the definition.
    */
-  export function updateDefinition(itemId: string, partial: Partial<ItemDefinition>): void;
+  export function updateDefinition(itemId: ItemId, partial: Partial<ItemDefinition>): void;
   /**
    * Returns the item definition for an id, or undefined.
    * @param itemId - Registered item id.
    */
-  export function getDefinitionById(itemId: string): ItemDefinition | undefined;
+  export function getDefinitionById(itemId: ItemId): ItemDefinition | undefined;
   /**
    * Creates a runtime item instance from an id.
    * @param itemId - Registered item id.
    */
-  export function createFromId(itemId: string): ModItem;
+  export function createFromId(itemId: ItemId): ModItem;
   /** Returns the item definition for the active hotbar slot. */
   export function getActive(): ItemDefinition | undefined;
   /**
@@ -40,10 +43,18 @@ export namespace items {
    * @param itemId - Item id or numeric type to compare.
    * @param itemType - Optional item type discriminator.
    */
-  export function isActiveById(itemId: string | number, itemType?: ItemType): boolean;
+  export function isActiveById(itemId: ItemId, itemType?: ItemType): boolean;
 
+  /**
+   * Inventory item id.
+   * Built-in {@link ItemIdEnum} values autocomplete; custom string ids are allowed.
+   */
+  export type ItemId = ItemIdEnum | LooseString<never>;
+  /**
+   * Item category handle.
+   * Built-in {@link ItemTypeEnum} values autocomplete.
+   */
+  export type ItemType = ItemTypeEnum | TaggedNumber<"itemType">;
   /** Runtime item instance (not yet typed in declarations). */
-  export type ModItem = unknown
-  /** Item type id (not yet typed in declarations). */
-  export type ItemType = unknown
+  export type ModItem = unknown;
 }

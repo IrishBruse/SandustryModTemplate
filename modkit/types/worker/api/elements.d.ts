@@ -13,6 +13,10 @@ import { shared } from "../../shared";
 export namespace elements {
   /** Numeric id for a registered element type. */
   export import ElementType = shared.api.elements.ElementType;
+  /** Mod or built-in element string id. */
+  export import ElementId = shared.api.elements.ElementId;
+  /** Type handle or string id accepted by lookup helpers. */
+  export import ElementRef = shared.api.elements.ElementRef;
   /** Matter category for element physics behavior. */
   export import MatterType = shared.api.elements.MatterType;
   /** Full definition used to register a custom element. */

@@ -1,3 +1,5 @@
+import type { LooseString } from "../../shared/nominal";
+
 /**
  * `sandkit.api.events` — subscribe to and emit named game events.
  * Main thread only. The `events` object is frozen; do not replace `on` or `emit`.
@@ -8,13 +10,13 @@ export namespace events {
    * @param eventId - Registered event name.
    * @param callback - Called when the event is emitted.
    */
-  export function on<K extends string>(eventId: K, callback: (payload: EventPayload<K>) => void): () => void;
+  export function on<K extends EventId>(eventId: K, callback: (payload: EventPayload<K>) => void): () => void;
   /**
    * Emits an event with a payload to all subscribers.
    * @param eventId - Registered event name.
    * @param payload - Serializable payload passed to listeners.
    */
-  export function emit<K extends string>(eventId: K, payload: EventPayload<K>): void;
+  export function emit<K extends EventId>(eventId: K, payload: EventPayload<K>): void;
 
   /**
    * Mutable payload for `player:collision:prepare`.
@@ -42,6 +44,9 @@ export namespace events {
       state?: unknown;
     };
   }
+
+  /** Known event names plus any custom string id. */
+  export type EventId = LooseString<keyof EventPayloadMap>;
 
   /** Event payload type for a given event id. */
   export type EventPayload<K> = K extends keyof EventPayloadMap ? EventPayloadMap[K] : unknown;

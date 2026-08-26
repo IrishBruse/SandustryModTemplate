@@ -1,4 +1,6 @@
 import { CellCoordinates } from "../../shared/player";
+import type { CellId } from "../../shared/nominal";
+import { shared } from "../../shared";
 
 /**
  * `sandkit.api.collector` — collector structure value and pickup handling.
@@ -9,22 +11,22 @@ export namespace collector {
    * Returns the collector value for a cell id.
    * @param cellId - Packed cell identifier.
    */
-  export function getValueFromCellId(cellId: number): number;
+  export function getValueFromCellId(cellId: CellId): number;
   /**
    * Returns the collector value for an element type.
    * @param elementType - Numeric element type id.
    */
-  export function getValueByType(elementType: number): number;
+  export function getValueByType(elementType: shared.api.elements.ElementType): number;
   /**
    * Returns true when the cell id can be collected.
    * @param cellId - Packed cell identifier.
    */
-  export function isCellIdCollectable(cellId: number): boolean;
+  export function isCellIdCollectable(cellId: CellId): boolean;
   /**
    * Returns true when the cell id can be collected for sprite display.
    * @param cellId - Packed cell identifier.
    */
-  export function isCellIdCollectableForSprite(cellId: number): boolean;
+  export function isCellIdCollectableForSprite(cellId: CellId): boolean;
   /**
    * Notifies collector logic that a pickup happened at the cell.
    * @param cellX - Grid cell X coordinate.

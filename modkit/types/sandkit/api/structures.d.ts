@@ -41,13 +41,17 @@ export namespace structures {
   export import Structure = shared.api.structures.Structure;
   /** Structure type id or enum value. */
   export import StructureType = shared.api.structures.StructureType;
+  /** Mod or built-in structure string id. */
+  export import StructureId = shared.api.structures.StructureId;
+  /** Type handle or string id accepted by lookup helpers. */
+  export import StructureRef = shared.api.structures.StructureRef;
 
   /**
    * Register a structure processor handler.
    * @param structureId - Structure type or string id to attach the processor to.
    * @param definition - Periodic processing interval and callback.
    */
-  export function addProcessor(structureId: string | StructureType, definition: StructureProcessorDefinitionV1): void;
+  export function addProcessor(structureId: StructureRef, definition: StructureProcessorDefinitionV1): void;
 
   /**
    * Register a new structure definition.
@@ -62,7 +66,7 @@ export namespace structures {
    * @param partial - Fields to merge onto the definition.
    * @param options - When `useRawShape` is true, keep the shape matrix as-is.
    */
-  export function updateDefinition(structureTypeOrId: string | StructureType, partial: Partial<SandkitStructureDefinition>, options?: { useRawShape?: boolean; }): void;
+  export function updateDefinition(structureTypeOrId: StructureRef, partial: Partial<SandkitStructureDefinition>, options?: { useRawShape?: boolean; }): void;
 
   /**
    * Add a rotated variant to a base structure type.
@@ -70,7 +74,7 @@ export namespace structures {
    * @param variant - Variant id and supported rotation angles.
    * @param options - Optional build-mode wiring for the variant.
    */
-  export function addVariant(baseStructureTypeOrId: string | StructureType, variant: { id: string | StructureType; angles: number[]; }, options?: { addBuildMode?: unknown; }): void;
+  export function addVariant(baseStructureTypeOrId: StructureRef, variant: { id: StructureRef; angles: number[]; }, options?: { addBuildMode?: unknown; }): void;
 
   /**
    * Register placement rules for a structure.
@@ -79,7 +83,7 @@ export namespace structures {
   export function registerPlacementConfig(definition: PlacementConfigDefinition): void;
 
   /** Return structure types unlocked for building. */
-  export function getUnlockedTypes(): Set<string | StructureType>;
+  export function getUnlockedTypes(): Set<StructureRef>;
 
   /**
    * Return true when the player blocks building at the cell.
@@ -99,7 +103,7 @@ export namespace structures {
    * Return true when a structure type is unlocked.
    * @param structureType - Structure type value or string id.
    */
-  export function isUnlockedByType(structureType: string | StructureType): boolean;
+  export function isUnlockedByType(structureType: StructureRef): boolean;
 
   /**
    * Map a numeric value through thresholds to a spritesheet index.
@@ -116,7 +120,7 @@ export namespace structures {
    * @param structureTypeOrId - Structure type or string id to build.
    * @param options - Optional build overrides.
    */
-  export function buildAtCellWhenIdle(...args: [...CellCoordinates, structureTypeOrId: string, options?: StructureBuildOptions]): void;
+  export function buildAtCellWhenIdle(...args: [...CellCoordinates, structureTypeOrId: StructureRef, options?: StructureBuildOptions]): void;
 
   /**
    * Remove a structure at a cell when simulation is idle.
@@ -184,7 +188,7 @@ export namespace structures {
      * @param id - Unique processing registration id.
      * @param definition - Structure type, interval, and callback.
      */
-    export function register(id: string, definition: StructureProcessingDefinitionV1): void;
+    export function register(id: StructureId, definition: StructureProcessingDefinitionV1): void;
 
     /**
      * Enable or disable processing at a cell.
@@ -204,7 +208,7 @@ export namespace structures {
 
   /** Rotated variant entry for a structure definition. */
   export interface StructureVariant {
-    id: string | number;
+    id: StructureRef;
     angles: number[];
   }
 
@@ -217,7 +221,7 @@ export namespace structures {
 
   /** Full structure definition registered with the game. */
   export interface SandkitStructureDefinition {
-    id: string;
+    id: StructureId;
     nameKey?: string;
     descriptionKey?: string;
     categoryKey?: string;
@@ -288,7 +292,7 @@ export namespace structures {
 
   /** Placement rule definition for a structure type. */
   export interface PlacementConfigDefinition {
-    structureId: string;
+    structureId: StructureId;
     fields: PlacementConfigField[];
   }
 
@@ -307,7 +311,7 @@ export namespace structures {
 
   /** Custom structure processing definition shape. */
   export interface StructureProcessingDefinitionV1 {
-    structureType: string | StructureType;
+    structureType: StructureRef;
     intervalMs: number;
     process: (state: unknown, structure: Structure) => void;
   }

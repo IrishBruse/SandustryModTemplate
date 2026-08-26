@@ -1,4 +1,5 @@
 import { CellCoordinates, Vector2 } from "../../shared/player";
+import { shared } from "../../shared";
 
 /**
  * `sandkit.api.building` — structure placement and built-in structure types.
@@ -87,5 +88,5 @@ export namespace building {
    * @param structureTypeOrId - Built-in {@link StructureType} value or registered structure id.
    * @returns Resolved selection, or null when the type or id is invalid.
    */
-  export function selectStructure(structureTypeOrId: string | StructureType): string | StructureType | null;
+  export function selectStructure(structureTypeOrId: StructureType | shared.api.structures.StructureRef): shared.api.structures.StructureRef | null;
 }

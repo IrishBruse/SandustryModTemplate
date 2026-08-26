@@ -1,4 +1,6 @@
-import { CellCoordinates } from "../../shared/player";
+import type { CellCoordinates } from "../../shared/player";
+import type { CellId, LooseString, TaggedNumber } from "../../nominal";
+import type { CellType as CellTypeEnum } from "../../../sandkit/enums/index";
 
 /**
  * Shared `sandkit.api.terrains` base — terrain type lookup and cell mutation.
@@ -11,14 +13,14 @@ export namespace terrains {
    * @param terrainId - Mod-registered or built-in terrain id.
    * @returns Numeric terrain cell type.
    */
-  export function getTypeFromId(terrainId: string): number;
+  export function getTypeFromId(terrainId: TerrainId): TerrainType;
 
   /**
    * Return the terrain cell type at a cell, or null when none.
    * @param cellX - Grid column of the target cell.
    * @param cellY - Grid row of the target cell.
    */
-  export function getTypeAtCell(...args: CellCoordinates): number | null;
+  export function getTypeAtCell(...args: CellCoordinates): TerrainType | null;
 
   /**
    * Return terrain cell type and hit points at a cell.
@@ -26,7 +28,7 @@ export namespace terrains {
    * @param cellY - Grid row of the target cell.
    * @returns Cell type and hp, or null when the cell is not terrain.
    */
-  export function getDataAtCell(...args: CellCoordinates): { cellType: number; hp: number | null; } | null;
+  export function getDataAtCell(...args: CellCoordinates): { cellType: TerrainType; hp: number | null; } | null;
 
   /**
    * Return true when any terrain occupies the cell.
@@ -41,13 +43,13 @@ export namespace terrains {
    * @param cellY - Grid row of the target cell.
    * @param terrainId - Terrain string id to compare.
    */
-  export function isTypeAtCell(...args: [...CellCoordinates, terrainId: string]): boolean;
+  export function isTypeAtCell(...args: [...CellCoordinates, terrainId: TerrainId]): boolean;
 
   /**
    * Return true when a packed cell id refers to terrain.
    * @param cellId - Packed cell id from {@link world.getCellIdAtCell}.
    */
-  export function isCellIdTerrain(cellId: number): boolean;
+  export function isCellIdTerrain(cellId: CellId): boolean;
 
   /**
    * Apply damage to terrain at a cell.
@@ -64,7 +66,7 @@ export namespace terrains {
    * @param terrainTypeOrId - Numeric cell type or terrain string id.
    * @param options - Optional mutation flags.
    */
-  export function createAtCell(...args: [...CellCoordinates, terrainTypeOrId: string | number, options?: TerrainMutationOptions]): void;
+  export function createAtCell(...args: [...CellCoordinates, terrainTypeOrId: TerrainRef, options?: TerrainMutationOptions]): void;
 
   /**
    * Replace existing terrain at a cell.
@@ -73,7 +75,7 @@ export namespace terrains {
    * @param terrainTypeOrId - Numeric cell type or terrain string id.
    * @param options - Optional mutation flags.
    */
-  export function replaceAtCell(...args: [...CellCoordinates, terrainTypeOrId: string | number, options?: TerrainMutationOptions]): void;
+  export function replaceAtCell(...args: [...CellCoordinates, terrainTypeOrId: TerrainRef, options?: TerrainMutationOptions]): void;
 
   /**
    * Remove terrain from a cell.
@@ -88,4 +90,11 @@ export namespace terrains {
     /** Skip shadow updates around the changed cell. */
     skipShadow?: boolean;
   }
+
+  /** Numeric terrain / {@link CellTypeEnum} handle. */
+  export type TerrainType = CellTypeEnum | TaggedNumber<"terrainType">;
+  /** Mod or built-in terrain string id. */
+  export type TerrainId = LooseString<never>;
+  /** Type handle or string id accepted by mutation helpers. */
+  export type TerrainRef = TerrainType | TerrainId;
 }

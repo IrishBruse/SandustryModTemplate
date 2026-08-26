@@ -33,20 +33,26 @@ export namespace terrains {
   export import removeAtCell = shared.api.terrains.removeAtCell;
   /** Options for terrain create, replace, and remove calls. */
   export import TerrainMutationOptions = shared.api.terrains.TerrainMutationOptions;
+  /** Numeric terrain cell type handle. */
+  export import TerrainType = shared.api.terrains.TerrainType;
+  /** Mod or built-in terrain string id. */
+  export import TerrainId = shared.api.terrains.TerrainId;
+  /** Type handle or string id accepted by mutation helpers. */
+  export import TerrainRef = shared.api.terrains.TerrainRef;
 
   /**
    * Register a new terrain definition.
    * @param definition - Terrain definition to register.
    * @returns Object with the assigned `cellType`.
    */
-  export function register(definition: TerrainDefinition): { cellType: number; };
+  export function register(definition: TerrainDefinition): { cellType: TerrainType; };
 
   /**
    * Patch fields on an existing terrain definition.
    * @param cellTypeOrId - Numeric cell type or terrain string id.
    * @param partial - Fields to merge onto the definition.
    */
-  export function updateDefinition(cellTypeOrId: string | number, partial: Partial<TerrainDefinition>): void;
+  export function updateDefinition(cellTypeOrId: TerrainRef, partial: Partial<TerrainDefinition>): void;
 
   /**
    * Create terrain at a cell when simulation is idle.
@@ -55,7 +61,7 @@ export namespace terrains {
    * @param terrainTypeOrId - Numeric cell type or terrain string id.
    * @param options - Optional mutation flags.
    */
-  export function createAtCellWhenIdle(...args: [...CellCoordinates, terrainTypeOrId: string | number, options?: TerrainMutationOptions]): void;
+  export function createAtCellWhenIdle(...args: [...CellCoordinates, terrainTypeOrId: TerrainRef, options?: TerrainMutationOptions]): void;
 
   /**
    * Replace terrain at a cell when simulation is idle.
@@ -64,7 +70,7 @@ export namespace terrains {
    * @param terrainTypeOrId - Numeric cell type or terrain string id.
    * @param options - Optional mutation flags.
    */
-  export function replaceAtCellWhenIdle(...args: [...CellCoordinates, terrainTypeOrId: string | number, options?: TerrainMutationOptions]): void;
+  export function replaceAtCellWhenIdle(...args: [...CellCoordinates, terrainTypeOrId: TerrainRef, options?: TerrainMutationOptions]): void;
 
   /**
    * Remove terrain at a cell when simulation is idle.

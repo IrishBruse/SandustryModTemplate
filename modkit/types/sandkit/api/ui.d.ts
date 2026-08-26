@@ -8,6 +8,7 @@
 import type { ComponentType, ReactNode, RefObject } from "react";
 import type { ComponentId as ComponentIdEnum } from "../enums/index";
 import { shared } from "../../shared";
+import type { LooseString } from "../../shared/nominal";
 
 export namespace ui {
   /** Show a toast message. */
@@ -76,20 +77,20 @@ export namespace ui {
      * @param overlayId - Unique id for this overlay within the slot.
      * @param render - Function that returns React content.
      */
-    export function register(slot: string, overlayId: string, render: () => ReactNode): void;
+    export function register(slot: OverlaySlot, overlayId: string, render: () => ReactNode): void;
 
     /**
      * Remove an overlay from a slot.
      * @param slot - Slot name the overlay was registered in.
      * @param overlayId - Overlay id passed to {@link register}.
      */
-    export function unregister(slot: string, overlayId: string): void;
+    export function unregister(slot: OverlaySlot, overlayId: string): void;
 
     /**
      * Request a re-render for all overlays in a slot.
      * @param slot - Slot name to refresh.
      */
-    export function update(slot: string): void;
+    export function update(slot: OverlaySlot): void;
   }
 
   /** Controller focus and scope navigation hooks. */
@@ -115,8 +116,16 @@ export namespace ui {
     export function controllerFocusClass(focused: boolean): string;
   }
 
-  /** Registered UI component id (built-in enum value or custom string). */
-  export type ComponentId = ComponentIdEnum | string;
+  /**
+   * Overlay slot name. Known vanilla slots autocomplete; any string is allowed.
+   */
+  export type OverlaySlot = LooseString<"hotbar" | "global">;
+
+  /**
+   * Registered UI component id.
+   * Built-in {@link ComponentIdEnum} values autocomplete; custom string ids are allowed.
+   */
+  export type ComponentId = ComponentIdEnum | LooseString<never>;
 
   /** Component-specific update payload passed to {@link update}. */
   export type ComponentUpdateOptions = Record<string, unknown>;

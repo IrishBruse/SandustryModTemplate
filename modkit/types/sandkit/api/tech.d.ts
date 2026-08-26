@@ -1,3 +1,6 @@
+import type { Tech as TechEnum } from "../enums/index";
+import type { LooseString, TaggedNumber } from "../../shared/nominal";
+
 /**
  * Tech tree definitions, nodes, and lock state.
  *
@@ -10,19 +13,19 @@ export namespace tech {
    * Return a tech definition by string id.
    * @param techId - Tech entry identifier.
    */
-  export function getDefinitionById(techId: string): TechDefinition | undefined;
+  export function getDefinitionById(techId: TechGridId): TechDefinition | undefined;
   /**
    * Patch fields on an existing tech definition.
    * @param techId - Tech entry identifier.
    * @param updates - Fields to merge into the definition.
    */
-  export function updateDefinition(techId: string, updates: Partial<TechDefinition>): void;
+  export function updateDefinition(techId: TechGridId, updates: Partial<TechDefinition>): void;
   /**
    * Add a new tech definition by id.
    * @param techId - Tech entry identifier.
    * @param definition - Full tech definition to register.
    */
-  export function addDefinition(techId: string, definition: TechDefinition): void;
+  export function addDefinition(techId: TechGridId, definition: TechDefinition): void;
   /**
    * Register a tech node on the grid with parent and position options.
    * @param techId - Tech grid node id.
@@ -34,16 +37,19 @@ export namespace tech {
    * Return true when a tech entry is locked.
    * @param techId - Tech entry id (string or numeric enum).
    */
-  export function isLockedById(techId: string | number): boolean;
+  export function isLockedById(techId: TechGridId): boolean;
   /**
    * Set locked state for a tech entry by id.
    * @param techId - Tech entry id (string or numeric enum).
    * @param locked - When true, the tech cannot be purchased.
    */
-  export function setLockedById(techId: string | number, locked: boolean): void;
+  export function setLockedById(techId: TechGridId, locked: boolean): void;
 
-  /** Tech grid node id. */
-  export type TechGridId = string | number
+  /**
+   * Tech grid node id.
+   * Built-in {@link TechEnum} values autocomplete; custom string ids and tagged handles are allowed.
+   */
+  export type TechGridId = TechEnum | LooseString<never> | TaggedNumber<"tech">;
   /** Tech definition shape. */
   export interface TechDefinition {
     /** Display name translation key. */

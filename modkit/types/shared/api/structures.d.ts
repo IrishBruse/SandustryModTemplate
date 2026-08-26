@@ -1,4 +1,6 @@
-import { CellCoordinates } from "../../shared/player";
+import type { CellCoordinates } from "../../shared/player";
+import type { LooseString, TaggedNumber } from "../../nominal";
+import type { StructureType as StructureTypeEnum } from "../../../sandkit/enums/index";
 
 /**
  * Shared `sandkit.api.structures` base — structure lookup and mutation.
@@ -11,7 +13,7 @@ export namespace structures {
    * @param structureTypeOrId - Structure type value or string id.
    * @param callback - Called once per matching structure instance.
    */
-  export function forEachOfType(structureTypeOrId: string | StructureType, callback: (structure: Structure) => void): void;
+  export function forEachOfType(structureTypeOrId: StructureRef, callback: (structure: Structure) => void): void;
 
   /**
    * Return the structure at a cell, or null when none.
@@ -24,13 +26,13 @@ export namespace structures {
    * Return the mod-registered or built-in definition for a structure type.
    * @param structureType - Structure type value or string id.
    */
-  export function getDefinitionByType(structureType: string | StructureType): any;
+  export function getDefinitionByType(structureType: StructureRef): any;
 
   /**
    * Map a structure string id to its runtime type value.
    * @param structureId - Structure string id.
    */
-  export function getTypeFromId(structureId: string): string | StructureType;
+  export function getTypeFromId(structureId: StructureId): StructureType;
 
   /**
    * Return true when a completed structure occupies the cell.
@@ -44,7 +46,7 @@ export namespace structures {
    * @param structure - Structure instance, or null.
    * @param structureId - Structure string id to compare.
    */
-  export function isType(structure: Structure | null, structureId: string): boolean;
+  export function isType(structure: Structure | null, structureId: StructureId): boolean;
 
   /**
    * Return true when the cell structure matches the given id.
@@ -52,7 +54,7 @@ export namespace structures {
    * @param cellY - Grid row of the target cell.
    * @param structureId - Structure string id to compare.
    */
-  export function isTypeAtCell(...args: [...CellCoordinates, structureId: string]): boolean;
+  export function isTypeAtCell(...args: [...CellCoordinates, structureId: StructureId]): boolean;
 
   /**
    * Set the spritesheet frame index on a structure instance.
@@ -114,7 +116,7 @@ export namespace structures {
   /** Per-structure custom data bag. */
   export interface StructureData {
     elementId?: string | null;
-    elementType?: number | null;
+    elementType?: TaggedNumber<"elementType"> | null;
     [key: string]: unknown;
   }
 
@@ -127,6 +129,10 @@ export namespace structures {
     [key: string]: unknown;
   }
 
-  /** Numeric or string structure type discriminator. */
-  export type StructureType = string | number;
+  /** Numeric structure type handle. Built-in enum values autocomplete. */
+  export type StructureType = StructureTypeEnum | TaggedNumber<"structureType">;
+  /** Mod or built-in structure string id. */
+  export type StructureId = LooseString<never>;
+  /** Type handle or string id accepted by lookup helpers. */
+  export type StructureRef = StructureType | StructureId;
 }

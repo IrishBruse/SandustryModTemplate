@@ -1,4 +1,6 @@
+import type { ElementType as ElementTypeEnum } from "../../../sandkit/enums/index";
 import type { CellCoordinates, Vector2 } from "../../shared/player";
+import type { CellId, LooseString, TaggedNumber } from "../../nominal";
 
 /**
  * Shared `sandkit.api.elements` base — element reads and definitions.
@@ -9,8 +11,16 @@ import type { CellCoordinates, Vector2 } from "../../shared/player";
  * @internal Base namespace reused by main and worker declarations.
  */
 export namespace elements {
-  /** Numeric element type handle. */
-  export type ElementType = number;
+  /**
+   * Numeric element type handle.
+   * Built-in {@link ElementTypeEnum} values autocomplete; `getTypeFromId` returns a tagged handle.
+   */
+  export type ElementType = ElementTypeEnum | TaggedNumber<"elementType">;
+
+  /** Mod or built-in element string id. */
+  export type ElementId = LooseString<never>;
+  /** Type handle or string id accepted by lookup helpers. */
+  export type ElementRef = ElementType | ElementId;
 
   /** Physical behaviour category for an element. */
   export enum MatterType {
@@ -78,7 +88,7 @@ export namespace elements {
    * Resolve a mod element string id to a type handle.
    * @param elementId - Mod-registered element id.
    */
-  export function getTypeFromId(elementId: string): ElementType;
+  export function getTypeFromId(elementId: ElementId): ElementType;
 
   /**
    * Look up the definition for a type handle.
@@ -104,14 +114,14 @@ export namespace elements {
    * Return the resolved element type from a packed cell id.
    * @param cellId - Packed cell id from {@link world.getCellIdAtCell}.
    */
-  export function getResolvedTypeFromCellId(cellId: number): ElementType | null;
+  export function getResolvedTypeFromCellId(cellId: CellId): ElementType | null;
 
   /**
    * Return element index, particle flag, and ids at a cell.
    * @param cellX - Grid column of the target cell.
    * @param cellY - Grid row of the target cell.
    */
-  export function getInfoAtCell(...args: CellCoordinates): { elementType: ElementType; isParticle: boolean; cellId: number; elementIndex: number; } | null;
+  export function getInfoAtCell(...args: CellCoordinates): { elementType: ElementType; isParticle: boolean; cellId: CellId; elementIndex: number; } | null;
 
   /**
    * Return the matter category at a cell, or null when empty.

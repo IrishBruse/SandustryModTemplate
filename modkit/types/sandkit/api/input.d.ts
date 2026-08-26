@@ -1,3 +1,6 @@
+import type { KeyBinding as KeyBindingEnum } from "../enums/index";
+import type { LooseString } from "../../shared/nominal";
+
 /**
  * `sandkit.api.input` — key bindings, mouse position, and modifier keys.
  * Main thread only.
@@ -10,7 +13,7 @@ export namespace input {
    * @param definition - Display metadata and press/release handlers.
    * @returns The registered binding id.
    */
-  export function registerBinding(bindingId: string, defaultKeys: string[], definition: InputBindingDefinition): string;
+  export function registerBinding(bindingId: BindingId, defaultKeys: KeyCode[], definition: InputBindingDefinition): BindingId;
 
   /**
    * Return the mouse position in cell coordinates.
@@ -25,7 +28,7 @@ export namespace input {
    * Session `input.keys` is keyed by `KeyboardEvent.code`. Modifier aliases
    * (`Shift`, `Alt`, `Control`, `Meta`) expand to `ShiftLeft` / `ShiftRight` and the same for the other modifiers.
    */
-  export function getBoundKeys(bindingId: string): string[];
+  export function getBoundKeys(bindingId: BindingId): KeyCode[];
 
   /**
    * Return a display label for the bound key.
@@ -33,25 +36,25 @@ export namespace input {
    * @param defaultLabel - Fallback label when no key is bound.
    * @returns Human-readable key label for UI.
    */
-  export function getDisplayKey(bindingId: string, defaultLabel?: string): string;
+  export function getDisplayKey(bindingId: BindingId, defaultLabel?: string): string;
 
   /**
    * Fire the binding down handler as if the key was pressed.
    * @param bindingId - Registered binding id.
    */
-  export function triggerBinding(bindingId: string): void;
+  export function triggerBinding(bindingId: BindingId): void;
 
   /**
    * Fire the binding down handler without a matching release.
    * @param bindingId - Registered binding id.
    */
-  export function pressBinding(bindingId: string): void;
+  export function pressBinding(bindingId: BindingId): void;
 
   /**
    * Fire the binding up handler.
    * @param bindingId - Registered binding id.
    */
-  export function releaseBinding(bindingId: string): void;
+  export function releaseBinding(bindingId: BindingId): void;
 
   /** Clear internal mouse button state. */
   export function resetMouseState(): void;
@@ -67,6 +70,29 @@ export namespace input {
    * @returns True when the Alt modifier is down.
    */
   export function isAltHeld(): boolean;
+
+  /**
+   * Binding id. Vanilla {@link KeyBindingEnum} names autocomplete; custom ids are allowed.
+   */
+  export type BindingId = LooseString<`${KeyBindingEnum}`>;
+
+  /**
+   * KeyboardEvent.code, a modifier alias (`Shift`), or a chord (`Control+KeyC`).
+   */
+  export type KeyCode = LooseString<
+    | "Shift"
+    | "Alt"
+    | "Control"
+    | "Meta"
+    | "ShiftLeft"
+    | "ShiftRight"
+    | "AltLeft"
+    | "AltRight"
+    | "ControlLeft"
+    | "ControlRight"
+    | "MetaLeft"
+    | "MetaRight"
+  >;
 
   /** Handlers invoked when a binding is pressed or released. */
   export interface InputBindingHandlers {

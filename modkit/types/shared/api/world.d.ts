@@ -1,4 +1,5 @@
 import type { CellCoordinates, Vector2 } from "../../shared/player";
+import type { CellId as PackedCellId } from "../../nominal";
 
 /**
  * Shared `sandkit.api.world` base — cell and terrain queries plus excavation.
@@ -14,7 +15,7 @@ export namespace world {
    * @param cellY - Grid row of the target cell.
    * @returns Packed cell id for the cell.
    */
-  export function getCellIdAtCell(...args: CellCoordinates): number;
+  export function getCellIdAtCell(...args: CellCoordinates): CellId;
 
   /**
    * Return true when the cell has no element or terrain content.
@@ -46,6 +47,9 @@ export namespace world {
    * @param options - Optional excavation source flags.
    */
   export function excavateAtCell(...args: [...CellCoordinates, outVelocity: Vector2, damage: number, options?: ExcavateOptions]): void;
+
+  /** Packed cell id from {@link getCellIdAtCell}. */
+  export type CellId = PackedCellId;
 
   /** Flags that control how {@link excavateAtCell} resolves damage and drops. */
   export interface ExcavateOptions {

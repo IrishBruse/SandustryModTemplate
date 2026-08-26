@@ -23,6 +23,8 @@ export namespace world {
   export import excavateAtCell = shared.api.world.excavateAtCell;
   /** Options for {@link excavateAtCell}. */
   export import ExcavateOptions = shared.api.world.ExcavateOptions;
+  /** Packed cell id from {@link getCellIdAtCell}. */
+  export import CellId = shared.api.world.CellId;
 
   /**
    * Run a callback when simulation is idle.

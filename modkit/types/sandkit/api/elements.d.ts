@@ -10,6 +10,10 @@ export namespace elements {
   // Shared types
   /** Numeric id for a registered element type. */
   export import ElementType = shared.api.elements.ElementType;
+  /** Mod or built-in element string id. */
+  export import ElementId = shared.api.elements.ElementId;
+  /** Type handle or string id accepted by lookup helpers. */
+  export import ElementRef = shared.api.elements.ElementRef;
   /** Matter category for element physics behavior. */
   export import MatterType = shared.api.elements.MatterType;
   /** Full definition used to register a custom element. */
@@ -107,20 +111,20 @@ export namespace elements {
    * @param elementTypeOrId - Numeric type or string id.
    * @param partial - Fields to merge onto the definition.
    */
-  export function updateDefinition(elementTypeOrId: string | ElementType, partial: Partial<ElementDefinition>): void;
+  export function updateDefinition(elementTypeOrId: ElementRef, partial: Partial<ElementDefinition>): void;
 
   /**
    * Adds an interaction entry to an element definition.
    * @param elementTypeOrId - Numeric type or string id.
    * @param interaction - Interaction entry to append.
    */
-  export function addInteractionInfo(elementTypeOrId: string | ElementType, interaction: Interaction): void;
+  export function addInteractionInfo(elementTypeOrId: ElementRef, interaction: Interaction): void;
 
   /**
    * Returns the display name for an element type.
    * @param elementType - Numeric element type.
    */
-  export function getNameByType(elementType: number): string;
+  export function getNameByType(elementType: ElementType): string;
 
   /**
    * Finds a free cell inside a structure footprint, or null.

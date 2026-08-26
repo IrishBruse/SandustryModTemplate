@@ -1,3 +1,5 @@
+import type { LooseString } from "../../shared/nominal";
+
 /**
  * `sandkit.api.i18n` — translations, locales, and display strings for mods.
  * Main thread only.
@@ -14,24 +16,24 @@ export namespace i18n {
    * @param locale - Locale code (e.g. `en`).
    * @param translations - Map of keys to translated strings.
    */
-  export function register(locale: string, translations: Record<string, string>): void;
+  export function register(locale: Locale, translations: Record<string, string>): void;
   /** Returns the active locale code. */
-  export function getLocale(): string;
+  export function getLocale(): Locale;
   /**
    * Returns true when a translation exists for the key.
    * @param key - Translation key.
    * @param locale - Optional locale; defaults to the active locale.
    */
-  export function hasTranslation(key: string, locale?: string): boolean;
+  export function hasTranslation(key: string, locale?: Locale): boolean;
   /**
    * Sets the active locale.
    * @param locale - Locale code to activate.
    */
-  export function setLocale(locale: string): Promise<void>;
+  export function setLocale(locale: Locale): Promise<void>;
   /** Returns metadata for all known languages. */
-  export function getLanguages(): { code: string; nativeName: string; englishName: string; enabled: boolean; }[];
+  export function getLanguages(): { code: Locale; nativeName: string; englishName: string; enabled: boolean; }[];
   /** Returns locale codes that have registered translations. */
-  export function getAvailableLocales(): string[];
+  export function getAvailableLocales(): Locale[];
   /**
    * Formats a number for the active locale.
    * @param value - Number to format.
@@ -82,6 +84,9 @@ export namespace i18n {
    * @param keyCode - Keyboard key code or binding name.
    */
   export function formatKeyForDisplay(keyCode: string): string;
+
+  /** Locale code. `"en"` autocompletes; any locale string is allowed. */
+  export type Locale = LooseString<"en">;
 
   /** Number format options for {@link formatNumber}. */
   export interface I18nNumberFormatOptions {
