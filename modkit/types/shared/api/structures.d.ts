@@ -1,6 +1,6 @@
 import type { CellCoordinates } from "../../shared/player";
-import type { LooseString, TaggedNumber } from "../../nominal";
-import type { StructureType as StructureTypeEnum } from "../../../sandkit/enums/index";
+import type { LooseString, TaggedNumber } from "../nominal";
+import type { StructureType as StructureTypeEnum } from "../../sandkit/enums/index";
 
 /**
  * Shared `sandkit.api.structures` base — structure lookup and mutation.

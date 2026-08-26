@@ -5,7 +5,8 @@
  *
  * @module
  */
-import { shared } from "../../shared";
+// Aliased: this module declares its own `shared` namespace below.
+import { shared as sharedApi } from "../../shared";
 
 export namespace shared {
   /** Shared buffer create and lookup. */
@@ -17,10 +18,10 @@ export namespace shared {
      */
     export function create(key: string, config: { type: SharedArrayType; length: number; }): SharedArray;
     /** Look up a named shared buffer without creating it. */
-    export import get = shared.api.shared.buffers.get
+    export import get = sharedApi.api.shared.buffers.get
   }
   /** Opaque shared array backing store. */
-  export import SharedArray = shared.api.shared.SharedArray
+  export import SharedArray = sharedApi.api.shared.SharedArray
   /** Discriminator for the underlying typed array kind. */
-  export import SharedArrayType = shared.api.shared.SharedArrayType
+  export import SharedArrayType = sharedApi.api.shared.SharedArrayType
 }

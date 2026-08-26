@@ -1,6 +1,6 @@
 import type { CellCoordinates } from "../../shared/player";
-import type { CellId, LooseString, TaggedNumber } from "../../nominal";
-import type { CellType as CellTypeEnum } from "../../../sandkit/enums/index";
+import type { CellId, LooseString, TaggedNumber } from "../nominal";
+import type { CellType as CellTypeEnum } from "../../sandkit/enums/index";
 
 /**
  * Shared `sandkit.api.terrains` base — terrain type lookup and cell mutation.

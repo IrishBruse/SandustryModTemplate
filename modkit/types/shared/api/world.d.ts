@@ -1,5 +1,5 @@
 import type { CellCoordinates, Vector2 } from "../../shared/player";
-import type { CellId as PackedCellId } from "../../nominal";
+import type { CellId as PackedCellId } from "../nominal";
 
 /**
  * Shared `sandkit.api.world` base — cell and terrain queries plus excavation.
