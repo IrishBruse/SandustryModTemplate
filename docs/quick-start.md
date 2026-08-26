@@ -51,14 +51,20 @@ Do not import files from another mod folder. Shared code goes in `modkit/`.
 
 ## Commands
 
-| Command               | Effect                                                                                          |
-| --------------------- | ----------------------------------------------------------------------------------------------- |
-| `npm run setup`       | Check install, extract game source to `sandustry/<version>-<branch>/`, link `dist/` and `logs/` |
-| `npm run dev`         | Watch all `src/` mods (debug)                                                                   |
-| `npm run dev:release` | Watch without debug / `hot-reload`                                                              |
-| `npm run dev:pick`    | Same as `dev`, with a TTY picker first                                                          |
-| `npm run examples`    | Watch `examples/` mods                                                                          |
-| `npm run build`       | Release build to `build/<modinfo.id>/`                                                          |
-| `npm run sandustry`   | Start the game (no build)                                                                       |
+### Setup and game
+
+- **`npm run setup`** — Check install, extract game source to `sandustry/<version>-<branch>/`, link `dist/` and `logs/`
+- **`npm run sandustry`** — Start the game (no build)
+
+### Development
+
+- **`npm run dev`** — Watch all `src/` mods (debug)
+- **`npm run dev:release`** — Watch without debug / `hot-reload`
+- **`npm run dev:pick`** — Same as `dev`, with a TTY picker first
+- **`npm run examples`** — Watch `examples/` mods
+
+### Release
+
+- **`npm run build`** — Release build to `build/<modinfo.id>/`
 
 More commands: [README](README.md#commands). Also see [Folder layout](layout.md), [Builds](builds.md), [Troubleshooting](troubleshooting.md).
