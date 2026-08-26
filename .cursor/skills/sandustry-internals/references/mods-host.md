@@ -1,6 +1,6 @@
 # Host mod loader
 
-`sandustry/current/workshop-mods.js` (game process). Template docs: `docs/patches.md`, `docs/config-schema.md`.
+`sandustry/0.5.2-mods/workshop-mods.js` (game process). Template docs: `docs/patches.md`, `docs/config-schema.md`.
 
 ## Constants (0.5.2 extract)
 
@@ -25,4 +25,20 @@
 
 Manifest id: same charset as patch id, not `__proto__` / `prototype` / `constructor`; must not start with `__sandkit`.
 
-Publisher (`local-mod-publisher.js`): `workshop.json` schema 1, max 16 KiB, preview `preview.png`. IPC `local-mods-upload`.
+## Discovery tags
+
+Each external mod record carries `workshop.discoveredVia`:
+
+| Tag          | Meaning                                                                       |
+| ------------ | ----------------------------------------------------------------------------- |
+| `local`      | App-data mods folder (developer / side-loaded)                                |
+| `subscribed` | Steam subscribed workshop item                                                |
+| `root-scan`  | Numeric folder under the Sandustry workshop content root (depot-shipped mods) |
+
+Inspector labels:
+
+- `local` → **Local**
+- `subscribed` → **Workshop**
+- `root-scan` only (no `local`, no `subscribed`) → **Core mod**
+
+Elements from shipped mod content (not owned by a loaded external mod id) are also labeled **Core mod** in the Elements tab. Built-in enum types stay **Core**.

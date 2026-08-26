@@ -7,7 +7,6 @@
  *
  * Layout:
  *   sandustry/<version>-<branch>/  game JS/JSON/HTML/CSS from app.asar (e.g. 0.5.2-mods)
- *   sandustry/current/             symlink to the folder from the last setup
  *   dist/        symlink (Linux) / junction (Windows) to sandustry mods folder
  *   logs/        symlink (Linux) / junction (Windows) to sandustry logs
  *                Linux: ~/.config/sandustry/logs
@@ -44,7 +43,6 @@ import {
   readGameVersionFromAsar,
   resolveGameBranchKey,
   sandustryExtractRoot,
-  updateCurrentExtractLink,
   versionedExtractDir,
 } from "../lib/sandustry-extract.js";
 
@@ -255,12 +253,7 @@ function extractGameSource(listed, sourceDest, folderName) {
     return false;
   }
 
-  const linkStatus = updateCurrentExtractLink(EXTRACT_ROOT, folderName);
-  const linkNote =
-    linkStatus === "already"
-      ? " (sandustry/current already linked)"
-      : " and linked sandustry/current";
-  ok(`Extracted ${count} game source files -> sandustry/${folderName}/${linkNote}`);
+  ok(`Extracted ${count} game source files -> sandustry/${folderName}/`);
   return true;
 }
 

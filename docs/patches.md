@@ -96,7 +96,7 @@ Replace each match with `code`. The collector sample replaces a Gold / liquidGol
 }
 ```
 
-Copy `find` from the **current** extracted `sandustry/current/` bundle. Do not reuse old minified snippets after a game update.
+Copy `find` from the extracted bundle in `sandustry/<version>-<branch>/`. Do not reuse old minified snippets after a game update.
 
 ### `wrap`
 

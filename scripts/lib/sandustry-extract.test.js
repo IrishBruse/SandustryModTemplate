@@ -1,27 +1,28 @@
 import assert from "node:assert/strict";
 import {
+  existsSync,
+  lstatSync,
   mkdtempSync,
   mkdirSync,
   readdirSync,
   readFileSync,
-  readlinkSync,
   rmSync,
+  symlinkSync,
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { join } from "node:path";
 import test from "node:test";
 import {
-  CURRENT_EXTRACT_LINK,
+  LEGACY_CURRENT_LINK,
   bundleHasSandkit,
   cleanupOrphanedFlatExtract,
   gameExtractFolderName,
   isVersionedExtractFolder,
   migrateLegacyFlatExtract,
-  resolveCurrentSandustryExtract,
+  removeLegacyCurrentLink,
   resolveGameBranchKey,
   sandustryExtractRoot,
-  updateCurrentExtractLink,
 } from "./sandustry-extract.js";
 
 test("gameExtractFolderName combines version and branch", () => {
@@ -63,22 +64,6 @@ test("migrateLegacyFlatExtract moves flat files into a version folder", () => {
   }
 });
 
-test("updateCurrentExtractLink creates sandustry/current", () => {
-  const repo = mkdtempSync(join(tmpdir(), "sandustry-repo-"));
-  const extractRoot = sandustryExtractRoot(repo);
-  const dest = join(extractRoot, "0.5.2-mods");
-  try {
-    mkdirSync(dest, { recursive: true });
-    updateCurrentExtractLink(extractRoot, "0.5.2-mods");
-    const link = join(extractRoot, CURRENT_EXTRACT_LINK);
-    assert.equal(resolve(extractRoot, readlinkSync(link)), dest);
-    assert.equal(resolveCurrentSandustryExtract(repo), dest);
-    assert.equal(updateCurrentExtractLink(extractRoot, "0.5.2-mods"), "already");
-  } finally {
-    rmSync(repo, { recursive: true, force: true });
-  }
-});
-
 test("cleanupOrphanedFlatExtract removes flat leftovers without main.js", () => {
   const root = mkdtempSync(join(tmpdir(), "sandustry-cleanup-"));
   try {
@@ -91,5 +76,20 @@ test("cleanupOrphanedFlatExtract removes flat leftovers without main.js", () => 
     assert.equal(readdirSync(root).sort().join(","), "0.5.2-mods");
   } finally {
     rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("removeLegacyCurrentLink deletes sandustry/current", () => {
+  const repo = mkdtempSync(join(tmpdir(), "sandustry-repo-"));
+  const extractRoot = sandustryExtractRoot(repo);
+  const dest = join(extractRoot, "0.5.2-mods");
+  try {
+    mkdirSync(dest, { recursive: true });
+    symlinkSync(dest, join(extractRoot, LEGACY_CURRENT_LINK));
+    assert.ok(lstatSync(join(extractRoot, LEGACY_CURRENT_LINK)).isSymbolicLink());
+    removeLegacyCurrentLink(extractRoot);
+    assert.equal(existsSync(join(extractRoot, LEGACY_CURRENT_LINK)), false);
+  } finally {
+    rmSync(repo, { recursive: true, force: true });
   }
 });

@@ -2,7 +2,7 @@
 
 **Menu [Esc]** or **Escape**. Dimmer `z-[10010]`. HUD stays behind.
 
-Rows are `w-64 cursor-pointer` (not buttons), except **Mods**.
+Rows are `w-64 cursor-pointer` (not buttons), except **Dev Tools**.
 
 | Label         | Opens                                                                                           |
 | ------------- | ----------------------------------------------------------------------------------------------- |
@@ -12,7 +12,6 @@ Rows are `w-64 cursor-pointer` (not buttons), except **Mods**.
 | Save          | [save-load.md](save-load.md)                                                                    |
 | Load          | [save-load.md](save-load.md)                                                                    |
 | Options       | [options.md](options.md)                                                                        |
-| Mods          | Vanilla `ComponentId.ModsScreen`. This session: template **Mod Inspector** ("Blank for now...") |
 | Exit          | Leave run                                                                                       |
 
 Underscores: **C**ontinue, **S**ave, **L**oad, **O**ptions, **E**xit.

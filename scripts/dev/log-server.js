@@ -128,6 +128,17 @@ export function startLogServer() {
   });
 
   server.on("error", (error) => {
+    const code = error && typeof error === "object" && "code" in error ? error.code : undefined;
+    if (code === "EADDRINUSE") {
+      server = null;
+      console.log(
+        styleText(
+          "dim",
+          `log server already running on ${logServerUrl()} (this watch will not bind)`,
+        ),
+      );
+      return;
+    }
     console.error(styleText("red", `log server failed: ${error.message}`));
   });
 }

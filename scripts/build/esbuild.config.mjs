@@ -12,6 +12,7 @@ import { dirname, isAbsolute, join, normalize } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { buildPatches, bundleAndImport } from "../lib/build-patches.js";
 import { kv, styleText } from "../lib/cli-style.js";
+import { debugIgnoreSourceSuffixes, markDebugSourcesIgnored } from "../lib/source-map-ignore.js";
 import {
   bundledContentFiles,
   compileTailwindUtilities,
@@ -235,7 +236,6 @@ function modkitCssTextPlugin(getTailwindCss) {
 
 const SOURCE_MAP_DATA_MARKER = "//# sourceMappingURL=data:application/json;base64,";
 const SOURCE_URL_RE = /\n\/\/# sourceURL=.*$/;
-const CONSOLE_INJECT_SOURCE_SUFFIX = "modkit/internal/esbuild/console.ts";
 
 /**
  * Sandkit loads `main.js` via `new Function("__sandkit", body)` where `body` is:
@@ -258,27 +258,12 @@ function toSourceMapFileUrl(source, outDir) {
 }
 
 /**
- * Mark the esbuild `inject` console shim as ignore-listed. Debuggers and DevTools
- * then skip it when resolving console output and breakpoints to mod source.
+ * Mark the console inject shim (and hot-reload poller files) as ignore-listed.
+ * Debuggers and DevTools then skip those frames on console output.
  * @param {{ sources?: string[]; ignoreList?: number[] }} map
  */
 function markConsoleInjectIgnored(map) {
-  const sources = map.sources ?? [];
-  if (sources.length === 0) return;
-
-  const ignored = new Set(map.ignoreList ?? []);
-  for (let i = 0; i < sources.length; i++) {
-    const source = sources[i];
-    if (
-      typeof source === "string" &&
-      source.replace(/\\/g, "/").endsWith(CONSOLE_INJECT_SOURCE_SUFFIX)
-    ) {
-      ignored.add(i);
-    }
-  }
-  if (ignored.size > 0) {
-    map.ignoreList = [...ignored].sort((a, b) => a - b);
-  }
+  markDebugSourcesIgnored(map, debugIgnoreSourceSuffixes());
 }
 
 /**

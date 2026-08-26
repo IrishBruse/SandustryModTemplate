@@ -30,8 +30,9 @@ Settings live on this mod. Open **Options → Mods → hot-reload**.
 | **F3 debug overlay**      | `f3Debug`         | off         | F3 toggles companion debug overlay. Vanilla Debug / Stats stay on while the mod is enabled                                                    |
 | **Disable autosave**      | `disableAutosave` | off         | Sets `session.settings.autosaveInterval` to `0`. Manual saves still work                                                                      |
 | **Watch local mods**      | `watchLocalMods`  | off         | Poll other mods' `main.js` and re-eval the renderer bundle. Does not reload this companion, workers, or patches                               |
+| **Skip shader recompile** | `skipShaderRecomp` | off        | Skip initial outline build, post-mod regenerate, `warmup`, and the **Compiling shaders…** splash wait. Writes `localStorage`. Needs `debugPatches` (dev). Restart once after you turn it on |
 
-Turn on **Watch local mods**, **Auto-load save**, **F3 debug overlay**, **Disable autosave**, **F12**, or **Open DevTools on load** when you want those helpers.
+Turn on **Watch local mods**, **Skip shader recompile**, **Auto-load save**, **F3 debug overlay**, **Disable autosave**, **F12**, or **Open DevTools on load** when you want those helpers.
 
 ## Features
 
@@ -41,8 +42,9 @@ Turn on **Watch local mods**, **Auto-load save**, **F3 debug overlay**, **Disabl
 - **Auto-load save** (`boot/boot-menu.ts`, `boot/auto-load-save.ts`) — reloads with `?db_load=` for the **Start save** pick.
 - **Disable autosave** (`boot/autosave.ts`) — sets interval to `0` on load.
 - **F3 debug overlay** (`f3/F3DebugOverlay.tsx`) — Minecraft-style text HUD. Extend with `registerF3Section` / `globalThis.debugF3`.
-- **Mod Inspector** (`mod-inspector/`) — pause menu **Mods** (under **Options**) opens a blank panel. Esc closes.
+- **Dev Tools** (`mod-inspector/`) — pause **Dev Tools** opens a 980×720 panel. **Mods** tab: compact loaded-mod cards with **Open** for details; save issues (missing, diagnostics, type-id drift) stay collapsed. **Elements**: family sand table. **Recipes**: placeholder.
 - **Watch local mods** (`reload/`) — poll and re-eval other mods' renderer `main.js`.
+- **Skip shader recompile** (`patches.ts`, `boot/skip-shader-recomp.ts`) — when on, `debugPatches` skip the early outline compile, post-mod regenerate, `warmup`, and the **Compiling shaders…** splash UI/wait. Preference is stored in `localStorage` so the next launch can skip work that runs before mods. Restart once after you turn it on.
 
 ## DevTools globals
 
@@ -99,7 +101,7 @@ After boot, `globalThis.debugF3.registerSection` is the same API for DevTools ex
 
 ## Watch local mods
 
-When **Watch local mods** is on, the companion polls other mods' `main.js` about twice per second. After `npm run dev` writes a new bundle, it re-evals that renderer entry.
+When **Watch local mods** is on, the companion polls other **local** mods' `main.js` about twice per second. It uses `session.externalMods.orderedMods` with `discoveredVia: local`. It does not poll Workshop ids from the save order list. After `npm run dev` writes a new bundle, it re-evals that renderer entry.
 
 Each reload runs tracked disposers first:
 
@@ -107,6 +109,8 @@ Each reload runs tracked disposers first:
 - `api.ui.overlays.register` via `overlays.unregister`
 - `api.input.registerBinding` handlers (they stop after reload)
 - `api.events.on`, `api.settings.onChange`, `api.hooks.intercept` / `modify`
+
+Hot eval wraps `api.ui.toast` so messages show the mod id and reload generation, for example `Template loaded (author.template v4)`. The console logs `reloaded <id> vN`.
 
 Content `register` calls (`elements`, `structures`, `i18n`, …) have no unregister. The game updates the same id when you register again.
 

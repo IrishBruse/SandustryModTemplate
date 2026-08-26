@@ -1,24 +1,13 @@
 /**
  * Versioned Sandustry source extracts under `sandustry/<version>-<branch>/`.
- * `sandustry/current` links to the folder from the last successful `npm run setup`.
  */
 import { extractFile } from "@electron/asar";
-import {
-  existsSync,
-  lstatSync,
-  mkdirSync,
-  readdirSync,
-  readFileSync,
-  readlinkSync,
-  renameSync,
-  rmSync,
-} from "node:fs";
-import { join, resolve } from "node:path";
+import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync } from "node:fs";
+import { join } from "node:path";
 import { asarExtractPath, asarRelPath } from "./asar-path.js";
-import { linkDirectory, samePath } from "./paths.js";
 
 export const SANDUSTRY_EXTRACT_DIRNAME = "sandustry";
-export const CURRENT_EXTRACT_LINK = "current";
+export const LEGACY_CURRENT_LINK = "current";
 export const BUNDLE_RELS = ["dist/js/bundle.js", "js/bundle.js"];
 const VERSIONED_FOLDER = /^\d+\.\d+\.\d+-[\w-]+$/;
 
@@ -109,38 +98,26 @@ export function versionedExtractDir(extractRoot, folderName) {
   return join(extractRoot, folderName);
 }
 
-/** @param {string} extractRoot */
-export function currentExtractLink(extractRoot) {
-  return join(extractRoot, CURRENT_EXTRACT_LINK);
-}
-
 /** @param {string} name */
 export function isVersionedExtractFolder(name) {
   return VERSIONED_FOLDER.test(name);
 }
 
-/**
- * Point `sandustry/current` at the active version folder.
- * @param {string} extractRoot
- * @param {string} folderName
- */
-export function updateCurrentExtractLink(extractRoot, folderName) {
-  const linkPath = currentExtractLink(extractRoot);
-  const target = versionedExtractDir(extractRoot, folderName);
-
-  try {
-    const stat = lstatSync(linkPath);
-    if (stat.isSymbolicLink()) {
-      const current = resolve(extractRoot, readlinkSync(linkPath));
-      if (samePath(current, target)) return "already";
-    }
-    rmSync(linkPath, { recursive: true, force: true });
-  } catch (err) {
-    if (/** @type {NodeJS.ErrnoException} */ (err).code !== "ENOENT") throw err;
+/** @param {string} extractRoot @param {string} name */
+function shouldKeepExtractRootEntry(extractRoot, name) {
+  if (isVersionedExtractFolder(name)) return true;
+  if (name === LEGACY_CURRENT_LINK) {
+    rmSync(join(extractRoot, name), { recursive: true, force: true });
+    return true;
   }
+  return false;
+}
 
-  linkDirectory(target, linkPath);
-  return "linked";
+/** Remove legacy `sandustry/current` symlink from older setup runs. */
+export function removeLegacyCurrentLink(extractRoot) {
+  const linkPath = join(extractRoot, LEGACY_CURRENT_LINK);
+  if (!existsSync(linkPath)) return;
+  rmSync(linkPath, { recursive: true, force: true });
 }
 
 /**
@@ -172,33 +149,11 @@ export function migrateLegacyFlatExtract(extractRoot) {
   mkdirSync(dest, { recursive: true });
 
   for (const name of readdirSync(extractRoot)) {
-    if (name === CURRENT_EXTRACT_LINK || isVersionedExtractFolder(name)) continue;
+    if (shouldKeepExtractRootEntry(extractRoot, name)) continue;
     renameSync(join(extractRoot, name), join(dest, name));
   }
 
   return folderName;
-}
-
-/**
- * Resolve the active extract directory (`sandustry/current` when present).
- * @param {string} repoRoot
- * @returns {string | null}
- */
-export function resolveCurrentSandustryExtract(repoRoot) {
-  const extractRoot = sandustryExtractRoot(repoRoot);
-  const linkPath = currentExtractLink(extractRoot);
-  if (!existsSync(linkPath)) return null;
-
-  try {
-    const stat = lstatSync(linkPath);
-    if (stat.isSymbolicLink()) {
-      return resolve(extractRoot, readlinkSync(linkPath));
-    }
-    if (stat.isDirectory()) return linkPath;
-  } catch {
-    return null;
-  }
-  return null;
 }
 
 /**
@@ -210,7 +165,7 @@ export function cleanupOrphanedFlatExtract(extractRoot) {
   if (existsSync(join(extractRoot, "main.js"))) return;
 
   for (const name of readdirSync(extractRoot)) {
-    if (name === CURRENT_EXTRACT_LINK || isVersionedExtractFolder(name)) continue;
+    if (shouldKeepExtractRootEntry(extractRoot, name)) continue;
     rmSync(join(extractRoot, name), { recursive: true, force: true });
   }
 }
@@ -218,6 +173,7 @@ export function cleanupOrphanedFlatExtract(extractRoot) {
 /** @param {string} extractRoot */
 export function ensureExtractRoot(extractRoot) {
   mkdirSync(extractRoot, { recursive: true });
+  removeLegacyCurrentLink(extractRoot);
   const migrated = migrateLegacyFlatExtract(extractRoot);
   cleanupOrphanedFlatExtract(extractRoot);
   return migrated;
