@@ -103,7 +103,10 @@ html {
 }
 
 .sidebar-nav li.active > a {
-  border-right: 3px solid var(--theme-color);
+  border-left: 3px solid var(--theme-color);
+  border-radius: 0;
+  padding-left: 0.5em;
+  margin-left: calc(-0.5em - 3px);
 }
 
 .markdown-section thead th,
