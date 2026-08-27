@@ -71,6 +71,7 @@
 
 html {
   scroll-padding-top: 1rem;
+  scrollbar-gutter: stable;
 }
 
 .markdown-section .callout.warning {
@@ -100,6 +101,7 @@ html {
 
 .sidebar {
   border-right: 1px solid var(--border-color);
+  scrollbar-gutter: stable;
 }
 
 .sidebar-nav li.active > a {

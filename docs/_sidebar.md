@@ -1,5 +1,4 @@
 - [Home](/)
-- [Changelog](Changelog.md)
 - [Official Sandkit API](https://sandustry.com/sandkit.html)
 - [Sandkit types](https://sandustry-modding.github.io/SandustryTypes/#/)
 
