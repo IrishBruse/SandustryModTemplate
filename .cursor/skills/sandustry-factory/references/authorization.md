@@ -17,12 +17,12 @@ Engine twin (state first): `canBuild`, `canGrab`, `canUseTool`, `canUseToolAt`, 
 
 ## `shared.authorization`
 
-| Field             | Live                                       |
-| ----------------- | ------------------------------------------ |
-| `width`, `height` | `3840` `3840` (cell grid)                  |
-| `data`            | `Uint8Array` or similar - zone id per cell |
+| Field             | Live                                                          |
+| ----------------- | ------------------------------------------------------------- |
+| `width`, `height` | `3840` `3840` (cell grid)                                     |
+| `data`            | `Uint8Array` len **14745600** (3840 x 3840), zone id per cell |
 
-Zone `0` means unrestricted on sampled points in this save. Non-zero zones apply rules from `AuthorizationType` flags configured per zone.
+Zone `0` means unrestricted. Live player cell and sampled corners were **0**; `canBuildAtCell` true. Non-zero zone layouts were not present on this save.
 
 Do not dump `data` in probe scripts. Sample sparse cells only.
 

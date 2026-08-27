@@ -1,16 +1,16 @@
 # Gaps
 
-Not confirmed in this pass:
+Still open (this save had **0** live entities, drones, projectiles, world items, teleport zones):
 
-- Full per-creature instance field list for each `typeId` (only common fields documented).
-- Sweeper drone `type` string value and full `data` schema (save had zero drones).
-- Digger drone `data` fields when `DroneType.Digger` is active.
-- `entities.registerSpawner` callback signatures.
-- `launchers.registerType` for base (non-mk2) launchers - only mk2 config probed live.
-- Portal static table contents when markers are non-empty (live save returned `[]`).
-- `prefabWorldItemCache` entry shape when cache is populated (save: `Fn` wrapper with `.cache` key only).
-- Grappling-hook and fire projectile `attributes` schemas.
-- Worker-thread copies of `store.projectiles` / `store.drones` (main thread only probed).
-- Whether Debug F3 "Redweaver" / "Voltblub" map to `resinWeaver` / a removed type (only bundle string `voltblub:spark` found).
+- Per-creature instance fields beyond the common set
+- Sweeper / Digger drone `data` when those types are active
+- `engine.api.entities.registerSpawner` callback signature
+- `launchers.registerType` for base (non-mk2) launchers
+- Portal static table when markers are non-empty
+- `prefabWorldItemCache` populated entry shape
+- Grappling-hook and fire projectile `attributes`
+- Worker copies of `store.projectiles` / `store.drones`
+- Debug F3 "Redweaver" / "Voltblub" vs `resinWeaver` / removed types
+- Full `store.stratacores` id catalog (this save: `["terracortex"]` only)
 
-Live counts (2025-08 probe, no spawns): **169** projectiles (`type: 2`, full motion fields), **1** world item, **0** drones, **872** structures (signal + quantum portal types on belt).
+Public `api.entities` has no `getAll()`: `entities.md`. `store.gloom.emitterPositions` was `[]`.

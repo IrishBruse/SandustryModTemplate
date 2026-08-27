@@ -2,6 +2,16 @@
 
 Side branch of Research (tickets, creatures, rewards). UI: **sandustry-ui** `../../sandustry-ui/references/research.md`.
 
+## Public API (0.5.5)
+
+`sandkit.api.tech.conservatory.appendUnlock(techId, unlocks)` - append extra unlocks to a conservatory reward tech.
+
+- `techId`: `Tech | string` (built-in or mod id).
+- `unlocks.structures` (optional): structure id strings.
+- `unlocks.items` (optional): item id strings.
+
+Write - do not call during read-only probes. Purchased state is still `store.player.tech[id]`.
+
 ## Store
 
 ```ts

@@ -4,18 +4,18 @@
 
 Rows are `w-64 cursor-pointer` (not buttons), except **Dev Tools**.
 
-| Label         | Opens                                |
-| ------------- | ------------------------------------ |
-| Unstuck       | Teleport                             |
-| Send feedback | [feedback.md](feedback.md) (also F2) |
-| Continue      | Close pause                          |
-| Save          | [save-load.md](save-load.md)         |
-| Load          | [save-load.md](save-load.md)         |
-| Options       | [options.md](options.md)             |
-| Exit          | Leave run                            |
+| Label         | Opens                   |
+| ------------- | ----------------------- |
+| Unstuck       | Teleport                |
+| Send feedback | `feedback.md` (also F2) |
+| Continue      | Close pause             |
+| Save          | `save-load.md`          |
+| Load          | `save-load.md`          |
+| Options       | `options.md`            |
+| Exit          | Leave run               |
 
 Underscores: **C**ontinue, **S**ave, **L**oad, **O**ptions, **E**xit.
 
-Footer: Discord `https://discord.gg/HJNk5eMnmt`, **Early Access 0.5.2 | seed:**, **Copy info for bug report**.
+Footer: Discord `https://discord.gg/HJNk5eMnmt`, **Early Access 0.5.5 | seed:**, **Copy info for bug report**.
 
 API: `sandkit.api.ui.openPauseMenu()`.

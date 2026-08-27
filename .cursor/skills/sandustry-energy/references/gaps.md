@@ -1,14 +1,13 @@
 # Gaps
 
-Not walked or not fully confirmed in the 0.5.2 MCP pass:
+Still open:
 
-- Full `SignalTargetPayloadV1` typing in `signals.d.ts` (live payload is `{ combined, inputCount, onCount }`).
-- Every vanilla `registerSenderType` / receiver handler id list (counts confirmed: **17** senders, **12** receivers via `Set.size`).
-- Link bucket shape confirmed: key `"senderX,senderY"` → `[{ x, y, on }]` (16 buckets on probe save).
-- `energyType` multi-network mod example on a live save.
-- `sandkit.api.energy.addAtCell` return value edge cases (partial fill).
-- Worker-thread energy network simulation details.
-- Heat transfer coupling (reactor coolant, turbines) - **sandustry-world**.
-- Per-structure `onCharge` / `onConsume` callback args (engine-only).
-- Signal link tool UX and radial - **sandustry-ui** if clicking matters.
-- On-disk save encoding for `store.mods.signals.links` beyond live object shape.
+- Vanilla sender / target structure id lists (counts only: **17** senders, **12** receivers, **5** interactables)
+- `energyType` multi-network example on a live save
+- `energy.addAtCell` return when the network is partially full (do not call in probes unless the user asks)
+- `getNetworkAtCell` populated entry shape (HTML: `{ cellX, cellY, type }`; this save had no energy structures)
+- Worker-thread energy simulation
+- Per-structure engine `onCharge` / `onConsume` args
+- On-disk encoding for `store.mods.signals.links`
+
+Heat coupling: **sandustry-world**. Signal tool clicks: **sandustry-ui**.

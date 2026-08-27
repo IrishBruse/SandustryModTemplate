@@ -2,6 +2,19 @@
 
 Fluid transport structures are split from the main structure list.
 
+## `sandkit.api.pipes` (public, 0.5.5)
+
+| Method                                    | Role                                    |
+| ----------------------------------------- | --------------------------------------- |
+| `isAtCell(cellX, cellY)`                  | Pipe segment at cell                    |
+| `isEnabledAtCell(cellX, cellY)`           | Pipe flow enabled at cell               |
+| `getConnectedVentsAtCell(cellX, cellY)`   | Connected liquid vents (`[]` when none) |
+| `setEnabledAtCell(cellX, cellY, enabled)` | **mutate** - do not call in probes      |
+
+Live on structure cell with no pipe: `isAtCell` / `isEnabledAtCell` -> `false`, `getConnectedVentsAtCell` -> `[]`.
+
+Pumps and liquid vents still appear in `store.structures` via `structures.getAtCell`. Pipe segments live in `store.pipes`.
+
 ## Store
 
 | Field                 | Role                                                             |
@@ -32,11 +45,9 @@ Pump / liquid vent at a cell without adjacent pipe may get `data.connectedVents:
 
 `session.settings.pipesModeView` - pipes overlay mode (foreground vs background tilemap).
 
-## API surface
+## Builtin ids
 
-No public `sandkit.api.pipes`. Use `structures.getAtCell` for pumps/vents in `store.structures`. Pipe lookup uses `session` spatial cache key `"pipes"`.
-
-Builtin ids: `Pipe` 23, `Pump` 24, `LiquidVent` 25 - `enums.md`.
+`Pipe` 23, `Pump` 24, `LiquidVent` 25 - `enums.md`.
 
 ## Related
 

@@ -5,14 +5,12 @@ description: "Sandustry world sim, cells, chunks, elements, matter, grid, terrai
 
 # Sandustry world
 
-Live **world map** of Early Access **0.5.2**. Public mod calls: [SandustryTypes](https://sandustry-modding.github.io/SandustryTypes/#/). Screen clicks stay in **sandustry-ui**. Host IPC and `__debug` stay in **sandustry-internals**.
-
-Types: `node_modules/@sandustry-modding/types/sandkit/api/{grid,elements,terrains,pickups,maps}.d.ts`. Enums: `node_modules/@sandustry-modding/types/sandkit/enums/index.d.ts`.
+Live **world map** of Early Access **0.5.5**. Public API: [sandkit.html](https://sandustry.com/sandkit.html) (source of truth for signatures). Types: `@sandustry-modding/types` 0.3.x. Screen clicks stay in **sandustry-ui**. Host IPC and `__debug` stay in **sandustry-internals**.
 
 ## Probe
 
 1. **sandustry-mcp** attach, then `evaluate_script` with `waitForStableDom: false`.
-2. Use `__debug.state` and `__debug.config`. `sandkit` is **not** on `window`; `__debug.state === sandkit.state`.
+2. `sandkit.api` is ambient in the renderer when the game is loaded; `__debug.state` is the vanilla read bag (`__debug.state === sandkit.state`).
 3. Read **one cell** or a **coarse stride** sample. Do not dump `cellIds`, `wallData.data`, or `shadowMap.data`.
 4. Done when live keys match the reference for that branch (or the gap is logged in `references/gaps.md`).
 
@@ -29,11 +27,12 @@ Open **one** file that matches the branch.
 | Read-only probe rules                      | [references/probe.md](references/probe.md)                         |
 | Grid size, cell id ranges, chunks          | [references/grid-chunks.md](references/grid-chunks.md)             |
 | CellType vs element vs matter              | [references/cells.md](references/cells.md)                         |
-| `sandkit.api.grid`, fog, redraw, `pickups` | [references/world-api.md](references/world-api.md)                 |
-| `sandkit.api.elements`                     | [references/elements.md](references/elements.md)                   |
-| `sandkit.api.terrains`                     | [references/terrains.md](references/terrains.md)                   |
-| `sandkit.api.grid`                         | [references/grid-api.md](references/grid-api.md)                   |
-| `sandkit.api.maps`                         | [references/maps.md](references/maps.md)                           |
+| `api.grid`, `api.world` alias, `pickups`   | [references/world-api.md](references/world-api.md)                 |
+| `api.elements` (main vs worker)            | [references/elements.md](references/elements.md)                   |
+| `api.terrains`                             | [references/terrains.md](references/terrains.md)                   |
+| Grid iteration helpers                     | [references/grid-api.md](references/grid-api.md)                   |
+| `api.maps`                                 | [references/maps.md](references/maps.md)                           |
+| Reactions, excavation, fire, patterns      | [references/sim-crafting.md](references/sim-crafting.md)           |
 | `store.world`, horizon, fixtures           | [references/store-world.md](references/store-world.md)             |
 | Wall, heat, shadows, foliage (engine)      | [references/wall-heat-foliage.md](references/wall-heat-foliage.md) |
 | Background rasters, prefabs, Pixi parallax | [references/background-layers.md](references/background-layers.md) |

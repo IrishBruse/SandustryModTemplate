@@ -37,9 +37,9 @@ Each external mod record carries `workshop.discoveredVia`:
 
 Inspector labels:
 
-- `local` → **Local**
-- `subscribed` → **Workshop**
-- `root-scan` with `workshop.itemId` → **Workshop** (e.g. Laser Overcharge)
-- `root-scan` only, no item id → **Core mod**
+- `local` -> **Local**
+- `subscribed` -> **Workshop**
+- `root-scan` with `workshop.itemId` -> **Workshop** (e.g. Laser Overcharge)
+- `root-scan` only, no item id -> **Core mod**
 
 Elements from shipped mod content (not owned by a loaded external mod id) are also labeled **Core mod** in the Elements tab. Built-in enum types stay **Core**.

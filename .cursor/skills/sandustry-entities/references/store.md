@@ -4,12 +4,14 @@
 
 ## Entity-related keys
 
-| Key           | Shape                                  | Notes                                                   |
-| ------------- | -------------------------------------- | ------------------------------------------------------- |
-| `drones`      | `Drone[]`                              | Autonomous units (digger, hauler, sweeper mod).         |
-| `projectiles` | `Projectile[]`                         | Weapon and tool shots.                                  |
-| `worldItems`  | `WorldItem[]`                          | Pickups in the world.                                   |
-| `creatures`   | `Record<typeId, { available, found }>` | Conservatory inventory counts. Not live world entities. |
+| Key           | Shape                                  | Notes                                                           |
+| ------------- | -------------------------------------- | --------------------------------------------------------------- |
+| `drones`      | `Drone[]`                              | Autonomous units (digger, hauler, sweeper mod).                 |
+| `projectiles` | `Projectile[]`                         | Weapon and tool shots.                                          |
+| `worldItems`  | `WorldItem[]`                          | Pickups in the world.                                           |
+| `creatures`   | `Record<typeId, { available, found }>` | Conservatory inventory counts. Not live world entities.         |
+| `stratacores` | `string[]`                             | Collected stratacore ids (progression), not live pickups.       |
+| `gloom`       | `{ emitterPositions: { x, y }[] }`     | Gloom emitter positions. Element detail in **sandustry-world**. |
 
 ## `store.world` (related)
 
@@ -26,9 +28,9 @@
 
 ## Entity list (not in `store`)
 
-Critters and swarm particles live in `sandkit.engine.api.entities.getAll(state)`.
+Critters and swarm particles live in `sandkit.api.entities.getAllByType(typeId)` or `sandkit.engine.api.entities.getAll(state)`.
 
-Live 0.5.2 backing list: `store.mods.entities.list` (array of `{ id, type, x, y, ... }`). Clear with `.length = 0` for void-world wipes. `engine.api.entities.kill` is **not** on the live API — use list clear or re-probe after updates.
+Live 0.5.5 backing list: `store.mods.entities.list` (array of `{ id, type, x, y, ... }`). Clear with `.length = 0` for void-world wipes. `engine.api.entities.kill` is **not** on the live API - use list clear, public `remove(entityId)`, or re-probe after updates.
 
 Types doc path `storage.ensure(state, "entities").list` may differ from live mod bag layout.
 

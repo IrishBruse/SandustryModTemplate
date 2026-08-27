@@ -1,13 +1,13 @@
 ---
 name: sandustry-entities
-description: "drones, entities, projectiles, creatures, swarm, sweeper, launchers, portals, teleport zones, world items. Use when probing live drones, entities, projectiles, creatures, or sandkit.engine.api.entities / drones."
+description: "drones, entities, projectiles, creatures, swarm, sweeper, launchers, portals, teleport zones, world items. Use when probing live drones, entities, projectiles, creatures, or sandkit.api.entities / engine.api.entities / drones."
 ---
 
 # Sandustry entities
 
-Live **entity map** of Early Access **0.5.2**. Public mod calls stay in https://sandustry-modding.github.io/SandustryTypes/#/. Screen clicks stay in **sandustry-ui**. Host bridge stays in **sandustry-internals**.
+Live **entity map** of Early Access **0.5.5**. Public mod calls: https://sandustry.com/sandkit.html (`api.entities`, `api.projectiles`, `api.pickups`). Screen clicks stay in **sandustry-ui**. Host bridge stays in **sandustry-internals**.
 
-This skill covers **engine and store models** only. It does not cover Debug F3 spawn UI (see **sandustry-ui** `references/debug.md`).
+Public `sandkit.api.entities` first, then engine and store models. Debug F3 spawn UI: **sandustry-ui** `references/debug.md`.
 
 ## Probe (read-only)
 
@@ -16,7 +16,7 @@ This skill covers **engine and store models** only. It does not cover Debug F3 s
 3. State: `const s = sandkit.state` (same as `sandkit.engine.state`, `__debug.state`).
 4. Done when counts and sample keys match the branch file.
 
-**Do not call:** `engine.api.drones.spawn|kill`, `entities.spawn|launch|startCapture`, `teleportZones.teleportPlayerTo|add|remove`, `pickups.spawnAtWorld|remove|pickUp`, `projectiles.spawnAtWorld|remove`, `swarmConsole.setSpawnJammed`, `sweeperDrone.cancelSelection`.
+**Do not call:** `api.entities.spawnAtWorld|remove|launch|startCapture|collect`, `engine.api.drones.spawn|kill`, `engine.api.entities.spawn|launch|startCapture|registerType|registerSpawner`, `teleportZones.teleportPlayerTo|add|remove`, `api.pickups.spawnAtWorld|remove|pickUp|destroy`, `api.projectiles.spawnAtWorld|remove`, `swarmConsole.setSpawnJammed`, `sweeperDrone.cancelSelection`.
 
 Details: [references/probe.md](references/probe.md).
 
@@ -28,7 +28,7 @@ Open **one** file that matches the branch.
 | ------------------------------------------- | ---------------------------------------------------------------- |
 | Safe probe scripts                          | [references/probe.md](references/probe.md)                       |
 | `store.*` arrays, session caches            | [references/store.md](references/store.md)                       |
-| `engine.api.entities`, creatures, capture   | [references/entities.md](references/entities.md)                 |
+| `api.entities`, creatures, capture          | [references/entities.md](references/entities.md)                 |
 | `store.drones`, hauler / sweeper            | [references/drones.md](references/drones.md)                     |
 | `store.projectiles`, public API             | [references/projectiles.md](references/projectiles.md)           |
 | `store.worldItems`, pickups, prefab cache   | [references/world-items.md](references/world-items.md)           |

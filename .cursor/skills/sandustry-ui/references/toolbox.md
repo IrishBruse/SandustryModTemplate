@@ -1,6 +1,6 @@
 # Toolbox
 
-Chrome: [management.md](management.md). Sub-tabs **Items**, **Stratacores**.
+Chrome: `management.md`. Sub-tabs **Items**, **Stratacores**.
 
 ## Items
 

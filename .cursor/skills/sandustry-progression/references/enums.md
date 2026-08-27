@@ -24,9 +24,9 @@ Mixed numeric and string node ids. Numeric core examples:
 
 String examples: `FluxEmanator="fluxEmanator"`, plus mod string ids (`aurixiteCrystallizer`, `swarmConsole`, `voidOrb`, ...).
 
-Use `String(Tech.Shaker)` or numeric key when reading `player.tech` and `getDefinitionById`.
+Use `String(Tech.Conveyors)` (`"2"`) or a registered string id (`"fluxEmanator"`). Enum **key names** (`"Conveyors"`, `"Shaker"`) return **`null`** from `getDefinitionById`. Lowercase slugs (`"conveyor"`) also return null.
 
-Full enum (110 entries) is in `node_modules/@sandustry-modding/types/sandkit/enums/index.d.ts` lines 289-401.
+Live `sandkit.enums.Tech` has **221** keys on 0.5.5 (numeric core + string mod ids). Types package core enum is in `node_modules/@sandustry-modding/types/sandkit/enums/index.d.ts` lines 289-401 (~110 built-in entries).
 
 ## Related enums
 

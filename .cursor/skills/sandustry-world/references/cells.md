@@ -6,7 +6,7 @@ Three layers overlap at each grid cell:
 2. **Element type** - numeric handle when id is in the element range, see `ElementType` enum and mod registrations.
 3. **Matter type** - physics category (Solid, Liquid, Gas, ...) on the element **definition**, not stored per cell directly.
 
-Use `sandkit.api.grid.isCellEmptyAtCell`, `isTerrainAtCell`, `elements.getTypeAtCell`, `elements.getMatterTypeAtCell`, `terrains.getTypeAtCell` in mod code. Full signatures: https://sandustry-modding.github.io/SandustryTypes/#/.
+Use `api.grid.isCellEmptyAtCell`, `isTerrainAtCell`, `elements.getTypeAtCell`, `elements.getMatterTypeAtCell`, `terrains.getTypeAtCell` in mod code. Official: [sandkit.html](https://sandustry.com/sandkit.html).
 
 ## `CellType` (terrain ids 1-30 in enum)
 
@@ -18,9 +18,13 @@ Mod terrains register into ids up to **1000** (`terrainType` table length 1001).
 
 ## `ElementType` (built-in 1-20)
 
-Sand, Water, Gold, Lava, Petalium (18), etc. Mod elements extend via `elements.register`.
+Sand (1), Water (3), Gold (7), **Gloom (8)**, Lava (19), Petalium (18), Basalt (20), etc. Mod elements extend via `elements.register`.
 
 Live: `state.sandkit.mods.elements` has **31** registered ids (sample: `caulk`, `florin`, `liquidGold`).
+
+## `PickupType` (world items)
+
+Artifact (1), GlyphKey (2), **Stratacore (3)**, Orb (4). Deprecated enum alias: `WorldItemType`.
 
 ## `MatterType`
 

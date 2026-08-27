@@ -22,17 +22,19 @@ Each `threads[i].meta`:
 | `ports`         | 14 MessagePorts      |
 | `managerPort`   | Manager port         |
 
-Exact cell-row ownership per thread: **not** confirmed in this pass (see `gaps.md`).
+Thread `meta.startingIndex` is the worker id **0..13**, not a Y-band start. Row/chunk ownership formula is still unknown (`gaps.md`).
 
 ## Shared scheduling fields
 
-On **`shared`**, not `__debug.config` (config has no scheduling keys on live 0.5.2).
+On **`shared`**, not `__debug.config` (config has no scheduling keys on live 0.5.5).
 
-| Field                         | Live                | Notes                                                |
-| ----------------------------- | ------------------- | ---------------------------------------------------- |
-| `shared.schedulingMode`       | object `{ "0": 1 }` | Mode map per worker group                            |
-| `shared.hybridScheduling`     | object `{ "0": 1 }` | Hybrid flag map                                      |
-| `__debug.getSchedulingMode()` | returns **1**       | Sync read; do not call `setSchedulingMode` in probes |
+JSON often prints `{ "0": 1 }` because these are **length-1 typed arrays**, not per-worker maps.
+
+| Field                         | Live                      | Notes                                                                        |
+| ----------------------------- | ------------------------- | ---------------------------------------------------------------------------- |
+| `shared.schedulingMode`       | `Uint8Array` length **1** | Index 0 is **1** on this save                                                |
+| `shared.hybridScheduling`     | `Uint8Array` length **1** | Index 0 is **1** on this save                                                |
+| `__debug.getSchedulingMode()` | returns **1**             | Same value as `schedulingMode[0]`. Do not call `setSchedulingMode` in probes |
 
 Do not call `__debug.setSchedulingMode` without user ask.
 
@@ -50,4 +52,4 @@ Value **1** = chunk marked for update (live sample at map center chunk).
 
 `sandkit.api.workers.setPostUpdateEnabled(enabled)` - toggle worker post-update hooks only.
 
-Worker-thread `sandkit` shape: **sandustry-internals** `references/gaps.md`.
+Worker-thread `sandkit` shape: **sandustry-internals** `references/worker-api.md`.

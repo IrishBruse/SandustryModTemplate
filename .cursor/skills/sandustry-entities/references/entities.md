@@ -1,29 +1,52 @@
 # Entities
 
-`sandkit.engine.api.entities` - capture critters, swarm particles, and mod-registered types. **Internal.** State is first arg on every call.
+Capture critters, swarm particles, and mod-registered entity types.
 
-Reference: https://sandustry-modding.github.io/SandustryTypes/#/. Types: `node_modules/@sandustry-modding/types/sandkit/engine/api/entities.d.ts`.
+## Public API (mods)
 
-## Methods (live)
+`sandkit.api.entities` - **main entry only** (not in Worker reference). Official signatures have **no state-first arg**.
 
-| Method                                    | Role                                       |
-| ----------------------------------------- | ------------------------------------------ |
-| `getAll(state)`                           | All live entity instances.                 |
-| `getAllByType(state, typeId)`             | Filter by string `typeId`.                 |
-| `getAllTypeDefs()` / `getTypeDef(typeId)` | Registered type metadata.                  |
-| `getSprite(state, entityId)`              | Pixi sprite for one entity.                |
-| `spawn(state, typeId, x, y, data?)`       | Create instance (unsafe without user ask). |
-| `launch(state, entity, angle, speed?)`    | Set `vx`/`vy`, launch timers (unsafe).     |
-| `startCapture(state, entityId)`           | Begin corraller capture (unsafe).          |
-| `registerType` / `registerSpawner`        | Mod registration (unsafe).                 |
-| `createLight`                             | Attach point light to entity.              |
+| Method                                       | Role                                       |
+| -------------------------------------------- | ------------------------------------------ |
+| `getById(entityId)`                          | One live instance by runtime id.           |
+| `getAllByType(entityTypeId)`                 | All instances of a string `entityTypeId`.  |
+| `spawnAtWorld(entityTypeId, worldX, worldY)` | Create instance (unsafe without user ask). |
+| `remove(entityId)`                           | Despawn (unsafe).                          |
+| `launch(entityId, angleRadians, speed?)`     | Set motion and launch timers (unsafe).     |
+| `startCapture(entityId)`                     | Begin corraller capture (unsafe).          |
+| `collect(entityId)`                          | Force conservatory collect (unsafe).       |
 
-## Built-in creature `typeId` values (0.5.2)
+There is **no** public `getAll()`. For read-only probes, use `getAllByType` per known `typeId`, or `engine.api.entities.getAll(state)` below.
+
+Reference: https://sandustry.com/sandkit.html (`api.entities`).
+
+## Engine API (internal)
+
+`sandkit.engine.api.entities` - same domain, **state-first** on most calls. Still live on 0.5.5.
+
+| Method                                                                    | Role                                  |
+| ------------------------------------------------------------------------- | ------------------------------------- |
+| `getAll(state)`                                                           | All live entity instances.            |
+| `getAllByType(state, typeId)`                                             | Filter by string `typeId`.            |
+| `getById(state, entityId)`                                                | One instance.                         |
+| `getAllTypeDefs(state?)` / `getTypeDef(typeId)`                           | Registered type metadata.             |
+| `getSprite(state, entityId)`                                              | Pixi sprite for one entity.           |
+| `spawn(state, typeId, x, y, data?)`                                       | Create (unsafe). Optional 5th `data`. |
+| `removeById(state, entityId)`                                             | Despawn (unsafe).                     |
+| `launch(state, entity, angle, speed?)` / `launchById(state, entityId, …)` | Launch (unsafe).                      |
+| `startCapture(state, entityId)`                                           | Capture (unsafe).                     |
+| `collectById(state, entityId)`                                            | Collect (unsafe).                     |
+| `registerType` / `registerSpawner`                                        | Mod registration (unsafe).            |
+| `createLight`                                                             | Attach point light to entity.         |
+
+Prefer public names for mod code. Map ids: public `remove`/`collect`/`launch` take `entityId`; engine often takes `state` first.
+
+## Built-in creature `typeId` values (0.5.5)
 
 | typeId        | sortOrder | Notes                                        |
 | ------------- | --------- | -------------------------------------------- |
+| `shinelet`    | 1         | Small light critter.                         |
 | `lumling`     | 2         | Flying critter.                              |
-| `shinelet`    | -         | Small light critter.                         |
 | `resinWeaver` | 3         | Ground critter. Display name "Resin Weaver". |
 | `eyes`        | 4         | Small swarm critter.                         |
 | `voidgrazer`  | 5         | Large flying critter.                        |
@@ -46,14 +69,14 @@ Per-type fields include `targetX`/`targetY`, `phase`, `grazeFlash`, `playerRelea
 
 ## `store.creatures` vs live entities
 
-- **Live world:** `entities.getAll(state)` - instances you can see and capture.
+- **Live world:** `api.entities.getAllByType(typeId)` or `engine.api.entities.getAll(state)` - instances you can see and capture.
 - **Inventory:** `store.creatures[typeId] = { available, found }` - conservatory counts. Updated on `entity:collected`. First find grants conservatory tickets.
 
 ## Capture flow (read-only observation)
 
 1. Corraller tool calls `startCapture` -> sets `capturing`, `captureProgress`.
 2. On complete -> increments `store.creatures[typeId]`, may toast first pickup, emits `entity:collected`.
-3. Entity removed from `entities` list.
+3. Entity removed from the live list.
 
 ## Spawners
 

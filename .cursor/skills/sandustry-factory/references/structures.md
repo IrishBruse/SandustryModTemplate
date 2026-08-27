@@ -14,32 +14,48 @@ World structures live in `store.structures[]`. Spatial index: `session.cache.str
 | `color`  | Hex tint (coloring tool), e.g. `"#00ffff"`                                          |
 | `frame`  | Boolean frame overlay on foundations                                                |
 
-Live save sample: **872** structures (2025-08 probe), 10 `queued`, fields `color`, `data`, `filter`, `frame`, `queued`, `type`, `x`, `y`. Signal types on belt: `signalButton`, `signalToggle`, `signalGate`, etc.
+Live save sample (0.5.5 probe): **19** structures, 0 `queued`, fields `color`, `data`, `filter`, `frame`, `queued`, `type`, `x`, `y`. Signal types on belt: `signalButton`, `signalToggle`, `signalGate`, etc.
 
-## `sandkit.api.structures` (live keys)
+## `sandkit.api.structures` (live keys, 0.5.5)
 
-`registerVariant`, `buildAtCell`, `forEachOfType`, `getAtCell`, `getDefinitionByType`, `getTypeById`, `getAvailableTypes`, `hasBuiltAtCell`, `isBlockedByPlayerAtCell`, `isLauncherAtCell`, `isType`, `isTypeAtCell`, `isLockedByType`, `mapValueToSpritesheetIndex`, `register`, `registerPlacementConfig`, `removeAtCell`, `removeAtCells`, `removeBetweenCells`, `updateData`, `setSpritesheetIndex`, `setSpritesheetIndexAtCell`, `setSpritesheetIndexByValue`, `setSpritesheetIndexByValueAtCell`, `update`, `updateDefinition`.
+Canonical methods plus deprecated aliases still on the live object (official HTML marks aliases):
+
+`register`, `updateDefinition`, `registerVariant`, `forEachOfType`, `registerPlacementConfig`, `getAtCell`, `getDefinitionByType`, `getAvailableTypes`, `getTypeById`, `hasBuiltAtCell`, `isBlockedByPlayerAtCell`, `isLauncherAtCell`, `isType`, `isTypeAtCell`, `isLockedByType`, `mapValueToSpritesheetIndex`, `setSpritesheetIndex`, `setSpritesheetIndexAtCell`, `setSpritesheetIndexByValue`, `setSpritesheetIndexByValueAtCell`, `update`, `updateData`, `buildAtCell`, `removeAtCell`, `removeBetweenCells`, `removeAtCells`.
+
+Deprecated aliases (use canonical name):
+
+| Alias                        | Canonical                                         |
+| ---------------------------- | ------------------------------------------------- |
+| `addVariant`                 | `registerVariant`                                 |
+| `getUnlockedTypes`           | `getAvailableTypes`                               |
+| `getTypeFromId`              | `getTypeById`                                     |
+| `isUnlockedByType`           | `isLockedByType` (inverted semantics - see below) |
+| `setData`                    | `updateData`                                      |
+| `buildAtCellWhenIdle`        | `buildAtCell`                                     |
+| `removeAtCellWhenIdle`       | `removeAtCell`                                    |
+| `removeBetweenCellsWhenIdle` | `removeBetweenCells`                              |
+| `removeAtCellsWhenIdle`      | `removeAtCells`                                   |
 
 Nested:
 
 - `recipes.register` - machine recipe slots (`planterBox`, `shaker`, `kineticPress`, refinery ids).
-- `processing.isEnabledAtCell`, `processing.register`, `processing.setEnabledAtCell`.
+- `processing.register`, `processing.isEnabledAtCell`, `processing.setEnabledAtCell` (deprecated aliases: `isEnabledAt`, `setEnabledAt`). Top-level deprecated: `api.structures.addProcessor` -> `processing.register`.
 
 ## Shape matrix (`shape`)
 
-4×4 grid (or larger for big structures). Each cell is a **`CellType` terrain id**, not a boolean.
+44 grid (or larger for big structures). Each cell is a **`CellType` terrain id**, not a boolean.
 
 | Value          | Meaning                                                   |
 | -------------- | --------------------------------------------------------- |
-| `0`            | Empty — no terrain placed; sand/elements pass through     |
-| `15`           | Block — solid foundation tile                             |
+| `0`            | Empty - no terrain placed, sand/elements pass through     |
+| `15`           | Block - solid foundation tile                             |
 | `19` / `20`    | ConveyorLeft / ConveyorRight                              |
 | mod terrain id | Custom terrain from `terrains.register` (e.g. glass `45`) |
 
 - **Fully transparent (logic):** omit `shape`, or use all `0`s. Filters, lights, collectors, liquid vents use no `shape`.
-- **Partially transparent:** mix `0` with terrain ids. Example: Velocity Soaker (type 20) — top row `24`, rest `0`.
-- **`useRawShape: true`:** pass the matrix straight to the terrain grid. Required for angled/partial footprints (splitters, glass triangles). Belts/filters: belts need it; filters must **not** use a belt shape or they become solid carriers.
-- **Do not use `1` in shape** — that is `CellType.Element`, not “solid”. It leaves red debris tiles. Use `15` (Block) or a registered terrain id.
+- **Partially transparent:** mix `0` with terrain ids. Example: Velocity Soaker (type 20) - top row `24`, rest `0`.
+- **`useRawShape: true`:** pass the matrix straight to the terrain grid. Required for angled/partial footprints (splitters, glass triangles). Belts/filters: belts need it, filters must **not** use a belt shape or they become solid carriers.
+- **Do not use `1` in shape** - that is `CellType.Element`, not "solid". It leaves red debris tiles. Use `15` (Block) or a registered terrain id.
 
 Optional **`draw(state, structure, render)`** callback replaces per-cell sprite painting (multi-cell art, glass ghosts). **`render.z`** sets draw depth (lower = behind sand).
 
@@ -67,3 +83,4 @@ Numeric `StructureType` enum (1-27): see `enums.md`. Mod types use string ids. `
 - Building overlay names: **sandustry-ui** `references/building.md`.
 - Collectors: `sandkit.api.collector` (value at cell). Gold overlap: **sandustry-energy** `references/gold-collector.md`.
 - Launchers: **sandustry-entities** `references/launchers.md`.
+- Blueprint copy: `blueprints.md`.

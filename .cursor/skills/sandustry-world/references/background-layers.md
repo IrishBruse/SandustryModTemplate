@@ -2,7 +2,7 @@
 
 Visual background is **not** only `shared.sim.cellIds`. Void-world wipes must clear these too. Scripts: **sandustry-mcp** `references/void-world.md`.
 
-## Simulation buffers (3840×3840)
+## Simulation buffers (3840 x 3840)
 
 | Buffer             | Path                    | Bytes per cell | Role                  |
 | ------------------ | ----------------------- | -------------- | --------------------- |
@@ -41,7 +41,7 @@ Clear **all** placement arrays, `placedFoliage`, and `removeChildren()` on folia
 
 ## Pixi (`session.rendering.pixi`)
 
-Parallax and map overlay sprites — hide (`visible: false`, `alpha: 0`) and clear children:
+Parallax and map overlay sprites - hide (`visible: false`, `alpha: 0`) and clear children:
 
 | Key                                | Role                               |
 | ---------------------------------- | ---------------------------------- |
@@ -56,7 +56,7 @@ Parallax and map overlay sprites — hide (`visible: false`, `alpha: 0`) and cle
 
 Also set `filter.uniformGroup.uniforms.uDrawUndergroundFog = false` when present.
 
-Large foliage draw container may live on `pixi.app.stage` (hundreds of children) — hide that container if decor respawns after redraw.
+Large foliage draw container may live on `pixi.app.stage` (hundreds of children) - hide that container if decor respawns after redraw.
 
 ## Fog uncover vs buffers
 

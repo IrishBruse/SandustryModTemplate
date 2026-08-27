@@ -2,7 +2,7 @@
 
 ## Store model
 
-`store.projectiles` - active shots. Common fields (live 0.5.2):
+`store.projectiles` - active shots. Common fields (live 0.5.5):
 
 | Field                | Type                  | Notes                                                              |
 | -------------------- | --------------------- | ------------------------------------------------------------------ |
@@ -26,17 +26,21 @@ Sprite key: `session.rendering.pixi.sprites.projectiles[id]`. Built-in texture m
 
 `sandkit.api.projectiles` - preferred for mods.
 
-| Method                                 | Role                                         |
-| -------------------------------------- | -------------------------------------------- |
-| `register(definition)`                 | Add to `sandkit.mods.projectiles`.           |
-| `getDefinitionById(id)`                | Lookup mod definition.                       |
-| `createBlueprintFromId(id)`            | Build spawn blueprint (`opts`, `type: Mod`). |
-| `getAll()`                             | `store.projectiles`.                         |
-| `getById(id)`                          | One instance.                                |
-| `spawnAtWorld(x, y, angle, blueprint)` | Spawn (unsafe without user ask).             |
-| `remove(projectile)`                   | Despawn (unsafe).                            |
+| Method                                                  | Role                                         |
+| ------------------------------------------------------- | -------------------------------------------- |
+| `register(definition)`                                  | Add to `sandkit.mods.projectiles`.           |
+| `getDefinitionById(projectileId)`                       | Lookup mod definition.                       |
+| `createBlueprintById(projectileId)`                     | Build spawn blueprint (`opts`, `type: Mod`). |
+| `getAll()`                                              | `store.projectiles`.                         |
+| `getById(projectileId)`                                 | One instance.                                |
+| `spawnAtWorld(worldX, worldY, angleRadians, blueprint)` | Spawn (unsafe without user ask).             |
+| `remove(projectile)`                                    | Despawn (unsafe).                            |
+
+Deprecated alias: `createBlueprintFromId(projectileId)` -> use `createBlueprintById`.
 
 Engine overlap exposes `createBlueprint` and `spawn` with state-first signatures. Prefer public names above.
+
+Reference: https://sandustry.com/sandkit.html (`api.projectiles`).
 
 ## Engine-only
 

@@ -1,6 +1,6 @@
 # Enums
 
-Live values from `sandkit.enums` on 0.5.2. Prefer string structure ids from API when registering mods.
+Live values from `sandkit.enums` on 0.5.5. Prefer string structure ids from API when registering mods.
 
 ## `StructureType` (builtin 1-27)
 

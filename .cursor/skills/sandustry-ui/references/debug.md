@@ -28,15 +28,15 @@ Story steps this save: establish_wet_sand_processing, establish_burnt_residue_pr
 
 ## Screenshot / GIF recorder
 
-Overlay (not a Debug tab). A11y title **SCREENSHOT AND GIF RECORDER**. Opens from in-game tooling (exact menu path not walked; panel can sit over HUD during play).
+Overlay (not a Debug tab). A11y title **SCREENSHOT AND GIF RECORDER**. Opens from in-game tooling (exact menu path not walked, panel can sit over HUD during play).
 
 | Control        | Notes                                       |
 | -------------- | ------------------------------------------- |
-| Structure pick | **C** — select structure bounds for capture |
+| Structure pick | **C** - select structure bounds for capture |
 | Frames         | spinbutton, default 120                     |
-| Ticks / frame  | 1–30, default 1                             |
-| Block padding  | 0–32 extra structure margin                 |
-| Countdown      | 0–10 s before GIF start                     |
+| Ticks / frame  | 1-30, default 1                             |
+| Block padding  | 0-32 extra structure margin                 |
+| Countdown      | 0-10 s before GIF start                     |
 | Greenscreen    | toggle                                      |
 | Show mouse     | toggle (default on)                         |
 | GIF size limit | dropdown, default **No limit**              |

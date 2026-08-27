@@ -2,22 +2,20 @@
 
 Machine recipes and per-cell processing toggles.
 
-## `sandkit.api.processing` (live)
+## `api.structures.recipes.register` (canonical)
 
-| Method                 | Role                                |
-| ---------------------- | ----------------------------------- |
-| `registerGrower`       | Planter box input -> output         |
-| `registerShaker`       | Shaker weighted outputs above/below |
-| `registerKineticPress` | Press velocity threshold + outputs  |
+Official HTML documents machine recipes as `api.structures.recipes.register(id, definition)`:
 
-Recipe shapes: `node_modules/@sandustry-modding/types/sandkit/api/processing.d.ts`. Weighted outputs use `{ elementType, chance }`.
+| `id` slot                                                        | Role                                |
+| ---------------------------------------------------------------- | ----------------------------------- |
+| `planterBox`                                                     | Grower input -> output              |
+| `shaker`                                                         | Shaker weighted outputs above/below |
+| `kineticPress`                                                   | Press velocity threshold + outputs  |
+| `condenser`, `steamDryer`, `synthesizer`, `snowmaker`, `smelter` | Weighted refinery outputs           |
 
-## `structures.recipes.register`
+Recipe shapes: `node_modules/@sandustry-modding/types/sandkit/api/structures.d.ts` (`recipes.register` overloads). Weighted outputs use `{ elementType, chance }`.
 
-Alternate registration path by machine slot id:
-
-- `planterBox`, `shaker`, `kineticPress`
-- Refinery ids: `condenser`, `steamDryer`, `synthesizer`, `snowmaker`, `smelter`
+Live extra (not in official HTML): top-level `sandkit.api.processing` with `registerGrower`, `registerShaker`, `registerKineticPress`. Prefer `structures.recipes.register`.
 
 Engine twin: `engine.api.structures.recipes.getWeightedRecipe`, `selectWeightedOutput`, `register`.
 
@@ -27,9 +25,13 @@ Engine twin: `engine.api.structures.recipes.getWeightedRecipe`, `selectWeightedO
 
 | Method                                                 | Role                                 |
 | ------------------------------------------------------ | ------------------------------------ |
-| `isEnabledAtCell(cellX, cellY)`                        | Read whether processing runs at cell |
 | `register(id, { structureType, intervalMs, process })` | Bind periodic callback               |
+| `isEnabledAtCell(cellX, cellY)`                        | Read whether processing runs at cell |
 | `setEnabledAtCell(cellX, cellY, enabled)`              | **mutate** per-cell enable flag      |
+
+Deprecated aliases (official HTML): `api.structures.addProcessor` -> `processing.register`; `isEnabledAt` -> `isEnabledAtCell`; `setEnabledAt` -> `setEnabledAtCell`.
+
+`context` deprecated aliases: `getElementTypeAtCell` -> `getResolvedTypeAtCell`; `isCellEmpty` -> `isCellEmptyAtCell`.
 
 Canonical registration:
 
@@ -43,13 +45,11 @@ api.structures.processing.register(id, {
 });
 ```
 
-Deprecated: `addProcessor(structureId, { intervalMs, process })` — use `processing.register` with `structureType`.
-
 Processing uses the triggers scheduler under the hood. Main thread only for `setEnabledAtCell`.
 
 ## Factory process events
 
-Shakers, presses, growers, and thermo machines call `engine.api.factory.recordProcess(state, processIndex)` when they complete work. Process indices and tier gates: `factory.md`.
+Shakers, presses, growers, and thermo machines call `engine.api.factory.recordProcess(state, processIndex)` when they complete work. Public read ids: `shakeWetSand`, `pressBurntResidue`, `growFlowers`, `condenseFlorin` - see `factory.md`.
 
 ## Related
 

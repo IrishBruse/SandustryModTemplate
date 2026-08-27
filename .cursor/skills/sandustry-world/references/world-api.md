@@ -1,47 +1,78 @@
-# `sandkit.api.grid` and `sandkit.api.pickups`
+# `api.grid`, `api.world`, and `api.pickups`
 
-Cell queries, fog, redraw, and deferred grid mutations live on `sandkit.api.grid`. World pickups live on `sandkit.api.pickups`.
+Official signatures: [sandkit.html - api.grid](https://sandustry.com/sandkit.html), [api.pickups](https://sandustry.com/sandkit.html). Types: `@sandustry-modding/types` `sandkit/api/grid.d.ts`, `pickups.d.ts`.
 
-Types: `node_modules/@sandustry-modding/types/sandkit/api/grid.d.ts`, `pickups.d.ts`. Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
+**Main** entry grid mutations are deferred, reads see the old grid until they apply. **Worker** entry mutations are immediate. For state-dependent writes, use `api.grid.mutate`.
 
-## `sandkit.api.grid` — sync queries (shared)
+## `api.grid` (canonical)
 
-| Method                                                        | Role                             |
-| ------------------------------------------------------------- | -------------------------------- |
-| `getCellIdAtCell(cellX, cellY)`                               | Packed cell id                   |
-| `isCellEmptyAtCell(cellX, cellY)`                             | True when id is 0                |
-| `isTerrainAtCell(cellX, cellY)`                               | True when id is terrain range    |
-| `reportActivityAtCell(cellX, cellY)`                          | Wake chunk for sim (**mutates**) |
-| `excavateAtCell(cellX, cellY, outVelocity, damage, options?)` | Dig terrain (**mutates**)        |
+### Sync queries (main and worker)
+
+| Method                                                        | Role                          |
+| ------------------------------------------------------------- | ----------------------------- |
+| `getDimensions()`                                             | `{ widthCells, heightCells }` |
+| `getCellIdAtCell(cellX, cellY)`                               | Packed cell id                |
+| `isCellEmptyAtCell(cellX, cellY)`                             | True when id is 0             |
+| `isTerrainAtCell(cellX, cellY)`                               | True when id is terrain range |
+| `reportActivityAtCell(cellX, cellY)`                          | Wake chunk (**mutates**)      |
+| `excavateAtCell(cellX, cellY, outVelocity, damage, options?)` | Dig terrain (**mutates**)     |
 
 `ExcavateOptions`: `fromGun`, `fromDrill`, `fromRocketExplosion`, `useLiteralOutVelocity`, `destroyNonDestructible`, `forceRemoveAll`, `drillTierDamage`.
 
-## `sandkit.api.grid` — main thread only
+### Main thread only
 
-| Method                                  | Role                                                           |
-| --------------------------------------- | -------------------------------------------------------------- |
-| `mutate(callback)`                      | Run deferred element/terrain writes via `writer` (**mutates**) |
-| `revealFogAtCell(cellX, cellY)`         | Clear fog-of-war (**mutates**)                                 |
-| `redrawAroundCell(cellX, cellY, range)` | Request render refresh around cell                             |
+| Method                                                                    | Role                                                       |
+| ------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `mutate(callback)`                                                        | Deferred element/terrain writes via `writer` (**mutates**) |
+| `revealFogAtCell(cellX, cellY)`                                           | Clear fog (**mutates**)                                    |
+| `redrawAroundCell(cellX, cellY, rangeCells)`                              | Request render refresh                                     |
+| `forEachCellInRectangle(cellX, cellY, widthCells, heightCells, callback)` | Rectangle iteration                                        |
+| `forEachCellInCircle(centerCellX, centerCellY, radiusCells, callback)`    | Circle iteration                                           |
 
-`mutate(writer => …)` schedules coordinated element and terrain changes. The writer exposes `writer.elements.createAtCell`, `writer.terrains.createAtCell`, and matching `replaceAtCell` / `removeAtCell` helpers.
+Deprecated alias: `forEachCellInRect` -> `forEachCellInRectangle`.
 
-Main-thread calls on `api.elements.*` and `api.terrains.*` are also deferred. Reads see the old grid until mutations apply.
+`mutate(writer => …)` writer exposes `writer.elements` and `writer.terrains` with `createAtCell`, `replaceAtCell`, `removeAtCell`.
 
-Fog terrain ids: `CellType.Fog` (4), `FogJetpackBlock` (5), `FogWater` (6), `FogLava` (13). Reveal API targets fog cells. Do not call during read-only probes.
+Bare `api.elements.*` and `api.terrains.*` on main are also deferred. Main-thread mutators have deprecated `*WhenIdle` aliases (same functions).
 
-## `sandkit.api.pickups`
+Fog terrain ids: `CellType.Fog` (4), `FogJetpackBlock` (5), `FogWater` (6), `FogLava` (13).
 
-| Method                                              | Role                       |
-| --------------------------------------------------- | -------------------------- |
-| `spawnAtWorld(type, worldX, worldY, data?, light?)` | Spawn pickup (**mutates**) |
-| `remove(pickup)`                                    | Remove pickup              |
-| `pickUp(pickup)`                                    | Collect to inventory       |
-| `getAll()`                                          | List active pickups        |
-| `getById(pickupId)`                                 | Lookup by id               |
+## `api.world` (deprecated alias)
 
-`WorldItem`: `{ id, x, y, type, data }`. Types: `PickupType` enum / https://sandustry-modding.github.io/SandustryTypes/#/.
+Live on renderer 0.5.5. Official docs mark `api.world` as a deprecated alias of `api.grid` for dims, mutate, and cell queries. Live object also exposes:
+
+| Key                                                  | Canonical                             |
+| ---------------------------------------------------- | ------------------------------------- |
+| `runWhenSimulationIdle(callback)`                    | `api.grid.mutate(callback)`           |
+| `redrawAroundCellWhenIdle(cellX, cellY, rangeCells)` | `api.grid.redrawAroundCell(…)`        |
+| `pickups`                                            | `api.pickups` (same object reference) |
+
+Prefer `api.grid` and `api.pickups` in new mod code.
+
+## `api.constants.physics`
+
+Used with `elements.setPhysicsAtCell(cellX, cellY, physicsState)`:
+
+| Key              | Value |
+| ---------------- | ----- |
+| `normal`         | 0     |
+| `skip`           | 1     |
+| `aggressiveSkip` | 2     |
+
+## `api.pickups`
+
+| Method                                              | Role                                             |
+| --------------------------------------------------- | ------------------------------------------------ |
+| `spawnAtWorld(type, worldX, worldY, data?, light?)` | Spawn pickup (**mutates**); `type`: `PickupType` |
+| `remove(pickup)`                                    | Remove pickup                                    |
+| `pickUp(pickup)`                                    | Collect to inventory                             |
+| `getAll()`                                          | List active pickups                              |
+| `getById(pickupId)`                                 | Lookup by id                                     |
+
+Deprecated alias: `destroy(pickup)` -> `remove(pickup)`.
+
+`WorldItem`: `{ id, x, y, type, data }`. Built-in `PickupType`: Artifact (1), GlyphKey (2), Stratacore (3), Orb (4). Deprecated enum alias: `WorldItemType`.
 
 ## MCP decode without API
 
-When `sandkit.api` is not in scope, read `__debug.state.shared.sim.cellIds` and decode with `grid-chunks.md` id ranges.
+When only `__debug` is needed, read `__debug.state.shared.sim.cellIds` and decode with `grid-chunks.md` id ranges.

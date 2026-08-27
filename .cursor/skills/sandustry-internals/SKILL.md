@@ -5,9 +5,11 @@ description: "Sandustry host internals: window.electron IPC, sandkit.engine, san
 
 # Sandustry internals
 
-Live **host map** of Early Access **0.5.2**. Public mod calls: [SandustryTypes](https://sandustry-modding.github.io/SandustryTypes/#/). Screen clicks stay in **sandustry-ui**.
+Live **host map** of Early Access **0.5.5**. Public mod calls: repo `.tmp/Sandkit - Sandustry Modding API.html` (`apiVersion` **1**); types at [SandustryTypes](https://sandustry-modding.github.io/SandustryTypes/#/). Screen clicks stay in **sandustry-ui**.
 
-Extracted tree: repo `sandustry/<version>-<branch>/` (`npm run setup`). Do not treat the published type reference as complete; confirm on the live object.
+Extracted tree: `sandustry/0.5.5-mods/` (`npm run setup`). Older folders (for example `0.5.2-mods/`) may remain on disk. Do not treat the published type reference as complete, confirm on the live object.
+
+**0.5.5 notes:** `sandkit` keys - `api`, `apiVersion`, `engine`, `enums`, `react`, `state`. Official HTML documents `api.grid`; live **`api.world`** is a **deprecated alias** (same `mutate`, plus `pickups`, `runWhenSimulationIdle`, `redrawAroundCellWhenIdle`). **`api.game.start({ skipIntro? })`** is official but a mutator - document only in probes. `store.gloom.emitterPositions`, `store.createdVersion`, `store.machineryEngine.runLaunchers`.
 
 ## Probe
 
@@ -22,15 +24,16 @@ Details: [references/probe.md](references/probe.md).
 
 Open **one** file that matches the branch.
 
-| Branch                                   | File                                               |
-| ---------------------------------------- | -------------------------------------------------- |
-| How to inspect without writes            | [references/probe.md](references/probe.md)         |
-| `window` aliases, webpack, Noise         | [references/globals.md](references/globals.md)     |
-| `window.electron` and IPC channels       | [references/electron.md](references/electron.md)   |
-| `sandkit.engine.api` extras vs public    | [references/engine.md](references/engine.md)       |
-| `sandkit.state` bags                     | [references/state.md](references/state.md)         |
-| `__debug`                                | [references/debug.md](references/debug.md)         |
-| Extracted `sandustry/` tree              | [references/sandustry.md](references/sandustry.md) |
-| Loader / **Starting game** / save layout | [references/boot.md](references/boot.md)           |
-| `workshop-mods.js` limits                | [references/mods-host.md](references/mods-host.md) |
-| Not confirmed yet                        | [references/gaps.md](references/gaps.md)           |
+| Branch                                        | File                                                 |
+| --------------------------------------------- | ---------------------------------------------------- |
+| How to inspect without writes                 | [references/probe.md](references/probe.md)           |
+| `window` aliases, webpack, Noise              | [references/globals.md](references/globals.md)       |
+| `window.electron` and IPC channels            | [references/electron.md](references/electron.md)     |
+| `sandkit.engine.api` extras vs public         | [references/engine.md](references/engine.md)         |
+| Official worker `sandkit.api` vs engine arity | [references/worker-api.md](references/worker-api.md) |
+| `sandkit.state` bags                          | [references/state.md](references/state.md)           |
+| `__debug`                                     | [references/debug.md](references/debug.md)           |
+| Extracted `sandustry/` tree                   | [references/sandustry.md](references/sandustry.md)   |
+| Loader / **Starting game** / save layout      | [references/boot.md](references/boot.md)             |
+| `workshop-mods.js` limits                     | [references/mods-host.md](references/mods-host.md)   |
+| Not confirmed yet                             | [references/gaps.md](references/gaps.md)             |

@@ -11,6 +11,6 @@ Read-only inspection of live host objects. Return JSON-serializable data only.
 ## Unsafe (needs user ask)
 
 - Any `ipcRenderer.invoke` that writes disk or Steam (save, settings, workshop, achievements, quit).
-- `sandkit.engine.api.game.load|save|start`.
+- `sandkit.engine.api.game.load|save|start` and public `sandkit.api.game.start`.
 - Engine mutators (`factory.unlockNextTier`, `drones.spawn`, `teleportZones.teleportPlayerTo`, `queue.process`, `wall.setWallDataAt`).
 - `__debug.admin.run`, `__debug.moveCamera`, `__debug.setSchedulingMode`, `__debug.ensureQueuedStructuresAreBuilt`.

@@ -1,6 +1,6 @@
 # Research
 
-Chrome: [management.md](management.md). Sub-tabs **Tech Tree**, **Conservatory**.
+Chrome: `management.md`. Sub-tabs **Tech Tree**, **Conservatory**.
 
 ## Tech Tree
 

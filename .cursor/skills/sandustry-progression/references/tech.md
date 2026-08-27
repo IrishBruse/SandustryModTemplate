@@ -2,23 +2,24 @@
 
 Public API: `sandkit.api.tech`. Types: `node_modules/@sandustry-modding/types/sandkit/api/tech.d.ts`. UI map: **sandustry-ui** `../../sandustry-ui/references/research.md`.
 
-## API (live 0.5.2)
+## API (live 0.5.5)
 
-| Method                                              | Role                                                                                                                                                                                                                            |
-| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `getDefinitionById(techId)`                         | Return definition. Numeric string ids (`"1"`) and mod string ids (`"fluxEmanator"`) work. Common slugs like `"conveyor"`, `"hover"`, `"signalGate"` return **`null`** on live — use enum numeric strings or registered mod ids. |
-| `isLockedById(techId)`                              | `true` when locked. Id may be `string` or `number` (`sandkit.enums.Tech`).                                                                                                                                                      |
-| `setLockedById(techId, locked)`                     | Write lock flag into `store.lockedTechs`.                                                                                                                                                                                       |
-| `addDefinition`, `updateDefinition`, `registerNode` | Mod registration.                                                                                                                                                                                                               |
+| Method                                                       | Role                                                                                                                                                                                                                                                      |
+| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `getDefinitionById(techId)`                                  | Return definition. Live lookups that work: numeric strings (`"1"`, `"2"`), `Tech.Conveyors` (number **2**), and registered string ids (`"fluxEmanator"`). Enum **names** (`"Conveyors"`) and lowercase slugs (`"conveyor"`, `"hover"`) return **`null`**. |
+| `isResearchedById(techId)`                                   | `true` when the node is in `store.player.tech`. Prefer over reading the map directly.                                                                                                                                                                     |
+| `isLockedById(techId)`                                       | `true` when locked. Id may be `string` or `number` (`sandkit.enums.Tech`).                                                                                                                                                                                |
+| `setLockedById(techId, locked)`                              | Write lock flag into `store.lockedTechs`.                                                                                                                                                                                                                 |
+| `registerDefinition`, `updateDefinition`, `registerNode`     | Mod registration. `addDefinition` is a **deprecated alias** of `registerDefinition`.                                                                                                                                                                      |
+| `conservatory.appendUnlock(techId, { structures?, items? })` | Append structure or item unlocks to a conservatory reward tech. See `conservatory.md`.                                                                                                                                                                    |
 
 Engine twin (state first): `sandkit.engine.api.tech` with `getDefinition`, `isLocked`, `setLocked`, `registerNode`, etc. Prefer public API in mods.
 
 ## Researched state
 
-`store.player.tech` is a map of **researched** nodes. Value `true` means purchased.
+`store.player.tech` is a map of **researched** nodes. Values are **booleans** (`true` = purchased). Live this save: **67** keys (`"1"`, `"2"`, ...). No `{ x, y }` grid positions on the live object.
 
 - Keys are **mixed**: numeric enum values as strings (`"1"`, `"22"`) and string ids (`"fluxEmanator"`, `"swarmConsole"`).
-- Live maxed save: ~116 `true` entries.
 - This is not `TechStatus`. UI derives Available / Visible / Researched from definitions, parents, and `lockedTechs`.
 
 ## Locks
@@ -29,7 +30,7 @@ Engine twin (state first): `sandkit.engine.api.tech` with `getDefinition`, `isLo
 - Value `false`: explicitly unlocked (cheat/debug paths).
 - Missing key: fall back to static definition `locked`.
 
-Live end-game save (2025-08): **70** keys — **2** with value `true` (locked), **68** with `false` (explicit unlock). Missing key falls back to definition `locked`.
+Live end-game save (2025-08): **70** keys - **2** with value `true` (locked), **68** with `false` (explicit unlock). Missing key falls back to definition `locked`.
 
 ## Definitions
 

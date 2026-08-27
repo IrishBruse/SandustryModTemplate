@@ -5,7 +5,7 @@ description: "Sandustry CDP via namespace sandustry (CallDynamicTool): attach, p
 
 # Sandustry MCP
 
-Chrome DevTools MCP on the Sandustry Electron renderer. Domain facts stay in **sandustry-ui**, **sandustry-world**, **sandustry-internals**, and sibling skills - load **one** of those after attach.
+Chrome DevTools MCP on the Sandustry Electron renderer. Official Sandkit API (signatures, mutations, patches): `.tmp/Sandkit - Sandustry Modding API.html`. Domain facts stay in **sandustry-ui**, **sandustry-world**, **sandustry-internals**, and sibling skills - load **one** of those after attach.
 
 ## Attach
 
@@ -45,7 +45,7 @@ Read live state with `evaluate_script`:
 };
 ```
 
-Ambient `sandkit` works inside mod bundle scope when mods are loaded. `window.sandkit` is often missing - use `__debug.state` for vanilla reads. Mutator bans live in each domain skill's probe reference.
+Ambient `sandkit` works in `evaluate_script` on 0.5.5 (`hasSandkit: true` when `sandkit.api` exists). **`window.sandkit` may still be missing** - check `typeof window.sandkit`; fall back to `__debug.state` for vanilla reads when needed. Do not call mutators (`api.game.start`, saves, grid writes) unless the user asks. Mutator bans live in each domain skill's probe reference.
 
 Done when the returned shape answers the question (or triage explains why not).
 

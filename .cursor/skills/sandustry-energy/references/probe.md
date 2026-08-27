@@ -2,7 +2,7 @@
 
 Read-only inspection via `sandustry-mcp` `evaluate_script`. Return JSON-serializable data only.
 
-`sandkit` is a mod-scope free variable - not on `window`. Use `window.__debug.state` (`__debug.state === sandkit.state` in mod code).
+`sandkit` is ambient in MCP `evaluate_script`. Check `typeof window.sandkit`. `__debug.state === sandkit.state`.
 
 ## Safe
 
@@ -12,14 +12,14 @@ Read-only inspection via `sandustry-mcp` `evaluate_script`. Return JSON-serializ
 - `__debug.state.session.mods.signals` counts: `senderTypes.size`, `receiverTypes.size`, `Object.keys(links).length`.
 - One sample link: first `links` bucket key and first entry `{ x, y, on }`.
 - `__debug.state.store.mods.signals` keys (`links`, `hideWires`).
-- Webpack module `92015` source string: public `sandkit.api.energy` / `signals` method names (loader binds state into `i.FH.*`).
+- `sandkit.api.energy` / `signals` / `resources` / `collector` key lists via `Object.keys` (when `sandkit` is in scope) or webpack module source string.
 
 ## Unsafe (needs user ask)
 
 - `sandkit.api.energy.addAtCell`, `consume`, `consumeExcludingNetworkAtCell`.
-- `sandkit.api.resources.updateEnergy`.
-- `sandkit.api.signals.targets.register` (writes handler maps).
-- Engine signal `link`, `unlink`, `set`, `setAll`, `registerSenderType`, `registerReceiverType`.
+- `sandkit.api.resources.adjustEnergy` / `updateEnergy`.
+- `sandkit.api.signals.targets.register`, `interactables.register`, `registerSenderType`, `setOutputAtCell` (writes handler maps / sender state).
+- Engine signal `link`, `unlink`, `set`, `setAll`, `registerReceiverType`.
 - `sandkit.engine.api.clipboard.set`, `activate`, `clear`.
 
 ## Example (compact)

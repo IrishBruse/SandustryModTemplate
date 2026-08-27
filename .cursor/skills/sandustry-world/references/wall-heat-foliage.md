@@ -31,13 +31,13 @@ Engine: `shadows.refresh`, `refreshRadius`, `refreshRect`. Terrain ops honor `sk
 
 `heatTransfer`: `absorbAdjacentElements`, `addTemperature`, `computeDiffusedTemperatures`, `computeEqualizedTemperature`, `consumeTemperatureNear`, `ensureTemperature`, `equalizeConnected`.
 
-No confirmed live temperature buffer on `shared.*` in this probe pass.
+No dedicated heat SAB on `shared.*` (only `wallData` matches a heat/temp name filter). Fire definition `getExtraProps().data.temperature` is **1000** (default, not a per-cell grid). Per-cell lifetime uses `elementData.durationLeft` / `durationMax`. Do not dump `elementData` arrays.
 
 ## Foliage (engine only)
 
 `foliage`: `generate`, `getClusters`, `getContainer`, `hasProcgenData`.
 
-Prefab placements and Pixi parallax sprites for void-world clears: [background-layers.md](background-layers.md).
+Prefab placements and Pixi parallax sprites for void-world clears: `background-layers.md`.
 
 ## Matters (engine only)
 

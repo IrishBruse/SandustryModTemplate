@@ -11,6 +11,7 @@ Public API: `sandkit.api.upgrades`. Types: `node_modules/@sandustry-modding/type
 | `updateDefinition(itemId, upgradeId, partial)` | Patch definition. Clamps levels to new `maxLevel`.                        |
 | `getLevelById(itemId, upgradeId)`              | Current purchased level.                                                  |
 | `getAvailableLevelById(itemId, upgradeId)`     | Max level the player may buy now.                                         |
+| `setLevelById(itemId, upgradeId, level)`       | Set purchased level. **Write** - do not call during probes.               |
 
 ## Store shape
 

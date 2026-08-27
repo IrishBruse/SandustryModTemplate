@@ -1,22 +1,11 @@
 # Gaps
 
-Not confirmed in the 0.5.2 MCP pass:
+Still open after the 0.5.5 MCP pass:
 
-- Live `sandkit.api.*` method keys on the closure object (webpack module not exposed to MCP, use types + `__debug.state` buffers)
-- Full `sandkit.api.grid` / `elements` / `terrains` method arity vs generated docs
-- Per-thread cell-row or chunk ownership mapping (`startingIndex` vs world Y bands)
-- Temperature / heat buffer location on `shared.*` (energy SABs confirmed; element heat not on `shared.sim`)
-- `schedulingMode` / `hybridScheduling` object key `"0"` meaning (live: `{ "0": 1 }` on `shared`, mode **1** via `getSchedulingMode()`)
-- Worker-thread `sandkit` API surface (simulation vs manager vs utility)
-- Custom map `getActive()` payload on this save (vanilla map, not custom)
-- Full enum numeric values for mod-registered terrains beyond built-in `CellType`
+- Per-thread cell-row or chunk ownership (`startingIndex` is only the worker id 0..13)
+- Worker-thread `sandkit` in simulation vs manager vs utility (main renderer confirmed, official worker list in **sandustry-internals**)
+- Full numeric ids for mod-registered terrains beyond built-in `CellType`
 - `grid.mutate` callback timing vs `chunkShouldUpdateNext`
+- `getArtifactLocations()` non-empty `{ cellX, cellY, name }` samples (this save returned `[]`)
 
-Confirmed (void MCP pass):
-
-- `shared.mapData.data` is RGBA, 58982400 bytes on 3840² worlds — see [background-layers.md](background-layers.md).
-- Prefab decor: `store.mods.prefabData.placements`, `store.mods.foliage.data.prefabPlacements`.
-- Pixi parallax keys on `session.rendering.pixi` — see [background-layers.md](background-layers.md).
-- Batch clear: 256 rows per MCP call for buffers; 128–512 rows for `revealFogAtCell` — **sandustry-mcp** `references/void-world.md`.
-
-When confirmed, move notes into the matching reference file and trim this list.
+Moved to references: scheduling typed arrays (`workers.md`), no shared heat SAB (`wall-heat-foliage.md`), `getDataAtCell` `{ cellType, hitPoints, hp }` (`terrains.md`), Gloom / Stratacore (`cells.md`).

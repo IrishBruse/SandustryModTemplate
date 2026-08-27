@@ -2,13 +2,19 @@
 
 Public API: `sandkit.api.progression`. Types: `node_modules/@sandustry-modding/types/sandkit/api/progression.d.ts`.
 
-## API
+## API (0.5.5)
 
 ```ts
-progression.complete(request: { id: string, ... }): boolean
+progression.complete(
+  request:
+    | { domain: "tutorial"; grantNormalUnlocks?: boolean }
+    | { domain: "objective"; id: string }
+): boolean
 ```
 
-Marks a story or quest step complete. Returns `true` on success. **Write** - do not call during read-only probes.
+Marks a tutorial or objective step complete. Returns `true` on success. **Write** - do not call during read-only probes.
+
+Example: `progression.complete({ domain: "objective", id: "all" })`.
 
 ## Store
 
@@ -34,4 +40,4 @@ Setting `upgradesUnlocked` or dungeon `done` is done by game systems (boss win, 
 | `store.tutorial`    | Guided early-game steps       |
 | `store.viability`   | Factory tier bar              |
 
-`progression.complete` ids are not listed in public types. Confirm in extracted `sandustry/` or live logs before calling.
+Objective `id` values beyond documented examples are not listed in public types. Confirm in extracted `sandustry/` or live logs before calling.

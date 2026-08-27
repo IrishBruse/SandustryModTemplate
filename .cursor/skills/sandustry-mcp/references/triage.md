@@ -34,9 +34,9 @@
 
 ## Player stuck / `handleAction` crash
 
-| Signal                                                         | Fix                                                                                                                                     |
-| -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `Cannot read properties of undefined (reading 'handleAction')` | Hotbar on mod item (`type: 4`) or null slot — set bank `0` slot `0` to `{ id: 1, type: 1 }`. See [void-world.md](void-world.md) triage. |
-| Player not moving in void                                      | No ground — place Block tiles (`cellId` 15) under player; `setMovementMode('normal')`, clear `isHovering`.                              |
-| `action.getSelected()` ≠ hotbar slot                           | Cancel build mode: `api.building.cancelPlacement()`, clear `session.building.activeStructureType`.                                      |
-| MCP `evaluate_script` timeout on full grid                     | Batch 256 rows for buffer clear, 128–512 for `revealFogAtCell`.                                                                         |
+| Signal                                                         | Fix                                                                                                                      |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `Cannot read properties of undefined (reading 'handleAction')` | Hotbar on mod item (`type: 4`) or null slot - set bank `0` slot `0` to `{ id: 1, type: 1 }`. See `void-world.md` triage. |
+| Player not moving in void                                      | No ground - place Block tiles (`cellId` 15) under player; `setMovementMode('normal')`, clear `isHovering`.               |
+| `action.getSelected()` hotbar slot                             | Cancel build mode: `api.building.cancelPlacement()`, clear `session.building.activeStructureType`.                       |
+| MCP `evaluate_script` timeout on full grid                     | Batch 256 rows for buffer clear, 128-512 for `revealFogAtCell`.                                                          |

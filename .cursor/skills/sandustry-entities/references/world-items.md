@@ -22,19 +22,28 @@
 
 Optional `data.lightIndex` when spawned with a point light.
 
+### Related store (not `worldItems`)
+
+| Key                            | Shape        | Notes                                                                                                                                                         |
+| ------------------------------ | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `store.stratacores`            | `string[]`   | Collected stratacore ids (e.g. `"terracortex"`). Separate from live `worldItems` pickups.                                                                     |
+| `store.gloom.emitterPositions` | `{ x, y }[]` | Gloom emitter world positions. Element sim detail lives in **sandustry-world**; listed here only because stratacore/gloom progression overlaps entity probes. |
+
 ## Public API
 
 `sandkit.api.pickups`:
 
-| Method                                    | Role                             |
-| ----------------------------------------- | -------------------------------- |
-| `getAll()`                                | `store.worldItems`.              |
-| `getById(id)`                             | Find by id.                      |
-| `spawnAtWorld(type, x, y, data?, light?)` | Spawn (unsafe).                  |
-| `remove(pickup)`                          | Remove (unsafe).                 |
-| `pickUp(pickup)`                          | Collect into inventory (unsafe). |
+| Method                                              | Role                                    |
+| --------------------------------------------------- | --------------------------------------- |
+| `getAll()`                                          | `store.worldItems`.                     |
+| `getById(pickupId)`                                 | Find by id.                             |
+| `spawnAtWorld(type, worldX, worldY, data?, light?)` | Spawn (unsafe). `type` is `PickupType`. |
+| `remove(pickup)`                                    | Remove (unsafe).                        |
+| `pickUp(pickup)`                                    | Collect into inventory (unsafe).        |
 
-Types: `node_modules/@sandustry-modding/types/sandkit/api/pickups.d.ts`. Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
+Deprecated live aliases: `api.world.pickups` (same namespace), `destroy(pickup)` -> use `remove`.
+
+Reference: https://sandustry.com/sandkit.html (`api.pickups`).
 
 ## `session.prefabWorldItemCache`
 

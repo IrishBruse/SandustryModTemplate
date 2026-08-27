@@ -5,17 +5,17 @@ description: "energy, batteries, gold/collector overlap only if energy-related, 
 
 # Sandustry energy and signals
 
-Live **power and signal map** for Early Access **0.5.2**. Mod calls use `sandkit.api.*`. Host-only runtime uses `sandkit.engine.api` - see **sandustry-internals**.
+Live **power and signal map** for Early Access **0.5.5**. Mod calls use `sandkit.api.*`. Host-only runtime uses `sandkit.engine.api` - see **sandustry-internals**.
 
-Types: `node_modules/@sandustry-modding/types/sandkit/api/energy.d.ts`, `signals.d.ts`. Reference: https://sandustry-modding.github.io/SandustryTypes/#/. Heat transfer is **sandustry-world**; only touch it when energy mechanics tie in.
+Official API: `.tmp/Sandkit - Sandustry Modding API.html` (`api.energy`, `api.signals`, `api.resources`, `api.collector`). Types: `node_modules/@sandustry-modding/types/sandkit/api/energy.d.ts`, `signals.d.ts`. Heat transfer is **sandustry-world**; only touch it when energy mechanics tie in.
 
 ## Probe
 
 1. `list_pages` - title **Sandustry**.
-2. `evaluate_script` with `waitForStableDom: false`. Read via `window.__debug.state` only.
+2. `evaluate_script` with `waitForStableDom: false`. Read `sandkit.api` getters and `__debug.state`. Check `typeof window.sandkit`.
 3. Done when live keys match the branch file, or the named SAB lengths match.
 
-Do not call `sandkit.api.energy.addAtCell`, `consume`, signal `link` / `set`, or clipboard `set` / `activate` unless the user asked.
+Do not call `sandkit.api.energy.addAtCell`, `consume`, `signals.setOutputAtCell`, signal `link` / `set`, or clipboard `set` / `activate` unless the user asked.
 
 Details: [references/probe.md](references/probe.md).
 

@@ -24,7 +24,7 @@ Methods (state first): `enqueue`, `enqueueInTicks`, `enqueueSkipTick`, `process`
 
 When placement clearance is `PartiallyBlocked` or `CanBeReplaced` with blocking terrain, the structure is pushed with `queued: true`. It builds when clearance clears.
 
-Live: 10 queued structures (e.g. `conveyorLeftMk2` at `1740, 1340`).
+Live (0.5.5 probe save): 0 queued structures.
 
 `__debug.ensureQueuedStructuresAreBuilt` forces completion - **mutate**, do not call in probes.
 
@@ -36,6 +36,8 @@ Main-thread placement and removal are deferred:
 
 - `buildAtCell(x, y, structureTypeOrId, options?)`
 - `removeAtCell`, `removeBetweenCells`, `removeAtCells`
+
+Deprecated aliases: `buildAtCellWhenIdle`, `removeAtCellWhenIdle`, `removeBetweenCellsWhenIdle`, `removeAtCellsWhenIdle` (official HTML).
 
 These are writes. Do not call without user ask.
 

@@ -1,17 +1,17 @@
-# `sandkit.api.grid`
+# `api.grid` iteration
 
-Main thread only. Cell iteration helpers and the full cell query surface (see also `world-api.md`).
+Main thread only. Cell iteration helpers, full grid surface in `world-api.md`.
 
-Types: `node_modules/@sandustry-modding/types/sandkit/api/grid.d.ts`.
-
-Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
+Official: [sandkit.html - api.grid](https://sandustry.com/sandkit.html). Types: `@sandustry-modding/types` `sandkit/api/grid.d.ts`.
 
 ## Iteration methods
 
-| Method                                                            | Role                                |
-| ----------------------------------------------------------------- | ----------------------------------- |
-| `forEachCellInRectangle(cellX, cellY, width, height, callback)`   | Each cell in axis-aligned rectangle |
-| `forEachCellInCircle(centerCellX, centerCellY, radius, callback)` | Each cell inside circle             |
+| Method                                                                    | Role                                |
+| ------------------------------------------------------------------------- | ----------------------------------- |
+| `forEachCellInRectangle(cellX, cellY, widthCells, heightCells, callback)` | Each cell in axis-aligned rectangle |
+| `forEachCellInCircle(centerCellX, centerCellY, radiusCells, callback)`    | Each cell inside circle             |
+
+Deprecated alias: `forEachCellInRect` -> `forEachCellInRectangle`.
 
 Callbacks receive `(cellX, cellY)`. Use with read-only `elements.*` / `grid.*` queries inside mod code.
 

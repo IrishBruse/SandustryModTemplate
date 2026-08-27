@@ -2,7 +2,7 @@
 
 Tabs: **General**, **Video**, **Audio**, **Controls**, **Mods**. Footer: **Reset**, **Cancel**, **Save**.
 
-Kit twins: [kit.md](kit.md). Controls list: [bindings.md](bindings.md).
+Kit twins: `kit.md`. Controls list: `bindings.md`.
 
 ## General
 

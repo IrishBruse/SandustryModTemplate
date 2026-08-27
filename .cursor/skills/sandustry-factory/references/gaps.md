@@ -1,16 +1,16 @@
 # Gaps
 
-Not walked or not confirmed in this 0.5.2 pass:
+Still open (need a save with the feature placed, or a worker attach):
 
-- `store.queue` item samples (empty on probe save — **confirmed** len 0)
-- `store.pipes` / `pumpsCache` instance dumps (no pipes placed — **confirmed** len 0)
-- Non-zero `shared.authorization.data` zone layouts (only zone `0` sampled)
+- `store.pipes` / `pumpsCache` instance dumps (this save: pipes length **0**, pumpsCache `[]`)
+- `pipes.isEnabledAtCell` / `getConnectedVentsAtCell` on a real pipe network
+- Non-zero `shared.authorization.data` zones (this save: all sampled cells **0**)
 - Full weighted refinery recipe tables per machine id
-- `structures.registerPlacementConfig` live field schemas per structure
+- `structures.registerPlacementConfig` live field schemas
 - `engine.api.structures.getConfig` return shape
-- Worker-thread structure mutations and `RegisterConveyorType` worker payloads
-- Blueprint encode/decode for structures (`engine.api.blueprints`)
-- Signal-linked structures (logic tab) - routing in **sandustry-energy**
-- Thermal machine tick internals (burner belt, smelter, ...) beyond `recordProcess` hooks
-- `placement` clearance preview API (no public `getClearanceAtCell`; engine-only path)
-- Complete mod structure id catalog (65 mods + 108 unlocked types; UI list in **sandustry-ui**)
+- Worker-thread structure mutations / conveyor register payloads
+- Thermal machine tick internals beyond `recordProcess`
+- Public placement clearance preview (`getClearanceAtCell` is not on `sandkit.api`)
+- Complete mod structure id catalog (UI list in **sandustry-ui**)
+
+`store.queue` empty on this save is expected (len 0), not a missing API.

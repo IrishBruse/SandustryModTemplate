@@ -1,6 +1,6 @@
 # Upgrades
 
-Chrome: [management.md](management.md). Filters: All, Utility, Tools, Drones, Augments. **Hide Max**. Fluxite in header.
+Chrome: `management.md`. Filters: All, Utility, Tools, Drones, Augments. **Hide Max**. Fluxite in header.
 
 This maxed save marks every row **MAX**:
 

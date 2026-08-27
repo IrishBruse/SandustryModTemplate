@@ -1,14 +1,15 @@
-# `sandkit.api.elements`
+# `api.elements`
 
-Main thread only for registration and deferred cell mutations. Shared reads in `node_modules/@sandustry-modding/types/shared/api/elements.d.ts`.
+Official: [sandkit.html - api.elements](https://sandustry.com/sandkit.html). Types: `@sandustry-modding/types` `sandkit/api/elements.d.ts`, `shared/api/elements.d.ts`.
 
-Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
+Main entry: registration and deferred cell mutations. Worker entry: immediate mutations plus extra move/swap helpers (see **Worker-only** below).
 
-## Shared reads
+## Shared reads (main and worker)
 
 | Method                                    | Role                         |
 | ----------------------------------------- | ---------------------------- |
 | `getTypeById(elementId)`                  | String id -> type handle     |
+| `getIdByType(elementType)`                | Type handle -> string id     |
 | `getDefinitionByType(elementType)`        | Mod definition               |
 | `getTypeAtCell`, `getResolvedTypeAtCell`  | Type at cell                 |
 | `getResolvedTypeFromCellId(cellId)`       | Type from packed id          |
@@ -17,24 +18,40 @@ Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
 | `isTypeAtCell`, `isFreeFallingAtCell`     | Boolean checks               |
 | `getVelocityAtCell`, `getDataFieldAtCell` | Per-cell data                |
 
+Deprecated alias: `getTypeFromId` -> `getTypeById`.
+
 ## Registration (main)
 
-| Method                                            | Role                             |
-| ------------------------------------------------- | -------------------------------- |
-| `getRegisteredTypes()`                            | All type handles                 |
-| `register(definition)`                            | New element -> `{ elementType }` |
-| `updateDefinition(typeOrId, partial)`             | Patch definition                 |
-| `addInteractionInfo(typeOrId, interaction)`       | Tooltip interactions             |
-| `getNameByType(elementType)`                      | Display name                     |
-| `findFreeCellInStructure(anchorX, anchorY, size)` | Footprint search                 |
+| Method                                                                        | Role                             |
+| ----------------------------------------------------------------------------- | -------------------------------- |
+| `getRegisteredTypes()`                                                        | All type handles                 |
+| `register(definition)`                                                        | New element -> `{ elementType }` |
+| `updateDefinition(typeOrId, partial)`                                         | Patch definition                 |
+| `addInteractionInfo(typeOrId, interaction)`                                   | Tooltip interactions             |
+| `getNameByType(elementType)`                                                  | Display name                     |
+| `findFreeCellInStructure(structureCellX, structureCellY, structureSizeCells)` | Footprint search                 |
 
 ## Main-thread mutations (need user ask)
 
-Main-entry writes are deferred. Reads see the old grid until mutations apply.
+Deferred on main. Reads see the old grid until mutations apply.
 
 `createAtCell`, `replaceAtCell`, `removeAtCell`, `teleportBetweenCells`, `setVelocityAtCell`, `addParticleVelocityAtCell`, `convertToParticleAtCell`, `convertFromParticleAtCell`, `setDataFieldAtCell`, `refreshColorAtCell`, `setPhysicsAtCell`, `setDurationAtCell`.
 
+Each has a deprecated `*WhenIdle` alias (same function). `setPhysicsAtCell` takes `api.constants.physics` values - see `world-api.md`.
+
 For coordinated element and terrain changes, prefer `api.grid.mutate(writer => …)`.
+
+## Worker-only mutations
+
+Present on worker entry only (undefined on main renderer 0.5.5):
+
+| Method                                                               | Deprecated alias                    |
+| -------------------------------------------------------------------- | ----------------------------------- |
+| `moveBetweenCells(fromCellX, fromCellY, toCellX, toCellY)`           | -                                   |
+| `swapBetweenCells(firstCellX, firstCellY, secondCellX, secondCellY)` | `swapCells`                         |
+| `markMovementBlockedByIndex(elementIndex)`                           | `markMovementBlockedByElementIndex` |
+
+Worker `createAtCell` / `replaceAtCell` / etc. apply immediately (no `*WhenIdle` aliases in worker docs).
 
 ## Live definition keys (`getDefinitionByType`)
 
@@ -52,10 +69,12 @@ Public TypeScript lists `id`, `nameKey`, `density`, `matterType`, `colors`, `def
 | `flammable`                       | Burn output id, chance, fire duration                                |
 | `collectable.value`               | Collector gold                                                       |
 | `mixes`                           | Contact mix `{ elementType, result }`                                |
-| `interactions`                    | Tooltip kinds (`flammable`, `freezable`, …)                          |
+| `interactions`                    | Tooltip kinds (`flammable`, `freezable`, ...)                        |
 | `getExtraProps().data`            | Extra sim bags (Steam `energy`, Fire `temperature`, Seedling growth) |
 
-Built-in enum names: `sandkit.enums.ElementType` (`Sand` = 1 … `Basalt` = 20). String id for mods is `definition.id`; for builtins parse `nameKey` (`elements|sand|name`).
+Built-in enum: `sandkit.enums.ElementType` - Sand (1) ... Basalt (20), **Gloom (8)**. String id for mods is `definition.id`; for builtins parse `nameKey` (`elements|sand|name`).
+
+Live: `state.sandkit.mods.elements` - **31** registered ids (sample: `caulk`, `florin`, `liquidGold`).
 
 ## MCP element read
 

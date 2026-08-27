@@ -1,6 +1,6 @@
 # Engine signals runtime
 
-Public mods only get `api-signals.md`. Full runtime is engine-internal (`Jd.Q` in bundle). Persisted slice: `store.mods.signals`.
+Public surface: `api-signals.md` (`targets`, `interactables`, `registerSenderType`, `setOutputAtCell`). Full runtime is engine-internal (`Jd.Q` in bundle). Persisted slice: `store.mods.signals`.
 
 ## Persisted (`store.mods.signals`)
 
@@ -11,7 +11,7 @@ Public mods only get `api-signals.md`. Full runtime is engine-internal (`Jd.Q` i
 
 ## Session (`state.session.mods.signals`)
 
-Built at init. Live counts on this save: **17** sender types, **12** receiver types, **16** link buckets.
+Built at init. Live counts on this save (0.5.5): **17** sender types, **12** receiver types, **5** interactable handlers, **6** link buckets.
 
 **Probe note:** `senderTypes` and `receiverTypes` are **`Set`** instances. Use `.size`, not `Object.keys()` (returns `[]` on Sets).
 
@@ -31,7 +31,9 @@ Built at init. Live counts on this save: **17** sender types, **12** receiver ty
 
 ## Engine-only methods (not on `sandkit.api`)
 
-`init`, `registerSenderType`, `registerReceiverType`, `registerInteractable`, `set`, `setAll`, `getCombinedAt`, `getIncomingCountAt`, `getOnCountAt`, `link`, `unlink`, `unlinkAllAt`, `hasLink`, `getAnchorPoint`, `drawWireSegment`, plus link-mode `interactAtCell`.
+`init`, `registerReceiverType`, `set`, `setAll`, `getCombinedAt`, `getIncomingCountAt`, `getOnCountAt`, `link`, `unlink`, `unlinkAllAt`, `hasLink`, `getAnchorPoint`, `drawWireSegment`, plus link-mode `interactAtCell`.
+
+`registerSenderType`, `registerInteractable`, and `set` output are exposed on `sandkit.api.signals` as `registerSenderType`, `interactables.register`, and `setOutputAtCell`.
 
 Event: `signals:userChanged` (undo history). Combinational loop toast when `dirtyReceivers` does not drain.
 

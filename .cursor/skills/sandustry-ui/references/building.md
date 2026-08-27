@@ -1,6 +1,6 @@
 # Building
 
-Chrome: [management.md](management.md). Sub-tabs **Structures**, **Blueprints**.
+Chrome: `management.md`. Sub-tabs **Structures**, **Blueprints**.
 
 ## Structures
 

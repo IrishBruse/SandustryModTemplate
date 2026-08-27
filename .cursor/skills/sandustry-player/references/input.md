@@ -16,18 +16,19 @@ Key **binding ids** and live key codes - not the full Options Controls table (**
 
 ## `sandkit.api.input`
 
-| Method                                  | Arity | Notes                             |
-| --------------------------------------- | ----- | --------------------------------- |
-| `registerBinding(id, defaultKeys, def)` | 3     | **mutate**                        |
-| `getMouseCellPosition()`                | 0     | `{ x, y }` cell under cursor      |
-| `getBoundKeys(bindingId)`               | 1     | Key strings from settings         |
-| `getDisplayKey(bindingId, fallback?)`   | 2     | UI label                          |
-| `triggerBinding(id)`                    | 1     | **mutate** - fire down handler    |
-| `pressBinding(id)`                      | 1     | **mutate** - down without release |
-| `releaseBinding(id)`                    | 1     | **mutate** - fire up handler      |
-| `resetMouseState()`                     | 0     | **mutate**                        |
-| `isCtrlHeld()`                          | 0     | Modifier                          |
-| `isAltHeld()`                           | 0     | Modifier                          |
+| Method                                  | Arity | Notes                                                                |
+| --------------------------------------- | ----- | -------------------------------------------------------------------- |
+| `registerBinding(id, defaultKeys, def)` | 3     | **mutate**                                                           |
+| `getMousePositionAtCell()`              | 0     | `{ x, y }` cell under cursor, alias `getMouseCellPosition` (same fn) |
+| `getMousePositionAtWorld()`             | 0     | `{ x, y }` world pixels under cursor                                 |
+| `getBoundKeys(bindingId)`               | 1     | Key strings from settings                                            |
+| `getDisplayKey(bindingId, fallback?)`   | 2     | UI label                                                             |
+| `triggerBinding(id)`                    | 1     | **mutate** - fire down handler                                       |
+| `pressBinding(id)`                      | 1     | **mutate** - down without release                                    |
+| `releaseBinding(id)`                    | 1     | **mutate** - fire up handler                                         |
+| `resetMouseState()`                     | 0     | **mutate**                                                           |
+| `isCtrlHeld()`                          | 0     | Modifier                                                             |
+| `isAltHeld()`                           | 0     | Modifier                                                             |
 
 `getBoundKeys` uses settings strings like `"Control+KeyC"`. `session.input.keys` uses `KeyboardEvent.code`. Modifier aliases (`Shift`, `Control`, ...) expand to `ShiftLeft` / `ShiftRight`, etc.
 

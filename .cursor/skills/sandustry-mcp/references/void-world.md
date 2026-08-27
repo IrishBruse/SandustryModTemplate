@@ -1,18 +1,20 @@
 # Void world (batched MCP)
 
-Turn a live save into an empty void world via `evaluate_script`. **User must ask** — these are mutators, not probe scripts.
+Turn a live save into an empty void world via `evaluate_script`. **User must ask** - these are mutators, not probe scripts.
 
-Grid: **3840×3840** cells (`shared.sim.width` / `height`). Full-grid work must be **batched** or MCP times out and the renderer freezes.
+Grid: **3840 x 3840** cells (`api.grid.getDimensions()` / `shared.sim.width` / `height` - confirmed 0.5.5). Full-grid work must be **batched** or MCP times out and the renderer freezes.
 
 Pass `waitForStableDom: false` on every call. Re-run `list_pages` after reload; `pageId` changes.
 
-## Batch sizes (live 0.5.2)
+Prefer public **`api.grid.revealFogAtCell`** for in-world fog (official HTML). Engine `eng.world.revealFogAtCell(st, x, y)` is the state-first twin - same effect, keep for scripts that already hold `st`.
 
-| Work                                                         | Rows per MCP call | Notes                            |
-| ------------------------------------------------------------ | ----------------- | -------------------------------- |
-| Buffer clear (`cellIds`, `wallData`, `shadowMap`, `mapData`) | **256**           | Fast `TypedArray.fill` per row   |
-| `engine.api.world.revealFogAtCell`                           | **128–512**       | 128 safe; 512 OK for map uncover |
-| Structures / background / player fix                         | **1 call**        | Small metadata                   |
+## Batch sizes (live 0.5.5)
+
+| Work                                                               | Rows per MCP call | Notes                            |
+| ------------------------------------------------------------------ | ----------------- | -------------------------------- |
+| Buffer clear (`cellIds`, `wallData`, `shadowMap`, `mapData`)       | **256**           | Fast `TypedArray.fill` per row   |
+| `api.grid.revealFogAtCell` (or `engine.api.world.revealFogAtCell`) | **128-512**       | 128 safe; 512 OK for map uncover |
+| Structures / background / player fix                               | **1 call**        | Small metadata                   |
 
 Save every **~1024** cleared rows or after each fog chunk group.
 
@@ -34,7 +36,7 @@ Use engine save (queues `session.saving`, writes via main process):
 
 First save returns a new id string. Pass that id on later saves to overwrite the same slot.
 
-## Phase 1 — structures, entities, hotbar guard
+## Phase 1 - structures, entities, hotbar guard
 
 Run once before grid batches. Fixes `activeSlotIndex: null` on fresh worlds (prevents later input crashes).
 
@@ -67,9 +69,9 @@ Run once before grid batches. Fixes `activeSlotIndex: null` on fresh worlds (pre
 };
 ```
 
-## Phase 2 — grid buffer clear (repeat per row range)
+## Phase 2 - grid buffer clear (repeat per row range)
 
-Replace `startY` / `endY` each call. Example: `0→256`, `256→512`, … `3584→3840` (15 calls).
+Replace `startY` / `endY` each call. Example: `0→256`, `256→512`, ... `3584→3840` (15 calls).
 
 ```javascript
 () => {
@@ -106,7 +108,7 @@ Optional save after every fourth batch:
 };
 ```
 
-## Phase 3 — background and parallax
+## Phase 3 - background and parallax
 
 Clears procgen decor and hides Pixi background layers. See **sandustry-world** `references/background-layers.md`.
 
@@ -159,17 +161,17 @@ Clears procgen decor and hides Pixi background layers. See **sandustry-world** `
 };
 ```
 
-## Phase 4 — in-game map (M) fog
+## Phase 4 - in-game map (M) fog
 
 The **map screen** uses a separate buffer from world `revealFogAtCell`:
 
 | Field       | Path                       | Live                                        |
 | ----------- | -------------------------- | ------------------------------------------- |
-| Fog raster  | `store.mods.map.fogBuffer` | 960×960 (4:1 vs world cells)                |
+| Fog raster  | `store.mods.map.fogBuffer` | 960960 (4:1 vs world cells)                 |
 | Size        | `fogWidth`, `fogHeight`    | 960                                         |
 | Compression | `fogBufferCompressed`      | `true` = RLE triplets; `false` = flat array |
 
-**Small fix** (one call — do not teleport-grid scan; that freezes):
+**Small fix** (one call - do not teleport-grid scan, that freezes):
 
 ```javascript
 () => {
@@ -177,7 +179,7 @@ The **map screen** uses a separate buffer from world `revealFogAtCell`:
   st.session.paused = true;
   const m = st.store.mods.map;
   if (!m.fogBufferCompressed && m.fogBuffer?.fill) {
-    m.fogBuffer.fill(0); // 0 = revealed on live 0.5.2
+    m.fogBuffer.fill(0); // 0 = revealed on live 0.5.5
   } else {
     m.fogBuffer = [0, 255, m.fogWidth * m.fogHeight];
     m.fogBufferCompressed = true;
@@ -192,32 +194,35 @@ The **map screen** uses a separate buffer from world `revealFogAtCell`:
 
 Close and reopen the map (**M**) after save. World-cell `revealFogAtCell` batches do **not** fill this UI buffer.
 
-## Phase 4b — world fog uncover (optional, batched)
+## Phase 4b - world fog uncover (optional, batched)
 
-Even after buffer clear, run `revealFogAtCell` in batches if in-world fog cells remain. Use **512-row** chunks with saves:
+Even after buffer clear, run `revealFogAtCell` in batches if in-world fog cells remain. Use **512-row** chunks with saves. Public path (preferred):
 
 ```javascript
 () => {
-  const st = sandkit.state;
-  const eng = sandkit.engine.api;
+  const sk = sandkit;
+  const st = sk.state;
+  const eng = sk.engine.api;
   const w = st.shared.sim.width;
   const startY = 0;
   const endY = 512;
   for (let y = startY; y < endY; y++) {
-    for (let x = 0; x < w; x++) eng.world.revealFogAtCell(st, x, y);
+    for (let x = 0; x < w; x++) sk.api.grid.revealFogAtCell(x, y);
   }
   const saveId = eng.game.save(st, "Void", "YOUR_SAVE_ID");
   return { startY, endY, saveId };
 };
 ```
 
-Repeat with `startY` / `endY`: `512→1024`, `1024→1536`, … `3072→3840`.
+Engine-only equivalent: `eng.world.revealFogAtCell(st, x, y)` inside the same loops.
+
+Repeat with `startY` / `endY`: `512→1024`, `1024→1536`, ... `3072→3840`.
 
 Fog terrain ids: `4`, `5`, `6`, `13` (**sandustry-world** `references/cells.md`).
 
-## Phase 5 — player platform and movement
+## Phase 5 - player platform and movement
 
-Void worlds have no ground. Place **Block** terrain (`cellId` **15**) and reset movement. Pick a **weapon or tool** hotbar slot — not a mod item or structure belt slot.
+Void worlds have no ground. Place **Block** terrain (`cellId` **15**) and reset movement. Pick a **weapon or tool** hotbar slot - not a mod item or structure belt slot.
 
 ```javascript
 () => {
@@ -304,7 +309,7 @@ Console: `TypeError: Cannot read properties of undefined (reading 'handleAction'
 | Build mode still targeting structure                             | `api.building.cancelPlacement()`, clear `session.building.activeStructureType`                            |
 | `action.getSelected()` shows structure while hotbar shows weapon | Trust `hotbar.bars[bank][slot]`; cancel build mode                                                        |
 
-Movement in void: player falls until `isOnGround` is true — place Block (`15`) tiles under feet.
+Movement in void: player falls until `isOnGround` is true - place Block (`15`) tiles under feet.
 
 ## Related
 

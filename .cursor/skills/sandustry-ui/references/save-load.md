@@ -1,6 +1,6 @@
 # Save and Load
 
-From [pause.md](pause.md).
+From `pause.md`.
 
 ## Save Game
 

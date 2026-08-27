@@ -2,13 +2,19 @@
 
 `sandkit.engine.api` is the **state-first** twin of public `sandkit.api`. Prefer public methods. Engine calls take **game state as `args[0]`**. Types: `node_modules/@sandustry-modding/types/sandkit/engine/`. Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
 
-Live counts: public **54** namespaces, engine **86**. `sandkit.engine.state === sandkit.state`.
+Live counts (0.5.5): public **60** namespaces, engine **88**. `sandkit.engine.state === sandkit.state`.
 
 ## Public-only (not on engine.api)
 
-`assets`, `gameConfig`, `mods`, `settings`, `shared`, `structureBehaviors`, `time`.
+`assets`, `gameConfig`, `mods`, `pickups`, `settings`, `shared`, `structureBehaviors`, `time`.
 
 Public `workers` is only `setPostUpdateEnabled`. Public `mods` is only `getProviders`.
+
+## Newly public on `sandkit.api` (0.5.5)
+
+Also on engine with state-first signatures: `blueprints` (serialize/localize structures), `entities` (getById, getAllByType, spawnAtWorld, remove, launch, startCapture, collect), `factory` (getLevel, getProcessCount, getProcessRate), `pipes`, `processing`, `game` (**`start({ skipIntro? })`** - mutator, probes must not call it). Official HTML omits top-level `api.processing` and deprecated **`api.world`**; prefer **`api.grid`**.
+
+Public `api.entities` coexists with `engine.api.entities` (engine has extra register/spawn helpers). Arity table: `worker-api.md`.
 
 ## Engine-only namespaces (live keys)
 
@@ -30,7 +36,7 @@ Public `workers` is only `setPostUpdateEnabled`. Public `mods` is only `getProvi
 | `factory`                 | addViabilityGold, canUnlockNextTier, ensureProcessAtLeast, flushDeferredLevelUps, getLevel, getProcessCount, getProcessRate, recordProcess, unlockNextTier                                                                                  |
 | `foliage`                 | generate, getClusters, getContainer, hasProcgenData                                                                                                                                                                                         |
 | `foundationColorPicker`   | getColor                                                                                                                                                                                                                                    |
-| `game`                    | load, save, start — `save(state, name, id?)` returns save id string; omit `id` for new slot, pass id to overwrite. Loader **Starting game**: [boot.md](boot.md)                                                                             |
+| `game`                    | load, save, start - `save(state, name, id?)` returns save id string, omit `id` for new slot, pass id to overwrite. Loader **Starting game**: `boot.md`                                                                                      |
 | `heatTransfer`            | absorbAdjacentElements, addTemperature, computeDiffused/EqualizedTemperature, consumeTemperatureNear, ensureTemperature, equalizeConnected                                                                                                  |
 | `launchers`               | registerType                                                                                                                                                                                                                                |
 | `lightColorPicker`        | getColor                                                                                                                                                                                                                                    |

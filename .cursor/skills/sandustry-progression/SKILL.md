@@ -5,9 +5,9 @@ description: "Sandustry game progression: tech tree, upgrades, discoveries, viab
 
 # Sandustry progression
 
-Early Access **0.5.2** ids and store fields for tech, upgrades, discoveries, viability, conservatory, tutorial, lexicon, and objectives. Screen clicks stay in **sandustry-ui**. Factory tier math stays in **sandustry-factory** (engine `factory` namespace only).
+Early Access **0.5.5** ids and store fields for tech, upgrades, discoveries, viability, conservatory, tutorial, lexicon, and objectives. Screen clicks stay in **sandustry-ui**. Factory tier reads and process ids: **sandustry-factory** (`api.factory` + `engine.api.factory`).
 
-Public API types: `node_modules/@sandustry-modding/types/sandkit/api/`. Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
+Official API: `.tmp/Sandkit - Sandustry Modding API.html`. Types: `node_modules/@sandustry-modding/types/sandkit/api/`.
 
 ## Probe
 

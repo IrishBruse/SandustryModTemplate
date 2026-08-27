@@ -53,6 +53,6 @@ Input loop calls `definition.handleAction(state, action)`. If the **definition l
 | New game `activeSlotIndex: null`                                            | Set `hotbarIndex: 0`, `activeSlotIndex: 0` before mutations                     |
 | Build mode active structure                                                 | `api.building.cancelPlacement()`, `session.building.activeStructureType = null` |
 
-`action.getSelected()` may still report a structure id while `hotbar.bars[bank][slot]` shows a weapon — trust hotbar after canceling build mode.
+`action.getSelected()` may still report a structure id while `hotbar.bars[bank][slot]` shows a weapon - trust hotbar after canceling build mode.
 
 Full scripts: **sandustry-mcp** `references/void-world.md`.

@@ -12,9 +12,13 @@ Nested: `session.ui` - dialogs, discoveryPopups, hudHidden, introScreen, listene
 
 achievements, conservatory, createdVersion, creatures, discoveries, drones, factoryLevelCap, gloom, hints, integrity, lockedTechs, machineryEngine, meta, mods, objectives, options, owner, pipes, player, productionPoints, progression, projectiles, pumpsCache, queue, resources, scene, stratacores, structures, tutorial, upgrades, version, viability, world, worldItems.
 
+Notable 0.5.5 fields: `version` (game build, e.g. **0.5.5**), `createdVersion` (save origin, may lag, e.g. **0.5.2**), `gloom.emitterPositions` (array), `machineryEngine.runLaunchers` (boolean), `stratacores` (array).
+
 ## `shared` (live)
 
 actionState, authorization, collectorGoldCount, conveyorBeltsAnimationIndex, debug, energy, energyBatteryDirty, energyChange, gold, goldChange, hybridScheduling, listenerPos, managerPerformance, mapData, mods, mouse, mutationSync, naturalAmbience, playerPos, productionPoints, reservoir, schedulingMode, shadowMap, sim, wallData, waterPresenceZones (+ Height/Width), workQueue, workerCompletion, workerDetailEnabled, workerDetailPerformance, workerPerformance.
+
+`schedulingMode` and `hybridScheduling` are `Uint8Array` length **1** (JSON prints `{ "0": 1 }`). Layout: **sandustry-world** `workers.md`.
 
 ## `sandkit` (under state)
 

@@ -104,11 +104,11 @@ Pass element uids via `args` when the MCP tool supports snapshot references.
 
 ## Void world (batched)
 
-Full save wipe — structures, terrain, background, map fog, player platform. **User must ask.**
+Full save wipe - structures, terrain, background, map fog, player platform. **User must ask.**
 
 | Topic                                          | File                                                  |
 | ---------------------------------------------- | ----------------------------------------------------- |
-| Batch sizes, save-as-you-go, all phase scripts | [void-world.md](void-world.md)                        |
+| Batch sizes, save-as-you-go, all phase scripts | `void-world.md`                                       |
 | Background buffers and Pixi layers             | **sandustry-world** `references/background-layers.md` |
 
 Quick save helper:
