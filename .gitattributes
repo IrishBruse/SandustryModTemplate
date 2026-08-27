@@ -1,2 +1,0 @@
-# Keep text files LF on Windows clones so Node scripts stay portable.
-* text=auto eol=lf
