@@ -2,7 +2,7 @@
 
 `sandkit.engine.api.entities` - capture critters, swarm particles, and mod-registered types. **Internal.** State is first arg on every call.
 
-Generated: `docs/api/engine/namespaces/entities/`. Types: `modkit/types/sandkit/engine/api/entities.d.ts`.
+Reference: https://sandustry-modding.github.io/SandustryTypes/#/. Types: `node_modules/@sandustry-modding/types/sandkit/engine/api/entities.d.ts`.
 
 ## Methods (live)
 

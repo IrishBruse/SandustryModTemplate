@@ -39,7 +39,7 @@ Used by structure definitions for drag shape - not stored on `session.building` 
 | `cancelPlacement()`                      | 0     | **mutate** - clear preview                                 |
 | `selectStructure(typeOrId)`              | 1     | **mutate** - pick structure, returns resolved id or `null` |
 
-`StructureType` enum: `docs/api/sandkit/api/namespaces/building/enumerations/StructureType.md`.
+`StructureType` enum: https://sandustry-modding.github.io/SandustryTypes/#/.
 
 ## Engine twin
 

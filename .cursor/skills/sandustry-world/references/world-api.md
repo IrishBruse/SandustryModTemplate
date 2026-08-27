@@ -1,8 +1,8 @@
 # `sandkit.api.world`
 
-Main-thread namespace. Shared queries live in `modkit/types/shared/api/world.d.ts`. Idle and fog helpers on main thread only.
+Main-thread namespace. Shared queries live in `node_modules/@sandustry-modding/types/shared/api/world.d.ts`. Idle and fog helpers on main thread only.
 
-Generated reference: `docs/api/sandkit/api/namespaces/world/`.
+Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
 
 ## Sync queries (shared)
 
@@ -36,7 +36,7 @@ Fog terrain ids: `CellType.Fog` (4), `FogJetpackBlock` (5), `FogWater` (6), `Fog
 | `getAll()`                                          | List active pickups        |
 | `getById(worldItemId)`                              | Lookup by id               |
 
-`WorldItem`: `{ id, x, y, type, data }`. Types: `WorldItemType` enum / `docs/api/sandkit/enums/enumerations/WorldItemType.md`.
+`WorldItem`: `{ id, x, y, type, data }`. Types: `WorldItemType` enum / https://sandustry-modding.github.io/SandustryTypes/#/.
 
 ## MCP decode without API
 

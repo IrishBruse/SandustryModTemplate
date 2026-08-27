@@ -6,7 +6,7 @@ Three layers overlap at each grid cell:
 2. **Element type** - numeric handle when id is in the element range, see `ElementType` enum and mod registrations.
 3. **Matter type** - physics category (Solid, Liquid, Gas, ...) on the element **definition**, not stored per cell directly.
 
-Use `sandkit.api.world.isCellEmptyAtCell`, `isTerrainAtCell`, `elements.getTypeAtCell`, `elements.getMatterTypeAtCell`, `terrains.getTypeAtCell` in mod code. Full signatures: `docs/api/sandkit/api/namespaces/{world,elements,terrains}/`.
+Use `sandkit.api.world.isCellEmptyAtCell`, `isTerrainAtCell`, `elements.getTypeAtCell`, `elements.getMatterTypeAtCell`, `terrains.getTypeAtCell` in mod code. Full signatures: https://sandustry-modding.github.io/SandustryTypes/#/.
 
 ## `CellType` (terrain ids 1-30 in enum)
 

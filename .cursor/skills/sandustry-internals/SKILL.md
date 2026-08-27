@@ -5,9 +5,9 @@ description: "Sandustry host internals: window.electron IPC, sandkit.engine, san
 
 # Sandustry internals
 
-Live **host map** of Early Access **0.5.2**. Public mod calls stay in `docs/api/sandkit/`. Screen clicks stay in **sandustry-ui**.
+Live **host map** of Early Access **0.5.2**. Public mod calls: [SandustryTypes](https://sandustry-modding.github.io/SandustryTypes/#/). Screen clicks stay in **sandustry-ui**.
 
-Extracted tree: repo `sandustry/<version>-<branch>/` (`npm run setup`). Do not treat generated `docs/api/engine/` as complete; confirm on the live object.
+Extracted tree: repo `sandustry/<version>-<branch>/` (`npm run setup`). Do not treat the published type reference as complete; confirm on the live object.
 
 ## Probe
 

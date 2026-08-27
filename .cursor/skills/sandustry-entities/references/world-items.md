@@ -34,7 +34,7 @@ Optional `data.lightIndex` when spawned with a point light.
 | `destroy(worldItem)`                      | Remove (unsafe).                 |
 | `pickUp(worldItem)`                       | Collect into inventory (unsafe). |
 
-Types: `modkit/types/sandkit/api/world.d.ts`. Generated: `docs/api/sandkit/api/namespaces/world/namespaces/pickups/`.
+Types: `node_modules/@sandustry-modding/types/sandkit/api/world.d.ts`. Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
 
 ## `session.prefabWorldItemCache`
 

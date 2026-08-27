@@ -2,7 +2,7 @@
 
 Not walked in this pass:
 
-- Full `sandkit.api.*` method lists (use generated `docs/api/sandkit/`; live namespace keys confirmed 2025-08 via MCP on page scope `sandkit.api`)
+- Full `sandkit.api.*` method lists (use [SandustryTypes](https://sandustry-modding.github.io/SandustryTypes/#/); live namespace keys confirmed 2025-08 via MCP on page scope `sandkit.api`)
 - Engine overlap signatures vs public (arity / state-first)
 - `engine.api.config` and `extend` argument meanings
 - `__debug.admin.run` command strings

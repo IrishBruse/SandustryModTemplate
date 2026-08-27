@@ -43,7 +43,7 @@ Completed tutorial: `active: false`, `currentStep` may remain at last value, `da
 
 ## Engine build helpers
 
-`sandkit.engine.api.tutorialBuild` exposes target cells and placement rules for constrained steps. State-first internal API. See `modkit/types/sandkit/engine/api/tutorialBuild.d.ts`.
+`sandkit.engine.api.tutorialBuild` exposes target cells and placement rules for constrained steps. State-first internal API. See `node_modules/@sandustry-modding/types/sandkit/engine/api/tutorialBuild.d.ts`.
 
 ## Tech gate during tutorial
 

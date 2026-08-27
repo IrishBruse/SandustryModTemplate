@@ -5,7 +5,7 @@ description: "drones, entities, projectiles, creatures, swarm, sweeper, launcher
 
 # Sandustry entities
 
-Live **entity map** of Early Access **0.5.2**. Public mod calls stay in `docs/api/sandkit/`. Screen clicks stay in **sandustry-ui**. Host bridge stays in **sandustry-internals**.
+Live **entity map** of Early Access **0.5.2**. Public mod calls stay in https://sandustry-modding.github.io/SandustryTypes/#/. Screen clicks stay in **sandustry-ui**. Host bridge stays in **sandustry-internals**.
 
 This skill covers **engine and store models** only. It does not cover Debug F3 spawn UI (see **sandustry-ui** `references/debug.md`).
 

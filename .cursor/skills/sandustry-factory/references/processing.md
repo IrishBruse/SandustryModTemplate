@@ -10,7 +10,7 @@ Machine recipes and per-cell processing toggles.
 | `registerShaker`       | Shaker weighted outputs above/below |
 | `registerKineticPress` | Press velocity threshold + outputs  |
 
-Recipe shapes: `modkit/types/sandkit/api/processing.d.ts`. Weighted outputs use `{ elementType, chance }`.
+Recipe shapes: `node_modules/@sandustry-modding/types/sandkit/api/processing.d.ts`. Weighted outputs use `{ elementType, chance }`.
 
 ## `structures.recipes.register`
 

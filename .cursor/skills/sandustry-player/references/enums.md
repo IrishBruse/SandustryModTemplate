@@ -1,6 +1,6 @@
 # Enums
 
-Live on `sandkit.enums.*`. Generated docs: `docs/api/sandkit/enums/`.
+Live on `sandkit.enums.*`. Generated docs: https://sandustry-modding.github.io/SandustryTypes/#/.
 
 ## `BuildMode`
 

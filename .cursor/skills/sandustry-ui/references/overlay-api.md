@@ -1,6 +1,6 @@
 # Overlay API
 
-Declarations: `modkit/types/sandkit/api/ui.d.ts`. Generated: `docs/api/sandkit/api/namespaces/ui/README.md`. Enum: `docs/api/sandkit/enums/enumerations/ComponentId.md`.
+Declarations: `node_modules/@sandustry-modding/types/sandkit/api/ui.d.ts`. Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
 
 ## Calls
 

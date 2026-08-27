@@ -1,6 +1,6 @@
 # Player
 
-`store.player` is the live physics snapshot. `sandkit.api.player` is the public write/read API. Types: `modkit/types/shared/player.d.ts`, `docs/api/sandkit/api/namespaces/player/`.
+`store.player` is the live physics snapshot. `sandkit.api.player` is the public write/read API. Types: `node_modules/@sandustry-modding/types/shared/player.d.ts`, https://sandustry-modding.github.io/SandustryTypes/#/.
 
 ## `store.player` (live keys)
 

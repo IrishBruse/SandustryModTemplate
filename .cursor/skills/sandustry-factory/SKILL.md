@@ -7,7 +7,7 @@ description: "structures, recipes, processing, pipes, conveyors, factory viabili
 
 Live **simulation map** for structures, machines, pipes, conveyors, factory tiers, and build authorization. Early Access **0.5.2**.
 
-Public mod calls: `modkit/types/sandkit/api/structures.d.ts`, `processing.d.ts`, `structureBehaviors.d.ts`, `authorization.d.ts`. Screen structure lists: **sandustry-ui** `references/building.md`. Placement session flags: **sandustry-player** `references/building.md`.
+Public mod calls: `node_modules/@sandustry-modding/types/sandkit/api/structures.d.ts`, `processing.d.ts`, `structureBehaviors.d.ts`, `authorization.d.ts`. Screen structure lists: **sandustry-ui** `references/building.md`. Placement session flags: **sandustry-player** `references/building.md`.
 
 ## Probe
 

@@ -5,9 +5,9 @@ description: "Sandustry world sim, cells, chunks, elements, matter, grid, terrai
 
 # Sandustry world
 
-Live **world map** of Early Access **0.5.2**. Public mod calls stay in `docs/api/sandkit/`. Screen clicks stay in **sandustry-ui**. Host IPC and `__debug` stay in **sandustry-internals**.
+Live **world map** of Early Access **0.5.2**. Public mod calls: [SandustryTypes](https://sandustry-modding.github.io/SandustryTypes/#/). Screen clicks stay in **sandustry-ui**. Host IPC and `__debug` stay in **sandustry-internals**.
 
-Types: `modkit/types/sandkit/api/{world,elements,grid,terrains,maps}.d.ts`. Enums: `modkit/types/sandkit/enums/index.d.ts`.
+Types: `node_modules/@sandustry-modding/types/sandkit/api/{world,elements,grid,terrains,maps}.d.ts`. Enums: `node_modules/@sandustry-modding/types/sandkit/enums/index.d.ts`.
 
 ## Probe
 

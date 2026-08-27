@@ -1,6 +1,6 @@
 # Enums
 
-Live on `sandkit.enums`. Types: `modkit/types/sandkit/enums/index.d.ts`. Generated: `docs/api/sandkit/enums/`.
+Live on `sandkit.enums`. Types: `node_modules/@sandustry-modding/types/sandkit/enums/index.d.ts`. Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
 
 ## TechStatus
 
@@ -26,7 +26,7 @@ String examples: `FluxEmanator="fluxEmanator"`, plus mod string ids (`aurixiteCr
 
 Use `String(Tech.Shaker)` or numeric key when reading `player.tech` and `getDefinitionById`.
 
-Full enum (110 entries) is in `modkit/types/sandkit/enums/index.d.ts` lines 289-401.
+Full enum (110 entries) is in `node_modules/@sandustry-modding/types/sandkit/enums/index.d.ts` lines 289-401.
 
 ## Related enums
 

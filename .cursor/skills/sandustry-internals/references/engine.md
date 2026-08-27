@@ -1,6 +1,6 @@
 # Engine API
 
-`sandkit.engine.api` is the **state-first** twin of public `sandkit.api`. Prefer public methods. Engine calls take **game state as `args[0]`**. Types: `modkit/types/sandkit/engine/`. Generated pages: `docs/api/engine/`.
+`sandkit.engine.api` is the **state-first** twin of public `sandkit.api`. Prefer public methods. Engine calls take **game state as `args[0]`**. Types: `node_modules/@sandustry-modding/types/sandkit/engine/`. Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
 
 Live counts: public **54** namespaces, engine **86**. `sandkit.engine.state === sandkit.state`.
 

@@ -2,9 +2,9 @@
 
 Custom map selection and session start. Not the in-game world grid itself.
 
-Types: `modkit/types/sandkit/api/maps.d.ts`, `modkit/types/shared/api/maps.d.ts`.
+Types: `node_modules/@sandustry-modding/types/sandkit/api/maps.d.ts`, `node_modules/@sandustry-modding/types/shared/api/maps.d.ts`.
 
-Generated: `docs/api/sandkit/api/namespaces/maps/`.
+Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
 
 ## Methods
 

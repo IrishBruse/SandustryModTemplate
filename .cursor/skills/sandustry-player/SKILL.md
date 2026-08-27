@@ -7,7 +7,7 @@ description: "Sandustry player, inventory, tools, grabber, build mode, camera, i
 
 Live **player map** of Early Access **0.5.2**. Screen clicks and HUD hotbar rows stay in **sandustry-ui**. Structure recipes stay in **sandustry-factory**. Host IPC stays in **sandustry-internals**.
 
-Access: `window.sandkit` on CDP `:9222` (`sandustry-mcp`). Public mod API: `docs/api/sandkit/`.
+Access: `window.sandkit` on CDP `:9222` (`sandustry-mcp`). Public mod API: https://sandustry-modding.github.io/SandustryTypes/#/.
 
 ## Probe
 

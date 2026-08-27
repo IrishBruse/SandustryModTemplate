@@ -7,7 +7,7 @@ description: "energy, batteries, gold/collector overlap only if energy-related, 
 
 Live **power and signal map** for Early Access **0.5.2**. Mod calls use `sandkit.api.*`. Host-only runtime uses `sandkit.engine.api` - see **sandustry-internals**.
 
-Types: `modkit/types/sandkit/api/energy.d.ts`, `signals.d.ts`. Generated pages: `docs/api/sandkit/api/namespaces/energy/`, `signals/`. Heat transfer is **sandustry-world**; only touch it when energy mechanics tie in.
+Types: `node_modules/@sandustry-modding/types/sandkit/api/energy.d.ts`, `signals.d.ts`. Reference: https://sandustry-modding.github.io/SandustryTypes/#/. Heat transfer is **sandustry-world**; only touch it when energy mechanics tie in.
 
 ## Probe
 

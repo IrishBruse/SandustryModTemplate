@@ -2,9 +2,9 @@
 
 Main thread only. Iteration helpers over cell coordinates.
 
-Types: `modkit/types/sandkit/api/grid.d.ts`.
+Types: `node_modules/@sandustry-modding/types/sandkit/api/grid.d.ts`.
 
-Generated: `docs/api/sandkit/api/namespaces/grid/`.
+Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
 
 ## Methods
 

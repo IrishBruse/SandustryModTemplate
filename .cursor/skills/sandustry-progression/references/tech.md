@@ -1,6 +1,6 @@
 # Tech
 
-Public API: `sandkit.api.tech`. Types: `modkit/types/sandkit/api/tech.d.ts`. UI map: **sandustry-ui** `../../sandustry-ui/references/research.md`.
+Public API: `sandkit.api.tech`. Types: `node_modules/@sandustry-modding/types/sandkit/api/tech.d.ts`. UI map: **sandustry-ui** `../../sandustry-ui/references/research.md`.
 
 ## API (live 0.5.2)
 

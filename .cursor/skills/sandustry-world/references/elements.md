@@ -1,8 +1,8 @@
 # `sandkit.api.elements`
 
-Main thread only for registration and `*WhenIdle` mutations. Shared reads in `modkit/types/shared/api/elements.d.ts`.
+Main thread only for registration and `*WhenIdle` mutations. Shared reads in `node_modules/@sandustry-modding/types/shared/api/elements.d.ts`.
 
-Generated: `docs/api/sandkit/api/namespaces/elements/`.
+Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
 
 ## Shared reads
 

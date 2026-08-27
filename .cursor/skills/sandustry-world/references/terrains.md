@@ -2,9 +2,9 @@
 
 Terrain uses numeric **cell types** (same id space as `CellType` and damaged-ground transitions).
 
-Types: `modkit/types/shared/api/terrains.d.ts`, `modkit/types/sandkit/api/terrains.d.ts`.
+Types: `node_modules/@sandustry-modding/types/shared/api/terrains.d.ts`, `node_modules/@sandustry-modding/types/sandkit/api/terrains.d.ts`.
 
-Generated: `docs/api/sandkit/api/namespaces/terrains/`.
+Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
 
 ## Shared queries and sync mutations
 
