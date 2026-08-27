@@ -5,7 +5,6 @@ import {
   FAST_BOOT_STORAGE_KEY,
 } from "./fast-boot-keys.ts";
 import { autoLoadOn, settingOn } from "./settings.ts";
-import { writeSkipShaderRecomp } from "./skip-shader-recomp.ts";
 
 export {
   AUTO_LOAD_SAVE_ID_STORAGE_KEY,
@@ -43,11 +42,9 @@ function removeLocalStorage(key: string): void {
 export function syncFastBootPrefs(api: SandkitApi): void {
   const fastBoot = settingOn(api, "fastBoot");
   const autoLoad = autoLoadOn(api);
-  const skipShader = settingOn(api, "skipShaderRecomp");
 
   writeLocalStorage(FAST_BOOT_STORAGE_KEY, String(fastBoot));
   writeLocalStorage(AUTO_LOAD_STORAGE_KEY, String(autoLoad));
-  writeSkipShaderRecomp(skipShader);
 
   if (autoLoad) {
     const saveId = resolveAutoLoadSaveId(api);

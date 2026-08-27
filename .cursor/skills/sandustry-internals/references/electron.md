@@ -20,7 +20,7 @@ Bridge object: `window.electron`.
 
 ## Invoke bags (do not call unless asked)
 
-- Saves: `save`, `saveSerialized`, `load`, `loadRaw`, `deleteSave`, `exportSave`, `importSave`, `getSaveFiles`, `getSaveFolder`
+- Saves: `save`, `saveSerialized`, `load`, `loadRaw`, `deleteSave`, `exportSave`, `importSave`, `getSaveFiles`, `getSaveFolder` — on-disk layout: [boot.md](boot.md)
 - Last played: `saveLastPlayedGame`, `clearLastPlayedGame`
 - Settings: `saveSettings`
 - Window: `setFullscreen`, `openDevTools` (`send`, not invoke)

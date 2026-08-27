@@ -145,7 +145,6 @@ export function testCompanionSettings(): Record<string, unknown> {
         startSave: AUTO_LOAD_LAST_PLAYED,
         disableAutosave: true,
         watchLocalMods: true,
-        skipShaderRecomp: true,
         fastBoot: true,
         openDevTools: false,
         f12DevTools: false,

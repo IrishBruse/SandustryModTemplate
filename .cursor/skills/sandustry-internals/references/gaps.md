@@ -13,7 +13,6 @@ Confirmed (void MCP pass):
 - `engine.api.entities` live keys omit `kill` on 0.5.2; creatures in `store.mods.entities.list`.
 - Worker-thread `sandkit` (simulation/manager/utility workers)
 - `platforms/msstore.js` / `gog.js` (not in this Steam extract)
-- Save file on-disk layout beyond gzip-after-newline in `main.js`
 - `Noise` constructor API
 - `webpackChunksand_v1` module ids
 - Custom maps IPC payloads

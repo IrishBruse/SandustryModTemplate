@@ -56,19 +56,12 @@ export const modinfo = defineModInfo({
       labelKey: "Watch local mods",
       descriptionKey: "Re-eval other mods' main.js when the file changes. Not workers or patches.",
     },
-    skipShaderRecomp: {
-      type: "boolean",
-      default: false,
-      labelKey: "Skip shader recompile",
-      descriptionKey:
-        "Skip outline shaders, warmup, and the Compiling shaders splash (dev). Restart once after you turn it on.",
-    },
     fastBoot: {
       type: "boolean",
       default: false,
       labelKey: "Fast dev boot",
       descriptionKey:
-        "Skip the logo splash when the URL already has ?db_load= (save load). Restart once after you turn it on.",
+        "Skip foliage generate on boot (dev). Raster and shaders stay vanilla. Restart once after you turn it on.",
     },
     // Dev tools
     openDevTools: {

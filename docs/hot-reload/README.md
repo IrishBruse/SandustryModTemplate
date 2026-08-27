@@ -20,33 +20,31 @@ Settings live on this mod. Open **Options → Mods → hot-reload**.
 
 ## Settings
 
-| Setting                   | Key                | Default     | Effect                                                                                                                                                                                      |
-| ------------------------- | ------------------ | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Mod enabled**           | `enabled`          | on          | Master switch for runtime helpers                                                                                                                                                           |
-| **Open DevTools on load** | `openDevTools`     | off         | Open Electron DevTools on load. Keep off under F5 so the IDE debugger stays attached                                                                                                        |
-| **F12 opens DevTools**    | `f12DevTools`      | off         | Capture-phase F12. Can disconnect an IDE debugger session                                                                                                                                   |
-| **Auto-load save**        | `autoLoad`         | off         | On load, `location.assign` with `?db_load=<saveId>`. Skips splash and main menu. Legacy `autoBoot` prefs still count until you set `autoLoad`                                               |
-| **Start save**            | `startSave`        | Mod storage | **Last played** or **Mod storage**. **Mod storage** reads `api.storage` (`startSave`). Set the id from DevTools or another mod.                                                             |
-| **F3 debug overlay**      | `f3Debug`          | off         | F3 toggles companion debug overlay. Vanilla Debug / Stats stay on while the mod is enabled                                                                                                  |
-| **Disable autosave**      | `disableAutosave`  | off         | Sets `session.settings.autosaveInterval` to `0`. Manual saves still work                                                                                                                    |
-| **Watch local mods**      | `watchLocalMods`   | off         | Poll other mods' `main.js` and re-eval the renderer bundle. Does not reload this companion, workers, or patches                                                                             |
-| **Skip shader recompile** | `skipShaderRecomp` | off         | Skip initial outline build, post-mod regenerate, `warmup`, and the **Compiling shaders…** splash wait. Writes `localStorage`. Needs `debugPatches` (dev). Restart once after you turn it on |
-| **Fast dev boot**         | `fastBoot`         | off         | Skip the logo splash when the URL already has `?db_load=`. Writes `localStorage`. Needs `debugPatches` (dev). Restart once after you turn it on                                             |
+| Setting                   | Key               | Default     | Effect                                                                                                                                                                  |
+| ------------------------- | ----------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Mod enabled**           | `enabled`         | on          | Master switch for runtime helpers                                                                                                                                       |
+| **Open DevTools on load** | `openDevTools`    | off         | Open Electron DevTools on load. Keep off under F5 and while MCP is on `:9222`                                                                                           |
+| **F12 opens DevTools**    | `f12DevTools`     | off         | Capture-phase F12. Can disconnect an IDE debugger session                                                                                                               |
+| **Auto-load save**        | `autoLoad`        | off         | On load, `location.assign` with `?db_load=<saveId>`. Skips splash and main menu. Legacy `autoBoot` prefs still count until you set `autoLoad`                           |
+| **Start save**            | `startSave`       | Mod storage | **Last played** or **Mod storage**. **Mod storage** reads `api.storage` (`startSave`). Set the id from DevTools or another mod.                                         |
+| **F3 debug overlay**      | `f3Debug`         | off         | F3 toggles companion debug overlay. Vanilla Debug / Stats stay on while the mod is enabled                                                                              |
+| **Disable autosave**      | `disableAutosave` | off         | Sets `session.settings.autosaveInterval` to `0`. Manual saves still work                                                                                                |
+| **Watch local mods**      | `watchLocalMods`  | off         | Poll other mods' `main.js` and re-eval the renderer bundle. Does not reload this companion, workers, or patches                                                         |
+| **Fast dev boot**         | `fastBoot`        | off         | Skip `foliage.generate` on boot. Raster, shadows, and shader compile stay vanilla. Writes `localStorage`. Needs `debugPatches` (dev). Restart once after you turn it on |
 
-Turn on **Watch local mods**, **Skip shader recompile**, **Fast dev boot**, **Auto-load save**, **F3 debug overlay**, **Disable autosave**, **F12**, or **Open DevTools on load** when you want those helpers.
+Turn on **Watch local mods**, **Fast dev boot**, **Auto-load save**, **F3 debug overlay**, **Disable autosave**, **F12**, or **Open DevTools on load** when you want those helpers.
 
 ## Features
 
 - **DevTools globals** (`main.ts`) — `sandkit`, `api`, `enums`, `react` on `globalThis` when the mod is enabled.
-- **Open DevTools on load** (`boot/boot-menu.ts`) — retries until the Electron bridge is ready. Keep off under F5.
+- **Open DevTools on load** (`boot/boot-menu.ts`) — retries until the Electron bridge is ready. Keep off under F5 and while MCP is on `:9222`.
 - **F12 opens DevTools** (`boot/boot-menu.ts`) — capture-phase keydown.
 - **Auto-load save** (`boot/boot-menu.ts`, `boot/auto-load-save.ts`) — reloads with `?db_load=` for the **Start save** pick.
 - **Disable autosave** (`boot/autosave.ts`) — sets interval to `0` on load.
 - **F3 debug overlay** (`f3/F3DebugOverlay.tsx`) — Minecraft-style text HUD. Extend with `registerF3Section` / `globalThis.debugF3`.
 - **Dev Tools** (`mod-inspector/`) — pause **Dev Tools** opens a 980×720 panel. **Mods** tab: compact loaded-mod cards with **Open** for details; save issues (missing, diagnostics, type-id drift) stay collapsed. **Elements**: family sand table. **Recipes**: placeholder.
 - **Watch local mods** (`reload/`) — poll and re-eval other mods' renderer `main.js`.
-- **Skip shader recompile** (`patches.ts`, `boot/skip-shader-recomp.ts`) — when on, `debugPatches` skip the early outline compile, post-mod regenerate, `warmup`, and the **Compiling shaders…** splash UI/wait. Preference is stored in `localStorage` so the next launch can skip work that runs before mods. Restart once after you turn it on.
-- **Fast dev boot** (`patches.ts`, `boot/fast-boot.ts`) — when on, skips the logo splash on save load when the URL already has `db_load`. Does not enable auto-load or shader skip. Restart once after you turn it on.
+- **Fast dev boot** (`patches.ts`, `boot/fast-boot.ts`) — when on, skips `foliage.generate` only. Raster fill, shadow rebuild, and outline compile stay vanilla. Needs `debugPatches` (dev). Restart once after you turn it on.
 
 ## DevTools globals
 

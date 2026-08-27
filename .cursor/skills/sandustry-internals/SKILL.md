@@ -1,6 +1,6 @@
 ---
 name: sandustry-internals
-description: "Sandustry host internals: window.electron IPC, sandkit.engine, sandkit.state, __debug, extracted sandustry/ main and preload, workshop-mods limits. Use when probing live APIs outside public sandkit.api, Electron bridge, file patches, or workers."
+description: "Sandustry host internals: window.electron IPC, sandkit.engine, sandkit.state, __debug, extracted sandustry/ main and preload, workshop-mods limits, Loader Starting game, save gzip. Use when probing live APIs outside public sandkit.api, Electron bridge, file patches, workers, or save-load boot."
 ---
 
 # Sandustry internals
@@ -22,14 +22,15 @@ Details: [references/probe.md](references/probe.md).
 
 Open **one** file that matches the branch.
 
-| Branch                                | File                                               |
-| ------------------------------------- | -------------------------------------------------- |
-| How to inspect without writes         | [references/probe.md](references/probe.md)         |
-| `window` aliases, webpack, Noise      | [references/globals.md](references/globals.md)     |
-| `window.electron` and IPC channels    | [references/electron.md](references/electron.md)   |
-| `sandkit.engine.api` extras vs public | [references/engine.md](references/engine.md)       |
-| `sandkit.state` bags                  | [references/state.md](references/state.md)         |
-| `__debug`                             | [references/debug.md](references/debug.md)         |
-| Extracted `sandustry/` tree           | [references/sandustry.md](references/sandustry.md) |
-| `workshop-mods.js` limits             | [references/mods-host.md](references/mods-host.md) |
-| Not confirmed yet                     | [references/gaps.md](references/gaps.md)           |
+| Branch                                   | File                                               |
+| ---------------------------------------- | -------------------------------------------------- |
+| How to inspect without writes            | [references/probe.md](references/probe.md)         |
+| `window` aliases, webpack, Noise         | [references/globals.md](references/globals.md)     |
+| `window.electron` and IPC channels       | [references/electron.md](references/electron.md)   |
+| `sandkit.engine.api` extras vs public    | [references/engine.md](references/engine.md)       |
+| `sandkit.state` bags                     | [references/state.md](references/state.md)         |
+| `__debug`                                | [references/debug.md](references/debug.md)         |
+| Extracted `sandustry/` tree              | [references/sandustry.md](references/sandustry.md) |
+| Loader / **Starting game** / save layout | [references/boot.md](references/boot.md)           |
+| `workshop-mods.js` limits                | [references/mods-host.md](references/mods-host.md) |
+| Not confirmed yet                        | [references/gaps.md](references/gaps.md)           |

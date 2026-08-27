@@ -21,7 +21,7 @@ CLI: `--sandustry-locale=`, `--sandustry-gpu-pref-relaunched`. SharedArrayBuffer
 
 ## Renderer dist
 
-`dist/index.html` loads `js/bundle.js`. Layers: `#canvas`, `#overlay-canvas`, `#ui`, splash `#loading`.
+`dist/index.html` loads `js/bundle.js`. Layers: `#canvas`, `#overlay-canvas`, `#ui`, splash `#loading`. Loader / **Starting game**: [boot.md](boot.md).
 
 Workers: `js/simulation-worker.js`, `manager-worker.js`, `utility-worker.js`, `external-mod-runtime.js`, `external-mod-worker-runtime.js`. Locales under `js/locales/`. Procgen prefab `img/procgen/prefabs/*/config.json`.
 
