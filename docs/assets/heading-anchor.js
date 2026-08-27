@@ -150,6 +150,19 @@
         copyBtn.addEventListener("click", function (ev) {
           ev.preventDefault();
           ev.stopPropagation();
+          var hashHref = tocHrefForId(vm, headingId);
+          if (vm && vm.config && vm.config.router === "history") {
+            if (typeof history !== "undefined" && history.replaceState) {
+              history.replaceState(null, "", hashHref);
+            } else if (typeof location !== "undefined") {
+              location.assign(hashHref);
+            }
+          } else if (typeof location !== "undefined") {
+            var nextHash = hashHref.charAt(0) === "#" ? hashHref.slice(1) : hashHref;
+            if (location.hash.replace(/^#/, "") !== nextHash) {
+              location.hash = nextHash;
+            }
+          }
           var url = fullUrlForHeading(vm, headingId);
           copyUrl(url, copyBtn);
         });
