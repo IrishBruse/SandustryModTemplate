@@ -1,19 +1,19 @@
 # `sandkit.api.grid`
 
-Main thread only. Iteration helpers over cell coordinates.
+Main thread only. Cell iteration helpers and the full cell query surface (see also `world-api.md`).
 
 Types: `node_modules/@sandustry-modding/types/sandkit/api/grid.d.ts`.
 
 Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
 
-## Methods
+## Iteration methods
 
 | Method                                                            | Role                                |
 | ----------------------------------------------------------------- | ----------------------------------- |
-| `forEachCellInRect(cellX, cellY, width, height, callback)`        | Each cell in axis-aligned rectangle |
+| `forEachCellInRectangle(cellX, cellY, width, height, callback)`   | Each cell in axis-aligned rectangle |
 | `forEachCellInCircle(centerCellX, centerCellY, radius, callback)` | Each cell inside circle             |
 
-Callbacks receive `(cellX, cellY)`. Use with read-only `elements.*` / `world.*` queries inside mod code.
+Callbacks receive `(cellX, cellY)`. Use with read-only `elements.*` / `grid.*` queries inside mod code.
 
 ## MCP equivalent (read-only)
 
@@ -30,4 +30,4 @@ for (let dy = 0; dy < height; dy++)
 
 For circle sampling, filter with `(dx*dx + dy*dy) <= radius*radius`.
 
-Do not pass large callbacks through MCP, return aggregates (counts, first match).
+Do not pass large callbacks through MCP. Return aggregates (counts, first match).

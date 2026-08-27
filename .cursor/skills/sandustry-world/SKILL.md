@@ -1,13 +1,13 @@
 ---
 name: sandustry-world
-description: "Sandustry world sim, cells, chunks, elements, matter, grid, terrains, fog, wall heat, workers. Use when probing live world/grid/elements/matter/terrains or sandkit.api.world / elements / grid."
+description: "Sandustry world sim, cells, chunks, elements, matter, grid, terrains, fog, wall heat, workers. Use when probing live world/grid/elements/matter/terrains or sandkit.api.grid / elements / pickups."
 ---
 
 # Sandustry world
 
 Live **world map** of Early Access **0.5.2**. Public mod calls: [SandustryTypes](https://sandustry-modding.github.io/SandustryTypes/#/). Screen clicks stay in **sandustry-ui**. Host IPC and `__debug` stay in **sandustry-internals**.
 
-Types: `node_modules/@sandustry-modding/types/sandkit/api/{world,elements,grid,terrains,maps}.d.ts`. Enums: `node_modules/@sandustry-modding/types/sandkit/enums/index.d.ts`.
+Types: `node_modules/@sandustry-modding/types/sandkit/api/{grid,elements,terrains,pickups,maps}.d.ts`. Enums: `node_modules/@sandustry-modding/types/sandkit/enums/index.d.ts`.
 
 ## Probe
 
@@ -16,7 +16,7 @@ Types: `node_modules/@sandustry-modding/types/sandkit/api/{world,elements,grid,t
 3. Read **one cell** or a **coarse stride** sample. Do not dump `cellIds`, `wallData.data`, or `shadowMap.data`.
 4. Done when live keys match the reference for that branch (or the gap is logged in `references/gaps.md`).
 
-Do not invoke: `engine.api.game.*`, `__debug.admin.run`, `setWallDataAt`, save/load IPC, spawn/kill, `excavateAtCell`, `*AtCellWhenIdle`, `revealFogAtCell`, `reportActivityAtCell`, terrain `createAtCell` / `replaceAtCell` / `removeAtCell`, `world.pickups.spawnAtWorld`.
+Do not invoke: `engine.api.game.*`, `__debug.admin.run`, `setWallDataAt`, save/load IPC, spawn/kill, `grid.excavateAtCell`, `grid.mutate`, `revealFogAtCell`, `reportActivityAtCell`, `redrawAroundCell`, element/terrain `createAtCell` / `replaceAtCell` / `removeAtCell`, `pickups.spawnAtWorld`.
 
 Details: [references/probe.md](references/probe.md).
 
@@ -29,7 +29,7 @@ Open **one** file that matches the branch.
 | Read-only probe rules                      | [references/probe.md](references/probe.md)                         |
 | Grid size, cell id ranges, chunks          | [references/grid-chunks.md](references/grid-chunks.md)             |
 | CellType vs element vs matter              | [references/cells.md](references/cells.md)                         |
-| `sandkit.api.world`, fog, redraw, pickups  | [references/world-api.md](references/world-api.md)                 |
+| `sandkit.api.grid`, fog, redraw, `pickups` | [references/world-api.md](references/world-api.md)                 |
 | `sandkit.api.elements`                     | [references/elements.md](references/elements.md)                   |
 | `sandkit.api.terrains`                     | [references/terrains.md](references/terrains.md)                   |
 | `sandkit.api.grid`                         | [references/grid-api.md](references/grid-api.md)                   |

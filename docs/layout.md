@@ -45,18 +45,18 @@ Start from [`src/template/`](../src/template/). Copy a folder from [`examples/`]
 | Content | [`custom-terrain`](../examples/content/custom-terrain/)           | `api.terrains.register` for one terrain                    |
 | Content | [`element-reaction`](../examples/content/element-reaction/)       | `api.reactions.registerContact`                            |
 | Content | [`register-structure`](../examples/content/register-structure/)   | `api.structures.register` + mod sprite                     |
-| Content | [`structure-processor`](../examples/content/structure-processor/) | `api.structures.addProcessor` periodic loop                |
+| Content | [`structure-processor`](../examples/content/structure-processor/) | `api.structures.processing.register` periodic loop         |
 | Content | [`mod-assets`](../examples/content/mod-assets/)                   | Static `mod/` files + `assets.getUrl`                      |
 | API     | [`events`](../examples/api/events/)                               | `api.events.on("game:ready")`                              |
 | API     | [`triggers-interval`](../examples/api/triggers-interval/)         | `api.triggers.register` repeating callback                 |
 | API     | [`hooks-intercept`](../examples/api/hooks-intercept/)             | `api.hooks.intercept` + `context.cancel()`                 |
-| API     | [`schedule-idle`](../examples/api/schedule-idle/)                 | `schedule.nextTick` + `runWhenSimulationIdle`              |
+| API     | [`schedule-idle`](../examples/api/schedule-idle/)                 | `schedule.nextTick` + `grid.mutate`                        |
 | API     | [`i18n`](../examples/api/i18n/)                                   | `api.i18n.register` + `i18n.t`                             |
 | API     | [`storage`](../examples/api/storage/)                             | `api.storage.ensure` in the save file                      |
 | API     | [`sprites`](../examples/api/sprites/)                             | `api.sprites.loadFromMod` + `getById`                      |
 | API     | [`ui-prompt`](../examples/api/ui-prompt/)                         | `api.ui.prompt` text dialog                                |
 | API     | [`signal-target`](../examples/api/signal-target/)                 | `api.signals.targets.register`                             |
-| API     | [`player-teleport`](../examples/api/player-teleport/)             | `api.player.setWorldPosition`                              |
+| API     | [`player-teleport`](../examples/api/player-teleport/)             | `api.player.setPositionAtWorld`                            |
 | API     | [`collector-patches`](../examples/api/collector-patches/)         | Collector admission patches                                |
 | API     | [`worker-api`](../examples/api/worker-api/)                       | Worker-thread `sandkit.api`                                |
 | API     | [`settings`](../examples/api/settings/)                           | All `configSchema` types (`boolean` / `number` / `choice`) |

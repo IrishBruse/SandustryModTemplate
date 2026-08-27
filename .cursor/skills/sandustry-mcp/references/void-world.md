@@ -252,14 +252,14 @@ Void worlds have no ground. Place **Block** terrain (`cellId` **15**) and reset 
       if (x >= 0 && y >= 0 && y < sim.height) sim.cellIds[y * w + x] = 15;
     }
   }
-  sk.api.player.setWorldPosition(cx * 4, floorY * 4 - (p.height || 30) - 4);
+  sk.api.player.setPositionAtWorld(cx * 4, floorY * 4 - (p.height || 30) - 4);
 
   eng.shadows.refresh(st);
-  sk.api.world.redrawAroundCellWhenIdle(cx, floorY, 40);
+  sk.api.grid.redrawAroundCell(cx, floorY, 40);
   const saveId = eng.game.save(st, "Void", "YOUR_SAVE_ID");
   return {
     saveId,
-    pos: sk.api.player.getWorldPosition(),
+    pos: sk.api.player.getPositionAtWorld(),
     isOnGround: sk.api.player.isOnGround(),
     selected: sk.api.action.getSelected(),
   };
@@ -287,7 +287,7 @@ Void worlds have no ground. Place **Block** terrain (`cellId` **15**) and reset 
     coarseFogSamples: fog,
     coarseNonEmptySamples: nonEmpty,
     prefabs: sandkit.engine.api.prefabData?.getAll?.(st)?.length ?? 0,
-    player: sandkit.api.player.getWorldPosition(),
+    player: sandkit.api.player.getPositionAtWorld(),
     onGround: sandkit.api.player.isOnGround(),
   };
 };

@@ -15,7 +15,7 @@ Public mod calls: `node_modules/@sandustry-modding/types/sandkit/api/structures.
 2. `evaluate_script` with `waitForStableDom: false`. `sandkit` is ambient in the script scope (not `window.sandkit`). `__debug.state === sandkit.state`.
 3. Done when API key lists and store samples match the branch file.
 
-Do not call: `structures.buildAtCellWhenIdle`, `remove*WhenIdle`, `structures.processing.setEnabledAt`, `building.selectStructure` / `cancelPlacement`, `engine.api.factory.unlockNextTier` / `addViabilityGold` / `recordProcess`, `engine.api.queue.process`, `engine.api.conveyors.registerType`, `__debug.ensureQueuedStructuresAreBuilt`.
+Do not call: `structures.buildAtCell`, `removeAtCell` / `removeBetweenCells` / `removeAtCells`, `structures.processing.setEnabledAtCell`, `building.selectStructure` / `cancelPlacement`, `engine.api.factory.unlockNextTier` / `addViabilityGold` / `recordProcess`, `engine.api.queue.process`, `engine.api.conveyors.registerType`, `__debug.ensureQueuedStructuresAreBuilt`.
 
 Details: [references/probe.md](references/probe.md).
 

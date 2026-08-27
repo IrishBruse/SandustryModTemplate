@@ -1,6 +1,6 @@
 # Player Teleport Example
 
-Move the player with `player.setWorldPosition`.
+Move the player with `player.setPositionAtWorld`.
 
 Pattern from workshop mod `dethm0r.teleportplayer`.
 

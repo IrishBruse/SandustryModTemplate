@@ -27,13 +27,25 @@ Engine twin: `engine.api.structures.recipes.getWeightedRecipe`, `selectWeightedO
 
 | Method                                                 | Role                                 |
 | ------------------------------------------------------ | ------------------------------------ |
-| `isEnabledAt(cellX, cellY)`                            | Read whether processing runs at cell |
+| `isEnabledAtCell(cellX, cellY)`                        | Read whether processing runs at cell |
 | `register(id, { structureType, intervalMs, process })` | Bind periodic callback               |
-| `setEnabledAt(cellX, cellY, enabled)`                  | **mutate** per-cell enable flag      |
+| `setEnabledAtCell(cellX, cellY, enabled)`              | **mutate** per-cell enable flag      |
 
-`addProcessor(structureId, { intervalMs, process })` - attach processor to a structure type without a separate id.
+Canonical registration:
 
-Processing uses the triggers scheduler under the hood. Main thread only for `setEnabledAt`.
+```js
+api.structures.processing.register(id, {
+  structureType: id,
+  intervalMs: number,
+  process(structure, context) {
+    // context.isCellEmptyAtCell, context.getResolvedTypeAtCell, context.commit
+  },
+});
+```
+
+Deprecated: `addProcessor(structureId, { intervalMs, process })` — use `processing.register` with `structureType`.
+
+Processing uses the triggers scheduler under the hood. Main thread only for `setEnabledAtCell`.
 
 ## Factory process events
 

@@ -1,8 +1,8 @@
 const api = sandkit.api;
 
-const sandType = api.elements.getTypeFromId("sand");
-const waterType = api.elements.getTypeFromId("water");
-const wetSandType = api.elements.getTypeFromId("wetSand");
+const sandType = api.elements.getTypeById("sand");
+const waterType = api.elements.getTypeById("water");
+const wetSandType = api.elements.getTypeById("wetSand");
 
 api.reactions.registerContact({
   inputA: sandType,

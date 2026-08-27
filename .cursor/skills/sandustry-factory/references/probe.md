@@ -7,8 +7,8 @@ Read-only inspection via `sandustry-mcp` `evaluate_script`. Return JSON-serializ
 ## Safe
 
 - `Object.keys` on `sandkit.api.structures`, `.processing`, `.structureBehaviors`, `.authorization`, `.building`, `.collector`.
-- `sandkit.api.structures.getAtCell`, `getDefinitionByType`, `getUnlockedTypes`, `isTypeAtCell`, `hasBuiltAtCell`, `forEachOfType` (read callbacks only).
-- `sandkit.api.structures.processing.isEnabledAt`.
+- `sandkit.api.structures.getAtCell`, `getDefinitionByType`, `getAvailableTypes`, `isLockedByType`, `isTypeAtCell`, `hasBuiltAtCell`, `forEachOfType` (read callbacks only).
+- `sandkit.api.structures.processing.isEnabledAtCell`.
 - `sandkit.api.authorization.canBuildAtCell`, `canGrabAtCell`, `getZoneIdAtCell`, `getPlayerZoneId`.
 - `sandkit.engine.api.factory.getLevel`, `getProcessCount`, `getProcessRate`, `canUnlockNextTier` (pass `sandkit.state` first).
 - Store counts and first-item key lists: `store.structures`, `store.pipes`, `store.pumpsCache`, `store.queue`, `store.viability`, `store.stratacores`, `store.factoryLevelCap`.
@@ -19,8 +19,8 @@ Read-only inspection via `sandustry-mcp` `evaluate_script`. Return JSON-serializ
 
 ## Unsafe (needs user ask)
 
-- `structures.buildAtCellWhenIdle`, `removeAtCellWhenIdle`, `removeBetweenCellsWhenIdle`, `removeAtCellsWhenIdle`.
-- `structures.setData`, `update`, `setSpritesheetIndex*`, `structures.processing.setEnabledAt`, `structures.register`, `addProcessor`.
+- `structures.buildAtCell`, `removeAtCell`, `removeBetweenCells`, `removeAtCells`.
+- `structures.updateData`, `update`, `setSpritesheetIndex*`, `structures.processing.setEnabledAtCell`, `structures.processing.register`, `structures.register`.
 - `processing.registerGrower|registerShaker|registerKineticPress`, `structureBehaviors.register*`, `structures.recipes.register`.
 - `building.selectStructure`, `cancelPlacement`.
 - `engine.api.structures.build|removeAt|removeBetween|removeAtPositions`.

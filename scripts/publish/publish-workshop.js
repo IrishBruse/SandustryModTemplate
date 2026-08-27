@@ -22,7 +22,7 @@ import {
   steamCmdPublishLogPath,
   workshopUploadSucceeded,
 } from "../lib/steamcmd.js";
-import { isPublishTty, tuiConfirm, tuiSelect } from "./publish-tui.js";
+import { isCliTty, tuiConfirm, tuiSelect } from "./publish-tui.js";
 import {
   copyWorkshopInstallFiles,
   parsePublishedFileIdFromVdf,
@@ -242,7 +242,7 @@ async function ensureSteamCmdLogin(steamCmd, account) {
     return;
   }
 
-  if (!isPublishTty()) {
+  if (!isCliTty()) {
     fail(
       [
         `SteamCMD has no cached credentials for ${account}.`,
@@ -346,7 +346,7 @@ async function pickMod(allMods) {
     return selected;
   }
 
-  if (!isPublishTty()) {
+  if (!isCliTty()) {
     fail("Pass --mod <folder> when stdin is not a TTY.");
   }
 
@@ -390,7 +390,7 @@ async function pickMod(allMods) {
 
 async function confirmUpload(mod, account, steamCmd, previewFile, publishedFileId, isNewItem) {
   if (yesFlag) return true;
-  if (!isPublishTty()) {
+  if (!isCliTty()) {
     fail("Pass --yes to skip confirmation when stdin is not a TTY.");
   }
   const changeNote = workshopChangeNote(mod);

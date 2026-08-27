@@ -15,9 +15,6 @@ export function isCliTty() {
   return Boolean(process.stdin.isTTY && process.stdout.isTTY);
 }
 
-/** @deprecated Use {@link isCliTty}. */
-export const isPublishTty = isCliTty;
-
 /**
  * @param {string} text
  */

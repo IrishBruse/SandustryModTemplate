@@ -7,34 +7,34 @@
 | Field    | Type   | Notes                                |
 | -------- | ------ | ------------------------------------ |
 | `id`     | number | Runtime id.                          |
-| `type`   | number | `sandkit.enums.WorldItemType`.       |
+| `type`   | number | `sandkit.enums.PickupType`.          |
 | `x`, `y` | number | World pixels.                        |
 | `data`   | object | Per-type animation and display data. |
 
 ### `data` by type
 
-| WorldItemType | Value | data keys (typical)                         |
-| ------------- | ----- | ------------------------------------------- |
-| Artifact      | 1     | `name`, `hoverData` (bob), `prefabSpecial`  |
-| GlyphKey      | 2     | Same hover pattern as Artifact.             |
-| Stratacore    | 3     | `circleData` (orbit animation).             |
-| Orb           | 4     | `breathData` (scale pulse), `lightPosition` |
+| PickupType | Value | data keys (typical)                         |
+| ---------- | ----- | ------------------------------------------- |
+| Artifact   | 1     | `name`, `hoverData` (bob), `prefabSpecial`  |
+| GlyphKey   | 2     | Same hover pattern as Artifact.             |
+| Stratacore | 3     | `circleData` (orbit animation).             |
+| Orb        | 4     | `breathData` (scale pulse), `lightPosition` |
 
 Optional `data.lightIndex` when spawned with a point light.
 
 ## Public API
 
-`sandkit.api.world.pickups`:
+`sandkit.api.pickups`:
 
 | Method                                    | Role                             |
 | ----------------------------------------- | -------------------------------- |
 | `getAll()`                                | `store.worldItems`.              |
 | `getById(id)`                             | Find by id.                      |
 | `spawnAtWorld(type, x, y, data?, light?)` | Spawn (unsafe).                  |
-| `destroy(worldItem)`                      | Remove (unsafe).                 |
-| `pickUp(worldItem)`                       | Collect into inventory (unsafe). |
+| `remove(pickup)`                          | Remove (unsafe).                 |
+| `pickUp(pickup)`                          | Collect into inventory (unsafe). |
 
-Types: `node_modules/@sandustry-modding/types/sandkit/api/world.d.ts`. Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
+Types: `node_modules/@sandustry-modding/types/sandkit/api/pickups.d.ts`. Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
 
 ## `session.prefabWorldItemCache`
 

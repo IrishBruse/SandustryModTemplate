@@ -25,7 +25,7 @@ export function registerBuiltinF3Sections(): () => void {
       lines: () => {
         if (!inGame()) return null;
 
-        const pos = api.player.getWorldPosition();
+        const pos = api.player.getPositionAtWorld();
         if (!pos) return null;
 
         const cell = worldToCell(pos.x, pos.y);

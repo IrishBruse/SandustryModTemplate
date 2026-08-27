@@ -23,20 +23,20 @@
 
 ## `sandkit.api.player`
 
-| Method                                | Arity | Notes                                             |
-| ------------------------------------- | ----- | ------------------------------------------------- |
-| `getWorldPosition()`                  | 0     | `{ x, y }` world pixels                           |
-| `setWorldPosition(x, y)`              | 2     | **mutate**                                        |
-| `setVelocity(vx, vy)`                 | 2     | **mutate**                                        |
-| `setMovementSpeedMultiplier(n)`       | 1     | `1` = walk; `0` freezes, vanilla sprint needs `1` |
-| `setMovementMode("normal"\|"hover")`  | 1     | **mutate**; returns changed                       |
-| `isOnGround()`                        | 0     | Solid cell 1px below hitbox                       |
-| `teleportToGround()`                  | 0     | **mutate**                                        |
-| `isWorldPositionClear(x, y)`          | 2     | Hitbox fits                                       |
-| `isCollidingWithCell(x, y)`           | 2     | Worker-shared                                     |
-| `isWithinRadiusOfCell(x, y, r)`       | 3     | Worker-shared                                     |
-| `inventory.addFromId(itemId)`         | 1     | **mutate**                                        |
-| `buildings.unlockByType(structureId)` | 1     | **mutate**                                        |
+| Method                               | Arity | Notes                                             |
+| ------------------------------------ | ----- | ------------------------------------------------- |
+| `getPositionAtWorld()`               | 0     | `{ x, y }` world pixels                           |
+| `setPositionAtWorld(x, y)`           | 2     | **mutate**                                        |
+| `setVelocity(vx, vy)`                | 2     | **mutate**                                        |
+| `setMovementSpeedMultiplier(n)`      | 1     | `1` = walk; `0` freezes, vanilla sprint needs `1` |
+| `setMovementMode("normal"\|"hover")` | 1     | **mutate**; returns changed                       |
+| `isOnGround()`                       | 0     | Solid cell 1px below hitbox                       |
+| `teleportToGround()`                 | 0     | **mutate**                                        |
+| `isPositionClearAtWorld(x, y)`       | 2     | Hitbox fits                                       |
+| `isCollidingWithCell(x, y)`          | 2     | Worker-shared                                     |
+| `isWithinRadiusOfCell(x, y, r)`      | 3     | Worker-shared                                     |
+| `inventory.addById(itemId)`          | 1     | **mutate**                                        |
+| `buildings.unlockById(structureId)`  | 1     | **mutate**                                        |
 
 ## Engine twin
 

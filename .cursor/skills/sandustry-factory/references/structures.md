@@ -18,12 +18,12 @@ Live save sample: **872** structures (2025-08 probe), 10 `queued`, fields `color
 
 ## `sandkit.api.structures` (live keys)
 
-`addProcessor`, `addVariant`, `buildAtCellWhenIdle`, `forEachOfType`, `getAtCell`, `getDefinitionByType`, `getTypeFromId`, `getUnlockedTypes`, `hasBuiltAtCell`, `isBlockedByPlayerAtCell`, `isLauncherAtCell`, `isType`, `isTypeAtCell`, `isUnlockedByType`, `mapValueToSpritesheetIndex`, `register`, `registerPlacementConfig`, `removeAtCellWhenIdle`, `removeAtCellsWhenIdle`, `removeBetweenCellsWhenIdle`, `setData`, `setSpritesheetIndex`, `setSpritesheetIndexAtCell`, `setSpritesheetIndexByValue`, `setSpritesheetIndexByValueAtCell`, `update`, `updateDefinition`.
+`registerVariant`, `buildAtCell`, `forEachOfType`, `getAtCell`, `getDefinitionByType`, `getTypeById`, `getAvailableTypes`, `hasBuiltAtCell`, `isBlockedByPlayerAtCell`, `isLauncherAtCell`, `isType`, `isTypeAtCell`, `isLockedByType`, `mapValueToSpritesheetIndex`, `register`, `registerPlacementConfig`, `removeAtCell`, `removeAtCells`, `removeBetweenCells`, `updateData`, `setSpritesheetIndex`, `setSpritesheetIndexAtCell`, `setSpritesheetIndexByValue`, `setSpritesheetIndexByValueAtCell`, `update`, `updateDefinition`.
 
 Nested:
 
 - `recipes.register` - machine recipe slots (`planterBox`, `shaker`, `kineticPress`, refinery ids).
-- `processing.isEnabledAt`, `processing.register`, `processing.setEnabledAt`.
+- `processing.isEnabledAtCell`, `processing.register`, `processing.setEnabledAtCell`.
 
 ## Shape matrix (`shape`)
 
@@ -57,7 +57,9 @@ State-first twin. Live extras vs public: `build`, `removeAt`, `removeBetween`, `
 
 ## Built-in type ids
 
-Numeric `StructureType` enum (1-27): see `enums.md`. Mod types use string ids. `getTypeFromId('collector')` -> `16`.
+Numeric `StructureType` enum (1-27): see `enums.md`. Mod types use string ids. `getTypeById('collector')` -> `16`.
+
+`isLockedByType(type)` returns `true` when the type is locked. For unlock checks use `!isLockedByType(...)` or `getAvailableTypes().has(...)`. Do not rely on deprecated `isUnlockedByType` for numeric types.
 
 ## Related
 

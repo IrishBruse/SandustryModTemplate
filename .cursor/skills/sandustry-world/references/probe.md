@@ -26,9 +26,9 @@ Cross-links: **sandustry-internals** `references/probe.md`, **sandustry-ui** for
 
 ## Unsafe (needs user ask)
 
-- Any cell or terrain mutation: `excavateAtCell`, `reportActivityAtCell`, `revealFogAtCell`, `redrawAroundCellWhenIdle`, `*AtCellWhenIdle`, terrain `createAtCell` / `replaceAtCell` / `removeAtCell` / `damageAtCell`.
+- Any cell or terrain mutation: `grid.excavateAtCell`, `reportActivityAtCell`, `revealFogAtCell`, `redrawAroundCell`, `grid.mutate`, element/terrain `createAtCell` / `replaceAtCell` / `removeAtCell` / `damageAtCell` / `setHitPointsAtCell`.
 - Engine mutators: `wall.setWallDataAt`, `heatTransfer.*`, `foliage.generate`, `shadows.refresh*`, `matters.register`, `engine.api.game.*`.
-- Pickup spawn/destroy: `world.pickups.spawnAtWorld`, `destroy`, `pickUp`.
+- Pickup spawn/remove: `pickups.spawnAtWorld`, `remove`, `pickUp`.
 - Save/load IPC, `__debug.admin.run`, `__debug.setSchedulingMode`, `__debug.moveCamera`.
 
 ## Sample script shape

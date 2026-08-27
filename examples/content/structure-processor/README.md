@@ -1,6 +1,6 @@
 # Structure Processor Example
 
-Attach a periodic callback with `structures.addProcessor`.
+Attach a periodic callback with `structures.processing.register`.
 
 Pattern from workshop mod `lunalith.storage`.
 

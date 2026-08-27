@@ -1,10 +1,10 @@
-# `sandkit.api.world`
+# `sandkit.api.grid` and `sandkit.api.pickups`
 
-Main-thread namespace. Shared queries live in `node_modules/@sandustry-modding/types/shared/api/world.d.ts`. Idle and fog helpers on main thread only.
+Cell queries, fog, redraw, and deferred grid mutations live on `sandkit.api.grid`. World pickups live on `sandkit.api.pickups`.
 
-Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
+Types: `node_modules/@sandustry-modding/types/sandkit/api/grid.d.ts`, `pickups.d.ts`. Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
 
-## Sync queries (shared)
+## `sandkit.api.grid` — sync queries (shared)
 
 | Method                                                        | Role                             |
 | ------------------------------------------------------------- | -------------------------------- |
@@ -16,27 +16,31 @@ Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
 
 `ExcavateOptions`: `fromGun`, `fromDrill`, `fromRocketExplosion`, `useLiteralOutVelocity`, `destroyNonDestructible`, `forceRemoveAll`, `drillTierDamage`.
 
-## Main-thread only
+## `sandkit.api.grid` — main thread only
 
-| Method                                          | Role                                 |
-| ----------------------------------------------- | ------------------------------------ |
-| `runWhenSimulationIdle(callback)`               | Run on main thread when workers idle |
-| `revealFogAtCell(cellX, cellY)`                 | Clear fog-of-war (**mutates**)       |
-| `redrawAroundCellWhenIdle(cellX, cellY, range)` | Request render refresh when idle     |
+| Method                                  | Role                                                           |
+| --------------------------------------- | -------------------------------------------------------------- |
+| `mutate(callback)`                      | Run deferred element/terrain writes via `writer` (**mutates**) |
+| `revealFogAtCell(cellX, cellY)`         | Clear fog-of-war (**mutates**)                                 |
+| `redrawAroundCell(cellX, cellY, range)` | Request render refresh around cell                             |
 
-Fog terrain ids: `CellType.Fog` (4), `FogJetpackBlock` (5), `FogWater` (6), `FogLava` (13). Reveal API targets fog cells, do not call during read-only probes.
+`mutate(writer => …)` schedules coordinated element and terrain changes. The writer exposes `writer.elements.createAtCell`, `writer.terrains.createAtCell`, and matching `replaceAtCell` / `removeAtCell` helpers.
 
-## `world.pickups`
+Main-thread calls on `api.elements.*` and `api.terrains.*` are also deferred. Reads see the old grid until mutations apply.
+
+Fog terrain ids: `CellType.Fog` (4), `FogJetpackBlock` (5), `FogWater` (6), `FogLava` (13). Reveal API targets fog cells. Do not call during read-only probes.
+
+## `sandkit.api.pickups`
 
 | Method                                              | Role                       |
 | --------------------------------------------------- | -------------------------- |
 | `spawnAtWorld(type, worldX, worldY, data?, light?)` | Spawn pickup (**mutates**) |
-| `destroy(worldItem)`                                | Remove pickup              |
-| `pickUp(worldItem)`                                 | Collect to inventory       |
+| `remove(pickup)`                                    | Remove pickup              |
+| `pickUp(pickup)`                                    | Collect to inventory       |
 | `getAll()`                                          | List active pickups        |
-| `getById(worldItemId)`                              | Lookup by id               |
+| `getById(pickupId)`                                 | Lookup by id               |
 
-`WorldItem`: `{ id, x, y, type, data }`. Types: `WorldItemType` enum / https://sandustry-modding.github.io/SandustryTypes/#/.
+`WorldItem`: `{ id, x, y, type, data }`. Types: `PickupType` enum / https://sandustry-modding.github.io/SandustryTypes/#/.
 
 ## MCP decode without API
 

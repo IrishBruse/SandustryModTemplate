@@ -6,17 +6,19 @@ Types: `node_modules/@sandustry-modding/types/shared/api/terrains.d.ts`, `node_m
 
 Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
 
-## Shared queries and sync mutations
+## Shared queries and mutations
 
-| Method                                          | Role                               |
-| ----------------------------------------------- | ---------------------------------- |
-| `getTypeFromId(terrainId)`                      | String id -> cell type             |
-| `getTypeAtCell`, `getDataAtCell`                | Type and hp at cell                |
-| `isAtCell`, `isTypeAtCell(…, terrainId)`        | Presence checks                    |
-| `isCellIdTerrain(cellId)`                       | True for terrain id range          |
-| `damageAtCell(…, damage)`                       | Apply hp damage (**mutates**)      |
-| `createAtCell`, `replaceAtCell`, `removeAtCell` | Immediate terrain ops (**mutate**) |
-| `setHpAtCell(…, hp)`                            | Sync hp set (**mutates**)          |
+| Method                                          | Role                                 |
+| ----------------------------------------------- | ------------------------------------ |
+| `getTypeById(terrainId)`                        | String id -> cell type               |
+| `getTypeAtCell`, `getDataAtCell`                | Type and `hitPoints` at cell         |
+| `isAtCell`, `isTypeAtCell(…, terrainId)`        | Presence checks                      |
+| `isCellIdTerrain(cellId)`                       | True for terrain id range            |
+| `damageAtCell(…, damage)`                       | Apply hit-point damage (**mutates**) |
+| `createAtCell`, `replaceAtCell`, `removeAtCell` | Terrain ops (**mutate**)             |
+| `setHitPointsAtCell(…, hitPoints)`              | Set hit points (**mutates**)         |
+
+On the main thread, terrain mutations are deferred like element writes. Worker entry applies them immediately.
 
 `TerrainMutationOptions`: `{ skipShadow?: boolean }`.
 
@@ -28,10 +30,6 @@ Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
 | `updateDefinition(cellTypeOrId, partial)` | Patch definition  |
 
 `TerrainDefinition`: `id`, `nameKey`, `hp`, `materialId` (must be > 100 and < 150), `metaColor`, `colorHSL`, `excavationRequirements`, `interactions`, `output`.
-
-## Idle mutations (main)
-
-`createAtCellWhenIdle`, `replaceAtCellWhenIdle`, `removeAtCellWhenIdle`, `setHpAtCellWhenIdle`.
 
 ## Live registrations
 

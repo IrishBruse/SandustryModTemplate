@@ -28,9 +28,9 @@ Sweeper drones use a mod string type, not this enum.
 
 Mod projectiles set `type: Mod` and carry `mods` payload keyed by registered string id.
 
-## WorldItemType
+## PickupType
 
-`store.worldItems[].type` and `world.pickups.spawnAtWorld` first arg.
+`store.worldItems[].type` and `pickups.spawnAtWorld` first arg.
 
 | Member     | Value |
 | ---------- | ----- |

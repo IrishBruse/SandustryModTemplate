@@ -9,8 +9,8 @@ Read-only inspection via `sandustry-mcp` `evaluate_script`. Return JSON only.
 - `sandkit.engine.api.teleportZones.getAll|getAtCell|getById`.
 - `sandkit.engine.api.portals.getMarkers(state)`.
 - `sandkit.engine.api.swarmConsole` getters (`getCrystalMined`, `getRadiusPx`, `getDiskRadiusCells`, `getPlacedConsoles`, `isSpawnJammed`, `getPendingConvergence`, `getNearestConvergence`).
-- `sandkit.api.projectiles.getAll()`, `getById`, `world.pickups.getAll()`, `getById`.
-- `sandkit.enums.DroneType`, `ProjectileType`, `WorldItemType`.
+- `sandkit.api.projectiles.getAll()`, `getById`, `pickups.getAll()`, `getById`.
+- `sandkit.enums.DroneType`, `ProjectileType`, `PickupType`.
 - `Object.keys` on API bags. Round positions with `Math.round`.
 
 ## Unsafe (needs user ask)
@@ -19,7 +19,7 @@ Read-only inspection via `sandustry-mcp` `evaluate_script`. Return JSON only.
 - `engine.api.entities.spawn|launch|startCapture|registerType|registerSpawner`.
 - `engine.api.teleportZones.teleportPlayerTo|add|remove|spawnDefaultParticles`.
 - `api.projectiles.spawnAtWorld|remove|register`.
-- `api.world.pickups.spawnAtWorld|destroy|pickUp`.
+- `api.pickups.spawnAtWorld|remove|pickUp`.
 - `swarmConsole.setSpawnJammed|resetAllConvergenceBuffers|decrementConvergenceBuffer|registerEntityType`.
 - `sweeperDrone.cancelSelection`.
 

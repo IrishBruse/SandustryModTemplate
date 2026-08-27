@@ -1,6 +1,6 @@
 # `sandkit.api.elements`
 
-Main thread only for registration and `*WhenIdle` mutations. Shared reads in `node_modules/@sandustry-modding/types/shared/api/elements.d.ts`.
+Main thread only for registration and deferred cell mutations. Shared reads in `node_modules/@sandustry-modding/types/shared/api/elements.d.ts`.
 
 Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
 
@@ -8,7 +8,7 @@ Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
 
 | Method                                    | Role                         |
 | ----------------------------------------- | ---------------------------- |
-| `getTypeFromId(elementId)`                | String id -> type handle     |
+| `getTypeById(elementId)`                  | String id -> type handle     |
 | `getDefinitionByType(elementType)`        | Mod definition               |
 | `getTypeAtCell`, `getResolvedTypeAtCell`  | Type at cell                 |
 | `getResolvedTypeFromCellId(cellId)`       | Type from packed id          |
@@ -28,9 +28,13 @@ Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
 | `getNameByType(elementType)`                      | Display name                     |
 | `findFreeCellInStructure(anchorX, anchorY, size)` | Footprint search                 |
 
-## Idle mutations (main, need user ask)
+## Main-thread mutations (need user ask)
 
-All schedule work when sim is idle: `createAtCellWhenIdle`, `replaceAtCellWhenIdle`, `removeAtCellWhenIdle`, `teleportBetweenCellsWhenIdle`, `setVelocityAtCellWhenIdle`, `addParticleVelocityAtCellWhenIdle`, `convertToParticleAtCellWhenIdle`, `convertFromParticleAtCellWhenIdle`, `setDataFieldAtCellWhenIdle`, `refreshColorAtCellWhenIdle`, `setPhysicsAtCellWhenIdle`, `setDurationAtCellWhenIdle`.
+Main-entry writes are deferred. Reads see the old grid until mutations apply.
+
+`createAtCell`, `replaceAtCell`, `removeAtCell`, `teleportBetweenCells`, `setVelocityAtCell`, `addParticleVelocityAtCell`, `convertToParticleAtCell`, `convertFromParticleAtCell`, `setDataFieldAtCell`, `refreshColorAtCell`, `setPhysicsAtCell`, `setDurationAtCell`.
+
+For coordinated element and terrain changes, prefer `api.grid.mutate(writer => …)`.
 
 ## Live definition keys (`getDefinitionByType`)
 

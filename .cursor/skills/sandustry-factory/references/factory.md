@@ -60,7 +60,7 @@ Later tiers may also gate on auralite produced, prismite/prismaline available, a
 
 ## Stratacores
 
-`store.stratacores` lists unlocked stratacore type ids. World pickups use `WorldItemType.Stratacore` - **sandustry-entities** `references/world-items.md`. Toolbox UI: **sandustry-ui** `references/toolbox.md`.
+`store.stratacores` lists unlocked stratacore type ids. World pickups use `PickupType.Stratacore` - **sandustry-entities** `references/world-items.md`. Toolbox UI: **sandustry-ui** `references/toolbox.md`.
 
 ## HUD
 

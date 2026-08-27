@@ -26,13 +26,14 @@ async function main() {
     },
   });
 
-  api.structures.addProcessor(STRUCTURE_ID, {
+  api.structures.processing.register(STRUCTURE_ID, {
+    structureType: STRUCTURE_ID,
     intervalMs: PROCESS_INTERVAL_MS,
-    process(_state, structure) {
+    process(structure, context) {
       let filled = 0;
       for (let dy = 0; dy < STRUCTURE_SIZE; dy += 1) {
         for (let dx = 0; dx < STRUCTURE_SIZE; dx += 1) {
-          if (!api.world.isCellEmptyAtCell(structure.x + dx, structure.y + dy)) {
+          if (!context.isCellEmptyAtCell(structure.x + dx, structure.y + dy)) {
             filled += 1;
           }
         }
@@ -44,7 +45,9 @@ async function main() {
   });
 
   api.ui.toast("Structure Processor — Debug → Building → Example Scanner", {});
-  console.log(`loaded — structures.addProcessor(${STRUCTURE_ID}) every ${PROCESS_INTERVAL_MS}ms`);
+  console.log(
+    `loaded — structures.processing.register(${STRUCTURE_ID}) every ${PROCESS_INTERVAL_MS}ms`,
+  );
 }
 
 void main();

@@ -16,7 +16,7 @@ This skill covers **engine and store models** only. It does not cover Debug F3 s
 3. State: `const s = sandkit.state` (same as `sandkit.engine.state`, `__debug.state`).
 4. Done when counts and sample keys match the branch file.
 
-**Do not call:** `engine.api.drones.spawn|kill`, `entities.spawn|launch|startCapture`, `teleportZones.teleportPlayerTo|add|remove`, `world.pickups.spawnAtWorld|destroy|pickUp`, `projectiles.spawnAtWorld|remove`, `swarmConsole.setSpawnJammed`, `sweeperDrone.cancelSelection`.
+**Do not call:** `engine.api.drones.spawn|kill`, `entities.spawn|launch|startCapture`, `teleportZones.teleportPlayerTo|add|remove`, `pickups.spawnAtWorld|remove|pickUp`, `projectiles.spawnAtWorld|remove`, `swarmConsole.setSpawnJammed`, `sweeperDrone.cancelSelection`.
 
 Details: [references/probe.md](references/probe.md).
 
@@ -24,16 +24,16 @@ Details: [references/probe.md](references/probe.md).
 
 Open **one** file that matches the branch.
 
-| Branch                                         | File                                                             |
-| ---------------------------------------------- | ---------------------------------------------------------------- |
-| Safe probe scripts                             | [references/probe.md](references/probe.md)                       |
-| `store.*` arrays, session caches               | [references/store.md](references/store.md)                       |
-| `engine.api.entities`, creatures, capture      | [references/entities.md](references/entities.md)                 |
-| `store.drones`, hauler / sweeper               | [references/drones.md](references/drones.md)                     |
-| `store.projectiles`, public API                | [references/projectiles.md](references/projectiles.md)           |
-| `store.worldItems`, pickups, prefab cache      | [references/world-items.md](references/world-items.md)           |
-| `teleportZones`, `portals`                     | [references/teleport-portals.md](references/teleport-portals.md) |
-| `swarmConsole`, `sweeperDrone`                 | [references/swarm-sweeper.md](references/swarm-sweeper.md)       |
-| `launchers.registerType`                       | [references/launchers.md](references/launchers.md)               |
-| `DroneType`, `ProjectileType`, `WorldItemType` | [references/enums.md](references/enums.md)                       |
-| Not confirmed yet                              | [references/gaps.md](references/gaps.md)                         |
+| Branch                                      | File                                                             |
+| ------------------------------------------- | ---------------------------------------------------------------- |
+| Safe probe scripts                          | [references/probe.md](references/probe.md)                       |
+| `store.*` arrays, session caches            | [references/store.md](references/store.md)                       |
+| `engine.api.entities`, creatures, capture   | [references/entities.md](references/entities.md)                 |
+| `store.drones`, hauler / sweeper            | [references/drones.md](references/drones.md)                     |
+| `store.projectiles`, public API             | [references/projectiles.md](references/projectiles.md)           |
+| `store.worldItems`, pickups, prefab cache   | [references/world-items.md](references/world-items.md)           |
+| `teleportZones`, `portals`                  | [references/teleport-portals.md](references/teleport-portals.md) |
+| `swarmConsole`, `sweeperDrone`              | [references/swarm-sweeper.md](references/swarm-sweeper.md)       |
+| `launchers.registerType`                    | [references/launchers.md](references/launchers.md)               |
+| `DroneType`, `ProjectileType`, `PickupType` | [references/enums.md](references/enums.md)                       |
+| Not confirmed yet                           | [references/gaps.md](references/gaps.md)                         |

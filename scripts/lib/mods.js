@@ -68,11 +68,6 @@ export function modFolderFromPath(filePath, root = ROOT) {
   return null;
 }
 
-/** @deprecated Use {@link modFolderFromPath}. */
-export function srcModFolder(filePath, root = ROOT) {
-  return modFolderFromPath(filePath, root);
-}
-
 /**
  * Fail the bundle when one mod folder imports another mod's tree.
  * @param {string} [root]

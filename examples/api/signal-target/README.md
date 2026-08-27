@@ -14,4 +14,4 @@ This mod does not add UI. It only registers the handler.
 
 ## Copy this mod
 
-Copy `examples/api/signal-target/` to `src/<your-mod>/`. Swap structure type ids and call `structures.processing.setEnabledAt` or your own handler in `main.ts`.
+Copy `examples/api/signal-target/` to `src/<your-mod>/`. Swap structure type ids and call `structures.processing.setEnabledAtCell` or your own handler in `main.ts`.

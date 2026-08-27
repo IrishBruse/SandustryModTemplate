@@ -30,12 +30,12 @@ Live: 10 queued structures (e.g. `conveyorLeftMk2` at `1740, 1340`).
 
 Conveyor registration often passes `skipQueued: true` so belts do not transport until built.
 
-## `sandkit.api.structures` idle builders
+## `sandkit.api.structures` deferred builders
 
-Deferred placement/removal when simulation is idle:
+Main-thread placement and removal are deferred:
 
-- `buildAtCellWhenIdle(x, y, structureTypeOrId, options?)`
-- `removeAtCellWhenIdle`, `removeBetweenCellsWhenIdle`, `removeAtCellsWhenIdle`
+- `buildAtCell(x, y, structureTypeOrId, options?)`
+- `removeAtCell`, `removeBetweenCells`, `removeAtCells`
 
 These are writes. Do not call without user ask.
 

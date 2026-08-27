@@ -24,6 +24,6 @@ Cell coords: `floor(playerPos[0] / config.cellSize)`, same for y.
 
 ## Pickups and items
 
-World pickups use `sandkit.api.world.pickups` (runtime list), not `store.world` keys.
+World pickups use `sandkit.api.pickups` (runtime list), not `store.world` keys.
 
 Structures, drones, pipes: other `store.*` bags - **sandustry-internals** `references/state.md`.
