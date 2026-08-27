@@ -1,3 +1,4 @@
+/* Shared base theme — keep identical across SandustryModTemplate and SandustryTypes. */
 /* Colors from SandustryModTemplate docs (dark charcoal + gold). */
 :root {
   --smt-wiki-gold: #c99400;
@@ -37,9 +38,7 @@
   --button-bg: var(--smt-wiki-gold-bright);
   --button-color: #121212;
   --font-size: 15px;
-  --content-max-width: 72ch;
-  --unofficial-banner-height: 2.75rem;
-  --smt-banner-offset: var(--unofficial-banner-height);
+  --content-max-width: 56rem;
   color-scheme: dark;
   scrollbar-width: thin;
   scrollbar-color: #3a3a3a #1a1a1a;
@@ -70,131 +69,7 @@
   height: 0;
 }
 
-.unofficial-banner {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  box-sizing: border-box;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 0.75rem;
-  min-height: var(--unofficial-banner-height);
-  padding: 0.55rem 0.75rem 0.55rem 1rem;
-  background: #1a1a1a;
-  color: #dddddd;
-  border-bottom: 1px solid #2a2a2a;
-  font-size: 0.9rem;
-  line-height: 1.35;
-  text-align: center;
-}
-
-.unofficial-banner[hidden] {
-  display: none;
-}
-
-.unofficial-banner__text {
-  grid-column: 2;
-  margin: 0;
-  max-width: 52rem;
-}
-
-.unofficial-banner strong {
-  color: var(--smt-wiki-gold-bright);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-}
-
-.unofficial-banner a {
-  color: var(--smt-wiki-link);
-  text-decoration: none;
-}
-
-.unofficial-banner a:hover {
-  color: var(--smt-wiki-gold-bright);
-  text-decoration: none;
-}
-
-.unofficial-banner__dismiss {
-  grid-column: 3;
-  justify-self: end;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  color: #f0f0f0;
-  font-size: 1.5rem;
-  font-weight: 600;
-  line-height: 1;
-  cursor: pointer;
-  user-select: none;
-}
-
-.unofficial-banner__dismiss:hover,
-.unofficial-banner__dismiss:focus,
-.unofficial-banner__dismiss:focus-visible {
-  background: transparent;
-  box-shadow: none;
-  outline: none;
-  color: var(--smt-wiki-gold-bright);
-}
-
 html {
-  scroll-padding-top: calc(var(--smt-banner-offset) + 1rem);
-}
-
-body {
-  padding-top: var(--smt-banner-offset);
-}
-
-body.sticky .sidebar,
-body.sticky .sidebar-toggle {
-  top: var(--smt-banner-offset);
-  height: calc(100vh - var(--smt-banner-offset));
-  bottom: auto;
-}
-
-body.banner-dismissed {
-  --smt-banner-offset: 0px;
-  padding-top: 0;
-}
-
-body.banner-dismissed.sticky .sidebar,
-body.banner-dismissed.sticky .sidebar-toggle {
-  top: 0;
-  height: 100vh;
-}
-
-html.banner-dismissed-pending {
-  --smt-banner-offset: 0px;
-}
-
-html.banner-dismissed-pending .unofficial-banner {
-  display: none;
-}
-
-html.banner-dismissed-pending body {
-  --smt-banner-offset: 0px;
-  padding-top: 0;
-}
-
-html.banner-dismissed-pending body.sticky .sidebar,
-html.banner-dismissed-pending body.sticky .sidebar-toggle {
-  top: 0;
-  height: 100vh;
-}
-
-html:has(body.banner-dismissed) {
   scroll-padding-top: 1rem;
 }
 

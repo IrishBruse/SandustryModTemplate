@@ -1,15 +1,10 @@
-/* Feature styles on top of assets/theme.css (shared with SandustryTypes). */
+/* Feature styles on top of assets/theme.css.
+ * Keep theme.css + site.css identical across SandustryModTemplate and SandustryTypes. */
 :root {
   --sidebar-toggle-height: 40px;
   --sidebar-toggle-margin-block: 0;
   --sidebar-toggle-width: 36px;
   --sidebar-toggle-alignment: flex-start;
-  --smt-banner-offset: var(--unofficial-banner-height);
-}
-
-body.banner-dismissed,
-html.banner-dismissed-pending {
-  --smt-banner-offset: 0px;
 }
 
 /* Hide Docsify GitHub corner if a repo option is re-added later. */
@@ -147,7 +142,7 @@ body:has(.sidebar.show) .sidebar-toggle .smt-sidebar-toggle-icon {
   body.smt-drawer-open .sidebar-toggle {
     position: fixed;
     left: max(0px, env(safe-area-inset-left, 0px));
-    top: calc(var(--smt-banner-offset, 0px) + max(0.65rem, env(safe-area-inset-top, 0px)));
+    top: calc(max(0.65rem, env(safe-area-inset-top, 0px)));
     right: auto;
     bottom: auto;
     width: auto !important;
@@ -182,10 +177,10 @@ body:has(.sidebar.show) .sidebar-toggle .smt-sidebar-toggle-icon {
   #smt-page-toc {
     display: block;
     position: fixed;
-    top: calc(var(--smt-banner-offset, 0px) + var(--navbar-height, 4em) + 0.75rem);
+    top: calc(var(--navbar-height, 4em) + 0.75rem);
     right: max(0.75rem, env(safe-area-inset-right, 0px));
     width: 12rem;
-    max-height: calc(100vh - var(--smt-banner-offset, 0px) - var(--navbar-height, 4em) - 2rem);
+    max-height: calc(100vh - var(--navbar-height, 4em) - 2rem);
     overflow-y: auto;
     z-index: 45;
     font-size: var(--font-size-s, 0.875rem);
@@ -196,7 +191,7 @@ body:has(.sidebar.show) .sidebar-toggle .smt-sidebar-toggle-icon {
     background: var(--color-bg, #fff);
   }
   .markdown-section :is(h1, h2, h3, h4, h5, h6) {
-    scroll-margin-top: calc(var(--smt-banner-offset, 0px) + var(--navbar-height, 4em) + 0.75rem);
+    scroll-margin-top: calc(var(--navbar-height, 4em) + 0.75rem);
   }
 }
 
@@ -368,16 +363,6 @@ body:has(.sidebar.show) .sidebar-toggle .smt-sidebar-toggle-icon {
     transform: translateX(-50%) translateY(-4px);
   }
 }
-.markdown-section .smt-mermaid {
-  margin: 1.25rem 0;
-  overflow-x: auto;
-  text-align: center;
-}
-.markdown-section .smt-mermaid svg {
-  max-width: 100%;
-  height: auto;
-}
-
 /* TypeDoc API signatures (blockquote → ```ts fences in docs:api output). */
 .markdown-section :is(h3, h4, h5, h6) + pre:has(> code.language-ts) {
   margin-top: 0.35rem;
@@ -395,24 +380,6 @@ body:has(.sidebar.show) .sidebar-toggle .smt-sidebar-toggle-icon {
   font-size: 0.9em;
   white-space: pre-wrap;
   word-break: break-word;
-}
-
-/* Shell blocks: terminal-style gbc CLI colors (see assets/prism-gbc-cli.js). */
-.markdown-section pre[data-lang="bash"] code .token.smt-cli,
-.markdown-section pre.language-bash code .token.smt-cli {
-  color: #b392f0;
-}
-.markdown-section pre[data-lang="bash"] code .token.smt-cmd,
-.markdown-section pre.language-bash code .token.smt-cmd {
-  color: #eeffff;
-}
-.markdown-section pre[data-lang="bash"] code .token.smt-path,
-.markdown-section pre.language-bash code .token.smt-path {
-  color: #89ddff;
-}
-.markdown-section pre[data-lang="bash"] code .token.smt-flag,
-.markdown-section pre.language-bash code .token.smt-flag {
-  color: #ffcb6b;
 }
 
 @keyframes smt-heading-copy-tooltip-rm {
@@ -447,54 +414,6 @@ body:has(.sidebar.show) .sidebar-toggle .smt-sidebar-toggle-icon {
 }
 .markdown-section tbody tr:nth-child(2n) {
   background: var(--table-row-alt-bg);
-}
-
-/* Live UI previews (Docsify embeds) */
-iframe.ui-canvas {
-  display: block;
-  width: 100%;
-  min-height: 10rem;
-  border: 1px solid color-mix(in srgb, var(--theme-color) 35%, var(--border-color, #334155));
-  border-radius: 4px;
-  background: #1a2332;
-  margin: 0 0 1.5rem;
-  overflow: hidden;
-  color-scheme: dark;
-}
-
-.ui-gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1rem;
-  margin: 1rem 0 2rem;
-}
-
-.ui-gallery-card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 0.75rem;
-  border: 1px solid var(--border-color, #334155);
-  border-radius: 8px;
-  background: var(--color-mono-2, #0f172a);
-}
-
-.ui-gallery-card a {
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--theme-color);
-  text-decoration: none;
-}
-
-.ui-gallery-card a:hover {
-  color: var(--color-text);
-}
-
-.ui-gallery-card iframe.ui-canvas {
-  margin: 0;
-  min-height: 9rem;
 }
 
 /* Doc screenshots and figures */

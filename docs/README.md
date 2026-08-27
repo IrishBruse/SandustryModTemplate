@@ -1,7 +1,7 @@
 # Sandustry Mod Template
 
-> [!NOTE]
-> These docs are **unofficial**. They are community docs for this template and Sandkit modding. They are not from the Sandustry developers.
+> [!WARNING]
+> **Unofficial** community docs. Not affiliated with Lantto Games, Hooded Horse, or the [official Sandustry wiki](https://wiki.hoodedhorse.com/Sandustry/Sandustry_Official_Wiki). See the [official Sandkit docs](https://sandustry.com/sandkit.html).
 
 TypeScript template for [Sandustry](https://store.steampowered.com/app/2764460/Sandustry/) mods (Steam **[mods]** beta). Browse mods on the [Workshop](https://steamcommunity.com/app/2764460/workshop/).
 
