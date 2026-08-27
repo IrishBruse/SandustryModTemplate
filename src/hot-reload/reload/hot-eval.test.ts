@@ -16,7 +16,6 @@ import {
 
 const TEMPLATE_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "template");
 const TEMPLATE_MAIN = readFileSync(join(TEMPLATE_DIR, "main.ts"), "utf8");
-const TEMPLATE_OVERLAY = readFileSync(join(TEMPLATE_DIR, "ui", "Overlay.tsx"), "utf8");
 
 test("wrapSource matches the sandkit loader body (5 lines before source)", () => {
   const source = "console.log(1);";
@@ -47,19 +46,15 @@ test("wrapHotSource keeps the inline source map (loader line offset stays valid)
   assert.equal(body.includes("//# sourceURL=sandkit-workshop://author.template/main.js\n"), false);
 });
 
-test("template source keeps inject, hotbar, binding, and probe markers", () => {
-  assert.ok(TEMPLATE_MAIN.includes('api.ui.inject("author.template", TemplateOverlay)'));
-  assert.ok(
-    TEMPLATE_MAIN.includes('api.ui.overlays.register("hotbar", "author.template", renderHotbar)'),
-  );
-  assert.ok(TEMPLATE_MAIN.includes('api.input.registerBinding("author.template.ping"'));
-  assert.ok(TEMPLATE_OVERLAY.includes('data-hot-reload-probe="inject"'));
-  assert.ok(TEMPLATE_OVERLAY.includes('data-hot-reload-probe="hotbar"'));
-  assert.ok(TEMPLATE_OVERLAY.includes("Template inject"));
-  assert.ok(TEMPLATE_OVERLAY.includes("Template hotbar"));
+test("template source keeps toast and load log", () => {
+  assert.ok(TEMPLATE_MAIN.includes('api.ui.toast("Template loaded", {})'));
+  assert.ok(TEMPLATE_MAIN.includes('console.log("loaded — template")'));
 });
 
-/** Same API calls as `src/template/main.ts` (without JSX imports). */
+/**
+ * Synthetic source with inject, hotbar, and binding so hotEvalMain disposal
+ * stays covered after the starter template was simplified.
+ */
 const TEMPLATE_SOURCE = `
 const api = sandkit.api;
 api.ui.toast("Template loaded", {});
