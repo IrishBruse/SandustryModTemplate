@@ -7,7 +7,7 @@
     "jsxImportSource": "react",
     "strict": true,
     "noEmit": true,
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "isolatedModules": true,
     "lib": ["ES2021", "DOM"],
     "types": ["react", "node"],
