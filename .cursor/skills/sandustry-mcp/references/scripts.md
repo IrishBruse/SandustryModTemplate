@@ -101,3 +101,22 @@ When snapshot uids are awkward (stacking, z-index):
 ```
 
 Pass element uids via `args` when the MCP tool supports snapshot references.
+
+## Void world (batched)
+
+Full save wipe — structures, terrain, background, map fog, player platform. **User must ask.**
+
+| Topic                                          | File                                                  |
+| ---------------------------------------------- | ----------------------------------------------------- |
+| Batch sizes, save-as-you-go, all phase scripts | [void-world.md](void-world.md)                        |
+| Background buffers and Pixi layers             | **sandustry-world** `references/background-layers.md` |
+
+Quick save helper:
+
+```javascript
+() => {
+  const st = sandkit.state;
+  const id = sandkit.engine.api.game.save(st, "Void", "EXISTING_ID_OR_OMIT");
+  return { id };
+};
+```

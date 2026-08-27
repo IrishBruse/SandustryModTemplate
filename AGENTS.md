@@ -6,4 +6,4 @@ Skills should only contain none mod changed information about the game.
 
 You can verify your changes with **sandustry-mcp**. Dont kill sandustry just ask the user to do a hard reload you cant.
 
-Extracted electron builds of sandustry live in `sandustry/`
+Extracted extracted source code of sandustry lives in `sandustry/` under the version folder always read this as reference.

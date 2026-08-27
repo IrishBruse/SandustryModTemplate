@@ -42,3 +42,17 @@ Returns `{ id, type }` where `type` is `ItemType` (structure slots use `Mod`=4 f
 ## Related
 
 `session.actionLocked` - blocks new actions when `true`.
+
+## MCP triage: `handleAction` crash
+
+Input loop calls `definition.handleAction(state, action)`. If the **definition lookup** is `undefined`, the renderer throws and movement stops.
+
+| Trigger                                                                     | Fix                                                                             |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Hotbar `type: 4` mod item without handler (e.g. `irishbruse.minecart:cart`) | Switch to vanilla weapon `{ id: 1, type: 1 }` or tool `{ id: 2, type: 3 }`      |
+| New game `activeSlotIndex: null`                                            | Set `hotbarIndex: 0`, `activeSlotIndex: 0` before mutations                     |
+| Build mode active structure                                                 | `api.building.cancelPlacement()`, `session.building.activeStructureType = null` |
+
+`action.getSelected()` may still report a structure id while `hotbar.bars[bank][slot]` shows a weapon — trust hotbar after canceling build mode.
+
+Full scripts: **sandustry-mcp** `references/void-world.md`.

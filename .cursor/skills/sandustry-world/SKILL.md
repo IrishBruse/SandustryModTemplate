@@ -24,18 +24,19 @@ Details: [references/probe.md](references/probe.md).
 
 Open **one** file that matches the branch.
 
-| Branch                                    | File                                                               |
-| ----------------------------------------- | ------------------------------------------------------------------ |
-| Read-only probe rules                     | [references/probe.md](references/probe.md)                         |
-| Grid size, cell id ranges, chunks         | [references/grid-chunks.md](references/grid-chunks.md)             |
-| CellType vs element vs matter             | [references/cells.md](references/cells.md)                         |
-| `sandkit.api.world`, fog, redraw, pickups | [references/world-api.md](references/world-api.md)                 |
-| `sandkit.api.elements`                    | [references/elements.md](references/elements.md)                   |
-| `sandkit.api.terrains`                    | [references/terrains.md](references/terrains.md)                   |
-| `sandkit.api.grid`                        | [references/grid-api.md](references/grid-api.md)                   |
-| `sandkit.api.maps`                        | [references/maps.md](references/maps.md)                           |
-| `store.world`, horizon, fixtures          | [references/store-world.md](references/store-world.md)             |
-| Wall, heat, shadows, foliage (engine)     | [references/wall-heat-foliage.md](references/wall-heat-foliage.md) |
-| Workers, scheduling, chunk flags          | [references/workers.md](references/workers.md)                     |
-| idStats, overflowPool, water zones        | [references/sim-stats.md](references/sim-stats.md)                 |
-| Not confirmed yet                         | [references/gaps.md](references/gaps.md)                           |
+| Branch                                     | File                                                               |
+| ------------------------------------------ | ------------------------------------------------------------------ |
+| Read-only probe rules                      | [references/probe.md](references/probe.md)                         |
+| Grid size, cell id ranges, chunks          | [references/grid-chunks.md](references/grid-chunks.md)             |
+| CellType vs element vs matter              | [references/cells.md](references/cells.md)                         |
+| `sandkit.api.world`, fog, redraw, pickups  | [references/world-api.md](references/world-api.md)                 |
+| `sandkit.api.elements`                     | [references/elements.md](references/elements.md)                   |
+| `sandkit.api.terrains`                     | [references/terrains.md](references/terrains.md)                   |
+| `sandkit.api.grid`                         | [references/grid-api.md](references/grid-api.md)                   |
+| `sandkit.api.maps`                         | [references/maps.md](references/maps.md)                           |
+| `store.world`, horizon, fixtures           | [references/store-world.md](references/store-world.md)             |
+| Wall, heat, shadows, foliage (engine)      | [references/wall-heat-foliage.md](references/wall-heat-foliage.md) |
+| Background rasters, prefabs, Pixi parallax | [references/background-layers.md](references/background-layers.md) |
+| Workers, scheduling, chunk flags           | [references/workers.md](references/workers.md)                     |
+| idStats, overflowPool, water zones         | [references/sim-stats.md](references/sim-stats.md)                 |
+| Not confirmed yet                          | [references/gaps.md](references/gaps.md)                           |

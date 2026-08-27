@@ -22,4 +22,6 @@ Generated: `docs/api/sandkit/api/namespaces/maps/`.
 
 Probe showed `store.scene.active` **4** (in-game `Scene` enum). `shared.mapData` keys: `data`, `width`, `height` - procgen / map raster separate from `shared.sim`.
 
+Live shape: `data` is `Uint8Array`, len **58982400** (= 3840×3840×4 RGBA). Clear per row in void-world batches (**sandustry-mcp** `references/void-world.md`). Background layer details: [background-layers.md](background-layers.md).
+
 Custom map IPC and UI: **sandustry-ui** / **sandustry-internals**; not repeated here.

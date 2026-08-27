@@ -26,7 +26,11 @@
 
 ## Entity list (not in `store`)
 
-Critters and swarm particles live in `sandkit.engine.api.entities.getAll(state)`. Backing storage: `storage.ensure(state, "entities").list` with `nextId` counter.
+Critters and swarm particles live in `sandkit.engine.api.entities.getAll(state)`.
+
+Live 0.5.2 backing list: `store.mods.entities.list` (array of `{ id, type, x, y, ... }`). Clear with `.length = 0` for void-world wipes. `engine.api.entities.kill` is **not** on the live API — use list clear or re-probe after updates.
+
+Types doc path `storage.ensure(state, "entities").list` may differ from live mod bag layout.
 
 ## IDs
 

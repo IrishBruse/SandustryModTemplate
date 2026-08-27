@@ -12,4 +12,11 @@ Not confirmed in the 0.5.2 MCP pass:
 - Full enum numeric values for mod-registered terrains beyond built-in `CellType`
 - `world.runWhenSimulationIdle` callback timing vs `chunkShouldUpdateNext`
 
+Confirmed (void MCP pass):
+
+- `shared.mapData.data` is RGBA, 58982400 bytes on 3840² worlds — see [background-layers.md](background-layers.md).
+- Prefab decor: `store.mods.prefabData.placements`, `store.mods.foliage.data.prefabPlacements`.
+- Pixi parallax keys on `session.rendering.pixi` — see [background-layers.md](background-layers.md).
+- Batch clear: 256 rows per MCP call for buffers; 128–512 rows for `revealFogAtCell` — **sandustry-mcp** `references/void-world.md`.
+
 When confirmed, move notes into the matching reference file and trim this list.

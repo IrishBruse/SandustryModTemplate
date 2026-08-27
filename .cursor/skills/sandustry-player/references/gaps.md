@@ -13,4 +13,10 @@ Not walked in the 0.5.2 player pass:
 - `store.player.buildings` id -> name map (use **sandustry-factory** or `StructureType` enum)
 - Mod-registered items (`items.register`) on this save
 
+Confirmed (void MCP pass):
+
+- New game can start with `hotbar.activeSlotIndex: null` — set before bulk scripts.
+- Mod hotbar `type: 4` without `handleAction` crashes input (`undefined.handleAction`).
+- `store.mods.entities.list` holds live creatures; `engine.api.entities.kill` not on live 0.5.2 API.
+
 Re-probe after game updates, arity and keys can drift.

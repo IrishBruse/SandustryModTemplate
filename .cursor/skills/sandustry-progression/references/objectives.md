@@ -1,6 +1,6 @@
 # Objectives
 
-Optional HUD story cards (**Objectives** in top right). No public API. Read `store.objectives`.
+Optional HUD story cards (**Objectives** in top right). No public `sandkit.api` for secondary cards. Primary **story** objectives use `store.mods.storyProgression` plus `sandkit.engine.api.progression`.
 
 ## Store
 
@@ -12,6 +12,48 @@ store.objectives: {
     completedAt?: number   // ms timestamp when done
   }>
 }
+
+store.mods.storyProgression: {
+  currentStep: string | null,
+  completedSteps: string[],
+  objectivePositions?: Record<string, { x, y }>,
+  waypoints?: unknown[]
+}
+```
+
+## Engine API (live 0.5.2)
+
+`sandkit.engine.api.progression`:
+
+| Method                           | Role                                                                         |
+| -------------------------------- | ---------------------------------------------------------------------------- |
+| `getSteps(state)`                | All story step defs (`objective.type`: `factoryLevel`, `waypoint`, `custom`) |
+| `getCurrentStep(state)`          | Active step or null                                                          |
+| `isStepCompleted(state, stepId)` | Step in `completedSteps`                                                     |
+| `complete(state, stepId)`        | Finish step when checks pass (returns `false` if blocked)                    |
+| `triggerCurrentWaypoint(state)`  | Advance waypoint step                                                        |
+
+Factory-tier HUD labels (**Reach Factory Tier {level}**) come from story steps with `objective.type === "factoryLevel"` (e.g. tier 4 = `establish_burnt_residue_processing`).
+
+**Force-complete all story steps** (paused, then save):
+
+```javascript
+() => {
+  const st = sandkit.state;
+  st.session.paused = true;
+  const eng = sandkit.engine.api;
+  const sp = eng.storage.ensure(st, "storyProgression");
+  sp.completedSteps = eng.progression.getSteps(st).map((s) => s.id);
+  sp.currentStep = null;
+  if (st.store.factoryLevelCap != null) {
+    eng.factory.flushDeferredLevelUps(st, st.store.factoryLevelCap);
+    st.store.factoryLevelCap = null;
+  }
+  eng.ui.update(st, sandkit.enums.ComponentId.Objectives);
+  const saveId = eng.game.save(st, "Void", "YOUR_SAVE_ID");
+  st.session.paused = false;
+  return { saveId, completed: sp.completedSteps.length };
+};
 ```
 
 Default chain after init (`research_hover` removed in live mid-game saves):

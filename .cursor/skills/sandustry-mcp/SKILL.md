@@ -66,3 +66,11 @@ When attach, probe, or click fails: [references/triage.md](references/triage.md)
 ## Script templates
 
 Reusable bundles (mod reload, window flags, DOM probes): [references/scripts.md](references/scripts.md).
+
+## Void world (batched mutators)
+
+Full-grid wipes must run in row batches with saves between chunks or MCP times out and the game freezes.
+
+Workflow, batch sizes, save pattern, and copy-paste phases: [references/void-world.md](references/void-world.md).
+
+Background buffers and Pixi layers: **sandustry-world** `references/background-layers.md`.

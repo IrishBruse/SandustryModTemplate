@@ -37,6 +37,8 @@ No confirmed live temperature buffer on `shared.*` in this probe pass.
 
 `foliage`: `generate`, `getClusters`, `getContainer`, `hasProcgenData`.
 
+Prefab placements and Pixi parallax sprites for void-world clears: [background-layers.md](background-layers.md).
+
 ## Matters (engine only)
 
 `matters`: `getMatterTypeFromId`, `register`, `runSolidUpdate`. One live mod matter registration in `state.sandkit.mods.matters`.

@@ -6,6 +6,11 @@ Not walked in this pass:
 - Engine overlap signatures vs public (arity / state-first)
 - `engine.api.config` and `extend` argument meanings
 - `__debug.admin.run` command strings
+
+Confirmed (void MCP pass):
+
+- `engine.api.game.save(state, name, id?)` — returns save id; use for batched void-world saves (**sandustry-mcp** `references/void-world.md`).
+- `engine.api.entities` live keys omit `kill` on 0.5.2; creatures in `store.mods.entities.list`.
 - Worker-thread `sandkit` (simulation/manager/utility workers)
 - `platforms/msstore.js` / `gog.js` (not in this Steam extract)
 - Save file on-disk layout beyond gzip-after-newline in `main.js`
