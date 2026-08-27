@@ -128,7 +128,7 @@ Steam **change notes** come from that mod's `CHANGELOG.md` (Keep a Changelog). W
 
 ## GitHub Actions
 
-Pushes, pull requests, and manual runs execute `.github/workflows/ci.yml` on **Ubuntu** and **Windows** (Node 24). Each job runs `npm ci`, `npm test`, `npm run lint`, `npm run build`, and a Tailwind example build (`--examples --mod overlay-hotkey`).
+Pushes, pull requests, and manual runs execute `.github/workflows/ci.yml` on **Ubuntu** and **Windows** (Node 24). Each job runs `npm ci`, `npm run build`, and a Tailwind example build (`--examples --mod overlay-hotkey`). Lint and unit tests run locally via the Cursor `stop` hook (`.cursor/hooks/lint-test.sh`), not in CI.
 
 On **Windows**, CI also builds a fake Sandustry install under `.tmp/ci-sandustry/` (`scripts/setup/prepare-ci-game.js`), sets `SANDUSTRY`, and runs `npm run setup`. That checks Node, links, asar extract, and junctions without Steam.
 

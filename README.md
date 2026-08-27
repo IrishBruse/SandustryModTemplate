@@ -44,6 +44,8 @@ More: [Quick start](https://ethanconneely.com/SandustryModTemplate/#/quick-start
 - **`npm run lint`** — Typecheck, oxlint, and format check
 - **`npm run lint:fix`** — oxlint `--fix` and oxfmt
 
+Lint and test also run on Agent stop via `.cursor/hooks/lint-test.sh` (Cursor hooks). They are not part of GitHub CI.
+
 ### Docs and UI
 
 - **`npm run docs`** — Serve Docsify on `docs/`
