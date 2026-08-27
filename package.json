@@ -14,8 +14,7 @@
     "test:integration": "node scripts/test/integration.js",
     "lint": "npm run typecheck && oxlint && oxfmt --check",
     "lint:fix": "oxlint --fix && oxfmt",
-    "docs": "npm run docs:api && docsify serve docs",
-    "docs:api": "node scripts/docs/generate-api-docs.mjs",
+    "docs": "docsify serve docs",
     "ui:css": "node scripts/ui/compile-preview-css.mjs",
     "ui:previews": "node scripts/ui/generate-previews.mjs",
     "sandustry": "node scripts/sandustry/launch-sandustry.js",
@@ -23,6 +22,7 @@
   },
   "devDependencies": {
     "@electron/asar": "^4.3.0",
+    "@sandustry-modding/types": "^0.1.0",
     "@types/node": "^26.3.0",
     "@types/react": "^18.3.1",
     "docsify-cli": "^5.0.0",

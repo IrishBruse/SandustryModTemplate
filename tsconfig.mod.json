@@ -14,7 +14,8 @@
     "allowImportingTsExtensions": true,
     "paths": {
       "*": ["./*"],
-      "@modkit/*": ["./modkit/*"]
+      "@modkit/*": ["./modkit/*"],
+      "@sandustry-modding/types/*": ["./node_modules/@sandustry-modding/types/*"]
     }
   }
 }

@@ -18,6 +18,7 @@ Sibling mods (for example `sandustry-doom-mod`) can use a symlink to this folder
 
 | Topic              | Page                                    |
 | ------------------ | --------------------------------------- |
+| Sandkit API types  | [SandustryTypes](https://sandustry-modding.github.io/SandustryTypes/#/) |
 | React and JSX      | [react.md](react.md)                    |
 | Utils              | [utils.md](utils.md)                    |
 | Live tests         | [test.md](test.md)                      |

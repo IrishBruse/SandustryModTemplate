@@ -1,5 +1,7 @@
 - [Home](/)
 - [Changelog](Changelog.md)
+- [Official Sandkit API](https://sandustry.com/sandkit.html)
+- [Sandkit types](https://sandustry-modding.github.io/SandustryTypes/#/)
 
 - Guide
   - [Quick start](quick-start.md)
@@ -7,14 +9,6 @@
   - [Builds](builds.md)
   - [Troubleshooting](troubleshooting.md)
   - [Hot Reload](hot-reload/)
-
-- Sandkit API
-  - [Module index](api/modules.md)
-  - [Main thread](api/sandkit.api.md)
-  - [Worker](api/sandkit.api.worker.md)
-  - [Engine](api/sandkit.engine.md)
-  - [Enums](api/sandkit.enums.md)
-  - [React](api/sandkit.react.md)
 
 - Modkit
   - [Overview](modkit/README.md)

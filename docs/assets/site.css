@@ -1,62 +1,15 @@
+/* Feature styles on top of assets/theme.css (shared with SandustryTypes). */
 :root {
-  --content-max-width: 102ch;
   --sidebar-toggle-height: 40px;
   --sidebar-toggle-margin-block: 0;
   --sidebar-toggle-width: 36px;
   --sidebar-toggle-alignment: flex-start;
-  --table-header-bg: var(--color-mono-2);
-
-  /* Hooded Horse wiki–inspired gold (light: darker for contrast) */
-  --smt-wiki-gold: #c99400;
-  --smt-wiki-gold-bright: #ffb800;
-  --smt-wiki-link: #d48900;
-  --theme-color: var(--smt-wiki-gold);
-  --sidebar-link-color-active: var(--theme-color);
-  --link-color: var(--smt-wiki-link);
+  --smt-banner-offset: var(--unofficial-banner-height);
 }
 
-html[data-smt-docs-theme="dark"] {
-  /* Charcoal + golden orange, close to wiki.hoodedhorse.com */
-  --color-bg: #121212;
-  --sidebar-bg: #1c1c1c;
-  --color-text: #dddddd;
-  --heading-color: #f0f0f0;
-  --border-color: #2a2a2a;
-  --table-header-bg: #202020;
-  --table-row-alt-bg: #181818;
-  --theme-color: var(--smt-wiki-gold-bright);
-  --sidebar-link-color-active: var(--theme-color);
-  --link-color: #ff9900;
-  --code-inline-bg: #202020;
-  --blockquote-bg: #1a1a1a;
-  color-scheme: dark;
-  scrollbar-width: thin;
-  scrollbar-color: #3a3a3a #1a1a1a;
-}
-
-html[data-smt-docs-theme="dark"] ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-html[data-smt-docs-theme="dark"] ::-webkit-scrollbar-track {
-  background: #1a1a1a;
-}
-
-html[data-smt-docs-theme="dark"] ::-webkit-scrollbar-thumb {
-  background: #3a3a3a;
-  border-radius: 4px;
-  border: 2px solid #1a1a1a;
-}
-
-html[data-smt-docs-theme="dark"] ::-webkit-scrollbar-thumb:hover {
-  background: #4a4a4a;
-}
-
-html[data-smt-docs-theme="dark"] ::-webkit-scrollbar-button {
-  display: none;
-  width: 0;
-  height: 0;
+body.banner-dismissed,
+html.banner-dismissed-pending {
+  --smt-banner-offset: 0px;
 }
 
 /* Hide Docsify GitHub corner if a repo option is re-added later. */
@@ -64,63 +17,6 @@ html[data-smt-docs-theme="dark"] ::-webkit-scrollbar-button {
   display: none !important;
 }
 
-#smt-theme-bar {
-  box-sizing: border-box;
-  position: fixed;
-  top: max(0.55rem, env(safe-area-inset-top, 0px));
-  right: max(0.55rem, env(safe-area-inset-right, 0px));
-  z-index: 52;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
-  padding: 0;
-  pointer-events: none;
-  direction: ltr;
-}
-#smt-theme-bar .smt-theme-button {
-  box-sizing: border-box;
-  width: 2.75rem;
-  height: 2.75rem;
-  padding: 0;
-  margin-block: 0;
-  margin-inline: auto;
-  border-radius: 50%;
-  border: 1px solid var(--form-element-border-color, var(--border-color, rgba(0, 0, 0, 0.2)));
-  background: var(--form-element-bg, var(--color-mono-1, var(--sidebar-bg, var(--color-bg))));
-  color: inherit;
-  cursor: pointer;
-  font: inherit;
-  line-height: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: auto;
-  direction: ltr;
-  unicode-bidi: isolate;
-}
-.smt-theme-button .smt-theme-icon-svg {
-  display: block;
-  flex-shrink: 0;
-  margin: 0;
-}
-.smt-theme-icon-svg[data-smt-glyph="dark"] {
-  transform: translate(-1px, 0);
-}
-.smt-theme-button:focus-visible {
-  outline: 2px solid var(--border-color, rgba(0, 0, 0, 0.22));
-  outline-offset: 2px;
-}
-@media screen and (any-hover) {
-  .smt-theme-button:hover {
-    background: color-mix(
-      in srgb,
-      var(--color-text, #333) 10%,
-      var(--form-element-bg, var(--color-mono-1, var(--sidebar-bg, var(--color-bg))))
-    );
-    border-color: var(--form-element-border-color, var(--border-color, rgba(0, 0, 0, 0.25)));
-  }
-}
 #smt-page-toc {
   display: none;
 }
@@ -251,7 +147,7 @@ body:has(.sidebar.show) .sidebar-toggle .smt-sidebar-toggle-icon {
   body.smt-drawer-open .sidebar-toggle {
     position: fixed;
     left: max(0px, env(safe-area-inset-left, 0px));
-    top: max(0.65rem, env(safe-area-inset-top, 0px));
+    top: calc(var(--smt-banner-offset, 0px) + max(0.65rem, env(safe-area-inset-top, 0px)));
     right: auto;
     bottom: auto;
     width: auto !important;
@@ -286,10 +182,10 @@ body:has(.sidebar.show) .sidebar-toggle .smt-sidebar-toggle-icon {
   #smt-page-toc {
     display: block;
     position: fixed;
-    top: calc(var(--navbar-height, 4em) + 0.75rem);
+    top: calc(var(--smt-banner-offset, 0px) + var(--navbar-height, 4em) + 0.75rem);
     right: max(0.75rem, env(safe-area-inset-right, 0px));
     width: 12rem;
-    max-height: calc(100vh - var(--navbar-height, 4em) - 2rem);
+    max-height: calc(100vh - var(--smt-banner-offset, 0px) - var(--navbar-height, 4em) - 2rem);
     overflow-y: auto;
     z-index: 45;
     font-size: var(--font-size-s, 0.875rem);
@@ -300,14 +196,11 @@ body:has(.sidebar.show) .sidebar-toggle .smt-sidebar-toggle-icon {
     background: var(--color-bg, #fff);
   }
   .markdown-section :is(h1, h2, h3, h4, h5, h6) {
-    scroll-margin-top: calc(var(--navbar-height, 4em) + 0.75rem);
+    scroll-margin-top: calc(var(--smt-banner-offset, 0px) + var(--navbar-height, 4em) + 0.75rem);
   }
 }
 
-/* Sidebar body: keep links readable (Docsify nests can shrink). */
-.sidebar-nav {
-  font-size: 0.9375rem;
-}
+/* Sidebar body: keep nested links at the same size (Docsify can shrink them). */
 .sidebar-nav ul ul {
   font-size: inherit;
 }
@@ -331,7 +224,7 @@ body:has(.sidebar.show) .sidebar-toggle .smt-sidebar-toggle-icon {
   color: var(--theme-color);
 }
 
-/* Prose links: wiki orange, no underline */
+/* Prose links: no underline (matches SandustryTypes). */
 .markdown-section :not(pre) a:not(.button):not(.anchor) {
   color: var(--link-color, var(--theme-color));
   text-decoration: none;
@@ -339,15 +232,8 @@ body:has(.sidebar.show) .sidebar-toggle .smt-sidebar-toggle-icon {
 @media screen and (any-hover) {
   .markdown-section :not(pre) a:not(.button):not(.anchor):hover {
     color: var(--theme-color);
-    text-decoration: underline;
-    text-underline-offset: 0.15em;
+    text-decoration: none;
   }
-}
-
-/* Section headers: thin gold rule (wiki Materials-style) */
-.markdown-section h2 {
-  padding-bottom: 0.35em;
-  border-bottom: 1px solid color-mix(in srgb, var(--theme-color) 55%, var(--border-color, #ddd));
 }
 
 /* Heading permalink: icon sits next to title (not full-width space-between). */
@@ -528,22 +414,6 @@ body:has(.sidebar.show) .sidebar-toggle .smt-sidebar-toggle-icon {
 .markdown-section pre.language-bash code .token.smt-flag {
   color: #ffcb6b;
 }
-html[data-smt-docs-theme="light"] .markdown-section pre[data-lang="bash"] code .token.smt-cli,
-html[data-smt-docs-theme="light"] .markdown-section pre.language-bash code .token.smt-cli {
-  color: #7c4dff;
-}
-html[data-smt-docs-theme="light"] .markdown-section pre[data-lang="bash"] code .token.smt-cmd,
-html[data-smt-docs-theme="light"] .markdown-section pre.language-bash code .token.smt-cmd {
-  color: #1b1b1b;
-}
-html[data-smt-docs-theme="light"] .markdown-section pre[data-lang="bash"] code .token.smt-path,
-html[data-smt-docs-theme="light"] .markdown-section pre.language-bash code .token.smt-path {
-  color: #0277bd;
-}
-html[data-smt-docs-theme="light"] .markdown-section pre[data-lang="bash"] code .token.smt-flag,
-html[data-smt-docs-theme="light"] .markdown-section pre.language-bash code .token.smt-flag {
-  color: #c77700;
-}
 
 @keyframes smt-heading-copy-tooltip-rm {
   0% {
@@ -677,47 +547,36 @@ iframe.ui-canvas {
   min-height: 2.75rem;
 }
 
-/* Sandkit API module index: larger landing + grouped namespace chips. */
+/* Sandkit API module index: grouped namespace chips. */
 .smt-api-landing {
-  font-size: 1.125rem;
   line-height: 1.6;
 }
 
 .smt-api-landing h1 {
-  font-size: clamp(1.85rem, 2.4vw + 1rem, 2.5rem);
   margin-block: 0 0.55em;
-  line-height: 1.2;
 }
 
 .smt-api-landing h2 {
   margin-block: 1.5em 0.55em;
-  font-size: 1.35em;
 }
 
 .smt-api-landing h3 {
   margin-block: 1.1em 0.4em;
-  font-size: 1.05em;
   font-weight: 600;
   color: var(--heading-color, var(--color-text));
 }
 
 .smt-api-landing > p {
-  font-size: 1.05em;
   margin-block: 0 1em;
 }
 
 .smt-api-landing > ul {
-  font-size: 1.08em;
   line-height: 1.75;
   margin-block: 0.35em 1.1em;
 }
 
 .smt-api-landing > ul > li {
   margin-block: 0.28em;
-}
-
-.smt-api-landing code {
-  font-size: 0.95em;
 }
 
 .smt-api-landing ul.smt-api-group {
@@ -731,7 +590,6 @@ iframe.ui-canvas {
   border: 1px solid var(--border-color, rgba(0, 0, 0, 0.14));
   border-radius: 8px;
   background: color-mix(in srgb, var(--color-text, #333) 4%, var(--color-bg, #fff));
-  font-size: 0.98em;
   line-height: 1.5;
 }
 
@@ -789,3 +647,4 @@ iframe.ui-canvas {
 .smt-api-landing ul.smt-api-tree a {
   font-weight: 500;
 }
+

@@ -1,11 +1,9 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
   "ignorePatterns": [
-    "modkit/types/**",
     "dist/**",
     "build/**",
     "sandustry/**",
-    "docs/ui/canvas/**",
-    "docs/api/**"
+    "docs/ui/canvas/**"
   ]
 }

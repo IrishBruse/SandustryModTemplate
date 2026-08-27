@@ -57,4 +57,4 @@ Default probe includes `%ProgramFiles(x86)%\Steam` and `%ProgramFiles%\Steam`, p
 
 **`npm run publish` fails with "No cached credentials"** — SteamCMD login is separate from the Steam client (credentials live under the dedicated cache `home/` folder). On a TTY, publish prompts for password / Steam Guard once, then uploads. Without a TTY, run that cache’s `steamcmd.sh` (Linux / macOS) or `steamcmd.exe` (Windows) with `+login <account>` once (use the item owner), then publish again. Full SteamCMD output is in `.tmp/steamcmd-publish.log`.
 
-**Types missing** — Pull the latest template. Sandkit API declarations live in `modkit/types/`. See [modkit/types/README.md](../modkit/types/README.md).
+**Types missing** — Run `npm install`. Sandkit API declarations come from `@sandustry-modding/types`. See [SandustryTypes](https://sandustry-modding.github.io/SandustryTypes/#/).

@@ -20,16 +20,13 @@ Avoid:
 - Marketing tone in guide pages.
 - Duplicating large code samples that already live next to the feature.
 
-## Generated API reference (`docs/api/`)
+## Sandkit API reference
 
-`docs/api/` is **generated** from `modkit/types/` by `npm run docs:api`. Do not edit those Markdown files by hand.
+Do **not** keep API reference pages in this repo. The live reference is:
 
-- Change JSDoc in `modkit/types/**/*.d.ts`, then run `npm run docs:api`.
-- Main docs sidebar has a **Sandkit API** section that lands on the **Module index** (`api/modules.md`), plus main thread, worker, engine, enums, and react. The Module index groups namespaces by topic (player, world, factory, UI, …) so you can find APIs without scrolling the full sidebar. The full API tree uses [`api/_sidebar.md`](api/_sidebar.md), generated with the reference (commit this file so the API sidebar works before a full regen). Nested namespaces appear under their parent in that tree.
-- API page URLs use runtime names (`/#/api/sandkit.api.action`, `/#/api/sandkit.engine.api.game`). Worker pages use a `.worker` suffix (`/#/api/sandkit.api.elements.worker`). Do not keep TypeDoc `/namespaces/.../README` paths in hand-written links.
-- Other files under `docs/api/` are generated; run `npm run docs:api` before `npm run docs` or publishing the docs site.
-- The generator also writes [`assets/search-paths.js`](assets/search-paths.js) (every docs page, including nested API files). Docsify search uses that list. Do not edit it by hand.
-- API headings are rewritten to runtime names (`sandkit.api.settings.get()`) so search results are readable. Do not put those qualified titles back into the `.d.ts` files. [`assets/search-rank.js`](assets/search-rank.js) reorders hits so short member names and dotted queries rank first.
+https://sandustry-modding.github.io/SandustryTypes/#/
+
+Edit declarations in [SandustryTypes](https://github.com/sandustry-modding/SandustryTypes). Link out to that site from template docs and skills. Do not copy or regenerate `docs/api/` here.
 
 ## Site pages and code-side links
 

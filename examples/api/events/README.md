@@ -8,7 +8,7 @@ Subscribe to one game event with `api.events.on`.
 2. On first load, look for the toast **Events — game ready**.
 3. Open DevTools console for the `game:ready` log.
 
-Search `modkit/types/` and [`docs/api/`](../docs/api/) for more event ids.
+Search [`@sandustry-modding/types`](https://www.npmjs.com/package/@sandustry-modding/types) and the [Sandkit API reference](https://sandustry-modding.github.io/SandustryTypes/#/) for more event ids.
 
 ## Copy this mod
 

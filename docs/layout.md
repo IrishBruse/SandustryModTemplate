@@ -108,6 +108,6 @@ Import `@modkit/*` and files in your own folder only.
 | `@modkit/ui`                                  | Shared React UI components                                      |
 | `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix           |
 
-Sandkit API types live in `modkit/types/`. Layout mirrors the live object (`sandkit/api`, `sandkit/engine/api`, …). Ambient `sandkit` is in [`modkit/types/global.d.ts`](../modkit/types/global.d.ts); `WorkerSandkitApi` is in [`modkit/ambient.d.ts`](../modkit/ambient.d.ts).
+Sandkit API types come from [`@sandustry-modding/types`](https://www.npmjs.com/package/@sandustry-modding/types). Browse the reference at [SandustryTypes](https://sandustry-modding.github.io/SandustryTypes/#/). Ambient `sandkit` loads via [`modkit/ambient.d.ts`](../modkit/ambient.d.ts) (`WorkerSandkitApi` is ambient from the package).
 
 Commands and build output: [Builds](builds.md).

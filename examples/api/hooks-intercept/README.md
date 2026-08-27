@@ -14,4 +14,4 @@ Disable the mod to restore normal Escape behaviour.
 
 ## Copy this mod
 
-Copy `examples/api/hooks-intercept/` to `src/<your-mod>/`. Swap `input:escape` for another intercept hook id from `modkit/types/sandkit/api/hooks.d.ts`.
+Copy `examples/api/hooks-intercept/` to `src/<your-mod>/`. Swap `input:escape` for another intercept hook id from the [Sandkit API reference](https://sandustry-modding.github.io/SandustryTypes/#/) (`sandkit.api.hooks`).

@@ -1,11 +1,14 @@
 # Sandustry Mod Template
 
+> [!NOTE]
+> These docs are **unofficial**. They are community docs for this template and Sandkit modding. They are not from the Sandustry developers.
+
 TypeScript template for [Sandustry](https://store.steampowered.com/app/2764460/Sandustry/) mods (Steam **[mods]** beta). Browse mods on the [Workshop](https://steamcommunity.com/app/2764460/workshop/).
 
 ## Features
 
 - **[Multi-mod](layout.md)** — One repo, many mods. Each `src/<name>/` or `examples/<name>/` with a `modinfo.ts` builds to its own game folder.
-- **[TypeScript](modkit/types/README.md)** — Sandkit API types in `modkit/types/`.
+- **[TypeScript](https://sandustry-modding.github.io/SandustryTypes/#/)** — Sandkit API types (`@sandustry-modding/types`)
 - **[React HUD](modkit/react.md)** — JSX via `sandkit.react`, plus the [UI kit gallery](ui/README.md).
 - **[Watch rebuild](builds.md)** — `npm run dev` writes `main.js`. The hot-reload companion re-evals the renderer bundle.
 - **[Hot Reload](hot-reload/)** — companion mod: F12 DevTools, auto-load last save, F3, in-game `main.js` reload.
@@ -50,8 +53,7 @@ Full steps: **[Quick start](quick-start.md)**.
 
 ### Docs and UI
 
-- **`npm run docs`** — Regenerate API reference (`docs:api`), then serve Docsify on `docs/`
-- **`npm run docs:api`** — Generate `docs/api/` Markdown from `modkit/types/` (TypeDoc)
+- **`npm run docs`** — Serve Docsify on `docs/`
 - **`npm run ui:css`** — Compile Tailwind for UI preview canvases
 - **`npm run ui:previews`** — Generate UI preview PNGs
 

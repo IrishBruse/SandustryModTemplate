@@ -80,7 +80,7 @@ Types re-exported from `@modkit/utils`:
 | `RetroConsoleInput`       | Input interface                      |
 | `RetroConsolePixel`       | Pixel type                           |
 
-Full shapes live in `modkit/types/sandkit/engine` and the [Sandkit API reference](../api/README.md).
+Full shapes live in `@sandustry-modding/types` (`sandkit/engine`) and the [Sandkit API reference](https://sandustry-modding.github.io/SandustryTypes/#/).
 
 ```ts
 import { registerRetroGame } from "@modkit/utils";

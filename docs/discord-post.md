@@ -24,7 +24,7 @@ npm run dev
 **TypeScript:**
 Split each mod across files in `src/<mod-name>/`.
 esbuild bundles them to one `main.js`.
-Sandkit API types live in `modkit/types/`.
+Sandkit API types: [`@sandustry-modding/types`](https://www.npmjs.com/package/@sandustry-modding/types) · [reference](https://sandustry-modding.github.io/SandustryTypes/#/).
 
 **React HUD:**
 Write JSX overlays with the UI kit.

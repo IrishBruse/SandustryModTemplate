@@ -46,7 +46,6 @@ More: [Quick start](https://ethanconneely.com/SandustryModTemplate/#/quick-start
 
 ### Docs and UI
 
-- **`npm run docs`** — Regenerate API reference (`docs:api`), then serve Docsify on `docs/`
-- **`npm run docs:api`** — Generate `docs/api/` from `modkit/types/`
+- **`npm run docs`** — Serve Docsify on `docs/`
 - **`npm run ui:css`** — Compile Tailwind for UI preview canvases
 - **`npm run ui:previews`** — Generate UI preview PNGs
