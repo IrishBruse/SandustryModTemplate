@@ -1,6 +1,6 @@
 ---
 name: sandustry-player
-description: "Sandustry player, inventory, tools, grabber, build mode, camera, input, action, coloring/clipboard. Use when probing live player, tools, grabber, building mode, camera, input, or sandkit.api.player / tools / building / input."
+description: "Use when working with vanilla player, inventory, items, grabber, camera, input, and placement session."
 ---
 
 # Sandustry player

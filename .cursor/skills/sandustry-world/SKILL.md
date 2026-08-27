@@ -1,6 +1,6 @@
 ---
 name: sandustry-world
-description: "Sandustry world sim, cells, chunks, elements, matter, grid, terrains, fog, wall heat, workers. Use when probing live world/grid/elements/matter/terrains or sandkit.api.grid / elements / pickups."
+description: "Use when working with vanilla grid, elements, terrains, maps, fog, chunks, and sim workers."
 ---
 
 # Sandustry world

@@ -1,6 +1,6 @@
 ---
 name: sandustry-energy
-description: "energy, batteries, gold/collector overlap only if energy-related, signals, signal links. Use when probing live energy, power, signals, or sandkit.api.energy / signals."
+description: "Use when working with vanilla energy networks, signals, collector, and resource energy helpers."
 ---
 
 # Sandustry energy and signals

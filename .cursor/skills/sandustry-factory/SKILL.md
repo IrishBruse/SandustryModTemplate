@@ -1,6 +1,6 @@
 ---
 name: sandustry-factory
-description: "structures, recipes, processing, pipes, conveyors, factory viability, build queue, authorization. Use when probing live factory, structures, recipes, processing, conveyors, or sandkit.api.structures / processing."
+description: "Use when working with vanilla structures, pipes, recipes, factory level, authorization, and build queue."
 ---
 
 # Sandustry factory

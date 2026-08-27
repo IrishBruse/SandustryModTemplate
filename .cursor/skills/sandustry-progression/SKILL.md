@@ -1,6 +1,6 @@
 ---
 name: sandustry-progression
-description: "Sandustry game progression: tech tree, upgrades, discoveries, viability, conservatory, tutorial, lexicon, objectives. Use when probing live tech, upgrades, discoveries, viability, tutorial, or sandkit.api.tech / upgrades / progression."
+description: "Use when working with vanilla tech, upgrades, discoveries, conservatory, tutorial, and objectives."
 ---
 
 # Sandustry progression

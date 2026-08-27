@@ -1,6 +1,6 @@
 ---
 name: sandustry-entities
-description: "drones, entities, projectiles, creatures, swarm, sweeper, launchers, portals, teleport zones, world items. Use when probing live drones, entities, projectiles, creatures, or sandkit.api.entities / engine.api.entities / drones."
+description: "Use when working with vanilla drones, entities, projectiles, pickups, portals, and swarm."
 ---
 
 # Sandustry entities

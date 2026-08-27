@@ -1,11 +1,11 @@
 ---
 name: sandustry-mcp
-description: "Sandustry CDP via namespace sandustry (CallDynamicTool): attach, probe, click, triage. Use when verifying live game state, driving UI, evaluate_script, list_pages, or chrome-devtools on Sandustry."
+description: "Use when attaching to live Sandustry: evaluate_script, list_pages, click, CDP :9222/:9223, void-world batches. Official API HTML. Domain facts: Read sandustry/SKILL.md then one domain SKILL.md."
 ---
 
 # Sandustry MCP
 
-Chrome DevTools MCP on the Sandustry Electron renderer. Official Sandkit API (signatures, mutations, patches): `.tmp/Sandkit - Sandustry Modding API.html`. Domain facts stay in **sandustry-ui**, **sandustry-world**, **sandustry-internals**, and sibling skills - load **one** of those after attach.
+Chrome DevTools MCP on the Sandustry Electron renderer. Official Sandkit API: `.tmp/Sandkit - Sandustry Modding API.html`. After attach, vanilla facts: Read `.cursor/skills/sandustry/SKILL.md`, then **one** domain `SKILL.md`.
 
 ## Attach
 

@@ -1,6 +1,6 @@
 ---
 name: sandustry-ui
-description: "Sandustry live HUD, pause, Options, Save/Load, Toolbox, Building, Research, Upgrades, Debug, hotkeys, ComponentId inject, regions, overrides, hotbar. Use when searching or clicking the game UI, writing overlays, or using sandustry-mcp / chrome-devtools."
+description: "Use when working with vanilla HUD, pause, Options, management overlays, hotkeys, and api.ui screens."
 ---
 
 # Sandustry UI

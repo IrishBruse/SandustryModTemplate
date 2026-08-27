@@ -1,6 +1,6 @@
 ---
 name: sandustry-internals
-description: "Sandustry host internals: window.electron IPC, sandkit.engine, sandkit.state, __debug, extracted sandustry/ main and preload, workshop-mods limits, Loader Starting game, save gzip. Use when probing live APIs outside public sandkit.api, Electron bridge, file patches, workers, or save-load boot."
+description: "Use when working with host electron IPC, sandkit.engine, __debug, extract tree, and worker-entry API."
 ---
 
 # Sandustry internals
