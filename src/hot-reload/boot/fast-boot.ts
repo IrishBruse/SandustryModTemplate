@@ -38,12 +38,12 @@ function removeLocalStorage(key: string): void {
 
 /**
  * Mirror boot prefs to localStorage so debugPatches can act before mods and assets load.
- * Fast boot also enables shader skip and auto-load mirrors when those settings are on.
+ * Each setting mirrors only its own flag — fast boot does not enable the others.
  */
 export function syncFastBootPrefs(api: SandkitApi): void {
   const fastBoot = settingOn(api, "fastBoot");
-  const autoLoad = fastBoot || autoLoadOn(api);
-  const skipShader = fastBoot || settingOn(api, "skipShaderRecomp");
+  const autoLoad = autoLoadOn(api);
+  const skipShader = settingOn(api, "skipShaderRecomp");
 
   writeLocalStorage(FAST_BOOT_STORAGE_KEY, String(fastBoot));
   writeLocalStorage(AUTO_LOAD_STORAGE_KEY, String(autoLoad));

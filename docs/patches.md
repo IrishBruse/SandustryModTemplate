@@ -21,7 +21,7 @@ Define the list with `definePatches`. Export it from that mod's `modinfo.ts`. Yo
 
 Release (`npm run build`, `npm run dev:release`) omits `debugPatches`. Dev (`npm run dev`) includes both.
 
-The hot-reload companion ships **`debugPatches`** that skip outline shader build, `warmup`, and the **Compiling shaders…** splash when `localStorage["hot-reload.skipShaderRecomp"]` is `"true"` (Options → **Skip shader recompile**). **Fast dev boot** adds an early auto-load redirect and skips the logo splash on `?db_load=` when `localStorage["hot-reload.fastBoot"]` is `"true"`. Auto-load last save is a runtime helper on that companion, not a file patch.
+The hot-reload companion ships **`debugPatches`** that skip outline shader build, `warmup`, and the **Compiling shaders…** splash when `localStorage["hot-reload.skipShaderRecomp"]` is `"true"` (Options → **Skip shader recompile**). **Fast dev boot** skips the logo splash on `?db_load=` when `localStorage["hot-reload.fastBoot"]` is `"true"` and does not enable the other boot settings. Auto-load last save is a runtime helper on that companion, not a file patch.
 
 The browser bundle stubs `@modkit/patches` so patch payloads stay out of `main.js`.
 

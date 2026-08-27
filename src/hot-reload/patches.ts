@@ -1,4 +1,5 @@
 import { definePatches } from "@modkit/modinfo";
+import { earlyDebugBadgePatchIife } from "./debug-badge/mount.ts";
 import { earlyAutoLoadPatchIife } from "./boot/auto-load.ts";
 import { FAST_BOOT_STORAGE_KEY } from "./boot/fast-boot-keys.ts";
 
@@ -13,6 +14,11 @@ const FAST = `localStorage.getItem(${JSON.stringify(FAST_BOOT_STORAGE_KEY)})==="
 /** Redirect to ?db_load= before assets, shaders, and mods load (avoids a full double boot). */
 const EARLY_AUTO_LOAD = earlyAutoLoadPatchIife();
 
+/** Top-left debug marker before mods and React UI (splash included). */
+const EARLY_DEBUG_BADGE = earlyDebugBadgePatchIife();
+
+const EARLY_BOOT = EARLY_DEBUG_BADGE + EARLY_AUTO_LOAD;
+
 /** Tiny passthrough — still constructs a Filter, but avoids Sn() + the huge outline GLSL compile. */
 const CHEAP_FRAG =
   "precision mediump float;varying vec2 vTextureCoord;uniform sampler2D uSampler;void main(){gl_FragColor=texture2D(uSampler,vTextureCoord);}";
@@ -23,7 +29,7 @@ export const debugPatches = definePatches([
     file: "js/bundle.js",
     find: "(async()=>{var e,t,n,a,r,o;try{await async function(){const e=(0,Rn.M5)().locale",
     operation: "insertBefore",
-    code: EARLY_AUTO_LOAD,
+    code: EARLY_BOOT,
     expectedMatches: 1,
   },
   {

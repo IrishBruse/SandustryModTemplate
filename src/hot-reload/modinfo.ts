@@ -68,7 +68,7 @@ export const modinfo = defineModInfo({
       default: false,
       labelKey: "Fast dev boot",
       descriptionKey:
-        "Early auto-load redirect, skip splash on save load, and shader skip. Restart once after you turn it on.",
+        "Skip the logo splash when the URL already has ?db_load= (save load). Restart once after you turn it on.",
     },
     // Dev tools
     openDevTools: {

@@ -1,5 +1,5 @@
 import { useEffect, useState, type MouseEvent } from "react";
-import { createPortal } from "react-dom";
+import { Interactive, OverlayRoot } from "@modkit/ui";
 import { inGame, safe } from "@modkit/utils";
 import { readUiScale } from "./list-mods";
 import { ElementsTab } from "./elements/ElementsTab";
@@ -80,41 +80,43 @@ export function ModInspectorOverlay() {
 
   const scale = readUiScale();
 
-  return createPortal(
-    <div
-      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[10010]"
-      onClick={(event: MouseEvent<HTMLDivElement>) => {
-        if (event.target === event.currentTarget) closePanel();
-      }}
-    >
-      <div style={{ transform: `scale(${scale})`, transformOrigin: "center center" }}>
+  return (
+    <OverlayRoot style={{ zIndex: 10010 }}>
+      <Interactive>
         <div
-          className="bg-black bg-opacity-90 shadow-lg ui-box card-2 text-white flex flex-col"
-          style={{ width: PANEL_WIDTH, height: PANEL_HEIGHT, maxHeight: "80vh" }}
-          role="dialog"
-          aria-label="Dev Tools"
-          onClick={(event) => event.stopPropagation()}
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+          onClick={(event: MouseEvent<HTMLDivElement>) => {
+            if (event.target === event.currentTarget) closePanel();
+          }}
         >
-          <div className="px-5 pt-4 pb-3 border-b border-slate-700/40 flex items-center justify-between">
-            <h2 className="text-lg font-bold tracking-wide">Dev Tools</h2>
-            <button
-              type="button"
-              className="text-slate-300 hover:text-white transition-colors text-lg leading-none px-1"
-              aria-label="Close"
-              onClick={closePanel}
-              onMouseEnter={playHover}
+          <div style={{ transform: `scale(${scale})`, transformOrigin: "center center" }}>
+            <div
+              className="bg-black bg-opacity-90 shadow-lg ui-box card-2 text-white flex flex-col"
+              style={{ width: PANEL_WIDTH, height: PANEL_HEIGHT, maxHeight: "80vh" }}
+              role="dialog"
+              aria-label="Dev Tools"
+              onClick={(event) => event.stopPropagation()}
             >
-              ✕
-            </button>
-          </div>
+              <div className="px-5 pt-4 pb-3 border-b border-slate-700/40 flex items-center justify-between">
+                <h2 className="text-lg font-bold tracking-wide">Dev Tools</h2>
+                <button
+                  type="button"
+                  className="text-slate-300 hover:text-white transition-colors text-lg leading-none px-1"
+                  aria-label="Close"
+                  onClick={closePanel}
+                  onMouseEnter={playHover}
+                >
+                  ✕
+                </button>
+              </div>
 
-          <div className="px-5 pt-3 flex justify-center gap-1 border-b border-slate-800">
-            {TABS.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => setTab(item.id)}
-                className={`
+              <div className="px-5 pt-3 flex justify-center gap-1 border-b border-slate-800">
+                {TABS.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => setTab(item.id)}
+                    className={`
                                     pb-2.5 px-4 text-sm font-medium transition-colors border-b-2
                                     ${
                                       tab === item.id
@@ -122,20 +124,21 @@ export function ModInspectorOverlay() {
                                         : "text-slate-300 border-transparent hover:text-slate-100"
                                     }
                                 `}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
 
-          <div className="px-5 pt-4 pb-4 flex-1 min-h-0 flex flex-col">
-            {tab === "mods" ? <ModsTab /> : null}
-            {tab === "elements" ? <ElementsTab /> : null}
-            {tab === "recipes" ? <PlaceholderTab label="Recipes" /> : null}
+              <div className="px-5 pt-4 pb-4 flex-1 min-h-0 flex flex-col">
+                {tab === "mods" ? <ModsTab /> : null}
+                {tab === "elements" ? <ElementsTab /> : null}
+                {tab === "recipes" ? <PlaceholderTab label="Recipes" /> : null}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>,
-    document.body,
+      </Interactive>
+    </OverlayRoot>
   );
 }
