@@ -7,7 +7,7 @@ export type SandustryTestFn = (t: TestContext, game: SandustrySession) => Promis
 
 /**
  * Node `test()` case that talks to the isolated Sandustry test host (CDP `:9223`).
- * Skips when the binary, Xvfb, test mods, or Game scene are missing.
+ * Skips when the binary, xvfb-run (Unix), test mods, or Game scene are missing.
  */
 export function sandustryTest(name: string, fn: SandustryTestFn): void {
   test(name, async (t) => {

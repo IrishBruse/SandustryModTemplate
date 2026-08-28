@@ -20,9 +20,9 @@ if ! command -v npm >/dev/null 2>&1; then
   exit 0
 fi
 
-log="$(mktemp "${TMPDIR:-/tmp}/smt-lint-test.XXXXXX")"
-cleanup() { rm -f "$log"; }
-trap cleanup EXIT
+mkdir -p "$ROOT/.tmp"
+log="$ROOT/.tmp/lint-test-last.log"
+: >"$log"
 
 set +e
 npm run lint >"$log" 2>&1
@@ -44,6 +44,7 @@ failed=()
 [[ $lint_status -ne 0 ]] && failed+=("npm run lint (exit $lint_status)")
 [[ $test_status -ne 0 ]] && failed+=("npm test (exit $test_status)")
 
+FAILED_JSON="$(printf '%s\n' "${failed[@]}" | node -e 'const fs=require("node:fs"); const lines=fs.readFileSync(0,"utf8").split(/\n/).filter(Boolean); process.stdout.write(JSON.stringify(lines))')"
 node -e '
 const fs = require("node:fs");
 const failed = JSON.parse(process.argv[1]);
@@ -61,6 +62,6 @@ const msg = [
   "```",
 ].join("\n");
 process.stdout.write(JSON.stringify({ followup_message: msg }) + "\n");
-' "$(node -e 'process.stdout.write(JSON.stringify(process.argv.slice(1)))' "${failed[@]}")" "$log"
+' "$FAILED_JSON" "$log"
 
 exit 0

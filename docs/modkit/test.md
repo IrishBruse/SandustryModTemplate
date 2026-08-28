@@ -14,10 +14,11 @@ The test host is a second Electron process. It does not attach to Steam or F5, a
 
 - User data: `.tmp/sandustry-test/` (Steam stays in `~/.config/sandustry` / `%APPDATA%\sandustry`)
 - CDP port: **9223** (Steam / F5 stay on **9222**)
-- `npm test` on Linux with a desktop: a **separate** window. Chromium headless and off-screen windows stall WebGL, so the Game scene does not load.
-- `npm test` on Linux without `DISPLAY`: `xvfb-run`
+- `npm test` on Linux / macOS: `xvfb-run` plus `--ozone-platform=x11` (no window)
 - `npm test` on Windows: Electron `--headless=new`
 - `npm run test:integration`: always a visible window. It needs a desktop (`DISPLAY` on Linux).
+
+Electron-only flags are not enough for this packaged game (Electron 33): `--ozone-platform=headless` stalls before CDP HTTP works, and `--headless=new` still opens a desktop window. Linux / macOS therefore use a virtual X display.
 
 It copies `author.template` and `hot-reload` from `dist/` (or the OS mods folder). It copies the last played `.save` so auto-load can enter the Game scene. After `npm test`, the runner stops only the test host.
 
@@ -27,7 +28,7 @@ Import `@modkit/test` from `*.test.ts` only. The esbuild alias rejects a game bu
 
 ## When a case runs
 
-`sandustryTest` is a `node:test` case. It **skips** when the Sandustry binary, a display (or Xvfb), or test mods are missing, or when the renderer does not reach the Game scene.
+`sandustryTest` is a `node:test` case. It **skips** when the Sandustry binary, `xvfb-run` (Unix), or test mods are missing, or when the renderer does not reach the Game scene.
 
 Inside the case, skip when the ordered mod list is not ready.
 

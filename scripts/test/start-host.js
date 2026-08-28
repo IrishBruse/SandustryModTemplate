@@ -11,7 +11,7 @@ console.log(
     ? "Sandustry test host already running"
     : visible
       ? "Sandustry test host started (visible window, isolated user data, CDP :9223)"
-      : "Sandustry test host started (isolated user data, CDP :9223)",
+      : "Sandustry test host started (no window, isolated user data, CDP :9223)",
 );
 
 await new Promise((resolve) => {

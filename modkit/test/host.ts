@@ -27,15 +27,13 @@ export type HostWindowMode = "headless" | "xvfb" | "window";
 export function hostWindowMode(input?: {
   visible?: boolean;
   platform?: NodeJS.Platform;
-  display?: string;
 }): HostWindowMode {
   const visible = input?.visible === true;
   const platform = input?.platform ?? process.platform;
-  const display = input && "display" in input ? input.display : process.env.DISPLAY;
   if (visible) return "window";
+  // Chromium `--headless` stalls WebGL on Linux; xvfb keeps a virtual display with no window.
   if (platform === "win32") return "headless";
-  if (!display) return "xvfb";
-  return "window";
+  return "xvfb";
 }
 
 type HostRecord = {
@@ -194,13 +192,17 @@ function spawnHost(binary: string, detached: boolean, visible: boolean): ChildPr
     });
   }
   if (mode === "xvfb") {
+    // Force X11 so Wayland sessions do not open a real compositor window.
+    chromeArgs.push("--ozone-platform=x11");
+    const env: NodeJS.ProcessEnv = { ...process.env, XDG_SESSION_TYPE: "x11" };
+    delete env.WAYLAND_DISPLAY;
     return spawn(
       "xvfb-run",
       ["--auto-servernum", "--server-args=-screen 0 1280x720x24", binary, ...chromeArgs],
-      { cwd, detached, stdio: ["ignore", logFd, logFd] },
+      { cwd, detached, stdio: ["ignore", logFd, logFd], env },
     );
   }
-  // Visible window: headless / off-screen Chromium stalls WebGL, so Game never loads.
+  // Visible window (`npm run test:integration`).
   chromeArgs.push("--window-position=50,50");
   return spawn(binary, chromeArgs, {
     cwd,
@@ -247,8 +249,15 @@ export async function stopSandustryTestHost(): Promise<void> {
     if (!(await isSandustryAvailable(SANDUSTRY_TEST_CDP_PORT))) break;
     await sleep(100);
   }
-  if ((await isSandustryAvailable(SANDUSTRY_TEST_CDP_PORT)) && process.platform !== "win32") {
-    spawnSync("fuser", ["-k", `${SANDUSTRY_TEST_CDP_PORT}/tcp`], { stdio: "ignore" });
+  if (await isSandustryAvailable(SANDUSTRY_TEST_CDP_PORT)) {
+    // Last resort: kill by recorded pid only (never fuser — it can hang).
+    if (record && pidAlive(record.pid)) {
+      try {
+        process.kill(record.pid, "SIGKILL");
+      } catch {
+        /* gone */
+      }
+    }
   }
   try {
     unlinkSync(sandustryTestHostFile());
@@ -262,10 +271,12 @@ export async function startSandustryTestHost(options?: {
   visible?: boolean;
 }): Promise<HostStartResult> {
   const visible = options?.visible === true;
-  if (visible && (await isSandustryAvailable(SANDUSTRY_TEST_CDP_PORT))) {
+  if (await isSandustryAvailable(SANDUSTRY_TEST_CDP_PORT)) {
+    // In-test cases reuse the runner host. Persist starts (npm test) always relaunch.
+    if (process.env.SANDUSTRY_TEST_HOST === "1" && !options?.persist) {
+      return { ok: true, reused: true };
+    }
     await stopSandustryTestHost();
-  } else if (await isSandustryAvailable(SANDUSTRY_TEST_CDP_PORT)) {
-    return { ok: true, reused: true };
   }
   if (process.env.SANDUSTRY_TEST_HOST === "1" && !options?.persist) {
     return { ok: false, reason: "Sandustry test host did not start" };
@@ -278,7 +289,7 @@ export async function startSandustryTestHost(options?: {
   if (visible && process.platform !== "win32" && !process.env.DISPLAY) {
     return { ok: false, reason: "DISPLAY is missing" };
   }
-  if (!visible && process.platform !== "win32" && !process.env.DISPLAY && !hasXvfb()) {
+  if (!visible && process.platform !== "win32" && !hasXvfb()) {
     return { ok: false, reason: "xvfb-run is missing" };
   }
 
@@ -287,7 +298,8 @@ export async function startSandustryTestHost(options?: {
     return { ok: false, reason: "test mods missing; run npm run dev -- --mod template" };
   }
 
-  const child = spawnHost(binary, !options?.persist, visible);
+  // Always detach so stopPid can signal the host process group (xvfb-run + sandustry).
+  const child = spawnHost(binary, true, visible);
   if (typeof child.pid !== "number") {
     return { ok: false, reason: "Sandustry test host did not start" };
   }
