@@ -7,7 +7,7 @@
     "jsxImportSource": "react",
     "strict": true,
     "noEmit": true,
-    "skipLibCheck": true,
+    "skipLibCheck": false,
     "isolatedModules": true,
     "lib": ["ES2021", "DOM"],
     "types": ["react", "node", "@sandustry-modding/types"],
@@ -15,7 +15,9 @@
     "paths": {
       "*": ["./*"],
       "@modkit/*": ["./modkit/*"],
-      "@sandustry-modding/types/*": ["./node_modules/@sandustry-modding/types/*"]
+      "@sandustry-modding/types/*": [
+        "./node_modules/@sandustry-modding/types/*"
+      ]
     }
   },
   "files": ["./modkit/css.d.ts"]
