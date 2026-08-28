@@ -4,8 +4,8 @@ export type WaitForOptions = {
   message?: string;
 };
 
-const DEFAULT_TIMEOUT_MS = 8000;
-const DEFAULT_INTERVAL_MS = 250;
+export const WAIT_FOR_TIMEOUT_MS = 8000;
+export const WAIT_FOR_INTERVAL_MS = 250;
 
 /**
  * Poll `read` until `match` is true. `read` runs in the caller (Node or a
@@ -16,8 +16,8 @@ export async function waitFor<T>(
   match: (value: T) => boolean,
   options?: WaitForOptions,
 ): Promise<T> {
-  const timeoutMs = options?.timeoutMs ?? DEFAULT_TIMEOUT_MS;
-  const intervalMs = options?.intervalMs ?? DEFAULT_INTERVAL_MS;
+  const timeoutMs = options?.timeoutMs ?? WAIT_FOR_TIMEOUT_MS;
+  const intervalMs = options?.intervalMs ?? WAIT_FOR_INTERVAL_MS;
   const deadline = Date.now() + timeoutMs;
   let last: T | undefined;
   while (Date.now() < deadline) {

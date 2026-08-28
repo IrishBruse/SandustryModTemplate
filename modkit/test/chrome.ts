@@ -5,6 +5,8 @@ import {
   sandustryTestChromeDir,
   sandustryTestChromeLog,
   SANDUSTRY_TEST_CDP_PORT,
+  SANDUSTRY_TEST_VIEWPORT_HEIGHT,
+  SANDUSTRY_TEST_VIEWPORT_WIDTH,
 } from "./paths.ts";
 
 export type HostWindowMode = "headless" | "xvfb" | "window";
@@ -18,8 +20,7 @@ export function hostWindowMode(input?: {
   const platform = input?.platform ?? process.platform;
   const display = input && "display" in input ? input.display : process.env.DISPLAY;
   if (visible && (platform === "win32" || display)) return "window";
-  if (platform === "win32") return "headless";
-  return "xvfb";
+  return "headless";
 }
 
 export function resolveChrome(): string | null {
@@ -43,19 +44,15 @@ export function stopChrome(): void {
   spawnSync("pkill", ["-f", `${sandustryTestChromeDir()}`], { stdio: "ignore" });
 }
 
-export function spawnChrome(chrome: string, url: string, visible: boolean): ChildProcess {
-  stopChrome();
-  mkdirSync(dirname(sandustryTestChromeLog()), { recursive: true });
-  rmSync(sandustryTestChromeDir(), { recursive: true, force: true });
-  mkdirSync(sandustryTestChromeDir(), { recursive: true });
-  const logFd = openSync(sandustryTestChromeLog(), "w");
+/** Chrome flags for the integration host. SwiftShader is on in every mode. */
+export function chromeLaunchArgs(mode: HostWindowMode): string[] {
   const args = [
     `--user-data-dir=${sandustryTestChromeDir()}`,
     "--no-first-run",
     "--no-default-browser-check",
     "--remote-allow-origins=*",
     `--remote-debugging-port=${SANDUSTRY_TEST_CDP_PORT}`,
-    "--window-size=1280,720",
+    `--window-size=${SANDUSTRY_TEST_VIEWPORT_WIDTH},${SANDUSTRY_TEST_VIEWPORT_HEIGHT}`,
     "--autoplay-policy=no-user-gesture-required",
     "--disable-background-timer-throttling",
     "--disable-renderer-backgrounding",
@@ -63,30 +60,27 @@ export function spawnChrome(chrome: string, url: string, visible: boolean): Chil
     "--ignore-gpu-blocklist",
     "--enable-webgl",
     "--enable-webgl2",
-  ];
-  const mode = hostWindowMode({ visible });
-  if (mode === "window") args.push("--window-position=50,50");
-  if (mode === "headless") {
-    args.unshift(
-      "--headless=new",
-      "--use-gl=angle",
-      "--use-angle=swiftshader",
-      "--enable-unsafe-swiftshader",
-    );
-    args.push(url);
-    return spawn(chrome, args, { stdio: ["ignore", logFd, logFd] });
-  }
-  if (mode === "window") {
-    args.push(url);
-    return spawn(chrome, args, { stdio: ["ignore", logFd, logFd] });
-  }
-  args.unshift(
-    "--ozone-platform=x11",
     "--use-gl=angle",
     "--use-angle=swiftshader",
     "--enable-unsafe-swiftshader",
-  );
-  args.push(url);
+  ];
+  if (mode === "headless") args.unshift("--headless=new");
+  if (mode === "xvfb") args.unshift("--ozone-platform=x11");
+  if (mode === "window") args.push("--window-position=50,50");
+  return args;
+}
+
+export function spawnChrome(chrome: string, url: string, visible: boolean): ChildProcess {
+  stopChrome();
+  mkdirSync(dirname(sandustryTestChromeLog()), { recursive: true });
+  rmSync(sandustryTestChromeDir(), { recursive: true, force: true });
+  mkdirSync(sandustryTestChromeDir(), { recursive: true });
+  const logFd = openSync(sandustryTestChromeLog(), "w");
+  const mode = hostWindowMode({ visible });
+  const args = [...chromeLaunchArgs(mode), url];
+  if (mode === "headless" || mode === "window") {
+    return spawn(chrome, args, { stdio: ["ignore", logFd, logFd] });
+  }
   const env: NodeJS.ProcessEnv = { ...process.env, XDG_SESSION_TYPE: "x11" };
   delete env.WAYLAND_DISPLAY;
   if (!hasXvfb()) {
@@ -94,7 +88,12 @@ export function spawnChrome(chrome: string, url: string, visible: boolean): Chil
   }
   return spawn(
     "xvfb-run",
-    ["--auto-servernum", "--server-args=-screen 0 1280x720x24", chrome, ...args],
+    [
+      "--auto-servernum",
+      `--server-args=-screen 0 ${SANDUSTRY_TEST_VIEWPORT_WIDTH}x${SANDUSTRY_TEST_VIEWPORT_HEIGHT}x24`,
+      chrome,
+      ...args,
+    ],
     { stdio: ["ignore", logFd, logFd], env },
   );
 }

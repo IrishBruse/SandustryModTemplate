@@ -22,6 +22,7 @@ export const DEFAULT_MOD_ROOTS = ["src"];
  */
 export function resolveModRoots(argv) {
   if (argv.includes("--examples")) return ["examples"];
+  if (parseModFilters(argv).length > 0) return MOD_ROOTS;
   return DEFAULT_MOD_ROOTS;
 }
 

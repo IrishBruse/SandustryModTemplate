@@ -1,4 +1,15 @@
-import { SANDUSTRY_TEST_CDP_PORT } from "./paths.ts";
+import {
+  SANDUSTRY_TEST_CDP_PORT,
+  SANDUSTRY_TEST_VIEWPORT_HEIGHT,
+  SANDUSTRY_TEST_VIEWPORT_WIDTH,
+} from "./paths.ts";
+
+export type ScreenshotClip = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
 
 /** Isolated integration Chromium CDP. F5 / Steam debug stays on :9222. */
 export const SANDUSTRY_CDP_PORT = SANDUSTRY_TEST_CDP_PORT;
@@ -76,18 +87,11 @@ export class CdpConnection {
   }
 
   async evaluate(expression: string): Promise<unknown> {
-    const run = this.tail.then(() =>
-      this.send("Runtime.evaluate", {
-        expression,
-        returnByValue: true,
-        awaitPromise: true,
-      }),
-    );
-    this.tail = run.then(
-      () => undefined,
-      () => undefined,
-    );
-    const details = (await run) as {
+    const details = (await this.sendQueued("Runtime.evaluate", {
+      expression,
+      returnByValue: true,
+      awaitPromise: true,
+    })) as {
       exceptionDetails?: { exception?: { description?: string }; text?: string };
       result?: { value?: unknown };
     };
@@ -98,8 +102,50 @@ export class CdpConnection {
     return details.result?.value;
   }
 
+  async setViewport(
+    width = SANDUSTRY_TEST_VIEWPORT_WIDTH,
+    height = SANDUSTRY_TEST_VIEWPORT_HEIGHT,
+  ): Promise<void> {
+    await this.sendQueued("Emulation.setDeviceMetricsOverride", {
+      width,
+      height,
+      deviceScaleFactor: 1,
+      mobile: false,
+    });
+  }
+
+  async captureScreenshot(clip?: ScreenshotClip): Promise<Buffer> {
+    const params: Record<string, unknown> = {
+      format: "png",
+      fromSurface: true,
+    };
+    if (clip) {
+      params.clip = {
+        x: Math.round(clip.x),
+        y: Math.round(clip.y),
+        width: Math.max(1, Math.round(clip.width)),
+        height: Math.max(1, Math.round(clip.height)),
+        scale: 1,
+      };
+    }
+    const result = (await this.sendQueued("Page.captureScreenshot", params)) as { data?: string };
+    if (typeof result?.data !== "string") {
+      throw new Error("CDP screenshot returned no data");
+    }
+    return Buffer.from(result.data, "base64");
+  }
+
   close(): void {
     this.ws.close();
+  }
+
+  private sendQueued(method: string, params: Record<string, unknown>): Promise<unknown> {
+    const run = this.tail.then(() => this.send(method, params));
+    this.tail = run.then(
+      () => undefined,
+      () => undefined,
+    );
+    return run;
   }
 
   private send(method: string, params: Record<string, unknown>): Promise<unknown> {
@@ -107,7 +153,7 @@ export class CdpConnection {
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
         this.pending.delete(id);
-        reject(new Error("CDP evaluate timeout"));
+        reject(new Error("CDP timeout"));
       }, this.timeoutMs);
       this.pending.set(id, { resolve, reject, timer });
       this.ws.send(JSON.stringify({ id, method, params }));

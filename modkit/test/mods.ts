@@ -1,4 +1,12 @@
-import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, statSync } from "node:fs";
+import {
+  cpSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  statSync,
+} from "node:fs";
 import { join } from "node:path";
 import {
   repoRoot,
@@ -40,17 +48,27 @@ function listModIds(root: string): string[] {
     .sort();
 }
 
-/** Copy every built mod from `dist/`, then fill gaps from the OS mods folder. */
-export function copyTestMods(): string[] {
+/** Copy built mods from `dist/`, then fill gaps from the OS mods folder. */
+export function copyTestMods(options?: { ids?: readonly string[] }): string[] {
   const destRoot = sandustryTestModsDir();
+  rmSync(destRoot, { recursive: true, force: true });
   mkdirSync(destRoot, { recursive: true });
+  const allow = options?.ids ? new Set(options.ids) : null;
   const copied = new Set<string>();
   for (const sourceRoot of [distModsRoot(), osModsRoot()]) {
     for (const id of listModIds(sourceRoot)) {
       if (copied.has(id)) continue;
+      if (allow && !allow.has(id)) continue;
       cpSync(join(sourceRoot, id), join(destRoot, id), { recursive: true, force: true });
       copied.add(id);
     }
+  }
+  if (allow) {
+    const missing = [...allow].filter((id) => !copied.has(id)).sort();
+    if (missing.length > 0) {
+      throw new Error(`Test host missing built mods: ${missing.join(", ")}. Build the mods first.`);
+    }
+    return [...allow].sort();
   }
   return [...copied].sort();
 }
@@ -127,9 +145,15 @@ export function listWorkshopMods(): unknown[] {
   return mods;
 }
 
+const TEST_HOST_DISABLED_MODS = new Set(["example.hooks-intercept"]);
+
 export function companionSettings(modIds: string[]): Record<string, unknown> {
   const externalModSettings: Record<string, Record<string, unknown>> = {};
   for (const id of modIds) {
+    if (TEST_HOST_DISABLED_MODS.has(id)) {
+      externalModSettings[id] = { enabled: false };
+      continue;
+    }
     externalModSettings[id] = { enabled: true };
   }
   if (modIds.includes("hot-reload")) {

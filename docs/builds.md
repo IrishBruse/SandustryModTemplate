@@ -83,7 +83,9 @@ npm run publish          # npm run build + SteamCMD Workshop upload
 npm run publish -- --mod <folder>
 npm run typecheck
 npm run test
-npm run test:integration  # --debug src+examples, then *.integration.test.ts on :9224
+npm run test:integration  # headless Chromium on :9224, then *.integration.test.ts
+npm run test:integration:view  # visible window (Linux needs DISPLAY)
+npm run test:integration -- --mod overlay-hotkey  # one folder + its tests
 npm run sandustry        # stop + launch (no build; keep npm run dev for the bundle)
 npm run ui:css           # compile docs/ui/canvas preview Tailwind
 npm run ui:previews      # compile preview CSS, then screenshot preview.html

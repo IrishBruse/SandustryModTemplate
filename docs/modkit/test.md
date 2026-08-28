@@ -4,7 +4,7 @@ Node helpers for tests that talk to the **extracted game** in Chromium. Import f
 
 ```ts
 import test from "node:test";
-import { setupGame } from "@modkit/test";
+import { expect, setupGame } from "@modkit/test";
 
 const game = await setupGame();
 
@@ -12,8 +12,8 @@ test("a", async () => {
   await game.evaluate(() => sandkit.api.player.getPositionAtWorld());
 });
 
-test("b", async () => {
-  await game.evaluate(() => sandkit.api);
+test("void world", async () => {
+  await expect(game).toHaveScreenshot("void-world.png");
 });
 ```
 
@@ -24,13 +24,26 @@ test("b", async () => {
 `npm run test:integration`:
 
 1. Builds `src/` and `examples/` with `--debug` into `dist/`.
-2. Boots `sandustry/<version>-<branch>/dist` in Chrome (CDP **:9224**).
+2. Boots `sandustry/<version>-<branch>/dist` in headless Chromium (CDP **:9224**).
 3. Waits for boot to finish (`game:ready`, `#loading` removed, Game scene).
-4. Runs every `*.integration.test.ts` with `--test-concurrency=1`.
+4. Runs every `*.integration.test.ts` with `--test-concurrency=1` (async spawn so
+   the host HTTP server keeps serving `/mods/...` during the run).
+
+Use **`npm run test:integration:view`** to open a visible Chrome window instead of headless.
+That script passes `--view` to the runner. On Linux it needs `DISPLAY`.
+
+Pass `--mod <folder>` to build that mod, load only that mod in the host, and run only its integration tests. Repeat `--mod` to select several folders. Pass `--examples` to build every sample and run only `examples/**/*.integration.test.ts`.
+
+```bash
+npm run test:integration -- --mod overlay-hotkey
+npm run test:integration -- --mod template
+npm run test:integration -- --mod overlay-hotkey --mod i18n
+npm run test:integration -- --examples
+```
 
 If the host is not running, `setupGame()` throws. Run integration files only through `npm run test:integration`.
 
-On failure, the host stays up until you press Ctrl+C. Do not open Chrome DevTools on that window while the tests run. That steals CDP from the runner.
+When the tests finish, the host stops. Do not open Chrome DevTools on that window while the tests run. That steals CDP from the runner.
 
 This host does not attach to Steam or F5, and it does not stop them.
 
@@ -41,9 +54,9 @@ This host does not attach to Steam or F5, and it does not stop them.
 | Test mods copy | `.tmp/sandustry-test/mods/`                           |
 | CDP            | **9224** (Steam / F5 stay on **9222**)                |
 | HTTP           | `http://127.0.0.1:4173` with COOP/COEP                |
-| Display        | Desktop (`DISPLAY` on Linux) so WebGL works           |
+| Window         | Headless by default; `npm run test:integration:view` for a visible window |
 
-It copies every built mod from `dist/` (then fills gaps from the OS mods folder) and enables them. It loads the tracked Void save `modkit/test/fixtures/Empty.save` with `?db_load=<meta.id>` (vanilla file name is `{id}.save`). A harness mod sets `globalThis.sandkit`. Hot-reload can fetch `main.js` from `/mods/<id>/`. Vanilla HUD textures stay at `/mods/<file>.png` from extracted `dist/mods/`. The host rewrites the served `js/bundle.js` so `assets.getUrl` / map blueprints accept HTTP `rootUrl` (vanilla join allows `file:` only). `sessionStorage.splashShown` is set; `?db_load=` still runs vanilla shader wait.
+It copies every built mod from `dist/` (then fills gaps from the OS mods folder) and enables them. `--mod` copies only those mods. It loads the tracked Void save `modkit/test/fixtures/Empty.save` with `?db_load=<meta.id>` (vanilla file name is `{id}.save`). A harness mod sets `globalThis.sandkit`. Hot-reload can fetch `main.js` from `/mods/<id>/`. Vanilla HUD textures stay at `/mods/<file>.png` from extracted `dist/mods/`. The host rewrites the served `js/bundle.js` so `assets.getUrl` / map blueprints accept HTTP `rootUrl` (vanilla join allows `file:` only). `sessionStorage.splashShown` is set; `?db_load=` still runs vanilla shader wait.
 
 Import `@modkit/test` from test files only. The esbuild alias rejects a game bundle import. The module also throws if `document` exists.
 
@@ -59,6 +72,8 @@ Tests that write the same world (for example player position) must run in order.
 | ------------------------------------ | --------------------------------------------------------------------------------------------- |
 | `game.evaluate(fn, ...args)`         | Run `fn` in the renderer. Arguments must be JSON values. Closures do not capture Node locals. |
 | `game.waitFor(read, match, options)` | Poll `read` in the page until `match` is true in Node.                                        |
+| `game.orderedModIds()`               | Return live `manifest.id` values from the ordered mod list.                                   |
+| `game.screenshot(options)`           | Capture a PNG of the compositor (WebGL plus DOM). Returns a `Buffer`.                         |
 | `game.withModMain(id, fn)`           | Edit the test-host `main.js`, then restore the original bytes.                                |
 | `game.tryReadModMain(id)`            | Return the test-host bundle, or `null`.                                                       |
 
@@ -66,4 +81,37 @@ Tests that write the same world (for example player position) must run in order.
 
 Return values from `evaluate` must be JSON-serializable.
 
-Kit smoke: `modkit/test/game.integration.test.ts`. Template: `src/template/template.integration.test.ts`. Samples: `examples/**/*.integration.test.ts`. Hot-reload: `src/hot-reload/reload/integration.test.ts`.
+## Screenshots
+
+`expect(game).toHaveScreenshot(name)` captures, then compares against a PNG next to the test file. `expect(png).toMatchSnapshot(name)` compares a buffer you already captured. Value checks stay on `node:assert`.
+
+| Item             | Value                                                    |
+| ---------------- | -------------------------------------------------------- |
+| Baseline folder  | `<file>.integration.test.ts-snapshots/`                  |
+| File name        | `{name}-chromium-{platform}.png`                         |
+| Fail artifacts   | `.tmp/sandustry-test-screenshots/`                       |
+| Update baselines | `npm run test:integration -- --test-update-snapshots`    |
+| Missing snapshot | Write the PNG, then fail. In `CI`, fail without a write. |
+| Retry            | Same as `waitFor`: 8000 ms timeout, 250 ms interval      |
+
+Capture options:
+
+| Option       | Role                                           |
+| ------------ | ---------------------------------------------- |
+| `clip`       | CSS-pixel rectangle                            |
+| `selector`   | Clip to a DOM node (`getBoundingClientRect`)   |
+| `mask`       | CSS selectors painted `#FF00FF` before capture |
+| `path`       | Write the PNG to that path                     |
+| `animations` | `"disabled"` (default) or `"allow"`            |
+
+Compare options: `maxDiffPixels`, `maxDiffPixelRatio`, `threshold` (default `0.2`).
+
+Game rules:
+
+- The host uses SwiftShader in every window mode so pixels match across machines.
+- `animations: "disabled"` pauses the sim (`session.paused`), then waits on a short timer.
+  It does not open the pause menu. It does not use `requestAnimationFrame` (pause can
+  stop the page frame loop and hang CDP).
+- Prefer `selector` or `mask` for HUD clocks and other live UI.
+
+Kit smoke: `modkit/test/game.integration.test.ts`. Template: `src/template/template.integration.test.ts`. Samples: every `examples/**/*.integration.test.ts`. Hot-reload: `src/hot-reload/reload/integration.test.ts`.

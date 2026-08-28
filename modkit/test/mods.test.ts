@@ -9,3 +9,11 @@ test("companionSettings only enables listed mods", () => {
   assert.equal(settings.externalModSettings["author.template"]?.enabled, true);
   assert.equal(settings.externalModSettings["hot-reload"], undefined);
 });
+
+test("companionSettings leaves hooks-intercept off", () => {
+  const settings = companionSettings(["example.hooks-intercept", "author.template"]) as {
+    externalModSettings: Record<string, { enabled?: boolean }>;
+  };
+  assert.equal(settings.externalModSettings["example.hooks-intercept"]?.enabled, false);
+  assert.equal(settings.externalModSettings["author.template"]?.enabled, true);
+});

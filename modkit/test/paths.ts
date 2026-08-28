@@ -8,6 +8,8 @@ const REPO_ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 /** Isolated Chromium CDP. Steam / F5 stay on :9222. */
 export const SANDUSTRY_TEST_CDP_PORT = "9224";
 export const SANDUSTRY_TEST_HTTP_PORT = 4173;
+export const SANDUSTRY_TEST_VIEWPORT_WIDTH = 1280;
+export const SANDUSTRY_TEST_VIEWPORT_HEIGHT = 720;
 
 export function repoRoot(): string {
   return REPO_ROOT;
@@ -39,6 +41,10 @@ export function sandustryTestChromeDir(): string {
 
 export function sandustryTestChromeLog(): string {
   return join(REPO_ROOT, ".tmp", "sandustry-test-chrome.log");
+}
+
+export function sandustryTestScreenshotsDir(): string {
+  return join(REPO_ROOT, ".tmp", "sandustry-test-screenshots");
 }
 
 /** Steam / OS Electron user-data (the running player profile). */

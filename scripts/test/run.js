@@ -6,13 +6,19 @@
  * `npm run test:integration` — boot extracted dist in Chrome, then `*.integration.test.ts`.
  */
 import { globSync } from "node:fs";
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { startSandustryTestHost, stopSandustryTestHost } from "../../modkit/test/host.ts";
+import { filterIntegrationFiles, integrationTestRepoPaths } from "./integration-select.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const REGISTER = join(ROOT, "scripts/test/register-modkit.js");
+
+/** Strip integration-runner flags before mod/test selection. */
+function integrationArgv(argv = process.argv.slice(2)) {
+  return argv.filter((arg) => arg !== "--view");
+}
 
 function collectUnitFiles() {
   return [
@@ -41,6 +47,18 @@ function collectIntegrationFiles() {
   return [...new Set(files)].sort();
 }
 
+/**
+ * @param {string[]} argv
+ * @returns {string[]}
+ */
+function collectSelectedIntegrationFiles(argv) {
+  return filterIntegrationFiles(collectIntegrationFiles(), integrationTestRepoPaths(argv));
+}
+
+function extraTestFlags() {
+  return process.argv.slice(2).filter((arg) => arg.startsWith("--test-"));
+}
+
 function run(args, extraEnv) {
   return spawnSync(process.execPath, ["--import", REGISTER, ...args], {
     cwd: ROOT,
@@ -49,49 +67,80 @@ function run(args, extraEnv) {
   });
 }
 
-function waitForSignal() {
+/**
+ * Async spawn so the integration host HTTP server can keep answering while
+ * tests run. `spawnSync` freezes the host event loop and hangs page/Node fetches.
+ * @param {string[]} args
+ * @param {NodeJS.ProcessEnv} [extraEnv]
+ * @returns {Promise<{ status: number | null }>}
+ */
+function runAsync(args, extraEnv) {
   return new Promise((resolve) => {
-    const onStop = () => resolve();
-    process.once("SIGINT", onStop);
-    process.once("SIGTERM", onStop);
+    const child = spawn(process.execPath, ["--import", REGISTER, ...args], {
+      cwd: ROOT,
+      stdio: "inherit",
+      env: extraEnv ? { ...process.env, ...extraEnv } : process.env,
+    });
+    child.on("error", () => resolve({ status: 1 }));
+    child.on("exit", (code, signal) => {
+      resolve({ status: code ?? (signal ? 1 : 0) });
+    });
   });
 }
 
 /**
- * @param {{ integration?: boolean }} [options]
+ * @param {{ integration?: boolean; modIds?: string[]; visible?: boolean }} [options]
  * @returns {Promise<number>}
  */
 export async function runNodeTests(options) {
   const integration = options?.integration === true;
-  const files = integration ? collectIntegrationFiles() : collectUnitFiles();
+  const argv = integration ? integrationArgv() : process.argv.slice(2);
+  let files;
+  try {
+    files = integration ? collectSelectedIntegrationFiles(argv) : collectUnitFiles();
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : String(error));
+    return 1;
+  }
   if (files.length === 0) {
     console.error(
       integration
-        ? "No integration tests found (*.integration.test.ts)."
+        ? argv.includes("--examples") ||
+          argv.some((arg) => arg === "--mod" || arg.startsWith("--mod="))
+          ? "No integration tests match the selected mods."
+          : "No integration tests found (*.integration.test.ts)."
         : "No tests found (src/**/*.test.ts, modkit/**/*.test.ts).",
     );
     return 1;
   }
 
   if (!integration) {
-    const result = run(["--test", ...files.map((file) => join(ROOT, file))]);
+    const result = run(["--test", ...extraTestFlags(), ...files.map((file) => join(ROOT, file))]);
     return result.status ?? 1;
   }
 
-  const host = await startSandustryTestHost({ persist: true, visible: true });
+  const host = await startSandustryTestHost({
+    persist: true,
+    visible: options?.visible === true,
+    ...(options?.modIds ? { modIds: options.modIds } : {}),
+  });
   if (!host.ok) {
     console.error(`Integration host failed: ${host.reason}`);
     return 1;
   }
-  console.log("Integration host ready (extracted dist, Chromium CDP :9224)");
+  console.log(`Integration host ready (${options?.visible ? "window" : "headless"}, CDP :9224)`);
+  if (options?.modIds) {
+    console.log(`Integration tests: ${files.join(", ")}`);
+  }
 
   let status = 1;
   try {
-    const result = run(
+    const result = await runAsync(
       [
         "--test",
         "--test-concurrency=1",
         "--test-isolation=process",
+        ...extraTestFlags(),
         ...files.map((file) => join(ROOT, file)),
       ],
       {
@@ -99,12 +148,6 @@ export async function runNodeTests(options) {
       },
     );
     status = result.status ?? 1;
-    if (status !== 0) {
-      console.log(
-        "Tests failed. Integration host is still running on CDP :9224. Press Ctrl+C to stop.",
-      );
-      await waitForSignal();
-    }
   } finally {
     await stopSandustryTestHost();
   }

@@ -81,6 +81,7 @@ const ISOLATION_HEADERS = {
   "Cross-Origin-Embedder-Policy": "require-corp",
   "Cross-Origin-Resource-Policy": "same-origin",
   "Cache-Control": "no-store",
+  Connection: "close",
 };
 
 type Runtime = { http: TestHttpServer; chrome: ChildProcess | null };
@@ -150,9 +151,12 @@ function prepareSaves(): { saveId: string; ids: string[]; saves: Record<string, 
   return { saveId: installed.id, ids: [installed.id], saves: { [installed.id]: installed.data } };
 }
 
-export function prepareSandustryTestUserData(): { mods: string[]; saveId: string | null } {
+export function prepareSandustryTestUserData(options?: { ids?: readonly string[] }): {
+  mods: string[];
+  saveId: string | null;
+} {
   mkdirSync(sandustryTestUserDataDir(), { recursive: true });
-  const mods = copyTestMods();
+  const mods = copyTestMods(options?.ids ? { ids: options.ids } : undefined);
   const saves = prepareSaves();
   return { mods, saveId: saves.saveId };
 }
@@ -263,13 +267,15 @@ function serveStatic(distDir: string, urlPath: string, response: ServerResponse)
   send(response, 404, "Not found", "text/plain; charset=utf-8");
 }
 
-async function startHttpHost(): Promise<TestHttpServer> {
+async function startHttpHost(options?: { modIds?: readonly string[] }): Promise<TestHttpServer> {
   const distDir = extractedDistDir();
   if (!distDir) {
     throw new Error("No sandustry/<version>-<branch>/dist. Run npm run setup.");
   }
 
-  const prepared = prepareSandustryTestUserData();
+  const prepared = prepareSandustryTestUserData(
+    options?.modIds ? { ids: options.modIds } : undefined,
+  );
   const lastPlayedRaw = prepared.saveId ? JSON.stringify({ id: prepared.saveId }) : "";
   const saveIds = prepared.saveId ? [prepared.saveId] : [];
   const saves: Record<string, unknown> = {};
@@ -341,9 +347,13 @@ async function waitForGameReady(): Promise<boolean> {
       const snapshot = (await cdp.evaluate(
         toPageExpression(readRendererReadySnapshot),
       )) as ReturnType<typeof readRendererReadySnapshot>;
-      cdp.close();
       lastSnapshot = formatRendererReadySnapshot(snapshot);
-      if (isRendererReady(snapshot)) return true;
+      if (isRendererReady(snapshot)) {
+        await cdp.setViewport();
+        cdp.close();
+        return true;
+      }
+      cdp.close();
     } catch {
       cdp?.close();
     }
@@ -371,6 +381,7 @@ export async function stopSandustryTestHost(): Promise<void> {
 export async function startSandustryTestHost(options?: {
   persist?: boolean;
   visible?: boolean;
+  modIds?: readonly string[];
 }): Promise<HostStartResult> {
   const visible = options?.visible === true;
   if (await isSandustryAvailable(SANDUSTRY_TEST_CDP_PORT)) {
@@ -396,7 +407,7 @@ export async function startSandustryTestHost(options?: {
 
   let http: TestHttpServer;
   try {
-    http = await startHttpHost();
+    http = await startHttpHost(options?.modIds ? { modIds: options.modIds } : undefined);
   } catch (error) {
     return { ok: false, reason: error instanceof Error ? error.message : String(error) };
   }
@@ -415,7 +426,8 @@ export async function startSandustryTestHost(options?: {
     await stopSandustryTestHost();
     return {
       ok: false,
-      reason: "Game did not finish booting (game:ready and loading overlay). See .tmp/sandustry-test-chrome.log",
+      reason:
+        "Game did not finish booting (game:ready and loading overlay). See .tmp/sandustry-test-chrome.log",
     };
   }
   return { ok: true, reused: false };

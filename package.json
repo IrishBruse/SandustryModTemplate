@@ -12,6 +12,7 @@
     "typecheck": "node scripts/typecheck/typecheck.js",
     "test": "node scripts/test/test.js",
     "test:integration": "node scripts/test/integration.js",
+    "test:integration:view": "node scripts/test/integration.js --view",
     "lint": "npm run typecheck && oxlint && oxfmt --check",
     "lint:fix": "oxlint --fix && oxfmt",
     "docs": "docsify serve docs",

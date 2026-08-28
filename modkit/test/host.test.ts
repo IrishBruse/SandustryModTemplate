@@ -3,22 +3,35 @@ import { mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { hostWindowMode } from "./chrome.ts";
+import { chromeLaunchArgs, hostWindowMode } from "./chrome.ts";
 import { resolveHostStaticFile } from "./host.ts";
 
-test("hostWindowMode uses a window when visible and a display exists", () => {
+test("hostWindowMode is headless when not visible", () => {
+  assert.equal(hostWindowMode({ platform: "win32" }), "headless");
+  assert.equal(hostWindowMode({ platform: "linux", display: undefined }), "headless");
+  assert.equal(hostWindowMode({ platform: "linux", display: ":1" }), "headless");
+  assert.equal(hostWindowMode({ platform: "darwin", display: undefined }), "headless");
+});
+
+test("hostWindowMode uses a window only when visible and a display exists", () => {
   assert.equal(hostWindowMode({ visible: true, platform: "win32" }), "window");
   assert.equal(hostWindowMode({ visible: true, platform: "linux", display: ":1" }), "window");
 });
 
-test("hostWindowMode is headless on Windows by default", () => {
-  assert.equal(hostWindowMode({ platform: "win32" }), "headless");
+test("hostWindowMode is headless when visible is requested without DISPLAY on Unix", () => {
+  assert.equal(
+    hostWindowMode({ visible: true, platform: "linux", display: undefined }),
+    "headless",
+  );
 });
 
-test("hostWindowMode uses xvfb on Unix when there is no DISPLAY", () => {
-  assert.equal(hostWindowMode({ visible: true, platform: "linux", display: undefined }), "xvfb");
-  assert.equal(hostWindowMode({ platform: "linux", display: undefined }), "xvfb");
-  assert.equal(hostWindowMode({ platform: "darwin", display: undefined }), "xvfb");
+test("chromeLaunchArgs uses SwiftShader in every host mode", () => {
+  for (const mode of ["headless", "xvfb", "window"] as const) {
+    const args = chromeLaunchArgs(mode);
+    assert.ok(args.includes("--use-gl=angle"), mode);
+    assert.ok(args.includes("--use-angle=swiftshader"), mode);
+    assert.ok(args.includes("--enable-unsafe-swiftshader"), mode);
+  }
 });
 
 test("resolveHostStaticFile prefers live /mods/<id>/ then vanilla dist/mods", () => {

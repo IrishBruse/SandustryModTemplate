@@ -32,7 +32,7 @@ Workshop mod references live in `sandustry-workshop-mods/workshop/` (sibling rep
 | --------------------------------------------- | ------------------------------------------ |
 | [`events`](api/events/)                       | `api.events.on("game:ready")`              |
 | [`triggers-interval`](api/triggers-interval/) | `api.triggers.register` repeating callback |
-| [`hooks-intercept`](api/hooks-intercept/)     | `api.hooks.intercept` + `context.cancel()` |
+| [`hooks-intercept`](api/hooks-intercept/)     | `api.hooks.intercept` on `input:escape`    |
 | [`schedule-idle`](api/schedule-idle/)         | `schedule.nextTick` + `grid.mutate`        |
 | [`i18n`](api/i18n/)                           | `api.i18n.register` + `i18n.t`             |
 | [`storage`](api/storage/)                     | `api.storage.ensure` in the save file      |
@@ -52,4 +52,8 @@ Workshop mod references live in `sandustry-workshop-mods/workshop/` (sibling rep
 
 The hot-reload companion docs live under [`../docs/hot-reload/`](../docs/hot-reload/) (debug install / release staging). Do not copy that mod as a starting sample.
 
-Integration tests (`*.integration.test.ts`) run with `npm run test:integration`. Samples: `api/player-teleport`, `api/i18n`, `api/storage`, `api/events`, `ui/overlay-hotkey`.
+Integration tests (`*.integration.test.ts`) run with `npm run test:integration`. Each sample folder has one. Pass `--mod <folder>` to run one sample:
+
+```bash
+npm run test:integration -- --mod overlay-hotkey
+```
