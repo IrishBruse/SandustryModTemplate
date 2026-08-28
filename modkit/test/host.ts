@@ -15,6 +15,7 @@ import { setTimeout as sleep } from "node:timers/promises";
 import type { ChildProcess } from "node:child_process";
 import { isSandustryAvailable, CdpConnection } from "./cdp.ts";
 import { spawnChrome, stopChild, resolveChrome } from "./chrome.ts";
+import { rewriteAssetJoinForHttp } from "./asset-join.ts";
 import { companionSettings, copyTestMods, listWorkshopMods } from "./mods.ts";
 import {
   extractedDistDir,
@@ -198,12 +199,33 @@ function listSaves(): unknown[] {
   return out;
 }
 
-function sendFile(root: string, urlPath: string, response: ServerResponse): boolean {
-  const filePath = safeJoin(root, urlPath);
-  if (!filePath || !existsSync(filePath) || !statSync(filePath).isFile()) return false;
+function isFile(filePath: string | null): filePath is string {
+  return Boolean(filePath && existsSync(filePath) && statSync(filePath).isFile());
+}
+
+/**
+ * Vanilla bundle textures use `/mods/<file>.png` under extracted `dist/mods/`.
+ * Live test mods use `/mods/<id>/...` under the isolated test mods folder.
+ */
+export function resolveHostStaticFile(
+  distDir: string,
+  testModsDir: string,
+  urlPath: string,
+): string | null {
+  const pathOnly = urlPath.split("?")[0] ?? "";
+  if (pathOnly.startsWith("/mods/")) {
+    const live = safeJoin(testModsDir, pathOnly.slice("/mods".length));
+    if (isFile(live)) return live;
+    const vanilla = safeJoin(distDir, pathOnly);
+    return isFile(vanilla) ? vanilla : null;
+  }
+  const distFile = safeJoin(distDir, pathOnly);
+  return isFile(distFile) ? distFile : null;
+}
+
+function sendResolvedFile(filePath: string, response: ServerResponse): void {
   const type = MIME[extname(filePath).toLowerCase()] ?? "application/octet-stream";
   send(response, 200, readFileSync(filePath), type);
-  return true;
 }
 
 function serveStatic(distDir: string, urlPath: string, response: ServerResponse): void {
@@ -220,12 +242,17 @@ function serveStatic(distDir: string, urlPath: string, response: ServerResponse)
     );
     return;
   }
-  if (urlPath.startsWith("/mods/")) {
-    if (sendFile(sandustryTestModsDir(), urlPath.slice("/mods".length), response)) return;
-    send(response, 404, "Not found", "text/plain; charset=utf-8");
+  const pathOnly = urlPath.split("?")[0] ?? "";
+  if (pathOnly === "/js/bundle.js") {
+    const raw = readFileSync(join(distDir, "js", "bundle.js"), "utf8");
+    send(response, 200, rewriteAssetJoinForHttp(raw), "application/javascript; charset=utf-8");
     return;
   }
-  if (sendFile(distDir, urlPath, response)) return;
+  const resolved = resolveHostStaticFile(distDir, sandustryTestModsDir(), urlPath);
+  if (resolved) {
+    sendResolvedFile(resolved, response);
+    return;
+  }
   send(response, 404, "Not found", "text/plain; charset=utf-8");
 }
 

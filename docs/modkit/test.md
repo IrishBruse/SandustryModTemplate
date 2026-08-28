@@ -43,7 +43,7 @@ This host does not attach to Steam or F5, and it does not stop them.
 | HTTP           | `http://127.0.0.1:4173` with COOP/COEP                |
 | Display        | Desktop (`DISPLAY` on Linux) so WebGL works           |
 
-It copies every built mod from `dist/` (then fills gaps from the OS mods folder) and enables them. It does **not** load the last-played save. A harness mod sets `globalThis.sandkit`. A generated **80×80** custom map (`sandustry-test.tiny-map`) calls `api.maps.start` so boot stays small. Hot-reload can fetch `main.js` from `/mods/<id>/`. `sessionStorage.splashShown` is set so shader wait is skipped when the URL has no `db_load`.
+It copies every built mod from `dist/` (then fills gaps from the OS mods folder) and enables them. It does **not** load the last-played save. A harness mod sets `globalThis.sandkit`. A generated **80×80** custom map (`sandustry-test.tiny-map`) calls `api.maps.start` so boot stays small. Floor RGB `0, 200, 0` maps to built-in terrain **Dirt**. Hot-reload can fetch `main.js` from `/mods/<id>/`. Vanilla HUD textures stay at `/mods/<file>.png` from extracted `dist/mods/`. The host rewrites the served `js/bundle.js` so `assets.getUrl` / map blueprints accept HTTP `rootUrl` (vanilla join allows `file:` only). `sessionStorage.splashShown` is set so shader wait is skipped when the URL has no `db_load`.
 
 Import `@modkit/test` from test files only. The esbuild alias rejects a game bundle import. The module also throws if `document` exists.
 

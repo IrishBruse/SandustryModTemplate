@@ -32,6 +32,12 @@ Order after `?db_load=` / Continue:
 
 An empty Void save is **~11 KB** on disk. A full world is **~1.3 MB**. Disk size does not skip steps 2, 7, or 8.
 
+## Failure
+
+The boot `catch` logs `Initialization failed: ` plus a dump of the thrown value (`Error.message` / stack when it is an Error). An `Image` `onerror` Event dumps as `{"isTrusted":true}` (no URL). That usually means a required texture 404. Vanilla HUD icons load from `dist/mods/<name>.png` (bundle paths like `mods/minimap_icon.png`).
+
+Custom-map blueprints and `api.assets.getUrl` join `rootUrl` with a relative path. Vanilla **requires `file:`** (`pathToFileURL(folder + sep)`). An HTTP `rootUrl` throws `Asset path resolves outside the mod folder.` before the image fetch.
+
 ## Live page-reload timings (0.5.2, Void `?db_load=`)
 
 Marks on `globalThis.__hrBoot` (ms from bundle start). Fast boot **on**, skip shader **off**:

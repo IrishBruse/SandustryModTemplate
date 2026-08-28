@@ -10,7 +10,8 @@ export const TINY_MAP_WIDTH = 80;
 export const TINY_MAP_HEIGHT = 80;
 
 const AIR: readonly [number, number, number] = [255, 255, 255];
-const BLOCK: readonly [number, number, number] = [0, 200, 0];
+/** Non-reserved RGB. Mapped to CellType `Dirt` (not structure Block). */
+const FLOOR: readonly [number, number, number] = [0, 200, 0];
 const FLOOR_TOP = TINY_MAP_HEIGHT - 8;
 const SPAWN_X = 40;
 const SPAWN_Y = FLOOR_TOP - 4;
@@ -20,7 +21,7 @@ function blank(_x: number, _y: number): readonly [number, number, number] {
 }
 
 function terrain(_x: number, y: number): readonly [number, number, number] {
-  if (y >= FLOOR_TOP) return BLOCK;
+  if (y >= FLOOR_TOP) return FLOOR;
   return AIR;
 }
 
@@ -58,7 +59,7 @@ export function tinyMapManifest(): Record<string, unknown> {
       depthLight: { startY: 40, endY: 80, maxSize: 40, minSize: 8 },
       parallax: { widthScale: 1, offsetY: 0 },
       colorMappings: {
-        "0, 200, 0": "Block",
+        "0, 200, 0": "Dirt",
       },
     },
   };

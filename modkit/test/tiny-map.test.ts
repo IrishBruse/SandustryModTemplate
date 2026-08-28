@@ -18,10 +18,11 @@ test("writeTinyTestMap writes an 80x80 custom map mod", () => {
   const id = writeTinyTestMap(dir);
   assert.equal(id, TINY_MAP_ID);
   const info = JSON.parse(readFileSync(join(dir, id, "modinfo.json"), "utf8")) as {
-    map: { width: number; height: number };
+    map: { width: number; height: number; colorMappings: Record<string, string> };
   };
   assert.equal(info.map.width, TINY_MAP_WIDTH);
   assert.equal(info.map.height, TINY_MAP_HEIGHT);
+  assert.equal(info.map.colorMappings["0, 200, 0"], "Dirt");
   const png = readFileSync(join(dir, id, "map", "terrain.png"));
   assert.deepEqual([...png.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10]);
 });
