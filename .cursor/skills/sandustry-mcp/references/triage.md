@@ -2,11 +2,11 @@
 
 ## MCP unreachable
 
-| Signal                               | Fix                                                                                                                               |
-| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
-| `list_pages` empty or errors         | Game not running, or debug port off. Steam/F5 uses `:9222`. Live tests: `npm run test:integration` brings up Chromium on `:9224`. |
-| Page list has no **Sandustry** title | Wait for load, or pick the `file://.../dist/index.html` renderer tab.                                                             |
-| Call fails after game reload         | Re-run `list_pages`; stale `pageId` is the usual cause.                                                                           |
+| Signal                               | Fix                                                                                                                                      |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `list_pages` empty or errors         | Game not running, or debug port off. Steam/F5 uses `:9222`. Integration tests: `npm run test:integration` brings up Chromium on `:9224`. |
+| Page list has no **Sandustry** title | Wait for load, or pick the `file://.../dist/index.html` renderer tab.                                                                    |
+| Call fails after game reload         | Re-run `list_pages`; stale `pageId` is the usual cause.                                                                                  |
 
 ## Probe returns garbage
 

@@ -1,6 +1,7 @@
 import { gunzipSync } from "node:zlib";
-import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { copyFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { sandustryUserDataDir } from "./paths.ts";
 
 const GZIP_MAGIC = [0x1f, 0x8b];
@@ -63,4 +64,28 @@ export function steamSettingsJson(): string {
   const filePath = join(sandustryUserDataDir(), "meta", "settings.json");
   if (existsSync(filePath)) return readFileSync(filePath, "utf8");
   return JSON.stringify(FALLBACK_SETTINGS);
+}
+
+/** Tracked Void save used by the Chromium integration host. */
+export function emptySaveFixturePath(): string {
+  return join(dirname(fileURLToPath(import.meta.url)), "fixtures", "Empty.save");
+}
+
+/**
+ * Copy `Empty.save` into the test saves folder as `{meta.id}.save`.
+ * Vanilla load uses that id (`?db_load=`).
+ */
+export function installEmptySave(destDir: string): { id: string; data: unknown } {
+  const fixture = emptySaveFixturePath();
+  if (!existsSync(fixture)) {
+    throw new Error(`Missing ${fixture}`);
+  }
+  const parsed = parseSaveFile(fixture);
+  const id = parsed.meta.id;
+  if (typeof id !== "string" || id.length === 0) {
+    throw new Error("Empty.save has no meta.id");
+  }
+  mkdirSync(destDir, { recursive: true });
+  copyFileSync(fixture, join(destDir, `${id}.save`));
+  return { id, data: parsed.data };
 }

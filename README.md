@@ -41,11 +41,9 @@ More: [Quick start](https://ethanconneely.com/SandustryModTemplate/#/quick-start
 
 - **`npm run typecheck`** — TypeScript check
 - **`npm run test`** — Unit tests only (`*.test.ts`). No Chromium.
-- **`npm run test:integration`** — Build mods, boot extracted dist in Chrome (CDP `:9224`), run `*.live.test.ts`
+- **`npm run test:integration`** — Build mods, boot extracted dist in Chrome (CDP `:9224`), run `*.integration.test.ts`
 - **`npm run lint`** — Typecheck, oxlint, and format check
 - **`npm run lint:fix`** — oxlint `--fix` and oxfmt
-
-Lint and test also run on Agent stop via `.cursor/hooks/lint-test.sh` (Cursor hooks). They are not part of GitHub CI.
 
 ### Docs and UI
 

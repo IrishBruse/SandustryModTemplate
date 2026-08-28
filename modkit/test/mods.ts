@@ -6,7 +6,6 @@ import {
   sandustryTestModsDir,
   sandustryUserDataDir,
 } from "./paths.ts";
-import { writeTinyTestMap } from "./tiny-map.ts";
 
 const HARNESS_ID = "sandustry-test.harness";
 
@@ -53,7 +52,6 @@ export function copyTestMods(): string[] {
       copied.add(id);
     }
   }
-  copied.add(writeTinyTestMap(destRoot));
   return [...copied].sort();
 }
 

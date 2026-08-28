@@ -83,7 +83,7 @@ npm run publish          # npm run build + SteamCMD Workshop upload
 npm run publish -- --mod <folder>
 npm run typecheck
 npm run test
-npm run test:integration  # --debug src+examples, then *.live.test.ts on :9224
+npm run test:integration  # --debug src+examples, then *.integration.test.ts on :9224
 npm run sandustry        # stop + launch (no build; keep npm run dev for the bundle)
 npm run ui:css           # compile docs/ui/canvas preview Tailwind
 npm run ui:previews      # compile preview CSS, then screenshot preview.html
@@ -128,7 +128,7 @@ Steam **change notes** come from that mod's `CHANGELOG.md` (Keep a Changelog). W
 
 ## GitHub Actions
 
-Pushes, pull requests, and manual runs execute `.github/workflows/ci.yml` on **Ubuntu** and **Windows** (Node 24). Each job runs `npm ci`, `npm run build`, and a Tailwind example build (`--examples --mod overlay-hotkey`). Lint and unit tests run locally via the Cursor `stop` hook (`.cursor/hooks/lint-test.sh`), not in CI.
+Pushes, pull requests, and manual runs execute `.github/workflows/ci.yml` on **Ubuntu** and **Windows** (Node 24). Each job runs `npm ci`, `npm run build`, and a Tailwind example build (`--examples --mod overlay-hotkey`).
 
 On **Windows**, CI also builds a fake Sandustry install under `.tmp/ci-sandustry/` (`scripts/setup/prepare-ci-game.js`), sets `SANDUSTRY`, and runs `npm run setup`. That checks Node, links, asar extract, and junctions without Steam.
 

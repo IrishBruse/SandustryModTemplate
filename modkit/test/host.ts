@@ -28,7 +28,7 @@ import {
   sandustryTestUserDataDir,
   SANDUSTRY_TEST_CDP_PORT,
 } from "./paths.ts";
-import { parseSaveFile, readSaveMetaLine, steamSettingsJson } from "./saves.ts";
+import { parseSaveFile, readSaveMetaLine, steamSettingsJson, installEmptySave } from "./saves.ts";
 
 export type { HostWindowMode } from "./chrome.ts";
 export { hostWindowMode } from "./chrome.ts";
@@ -138,9 +138,10 @@ function mergedSettingsJson(modIds: string[]): string {
   });
 }
 
-function prepareSaves(): { saveId: string | null; ids: string[]; saves: Record<string, unknown> } {
-  mkdirSync(sandustryTestSavesDir(), { recursive: true });
-  return { saveId: null, ids: [], saves: {} };
+function prepareSaves(): { saveId: string; ids: string[]; saves: Record<string, unknown> } {
+  const dest = sandustryTestSavesDir();
+  const installed = installEmptySave(dest);
+  return { saveId: installed.id, ids: [installed.id], saves: { [installed.id]: installed.data } };
 }
 
 export function prepareSandustryTestUserData(): { mods: string[]; saveId: string | null } {

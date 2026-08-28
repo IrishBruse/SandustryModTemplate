@@ -44,6 +44,7 @@ type Pending = {
 
 export class CdpConnection {
   private nextId = 1;
+  private tail: Promise<unknown> = Promise.resolve();
   private readonly pending = new Map<number, Pending>();
   private readonly ws: WebSocket;
   private readonly timeoutMs: number;
@@ -75,11 +76,18 @@ export class CdpConnection {
   }
 
   async evaluate(expression: string): Promise<unknown> {
-    const details = (await this.send("Runtime.evaluate", {
-      expression,
-      returnByValue: true,
-      awaitPromise: true,
-    })) as {
+    const run = this.tail.then(() =>
+      this.send("Runtime.evaluate", {
+        expression,
+        returnByValue: true,
+        awaitPromise: true,
+      }),
+    );
+    this.tail = run.then(
+      () => undefined,
+      () => undefined,
+    );
+    const details = (await run) as {
       exceptionDetails?: { exception?: { description?: string }; text?: string };
       result?: { value?: unknown };
     };

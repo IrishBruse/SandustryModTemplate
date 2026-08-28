@@ -1,9 +1,9 @@
 /**
  * Node helpers for live Sandustry tests (extracted dist in Chromium, CDP `:9224`).
- * Import from `*.live.test.ts` only. Do not import from mod `main.ts`.
+ * Import from `*.integration.test.ts` only. Do not import from mod `main.ts`.
  */
 if (typeof globalThis.document !== "undefined") {
-  throw new Error("@modkit/test runs under Node. Import it from *.live.test.ts only.");
+  throw new Error("@modkit/test runs under Node. Import it from *.integration.test.ts only.");
 }
 
 export { SANDUSTRY_CDP_PORT, isSandustryAvailable } from "./cdp.ts";

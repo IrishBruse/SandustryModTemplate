@@ -3,7 +3,7 @@
  * `--import` maps `@modkit/*` because Node does not use tsconfig paths.
  *
  * `npm test` — unit files only (no Chromium).
- * `npm run test:integration` — boot extracted dist in Chrome, then `*.live.test.ts`.
+ * `npm run test:integration` — boot extracted dist in Chrome, then `*.integration.test.ts`.
  */
 import { globSync } from "node:fs";
 import { spawnSync } from "node:child_process";
@@ -22,21 +22,21 @@ function collectUnitFiles() {
   ]
     .filter(
       (file) =>
-        !file.endsWith(".live.test.ts") &&
-        !file.endsWith("/live.test.ts") &&
-        file !== "live.test.ts",
+        !file.endsWith(".integration.test.ts") &&
+        !file.endsWith("/integration.test.ts") &&
+        file !== "integration.test.ts",
     )
     .sort();
 }
 
-function collectLiveFiles() {
+function collectIntegrationFiles() {
   const files = [
-    ...globSync("src/**/*.live.test.ts", { cwd: ROOT }),
-    ...globSync("src/**/live.test.ts", { cwd: ROOT }),
-    ...globSync("modkit/**/*.live.test.ts", { cwd: ROOT }),
-    ...globSync("modkit/**/live.test.ts", { cwd: ROOT }),
-    ...globSync("examples/**/*.live.test.ts", { cwd: ROOT }),
-    ...globSync("examples/**/live.test.ts", { cwd: ROOT }),
+    ...globSync("src/**/*.integration.test.ts", { cwd: ROOT }),
+    ...globSync("src/**/integration.test.ts", { cwd: ROOT }),
+    ...globSync("modkit/**/*.integration.test.ts", { cwd: ROOT }),
+    ...globSync("modkit/**/integration.test.ts", { cwd: ROOT }),
+    ...globSync("examples/**/*.integration.test.ts", { cwd: ROOT }),
+    ...globSync("examples/**/integration.test.ts", { cwd: ROOT }),
   ];
   return [...new Set(files)].sort();
 }
@@ -63,11 +63,11 @@ function waitForSignal() {
  */
 export async function runNodeTests(options) {
   const integration = options?.integration === true;
-  const files = integration ? collectLiveFiles() : collectUnitFiles();
+  const files = integration ? collectIntegrationFiles() : collectUnitFiles();
   if (files.length === 0) {
     console.error(
       integration
-        ? "No live tests found (*.live.test.ts)."
+        ? "No integration tests found (*.integration.test.ts)."
         : "No tests found (src/**/*.test.ts, modkit/**/*.test.ts).",
     );
     return 1;
@@ -88,7 +88,12 @@ export async function runNodeTests(options) {
   let status = 1;
   try {
     const result = run(
-      ["--test", "--test-concurrency=1", ...files.map((file) => join(ROOT, file))],
+      [
+        "--test",
+        "--test-concurrency=1",
+        "--test-isolation=process",
+        ...files.map((file) => join(ROOT, file)),
+      ],
       {
         SANDUSTRY_TEST_HOST: "1",
       },
