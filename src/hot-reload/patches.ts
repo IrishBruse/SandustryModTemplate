@@ -56,7 +56,8 @@ export const debugPatches = definePatches([
     file: "js/bundle.js",
     find: "{environment:t,shared:a,simSab:l,sabDescriptor:i}}(C);",
     operation: "insertBefore",
-    code: `${markCall("sabAlloc:start")};`,
+    // Comma, not semicolon: this object is a comma-expression value, not a statement.
+    code: `${markCall("sabAlloc:start")},`,
     expectedMatches: 1,
   },
   {
