@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { filterIntegrationFiles, integrationTestRepoPaths } from "./integration-select.js";
+import {
+  filterIntegrationFiles,
+  integrationTestRepoPaths,
+  normalizeIntegrationArgv,
+} from "./integration-select.js";
 
 const discovered = [
   { folder: "overlay-hotkey", root: "examples", repoPath: "examples/ui/overlay-hotkey" },
@@ -16,6 +20,26 @@ const files = [
   "src/hot-reload/reload/integration.test.ts",
   "src/template/template.integration.test.ts",
 ];
+
+test("normalizeIntegrationArgv turns positional folders into --mod", () => {
+  assert.deepEqual(normalizeIntegrationArgv(["--view", "collector-element"]), [
+    "--view",
+    "--mod",
+    "collector-element",
+  ]);
+  assert.deepEqual(normalizeIntegrationArgv(["template", "i18n", "--examples"]), [
+    "--mod",
+    "template",
+    "--mod",
+    "i18n",
+    "--examples",
+  ]);
+  assert.deepEqual(normalizeIntegrationArgv(["--mod", "template", "--view"]), [
+    "--mod",
+    "template",
+    "--view",
+  ]);
+});
 
 test("filterIntegrationFiles keeps the full list when no prefixes are set", () => {
   assert.deepEqual(filterIntegrationFiles(files, null), [...files].sort());
@@ -45,6 +69,15 @@ test("integrationTestRepoPaths maps --mod folders", () => {
   );
 });
 
+test("integrationTestRepoPaths maps positional mod folders", () => {
+  assert.deepEqual(integrationTestRepoPaths(["overlay-hotkey"], discovered), [
+    "examples/ui/overlay-hotkey",
+  ]);
+  assert.deepEqual(integrationTestRepoPaths(["--view", "template"], discovered), [
+    "src/template",
+  ]);
+});
+
 test("integrationTestRepoPaths uses examples/ for --examples", () => {
   assert.deepEqual(integrationTestRepoPaths(["--examples"], discovered), ["examples"]);
   assert.deepEqual(filterIntegrationFiles(files, ["examples"]), [
@@ -63,6 +96,6 @@ test("integrationTestRepoPaths rejects --examples --mod from src/", () => {
 test("integrationTestRepoPaths rejects unknown --mod", () => {
   assert.throws(
     () => integrationTestRepoPaths(["--mod", "missing"], discovered),
-    /Unknown --mod "missing"/,
+    /Unknown mod "missing"/,
   );
 });

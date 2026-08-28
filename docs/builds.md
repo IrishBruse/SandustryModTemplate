@@ -85,7 +85,8 @@ npm run typecheck
 npm run test
 npm run test:integration  # headless Chromium on :9224, then *.integration.test.ts
 npm run test:integration:view  # visible window (Linux needs DISPLAY)
-npm run test:integration -- --mod overlay-hotkey  # one folder + its tests
+nr test:integration:view overlay-hotkey  # one folder + its tests (visible)
+nr test:integration overlay-hotkey  # one folder + its tests (headless)
 npm run sandustry        # stop + launch (no build; keep npm run dev for the bundle)
 npm run ui:css           # compile docs/ui/canvas preview Tailwind
 npm run ui:previews      # compile preview CSS, then screenshot preview.html

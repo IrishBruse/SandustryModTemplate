@@ -89,12 +89,19 @@ function runAsync(args, extraEnv) {
 }
 
 /**
- * @param {{ integration?: boolean; modIds?: string[]; visible?: boolean }} [options]
+ * @param {{
+ *   integration?: boolean;
+ *   modIds?: string[];
+ *   visible?: boolean;
+ *   argv?: string[];
+ * }} [options]
  * @returns {Promise<number>}
  */
 export async function runNodeTests(options) {
   const integration = options?.integration === true;
-  const argv = integration ? integrationArgv() : process.argv.slice(2);
+  const argv = integration
+    ? integrationArgv(options?.argv ?? process.argv.slice(2))
+    : process.argv.slice(2);
   let files;
   try {
     files = integration ? collectSelectedIntegrationFiles(argv) : collectUnitFiles();
@@ -145,6 +152,7 @@ export async function runNodeTests(options) {
       ],
       {
         SANDUSTRY_TEST_HOST: "1",
+        ...(options?.visible === true ? { SANDUSTRY_TEST_VIEW: "1" } : {}),
       },
     );
     status = result.status ?? 1;

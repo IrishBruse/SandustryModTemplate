@@ -23,6 +23,20 @@ try {
   /* userAgent may be locked */
 }
 
+/**
+ * Cap reported cores so vanilla sim worker count stays small:
+ * `max(2, hardwareConcurrency - 2)`. A 16-core host would otherwise spawn ~14 workers
+ * and starve Steam Sandustry / the desktop while tests run.
+ */
+try {
+  Object.defineProperty(Navigator.prototype, "hardwareConcurrency", {
+    configurable: true,
+    get: () => 4,
+  });
+} catch {
+  /* hardwareConcurrency may be locked */
+}
+
 try {
   sessionStorage.setItem("splashShown", "1");
 } catch {

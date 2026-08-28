@@ -1,7 +1,37 @@
 /**
- * Select integration test files for `--mod` / `--examples`.
+ * Select integration test files for `--mod` / `--examples` / positional mod folders.
  */
 import { discoverMods, parseModFilters } from "../lib/mods.js";
+
+/**
+ * Turn bare mod folder names into `--mod` flags.
+ * Keeps `--view`, `--examples`, `--test-*`, and explicit `--mod`.
+ *
+ * @param {string[]} argv
+ * @returns {string[]}
+ */
+export function normalizeIntegrationArgv(argv) {
+  /** @type {string[]} */
+  const out = [];
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+    if (arg === "--mod") {
+      const value = argv[i + 1];
+      out.push(arg);
+      if (value !== undefined) {
+        out.push(value);
+        i += 1;
+      }
+      continue;
+    }
+    if (arg.startsWith("-")) {
+      out.push(arg);
+      continue;
+    }
+    out.push("--mod", arg);
+  }
+  return out;
+}
 
 /**
  * Keep files under one of the repo-relative prefixes.
@@ -34,18 +64,19 @@ export function filterIntegrationFiles(files, repoPaths) {
  * @returns {string[] | null}
  */
 export function integrationTestRepoPaths(argv, discovered = discoverMods()) {
-  const filters = parseModFilters(argv);
-  const examplesOnly = argv.includes("--examples");
+  const normalized = normalizeIntegrationArgv(argv);
+  const filters = parseModFilters(normalized);
+  const examplesOnly = normalized.includes("--examples");
   if (filters.length > 0) {
     return filters.map((folder) => {
       const mod = discovered.find((entry) => entry.folder === folder);
       if (!mod) {
         throw new Error(
-          `Unknown --mod ${JSON.stringify(folder)}. Found: ${discovered.map((entry) => entry.folder).join(", ")}`,
+          `Unknown mod ${JSON.stringify(folder)}. Found: ${discovered.map((entry) => entry.folder).join(", ")}`,
         );
       }
       if (examplesOnly && mod.root !== "examples") {
-        throw new Error(`--mod ${JSON.stringify(folder)} is not under examples/`);
+        throw new Error(`mod ${JSON.stringify(folder)} is not under examples/`);
       }
       return mod.repoPath;
     });

@@ -65,7 +65,6 @@ export class SandustrySession {
         session = await SandustrySession.connect(options);
         const snapshot = await session.evaluate(readRendererReadySnapshot);
         if (isRendererReady(snapshot)) {
-          await session.cdp.setViewport();
           return session;
         }
         lastError = `Sandustry boot is not finished: ${formatRendererReadySnapshot(snapshot)}`;

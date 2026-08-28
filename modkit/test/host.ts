@@ -33,6 +33,7 @@ import {
   GAME_READY_POLL_MS,
   GAME_READY_TIMEOUT_MS,
   isRendererReady,
+  pauseRendererSim,
   readRendererReadySnapshot,
 } from "./readiness.ts";
 import { parseSaveFile, readSaveMetaLine, installEmptySave } from "./saves.ts";
@@ -344,7 +345,7 @@ function writeHostRecord(record: HostRecord): void {
   writeFileSync(sandustryTestHostFile(), `${JSON.stringify(record, null, 2)}\n`);
 }
 
-async function waitForGameReady(): Promise<boolean> {
+async function waitForGameReady(options?: { visible?: boolean }): Promise<boolean> {
   const deadline = Date.now() + GAME_READY_TIMEOUT_MS;
   let lastSnapshot = "no CDP snapshot";
   while (Date.now() < deadline) {
@@ -360,7 +361,8 @@ async function waitForGameReady(): Promise<boolean> {
       )) as ReturnType<typeof readRendererReadySnapshot>;
       lastSnapshot = formatRendererReadySnapshot(snapshot);
       if (isRendererReady(snapshot)) {
-        await cdp.setViewport();
+        await cdp.lockViewport({ visible: options?.visible === true });
+        await cdp.evaluate(toPageExpression(pauseRendererSim));
         cdp.close();
         return true;
       }
@@ -432,7 +434,7 @@ export async function startSandustryTestHost(options?: {
     writeHostRecord({ pid: child.pid, port: SANDUSTRY_TEST_CDP_PORT, launchedAt: Date.now() });
   }
 
-  const ready = await waitForGameReady();
+  const ready = await waitForGameReady({ visible });
   if (!ready) {
     await stopSandustryTestHost();
     return {

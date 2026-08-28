@@ -102,15 +102,43 @@ export class CdpConnection {
     return details.result?.value;
   }
 
-  async setViewport(
-    width = SANDUSTRY_TEST_VIEWPORT_WIDTH,
-    height = SANDUSTRY_TEST_VIEWPORT_HEIGHT,
-  ): Promise<void> {
+  /**
+   * Lock the page to a fixed size once at host boot.
+   * Visible windows use Browser bounds only — Emulation device metrics resize the
+   * window and make `:view` thrash. Headless uses device metrics so screenshots
+   * stay 1280×720.
+   */
+  async lockViewport(options?: {
+    visible?: boolean;
+    width?: number;
+    height?: number;
+  }): Promise<void> {
+    const width = options?.width ?? SANDUSTRY_TEST_VIEWPORT_WIDTH;
+    const height = options?.height ?? SANDUSTRY_TEST_VIEWPORT_HEIGHT;
+    if (options?.visible === true) {
+      await this.setWindowBounds(width, height);
+      return;
+    }
     await this.sendQueued("Emulation.setDeviceMetricsOverride", {
       width,
       height,
       deviceScaleFactor: 1,
       mobile: false,
+    });
+  }
+
+  private async setWindowBounds(width: number, height: number): Promise<void> {
+    const target = (await this.sendQueued("Browser.getWindowForTarget", {})) as {
+      windowId?: number;
+    };
+    if (typeof target.windowId !== "number") return;
+    await this.sendQueued("Browser.setWindowBounds", {
+      windowId: target.windowId,
+      bounds: {
+        width,
+        height,
+        windowState: "normal",
+      },
     });
   }
 

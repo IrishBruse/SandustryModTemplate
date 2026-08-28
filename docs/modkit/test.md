@@ -32,13 +32,35 @@ test("void world", async () => {
 Use **`npm run test:integration:view`** to open a visible Chrome window instead of headless.
 That script passes `--view` to the runner. On Linux it needs `DISPLAY`.
 
-Pass `--mod <folder>` to build that mod, load only that mod in the host, and run only its integration tests. Repeat `--mod` to select several folders. Pass `--examples` to build every sample and run only `examples/**/*.integration.test.ts`.
+### Performance
+
+The host is heavy: it boots the full game in Chromium with sim workers and WebGL. To reduce lag on your machine (and on Steam Sandustry):
+
+| Goal | Command |
+| ---- | ------- |
+| Run one mod only | `nr test:integration template` |
+| Run one mod with a window | `nr test:integration:view collector-element` |
+| Run example samples only | `nr test:integration --examples` |
+| Skip the full example build | pass a mod folder (or `--mod`) |
+
+Local runs:
+
+- Use the GPU (SwiftShader only in `CI`, for screenshot baselines).
+- Cap `navigator.hardwareConcurrency` at 4 so vanilla spawns about **2** sim workers (not ~`cores − 2`).
+- Launch Chrome under `nice -n 10` and limit raster / renderer processes.
+- Allow Chrome timer throttling (full frame-rate flags stay on in CI only).
+- Pause the sim after boot until a test needs live frames.
+
+Pass a mod folder name (or `--mod <folder>`) to build that mod, load only that
+mod in the host, and run only its integration tests. Repeat folders / `--mod`
+to select several. Pass `--examples` to build every sample and run only
+`examples/**/*.integration.test.ts`.
 
 ```bash
-npm run test:integration -- --mod overlay-hotkey
-npm run test:integration -- --mod template
-npm run test:integration -- --mod overlay-hotkey --mod i18n
-npm run test:integration -- --examples
+nr test:integration:view overlay-hotkey
+nr test:integration template
+nr test:integration overlay-hotkey i18n
+nr test:integration --examples
 ```
 
 If the host is not running, `setupGame()` throws. Run integration files only through `npm run test:integration`.
@@ -55,6 +77,7 @@ This host does not attach to Steam or F5, and it does not stop them.
 | CDP            | **9224** (Steam / F5 stay on **9222**)                |
 | HTTP           | `http://127.0.0.1:4173` with COOP/COEP                |
 | Window         | Headless by default; `npm run test:integration:view` for a visible window |
+| Viewport       | Locked once at host boot (1280×720). `:view` does not re-apply Emulation metrics per test file |
 
 It copies every built mod from `dist/` (then fills gaps from the OS mods folder) and enables them. `--mod` copies only those mods. It loads the tracked Void save `modkit/test/fixtures/Empty.save` with `?db_load=<meta.id>` (vanilla file name is `{id}.save`). A harness mod sets `globalThis.sandkit`. Hot-reload can fetch `main.js` from `/mods/<id>/`. Vanilla HUD textures stay at `/mods/<file>.png` from extracted `dist/mods/`. The host rewrites the served `js/bundle.js` so `assets.getUrl` / map blueprints accept HTTP `rootUrl` (vanilla join allows `file:` only). `sessionStorage.splashShown` is set; `?db_load=` still runs vanilla shader wait.
 
@@ -108,7 +131,10 @@ Compare options: `maxDiffPixels`, `maxDiffPixelRatio`, `threshold` (default `0.2
 
 Game rules:
 
-- The host uses SwiftShader in every window mode so pixels match across machines.
+- The host uses SwiftShader only in CI so PNG baselines match across machines. Local runs prefer the GPU.
+- The test page reports `hardwareConcurrency` as 4 so vanilla keeps about two sim workers.
+- Chrome launches under `nice -n 10` (Unix) with fewer raster threads.
+- After boot the host pauses the sim (`session.paused`) until a test needs live frames.
 - `animations: "disabled"` pauses the sim (`session.paused`), then waits on a short timer.
   It does not open the pause menu. It does not use `requestAnimationFrame` (pause can
   stop the page frame loop and hang CDP).

@@ -50,15 +50,38 @@ function workshopModsModule(distDir: string): { applyPatchSet: ApplyPatchSet } |
 export function collectTestHostPatches(modsDir = sandustryTestModsDir()): unknown[] {
   if (!existsSync(modsDir)) return [];
   const patches: unknown[] = [];
+  const seenIds = new Set<string>();
   for (const name of readdirSync(modsDir).sort()) {
     const modDir = join(modsDir, name);
     if (!statSync(modDir).isDirectory()) continue;
     const patchesPath = join(modDir, "patches.json");
     if (!existsSync(patchesPath)) continue;
     const parsed = JSON.parse(readFileSync(patchesPath, "utf8")) as unknown;
-    if (Array.isArray(parsed)) patches.push(...parsed);
+    if (!Array.isArray(parsed)) continue;
+    const modId = readModId(modDir) ?? name;
+    for (const entry of parsed) {
+      if (!entry || typeof entry !== "object") continue;
+      const patch = entry as { id?: unknown; modId?: unknown };
+      const id = typeof patch.id === "string" ? patch.id : null;
+      // Identical sample patches (collector-element + collector-patches) share ids.
+      // Applying both in one set merges empty-modId atomic groups and rolls them back.
+      if (id && seenIds.has(id)) continue;
+      if (id) seenIds.add(id);
+      patches.push({ ...patch, modId: typeof patch.modId === "string" ? patch.modId : modId });
+    }
   }
   return patches;
+}
+
+function readModId(modDir: string): string | null {
+  const infoPath = join(modDir, "modinfo.json");
+  if (!existsSync(infoPath)) return null;
+  try {
+    const info = JSON.parse(readFileSync(infoPath, "utf8")) as { id?: unknown };
+    return typeof info.id === "string" ? info.id : null;
+  } catch {
+    return null;
+  }
 }
 
 /**

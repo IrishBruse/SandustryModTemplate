@@ -47,7 +47,7 @@ Full steps: **[Quick start](quick-start.md)**.
 
 - **`npm run typecheck`** — TypeScript check
 - **`npm run test`** — Unit tests only (`*.test.ts`). No Chromium.
-- **`npm run test:integration`** — Build mods, boot extracted dist in headless Chromium (CDP `:9224`), run `*.integration.test.ts`. Optional `--mod <folder>` or `--examples`. Use **`npm run test:integration:view`** for a visible window.
+- **`npm run test:integration`** — Build mods, boot extracted dist in headless Chromium (CDP `:9224`), run `*.integration.test.ts`. Optional mod folder (`nr test:integration template`) or `--examples`. Use **`npm run test:integration:view`** for a visible window (`nr test:integration:view collector-element`).
 - **`npm run lint`** — Typecheck, oxlint, and format check
 - **`npm run lint:fix`** — oxlint `--fix` and oxfmt
 

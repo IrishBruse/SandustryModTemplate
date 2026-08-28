@@ -20,6 +20,7 @@ Workshop mod references live in `sandustry-workshop-mods/workshop/` (sibling rep
 | ----------------------------------------------------- | -------------------------------------------------- |
 | [`custom-element`](content/custom-element/)           | `api.elements.register` for one powder             |
 | [`collectable-element`](content/collectable-element/) | `collectable.value` on a mod element               |
+| [`collector-element`](content/collector-element/)     | Platinum + Collector admission patches             |
 | [`custom-terrain`](content/custom-terrain/)           | `api.terrains.register` for one terrain            |
 | [`element-reaction`](content/element-reaction/)       | `api.reactions.registerContact`                    |
 | [`register-structure`](content/register-structure/)   | `api.structures.register` + mod sprite             |
@@ -52,8 +53,9 @@ Workshop mod references live in `sandustry-workshop-mods/workshop/` (sibling rep
 
 The hot-reload companion docs live under [`../docs/hot-reload/`](../docs/hot-reload/) (debug install / release staging). Do not copy that mod as a starting sample.
 
-Integration tests (`*.integration.test.ts`) run with `npm run test:integration`. Each sample folder has one. Pass `--mod <folder>` to run one sample:
+Integration tests (`*.integration.test.ts`) run with `npm run test:integration`. Each sample folder has one. Pass the folder name to run one sample:
 
 ```bash
-npm run test:integration -- --mod overlay-hotkey
+nr test:integration:view overlay-hotkey
+nr test:integration overlay-hotkey
 ```

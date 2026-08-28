@@ -1,4 +1,4 @@
-import { spawn, spawnSync, type ChildProcess } from "node:child_process";
+import { spawn, spawnSync, type ChildProcess, type SpawnOptions } from "node:child_process";
 import { existsSync, mkdirSync, openSync, rmSync } from "node:fs";
 import { dirname } from "node:path";
 import {
@@ -10,6 +10,9 @@ import {
 } from "./paths.ts";
 
 export type HostWindowMode = "headless" | "xvfb" | "window";
+
+/** Lower than the desktop / Steam game so the test host yields CPU. */
+const CHROME_NICE = 10;
 
 export function hostWindowMode(input?: {
   visible?: boolean;
@@ -44,7 +47,12 @@ export function stopChrome(): void {
   spawnSync("pkill", ["-f", `${sandustryTestChromeDir()}`], { stdio: "ignore" });
 }
 
-/** Chrome flags for the integration host. SwiftShader is on in every mode. */
+/** SwiftShader keeps CI screenshot baselines stable. Local runs prefer the GPU. */
+export function useSwiftShader(): boolean {
+  return Boolean(process.env.CI);
+}
+
+/** Chrome flags for the integration test host. */
 export function chromeLaunchArgs(mode: HostWindowMode): string[] {
   const args = [
     `--user-data-dir=${sandustryTestChromeDir()}`,
@@ -54,20 +62,50 @@ export function chromeLaunchArgs(mode: HostWindowMode): string[] {
     `--remote-debugging-port=${SANDUSTRY_TEST_CDP_PORT}`,
     `--window-size=${SANDUSTRY_TEST_VIEWPORT_WIDTH},${SANDUSTRY_TEST_VIEWPORT_HEIGHT}`,
     "--autoplay-policy=no-user-gesture-required",
-    "--disable-background-timer-throttling",
-    "--disable-renderer-backgrounding",
-    "--disable-backgrounding-occluded-windows",
     "--ignore-gpu-blocklist",
     "--enable-webgl",
     "--enable-webgl2",
     "--use-gl=angle",
-    "--use-angle=swiftshader",
-    "--enable-unsafe-swiftshader",
+    // Keep the test Chromium light so Steam Sandustry stays responsive.
+    "--renderer-process-limit=2",
+    "--num-raster-threads=1",
   ];
-  if (mode === "headless") args.unshift("--headless=new");
+  if (useSwiftShader()) {
+    args.push("--use-angle=swiftshader", "--enable-unsafe-swiftshader");
+  }
+  // CI keeps full frame rate for stable screenshots. Local runs may throttle.
+  if (process.env.CI) {
+    args.push(
+      "--disable-background-timer-throttling",
+      "--disable-renderer-backgrounding",
+      "--disable-backgrounding-occluded-windows",
+    );
+  }
+  if (mode === "headless") {
+    args.unshift("--headless=new");
+    // Headless defaults to 800x600 ozone size; pin it to the test viewport.
+    args.push(
+      `--ozone-override-screen-size=${SANDUSTRY_TEST_VIEWPORT_WIDTH},${SANDUSTRY_TEST_VIEWPORT_HEIGHT}`,
+    );
+  }
   if (mode === "xvfb") args.unshift("--ozone-platform=x11");
   if (mode === "window") args.push("--window-position=50,50");
   return args;
+}
+
+/**
+ * Spawn under `nice` on Unix so the test host yields to Steam / the desktop.
+ * Windows has no portable equivalent here.
+ */
+export function spawnLowPriority(
+  command: string,
+  args: string[],
+  options: SpawnOptions,
+): ChildProcess {
+  if (process.platform === "win32") {
+    return spawn(command, args, options);
+  }
+  return spawn("nice", ["-n", String(CHROME_NICE), command, ...args], options);
 }
 
 export function spawnChrome(chrome: string, url: string, visible: boolean): ChildProcess {
@@ -78,15 +116,16 @@ export function spawnChrome(chrome: string, url: string, visible: boolean): Chil
   const logFd = openSync(sandustryTestChromeLog(), "w");
   const mode = hostWindowMode({ visible });
   const args = [...chromeLaunchArgs(mode), url];
+  const stdio = ["ignore", logFd, logFd] as const;
   if (mode === "headless" || mode === "window") {
-    return spawn(chrome, args, { stdio: ["ignore", logFd, logFd] });
+    return spawnLowPriority(chrome, args, { stdio: [...stdio] });
   }
   const env: NodeJS.ProcessEnv = { ...process.env, XDG_SESSION_TYPE: "x11" };
   delete env.WAYLAND_DISPLAY;
   if (!hasXvfb()) {
-    return spawn(chrome, args, { stdio: ["ignore", logFd, logFd], env });
+    return spawnLowPriority(chrome, args, { stdio: [...stdio], env });
   }
-  return spawn(
+  return spawnLowPriority(
     "xvfb-run",
     [
       "--auto-servernum",
@@ -94,7 +133,7 @@ export function spawnChrome(chrome: string, url: string, visible: boolean): Chil
       chrome,
       ...args,
     ],
-    { stdio: ["ignore", logFd, logFd], env },
+    { stdio: [...stdio], env },
   );
 }
 
