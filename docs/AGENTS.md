@@ -48,9 +48,7 @@ Short player-facing copy. Builds do not copy these files into the game folder or
 - Use lists for steps and controls. Do not use markdown tables.
 - Match the tone and structure of the other `*-example` READMEs.
 
-## Changelog and Discord
-
-When a change is **user-visible** (new feature, behaviour change, fix, removal, or docs that announce a product change), update [`Changelog.md`](Changelog.md) in the same change set. Do not wait for a release tag.
+## Mod `CHANGELOG.md` and Discord
 
 ### Mod `CHANGELOG.md` (Steam change notes)
 
@@ -61,16 +59,8 @@ Each shipped mod may keep `src/<name>/CHANGELOG.md`. `npm run publish` sends the
 - Do **not** mention patches, APIs, file paths, internals, or implementation unless that detail changes how the mod plays.
 - Keep technical notes in that mod's `docs/` folder, or in `docs/<name>/` when the site has a page. Do not put mod-specific pages under `docs/modkit/`.
 
-### `Changelog.md`
-
-- Newest first. Follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
-- Use dated sections (`## YYYY-MM-DD`) for work that landed on `main`. Put in-progress notes under `## Unreleased` until they land.
-- Group under `### Added`, `### Changed`, `### Fixed`, `### Removed` as needed.
-- Write full bullets: what changed and why it matters. Link to related docs when useful.
-- Keep sample-mod tables and debugger notes in the full changelog when they help a reader.
-
 ### `discord-post.md`
 
-- Evergreen pitch only: Quick start, Features, and the **Full changelog** link.
-- Do not put a **What's new** / dated change list here. Put those in `Changelog.md` only.
+- Evergreen pitch only: Quick start and Features.
+- Do not put a **What's new** / dated change list here.
 - Update Features / Quick start only when those sections are wrong.

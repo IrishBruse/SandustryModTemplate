@@ -2,7 +2,6 @@ TypeScript template for Sandustry mods (Steam **[mods]** branch).
 
 **Repo:** https://github.com/IrishBruse/SandustryModTemplate
 **Docs:** https://ethanconneely.com/SandustryModTemplate/
-**Full changelog:** https://ethanconneely.com/SandustryModTemplate/#/Changelog
 
 ## Quick start
 

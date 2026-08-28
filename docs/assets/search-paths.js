@@ -1,7 +1,6 @@
 window.SMT_SEARCH_PATHS = [
   "/",
   "/builds",
-  "/Changelog",
   "/config-schema",
   "/discord-post",
   "/hot-reload/README",
