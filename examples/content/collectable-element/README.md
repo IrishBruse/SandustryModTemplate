@@ -10,7 +10,7 @@ Pattern from workshop mod `lunalith.collector`.
 2. **Debug menu:** equip the Debug tool → **Element** brush → **Elements** → **Platinum**.
 3. Drop Platinum onto Collector tiles like Gold.
 
-Without [`collector-patches`](../../api/collector-patches/), only Gold and liquidGold enter Collectors by default.
+Without [`collector-patches`](../../api/collector-patches/), only Gold and liquidGold enter Collectors by default (game 0.5.5). Vanilla uses `collectable.value` for payout but not for tile admission.
 
 ## Copy this mod
 

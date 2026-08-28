@@ -60,6 +60,7 @@ const api = sandkit.api;
 api.ui.toast("Template loaded", {});
 api.ui.inject("author.template", function TemplateOverlay() { return "Template inject"; });
 api.ui.overlays.register("hotbar", "author.template", function () { return "Template hotbar"; });
+api.ui.regions.mount("hotbar", "author.template", { render: function () { return "Template region"; } });
 api.input.registerBinding("author.template.ping", ["F13"], {
   displayName: "Template ping",
   category: "Template",
@@ -89,6 +90,17 @@ function gameLikeHost(seen: unknown[]) {
       return () => seen.push(`dispose:${id}`);
     },
     overlays,
+    regions: Object.freeze({
+      mount: (regionId: string, mountId: string) => {
+        seen.push(`mount:${regionId}:${mountId}`);
+        return {
+          update: () => {},
+          unmount: () => {
+            seen.push(`unmount:${regionId}:${mountId}`);
+          },
+        };
+      },
+    }),
   });
   const input = Object.freeze({
     registerBinding: (id: string) => {
@@ -138,6 +150,7 @@ test("hotEvalMain runs the template source on a frozen proxied sandkit", async (
     ["toast", `Template loaded (author.template v${g1})`, {}],
     "inject:author.template",
     "reg:hotbar:author.template",
+    "mount:hotbar:author.template",
     "bind:author.template.ping",
   ]);
   assert.equal(Object.isFrozen(host.api), true);
@@ -148,12 +161,15 @@ test("hotEvalMain runs the template source on a frozen proxied sandkit", async (
     ["toast", `Template loaded (author.template v${g1})`, {}],
     "inject:author.template",
     "reg:hotbar:author.template",
+    "mount:hotbar:author.template",
     "bind:author.template.ping",
     "dispose:author.template",
     "unreg:hotbar:author.template",
+    "unmount:hotbar:author.template",
     ["toast", `Template loaded (author.template v${g2})`, {}],
     "inject:author.template",
     "reg:hotbar:author.template",
+    "mount:hotbar:author.template",
     "bind:author.template.ping",
   ]);
 });

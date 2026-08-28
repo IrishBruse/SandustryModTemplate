@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { disposeLists, runDisposers } from "./dispose.ts";
-import { copyOwn, trackDisposeReturn, wrapApi, wrapSandkit } from "./wrap-api.ts";
+import { copyOwn, trackDisposeReturn, wrapApi, wrapRegionsMount, wrapSandkit } from "./wrap-api.ts";
 
 test("copyOwn does not proxy the host and leaves it unchanged", () => {
   const host = { api: { n: 1 } };
@@ -66,6 +66,43 @@ test("wrapApi unregisters overlays.register on reload", () => {
   assert.deepEqual(seen, ["reg:hotbar:overlay-hotkey"]);
   runDisposers("mod-ov");
   assert.deepEqual(seen, ["reg:hotbar:overlay-hotkey", "unreg:hotbar:overlay-hotkey"]);
+});
+
+test("wrapApi calls mount and runDisposers calls unmount on the handle", () => {
+  const seen: string[] = [];
+  const regions = Object.freeze({
+    mount: (regionId: string, mountId: string) => {
+      seen.push(`mount:${regionId}:${mountId}`);
+      return {
+        update: () => {},
+        unmount: () => {
+          seen.push(`unmount:${regionId}:${mountId}`);
+        },
+      };
+    },
+    setVisible: () => {},
+  });
+  const api = wrapApi({ ui: { regions } }, "mod-rg");
+  assert.notEqual(api.ui?.regions, regions);
+  const mount = (
+    api.ui?.regions as
+      | { mount: (regionId: string, mountId: string, options?: object) => unknown }
+      | undefined
+  )?.mount;
+  assert.ok(mount);
+  mount("hotbar", "author.template", { render: () => null });
+  assert.deepEqual(seen, ["mount:hotbar:author.template"]);
+  runDisposers("mod-rg");
+  assert.deepEqual(seen, ["mount:hotbar:author.template", "unmount:hotbar:author.template"]);
+});
+
+test("wrapRegionsMount tracks function return from mount", () => {
+  const stop = () => {};
+  const regions = { mount: () => stop };
+  const wrapped = wrapRegionsMount(regions, "mod-fn");
+  wrapped.mount();
+  assert.equal(disposeLists()["mod-fn"]?.length, 1);
+  runDisposers("mod-fn");
 });
 
 test("wrapApi gates registerBinding handlers after dispose", () => {

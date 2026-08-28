@@ -8,6 +8,7 @@
   - [Builds](builds.md)
   - [Troubleshooting](troubleshooting.md)
   - [Hot Reload](hot-reload/)
+  - [Changelog](Changelog.md)
 
 - Modkit
   - [Overview](modkit/README.md)

@@ -2,6 +2,8 @@
 
 Copy a folder here to `src/<your-mod>/` when you want that sample. Start a new mod from [`src/template/`](../src/template/). Each leaf folder is a separate game mod.
 
+On **0.5.5+**, prefer Sandkit hooks and `configOverrides` over bundle patches; [`collector-patches`](api/collector-patches/) is the remaining patch-rewrite sample.
+
 Workshop mod references live in `sandustry-workshop-mods/workshop/` (sibling repo).
 
 ## UI

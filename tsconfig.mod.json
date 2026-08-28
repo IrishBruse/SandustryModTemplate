@@ -10,12 +10,13 @@
     "skipLibCheck": true,
     "isolatedModules": true,
     "lib": ["ES2021", "DOM"],
-    "types": ["react", "node"],
+    "types": ["react", "node", "@sandustry-modding/types"],
     "allowImportingTsExtensions": true,
     "paths": {
       "*": ["./*"],
       "@modkit/*": ["./modkit/*"],
       "@sandustry-modding/types/*": ["./node_modules/@sandustry-modding/types/*"]
     }
-  }
+  },
+  "files": ["./modkit/css.d.ts"]
 }

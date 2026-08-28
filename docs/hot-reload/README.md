@@ -106,7 +106,8 @@ When **Watch local mods** is on, the companion polls other **local** mods' `main
 Each reload runs tracked disposers first:
 
 - `api.ui.inject` return functions
-- `api.ui.overlays.register` via `overlays.unregister`
+- `api.ui.regions.mount` via handle `unmount` (canonical 0.5.5+ API)
+- `api.ui.overlays.register` via `overlays.unregister` (deprecated alias; still wrapped for older mods)
 - `api.input.registerBinding` handlers (they stop after reload)
 - `api.events.on`, `api.settings.onChange`, `api.hooks.intercept` / `modify`
 

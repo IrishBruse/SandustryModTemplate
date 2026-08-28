@@ -6,6 +6,7 @@ export const modinfo = defineModInfo({
   name: "Template",
   version: "0.0.1",
   apiVersion: 1,
+  gameVersion: { minimum: "0.5.5" },
   entry: "main.js",
   author: "Your Name",
   description: "Starter mod. Toast on load.",

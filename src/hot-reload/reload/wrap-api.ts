@@ -2,7 +2,11 @@ import { pushDispose } from "./dispose.ts";
 import { formatHotToastMessage } from "./generation.ts";
 
 export type ApiNamespaces = {
-  ui?: { overlays?: object; toast?: (...args: unknown[]) => unknown };
+  ui?: {
+    overlays?: object;
+    regions?: object;
+    toast?: (...args: unknown[]) => unknown;
+  };
   events?: object;
   settings?: object;
   hooks?: object;
@@ -92,6 +96,32 @@ export function wrapRegisterUnregister<T extends object>(
   return copy;
 }
 
+/** Wrap `mount` so reload calls `unmount` on the handle when present. */
+export function wrapRegionsMount<T extends object>(ns: T, modId: string): T {
+  const copy = copyOwn(ns);
+  const source = ns as Record<string, unknown>;
+  const target = copy as Record<string, unknown>;
+  const mount = source.mount;
+  if (typeof mount !== "function") return copy;
+
+  const boundMount = (mount as (...args: unknown[]) => unknown).bind(ns);
+  target.mount = (...args: unknown[]) => {
+    const result = boundMount(...args);
+    if (typeof result === "function") {
+      pushDispose(modId, result as () => void);
+    } else if (
+      result &&
+      typeof result === "object" &&
+      typeof (result as { unmount?: unknown }).unmount === "function"
+    ) {
+      const unmount = (result as { unmount: () => void }).unmount;
+      pushDispose(modId, unmount.bind(result));
+    }
+    return result;
+  };
+  return copy;
+}
+
 type BindingHandlers = {
   down?: () => void;
   up?: () => void;
@@ -157,14 +187,15 @@ function wrapToast(
     toast(formatHotToastMessage(message, modId, generation), options, ...rest);
 }
 
-function wrapUi<T extends { overlays?: object; toast?: (...args: unknown[]) => unknown }>(
-  ui: T,
-  modId: string,
-  generation?: number,
-): T {
+function wrapUi<
+  T extends { overlays?: object; regions?: object; toast?: (...args: unknown[]) => unknown },
+>(ui: T, modId: string, generation?: number): T {
   const copy = wrapMethods(ui, ["inject"], modId);
   if (ui.overlays) {
     copy.overlays = wrapRegisterUnregister(ui.overlays, "register", "unregister", 2, modId);
+  }
+  if (ui.regions) {
+    copy.regions = wrapRegionsMount(ui.regions, modId);
   }
   if (typeof generation === "number" && typeof ui.toast === "function") {
     copy.toast = wrapToast(ui.toast.bind(ui), modId, generation);
