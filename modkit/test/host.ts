@@ -35,8 +35,9 @@ import {
   isRendererReady,
   readRendererReadySnapshot,
 } from "./readiness.ts";
-import { parseSaveFile, readSaveMetaLine, steamSettingsJson, installEmptySave } from "./saves.ts";
+import { parseSaveFile, readSaveMetaLine, installEmptySave } from "./saves.ts";
 import { toPageExpression } from "./serialize.ts";
+import { buildPatchedDistSources } from "./patched-dist.ts";
 
 export type { HostWindowMode } from "./chrome.ts";
 export { hostWindowMode } from "./chrome.ts";
@@ -48,6 +49,7 @@ export type TestHttpServer = {
   distDir: string;
   saveId: string | null;
   origin: string;
+  patchedJs: Map<string, string>;
   close: () => Promise<void>;
 };
 
@@ -122,26 +124,18 @@ function wrapIndexHtml(distDir: string): string {
 }
 
 function mergedSettingsJson(modIds: string[]): string {
-  let base: Record<string, unknown> = {};
-  try {
-    const parsed = JSON.parse(steamSettingsJson()) as unknown;
-    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-      base = parsed as Record<string, unknown>;
-    }
-  } catch {
-    /* fallback */
-  }
   const companion = companionSettings(modIds);
-  const baseExternal =
-    base.externalModSettings && typeof base.externalModSettings === "object"
-      ? (base.externalModSettings as Record<string, unknown>)
-      : {};
-  const companionExternal = companion.externalModSettings as Record<string, unknown>;
+  // Do not merge the developer Steam settings file. It seeds unrelated mod ids
+  // and leaves `hot-reload` as `{}` in session while `watchLocalMods` lives only
+  // on the companion entry from `companionSettings`.
   return JSON.stringify({
-    ...base,
-    ...companion,
-    externalModSettings: { ...baseExternal, ...companionExternal },
+    settingsVersion: 12,
+    windowMode: "windowed",
+    autosaveInterval: 0,
+    locale: "en",
+    customMaps: { showCustomMaps: true },
     sound: companion.sound,
+    externalModSettings: companion.externalModSettings,
   });
 }
 
@@ -239,7 +233,12 @@ function sendResolvedFile(filePath: string, response: ServerResponse): void {
   send(response, 200, readFileSync(filePath), type);
 }
 
-function serveStatic(distDir: string, urlPath: string, response: ServerResponse): void {
+function serveStatic(
+  distDir: string,
+  urlPath: string,
+  response: ServerResponse,
+  patchedJs: Map<string, string>,
+): void {
   if (urlPath === "/" || urlPath.startsWith("/?")) {
     send(response, 200, wrapIndexHtml(distDir), "text/html; charset=utf-8");
     return;
@@ -255,8 +254,18 @@ function serveStatic(distDir: string, urlPath: string, response: ServerResponse)
   }
   const pathOnly = urlPath.split("?")[0] ?? "";
   if (pathOnly === "/js/bundle.js") {
-    const raw = readFileSync(join(distDir, "js", "bundle.js"), "utf8");
+    const raw =
+      patchedJs.get("js/bundle.js") ?? readFileSync(join(distDir, "js", "bundle.js"), "utf8");
     send(response, 200, rewriteAssetJoinForHttp(raw), "application/javascript; charset=utf-8");
+    return;
+  }
+  if (pathOnly.startsWith("/js/") && patchedJs.has(pathOnly.slice(1))) {
+    send(
+      response,
+      200,
+      patchedJs.get(pathOnly.slice(1)) ?? "",
+      "application/javascript; charset=utf-8",
+    );
     return;
   }
   const resolved = resolveHostStaticFile(distDir, sandustryTestModsDir(), urlPath);
@@ -284,6 +293,7 @@ async function startHttpHost(options?: { modIds?: readonly string[] }): Promise<
     saves[prepared.saveId] = parsed.data;
   }
   await buildElectronMock(saveIds, lastPlayedRaw, saves, prepared.mods);
+  const patchedJs = buildPatchedDistSources(distDir);
 
   const server = createServer((request: IncomingMessage, response: ServerResponse) => {
     const url = request.url ?? "/";
@@ -305,7 +315,7 @@ async function startHttpHost(options?: { modIds?: readonly string[] }): Promise<
         });
         return;
       }
-      serveStatic(distDir, url, response);
+      serveStatic(distDir, url, response, patchedJs);
     } catch (error) {
       sendJson(response, 500, { error: error instanceof Error ? error.message : String(error) });
     }
@@ -321,6 +331,7 @@ async function startHttpHost(options?: { modIds?: readonly string[] }): Promise<
     distDir,
     saveId: prepared.saveId,
     origin: `http://127.0.0.1:${SANDUSTRY_TEST_HTTP_PORT}`,
+    patchedJs,
     close: () =>
       new Promise((resolve) => {
         server.close(() => resolve());

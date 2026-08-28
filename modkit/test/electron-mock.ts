@@ -29,6 +29,8 @@ try {
   /* sessionStorage may be locked */
 }
 
+Object.assign(globalThis, { __sandustryTestHost: true });
+
 const SAVE_IDS = new Set(__TEST_HOST_SAVE_IDS__);
 
 type Json = Record<string, unknown>;
