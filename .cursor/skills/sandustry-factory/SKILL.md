@@ -27,6 +27,7 @@ Open **one** file that matches the branch.
 | --------------------------------------------------------- | ---------------------------------------------------------- |
 | Safe MCP reads                                            | [references/probe.md](references/probe.md)                 |
 | `store.structures`, `sandkit.api.structures`, mod defs    | [references/structures.md](references/structures.md)       |
+| Collector tile admission vs `collectable.value`           | [references/collector.md](references/collector.md)         |
 | Recipes, grower / shaker / press, `structures.processing` | [references/processing.md](references/processing.md)       |
 | `store.pipes`, `api.pipes`, `pumpsCache`, fluids          | [references/pipes.md](references/pipes.md)                 |
 | Viability, `api.factory`, `engine.api.factory`            | [references/factory.md](references/factory.md)             |

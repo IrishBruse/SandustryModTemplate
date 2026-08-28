@@ -1,8 +1,8 @@
 # Host mod loader
 
-`sandustry/0.5.2-mods/workshop-mods.js` (game process). Template docs: `docs/patches.md`, `docs/config-schema.md`.
+`sandustry/0.5.5-mods/workshop-mods.js` (game process). Template docs: `docs/patches.md`, `docs/modinfo.md`, `docs/config-schema.md`.
 
-## Constants (0.5.2 extract)
+## Constants (0.5.5 extract)
 
 | Limit              | Value                                            |
 | ------------------ | ------------------------------------------------ |
@@ -20,10 +20,23 @@
 | Color mappings     | 64                                               |
 | Config fields      | 64                                               |
 | Choice options     | 64                                               |
-| Texture overrides  | 128                                              |
+| `configOverrides`  | 32 files, 256 KiB each                           |
+| `shaderOverrides`  | 8 files, 256 KiB each                            |
+| Texture overrides  | 128 (total across static + provider bundles)     |
 | Asset providers    | 32                                               |
 
 Manifest id: same charset as patch id, not `__proto__` / `prototype` / `constructor`; must not start with `__sandkit`.
+
+## 0.5.5 manifest additions
+
+| Field             | Role                                                                                                               |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `gameVersion`     | Optional `{ minimum?, maximum? }` semver-like strings. Loader skips the mod when the running game is out of range. |
+| `shaderOverrides` | Maps shader ids to relative `.glsl` paths under the mod folder.                                                    |
+
+A manifest must still declare at least one of: `entry`, `workerEntry`, `configOverrides`, `shaderOverrides`, `textureOverrides`, `provides`, or `map`.
+
+Sandkit signatures: https://sandustry.com/sandkit.html
 
 ## Discovery tags
 

@@ -81,6 +81,6 @@ Numeric `StructureType` enum (1-27): see `enums.md`. Mod types use string ids. `
 
 - Placement mode: **sandustry-player** `references/building.md`.
 - Building overlay names: **sandustry-ui** `references/building.md`.
-- Collectors: `sandkit.api.collector` (value at cell). Gold overlap: **sandustry-energy** `references/gold-collector.md`.
+- Collectors: `sandkit.api.collector` (value at cell). Admission is Gold + liquidGold only — see [collector.md](collector.md). Gold / energy overlap: **sandustry-energy** `references/gold-collector.md`.
 - Launchers: **sandustry-entities** `references/launchers.md`.
 - Blueprint copy: `blueprints.md`.

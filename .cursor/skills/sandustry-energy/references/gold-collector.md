@@ -22,6 +22,8 @@ Structure type `goldBattery`. Registered as energy **storage** with `excludeFrom
 
 `sandkit.api.collector` - pickup value for gold-bearing cells. `shared.collectorGoldCount` is a per-tile density map for collector structures, not energy.
 
+Tile **admission** (which elements may enter Collector tiles) is still Gold + liquidGold only in 0.5.5, even when `collectable.value` is set. See **sandustry-factory** `references/collector.md`.
+
 Only overlap with energy: both use multithreaded SAB sync patterns similar to `energyChange` / `goldChange`.
 
 ## Element gold
