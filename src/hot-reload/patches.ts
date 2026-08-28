@@ -1,11 +1,12 @@
-import { definePatches } from "@modkit/modinfo";
+import { definePatches } from "@modkit/patches";
 import { earlyDebugBadgePatchIife } from "./debug-badge/mount.ts";
 import { bootMarkHelperIife, markCall } from "./boot/boot-marks.ts";
 import { earlyAutoLoadPatchIife } from "./boot/auto-load.ts";
 import { FAST_BOOT_STORAGE_KEY } from "./boot/fast-boot-keys.ts";
 
 /**
- * Boot marks and fast-boot skips. Re-test find strings after each game update.
+ * Boot marks and fast-boot skips. Find strings matched against
+ * `sandustry/0.5.5-mods/dist/js/` (game 0.5.5). Re-test after each game update.
  */
 const FAST = `localStorage.getItem(${JSON.stringify(FAST_BOOT_STORAGE_KEY)})==="true"`;
 
@@ -21,7 +22,7 @@ export const debugPatches = definePatches([
   {
     id: "early-auto-load-save",
     file: "js/bundle.js",
-    find: "(async()=>{var e,t,n,a,r,o;try{await async function(){const e=(0,Rn.M5)().locale",
+    find: "(async()=>{var e,t,n,r,o,a;try{await async function(){const e=(0,rr.M5)().locale",
     operation: "insertBefore",
     code: EARLY_BOOT,
     expectedMatches: 1,
@@ -37,7 +38,7 @@ export const debugPatches = definePatches([
   {
     id: "boot-mark-starting-game",
     file: "js/bundle.js",
-    find: 'PI("ui|loading|startingGame",7)',
+    find: 'wL("ui|loading|startingGame",7)',
     operation: "insertBefore",
     code: `${markCall("startingGame")};`,
     expectedMatches: 1,
@@ -53,7 +54,7 @@ export const debugPatches = definePatches([
   {
     id: "boot-mark-sab-alloc",
     file: "js/bundle.js",
-    find: "const{environment:T,shared:C,simSab:j,sabDescriptor:E}=function(e){",
+    find: "{environment:t,shared:a,simSab:l,sabDescriptor:i}}(C);",
     operation: "insertBefore",
     code: `${markCall("sabAlloc:start")};`,
     expectedMatches: 1,
@@ -61,25 +62,25 @@ export const debugPatches = definePatches([
   {
     id: "boot-mark-workers",
     file: "js/bundle.js",
-    find: "await A.environment.multithreading.simulation.init(A,E)",
+    find: "await C.environment.multithreading.simulation.init(C,P)",
     operation: "replace",
-    code: `await(async()=>{${markCall("workers:start")};await A.environment.multithreading.simulation.init(A,E);${markCall("workers:done")}})()`,
+    code: `await(async()=>{${markCall("workers:start")};await C.environment.multithreading.simulation.init(C,P);${markCall("workers:done")}})()`,
     expectedMatches: 1,
   },
   {
     id: "boot-mark-pj",
     file: "js/bundle.js",
-    find: "await pj(e)",
+    find: "if(await RE(e),t&&t.mods.length>0)",
     operation: "replace",
-    code: `await(async()=>{${markCall("bindings:start")};await pj(e);${markCall("bindings:done")}})()`,
+    code: `if(await(async()=>{${markCall("bindings:start")};var x=await RE(e);${markCall("bindings:done")};return x})(),t&&t.mods.length>0)`,
     expectedMatches: 1,
   },
   {
     id: "boot-mark-mods",
     file: "js/bundle.js",
-    find: "a=await n(e,t.mods,t.diagnostics)",
+    find: "r=await n(e,t.mods,t.diagnostics)",
     operation: "replace",
-    code: `a=await(async()=>{${markCall("mods:start")};var x=await n(e,t.mods,t.diagnostics);${markCall("mods:done")};return x})()`,
+    code: `r=await(async()=>{${markCall("mods:start")};var x=await n(e,t.mods,t.diagnostics);${markCall("mods:done")};return x})()`,
     expectedMatches: 1,
   },
   {
@@ -93,17 +94,17 @@ export const debugPatches = definePatches([
   {
     id: "stash-sandkit-by-mod",
     file: "js/external-mod-runtime.js",
-    find: "const t=ie(e,{manifest:i,discovered:r});e.store.integrity.modsUsed=!0,await c(t)",
+    find: "const t=we(e,{manifest:o,discovered:r});e.store.integrity.modsUsed=!0,await c(t)",
     operation: "replace",
-    code: "const t=ie(e,{manifest:i,discovered:r});(globalThis.__sandkitByMod||(globalThis.__sandkitByMod={}))[i.id]=t;e.store.integrity.modsUsed=!0,await c(t)",
+    code: "const t=we(e,{manifest:o,discovered:r});(globalThis.__sandkitByMod||(globalThis.__sandkitByMod={}))[o.id]=t;e.store.integrity.modsUsed=!0,await c(t)",
     expectedMatches: 1,
   },
   {
     id: "skip-start-foliage-generate",
     file: "js/bundle.js",
-    find: "await ie.FH.foliage.generate()",
+    find: "await se.FH.foliage.generate()",
     operation: "replace",
-    code: `await(async()=>{${markCall("foliage:start")};var x=${FAST}?undefined:await ie.FH.foliage.generate();${markCall("foliage:done")};return x})()`,
+    code: `await(async()=>{${markCall("foliage:start")};var x=${FAST}?undefined:await se.FH.foliage.generate();${markCall("foliage:done")};return x})()`,
     expectedMatches: 1,
   },
 ]);

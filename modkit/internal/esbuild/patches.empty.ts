@@ -1,4 +1,10 @@
-import { definePatches } from "@modkit/modinfo";
+/**
+ * Browser-bundle stub for `@modkit/patches`.
+ * Real patch payloads load only when building `patches.json`.
+ */
+export function definePatches<const T extends readonly unknown[]>(patches: T): T {
+  return patches;
+}
 
-/** Browser-bundle stub — real patches load only when building `patches.json`. */
+/** Empty stand-in for `modkitDebugPatches`. */
 export const modkitDebugPatches = definePatches([]);

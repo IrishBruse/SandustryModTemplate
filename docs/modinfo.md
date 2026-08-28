@@ -22,27 +22,30 @@ The build fails if `id` or `name` is missing or blank.
 
 ## Optional fields
 
-| Field              | Type                     | Default / notes                                                                                                                                 |
-| ------------------ | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `entry`            | `string`                 | Main-thread script. Default in types is `main.js`. Set `"main.js"`.                                                                             |
-| `workerEntry`      | `string`                 | Worker script. If the folder has `worker.ts`, the build sets `"worker.js"` when this field is omitted.                                          |
-| `description`      | `string`                 | Loader / Workshop fallback when `workshop/workshop.md` is missing.                                                                              |
-| `author`           | `string`                 | Author label.                                                                                                                                   |
-| `dependencies`     | `string[]`               | Other mods by **`id`**. Empty list is fine.                                                                                                     |
-| `loadOrder`        | `number`                 | Load order. Lower runs first. Hot Reload uses `-2147483648` so it loads before other local mods.                                                |
-| `configSchema`     | object                   | Options → Mods fields. Max 64. See [configSchema](config-schema.md).                                                                            |
-| `configOverrides`  | `Record<string, string>` | Paths under `config/`.                                                                                                                          |
-| `textureOverrides` | sheets or path strings   | Paths under `assets/`. A sheet needs `path`, `frameWidth`, `frames`, `intervalMs`.                                                              |
-| `map`              | `MapConfig`              | Custom map under `map/` (`blueprints`, `width`, `height`, `spawn`, optional unstuck / deployment / bounds / lighting / parallax / colour maps). |
+| Field              | Type                     | Default / notes                                                                                                                                                                           |
+| ------------------ | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `entry`            | `string`                 | Main-thread script. Default in types is `main.js`. Set `"main.js"`.                                                                                                                       |
+| `workerEntry`      | `string`                 | Worker script. If the folder has `worker.ts`, the build sets `"worker.js"` when this field is omitted.                                                                                    |
+| `description`      | `string`                 | Loader / Workshop fallback when `workshop/workshop.md` is missing.                                                                                                                        |
+| `author`           | `string`                 | Author label.                                                                                                                                                                             |
+| `dependencies`     | `string[]`               | Other mods by **`id`**. Empty list is fine.                                                                                                                                               |
+| `loadOrder`        | `number`                 | Load order. Lower runs first. Hot Reload uses `-2147483648` so it loads before other local mods.                                                                                          |
+| `gameVersion`      | `GameVersionRange`       | Optional `minimum` and `maximum` strings (0.5.5+). Set `minimum: "0.5.5"` when the mod needs new hooks or APIs. Use Steam Workshop **Link to Game Version** to cap patch mods at `0.5.2`. |
+| `configSchema`     | object                   | Options → Mods fields. Max 64. See [configSchema](config-schema.md).                                                                                                                      |
+| `configOverrides`  | `Record<string, string>` | Paths under `config/`.                                                                                                                                                                    |
+| `shaderOverrides`  | `ShaderOverrides`        | Maps shader IDs to relative `.glsl` paths (for example `sky` → `shaders/sky.glsl`).                                                                                                       |
+| `textureOverrides` | sheets or path strings   | Paths under `assets/`. A sheet needs `path`, `frameWidth`, `frames`, `intervalMs`.                                                                                                        |
+| `provides`         | `AssetProvider[]`        | Asset provider bundles. Each entry has `kind`, `id`, and `textureOverrides` (same shape as top-level `textureOverrides`).                                                                 |
+| `map`              | `MapConfig`              | Custom map under `map/` (`blueprints`, `width`, `height`, `spawn`, optional unstuck / deployment / bounds / lighting / parallax / colour maps).                                           |
 
 ## Extra exports (not inside `modinfo`)
 
 Keep these next to `export const modinfo` in the same file, or re-export them:
 
-| Export         | Role                                                                            |
-| -------------- | ------------------------------------------------------------------------------- |
-| `patches`      | Production patches. Array from `definePatches`. Written to `patches.json`.      |
-| `debugPatches` | Extra patches for `npm run dev` / `--debug` only. Omitted from `npm run build`. |
+| Export         | Role                                                                                           |
+| -------------- | ---------------------------------------------------------------------------------------------- |
+| `patches`      | Production patches. Array from `definePatches` (`@modkit/patches`). Written to `patches.json`. |
+| `debugPatches` | Extra patches for `npm run dev` / `--debug` only. Omitted from `npm run build`.                |
 
 Example re-export from `patches.ts`:
 

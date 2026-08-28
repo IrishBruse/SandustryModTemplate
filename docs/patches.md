@@ -1,18 +1,27 @@
 # Patch definitions
 
+On **0.5.5+**, prefer the public [Sandkit API](https://sandustry.com/sandkit.html) ([local copy](../.tmp/Sandkit%20-%20Sandustry%20Modding%20API.html)). Use **`api.hooks`**, **`configOverrides`**, and **`register`** APIs before you rewrite game bundles.
+
+`patches.json` breaks when the game updates. Minified `find` strings move. Re-test every patch after a game update.
+
+Set **`gameVersion`** in `modinfo.json` to declare compatibility ([`modinfo.ts`](modinfo.md)):
+
+- **Patch-only mods** (bundle rewrites tied to old minified text): set **`maximum: "0.5.2"`**, or use Steam Workshop **Link to Game Version** with the same cap.
+- **New API mods** (hooks, `configOverrides`, 0.5.5 Sandkit): set **`minimum: "0.5.5"`**.
+
 Patches are exact (or regex) rewrites of Sandustry JavaScript under `js/`. The loader applies `patches.json` at **mod load**. Renderer hot reload does **not** re-apply them. Restart the game after you change a patch.
 
-Prefer the Sandkit API first. Use a patch only when the public API cannot do the job.
+Use a patch only when the public API cannot do the job.
 
-Keep each `find` / `code` string small. Set `expectedMatches`. Re-test after every game update — minified bundle text moves.
+Keep each `find` / `code` string small. Set `expectedMatches`.
 
 Patch `code` runs **outside** the game bundle IIFE. Put shared runtime helpers on `globalThis` when patch code must call them.
 
-Types: [`modkit/modinfo.ts`](../modkit/modinfo.ts). Manifest: [`modinfo.ts`](modinfo.md). Canonical multi-file example: [`examples/api/collector-patches/patches.ts`](../examples/api/collector-patches/patches.ts).
+Types: [`modkit/patches.ts`](../modkit/patches.ts). Manifest: [`modinfo.ts`](modinfo.md). Canonical multi-file example: [`examples/api/collector-patches/patches.ts`](../examples/api/collector-patches/patches.ts).
 
 ## Layout
 
-Define the list with `definePatches`. Export it from that mod's `modinfo.ts`. You may keep the array in `patches.ts` at the mod root and re-export it.
+Define the list with `definePatches` from `@modkit/patches`. Export it from that mod's `modinfo.ts`. You may keep the array in `patches.ts` at the mod root and re-export it.
 
 | Export         | When it is written                                |
 | -------------- | ------------------------------------------------- |
@@ -88,9 +97,9 @@ Replace each match with `code`. The collector sample replaces a Gold / liquidGol
 {
   id: "collector-admission-value-map-main",
   file: "js/bundle.js",
-  find: 'const n=(e=>(null===l&&(l=s.FH.elements.getElementTypeFromId(e,"liquidGold")),l))(e);return t.type===r.RJ.Gold||t.type===n?d:f}',
+  find: 'const n=(e=>(null===l&&(l=i.FH.elements.getElementTypeFromId(e,"liquidGold")),l))(e);return t.type===o.RJ.Gold||t.type===n?d:f}',
   operation: "replace",
-  code: "return s.FH.collector.getValueFromElementType(e,t.type)>0?d:f}",
+  code: "return i.FH.collector.getValueFromElementType(e,t.type)>0?d:f}",
   expectedMatches: 1,
   atomicGroup: "collector-admission-value-map",
 }
@@ -118,7 +127,7 @@ Wrap each match as `before` + match + `after`. Use this when you must keep the o
 
 ```ts
 // src/<name>/modinfo.ts
-import { definePatches } from "@modkit/modinfo";
+import { definePatches } from "@modkit/patches";
 
 export const patches = definePatches([
   {

@@ -35,6 +35,8 @@ You do not copy files into the game folder by hand. `npm run dev` and `npm run b
 
 Start from [`src/template/`](../src/template/). Copy a folder from [`examples/`](../examples/) into `src/<your-mod>/` when you want that sample.
 
+On **0.5.5+**, prefer Sandkit hooks and `configOverrides` over bundle patches; [`collector-patches`](../examples/api/collector-patches/) is the remaining patch-rewrite sample.
+
 | Group   | Folder                                                            | What it shows                                              |
 | ------- | ----------------------------------------------------------------- | ---------------------------------------------------------- |
 | UI      | [`overlay-hotkey`](../examples/ui/overlay-hotkey/)                | React overlay + Tailwind (**Alt+E**)                       |
@@ -99,15 +101,16 @@ Add these when you need them:
 
 Import `@modkit/*` and files in your own folder only.
 
-| Import                                        | From                                                            |
-| --------------------------------------------- | --------------------------------------------------------------- |
-| `@modkit/modinfo`                             | `defineModInfo` / `definePatches`                               |
-| `@modkit/react` / JSX                         | Runtime React from `sandkit.react`                              |
-| `@modkit/utils`                               | `safe`, `isEnabled`, `inGame`, `registerRetroGame`              |
-| `@modkit/test`                                | Isolated live tests (CDP `:9223`). Import from `*.test.ts` only |
-| `@modkit/ui`                                  | Shared React UI components                                      |
-| `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix           |
+| Import                                        | From                                                                          |
+| --------------------------------------------- | ----------------------------------------------------------------------------- |
+| `@modkit/modinfo`                             | `defineModInfo`                                                               |
+| `@modkit/patches`                             | `definePatches` and patch types. Browser stub keeps payloads out of `main.js` |
+| `@modkit/react` / JSX                         | Runtime React from `sandkit.react`                                            |
+| `@modkit/utils`                               | `safe`, `isEnabled`, `inGame`, `registerRetroGame`                            |
+| `@modkit/test`                                | Isolated live tests (CDP `:9223`). Import from `*.test.ts` only               |
+| `@modkit/ui`                                  | Shared React UI components                                                    |
+| `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix                         |
 
-Sandkit API types come from [`@sandustry-modding/types`](https://www.npmjs.com/package/@sandustry-modding/types). Browse the reference at [SandustryTypes](https://sandustry-modding.github.io/SandustryTypes/#/). Ambient `sandkit` loads via [`modkit/ambient.d.ts`](../modkit/ambient.d.ts) (`WorkerSandkitApi` is ambient from the package).
+Sandkit API types come from [`@sandustry-modding/types`](https://www.npmjs.com/package/@sandustry-modding/types). Browse the reference at [SandustryTypes](https://sandustry-modding.github.io/SandustryTypes/#/). Ambient `sandkit` loads through [`tsconfig.mod.json`](../tsconfig.mod.json) (`compilerOptions.types`). `WorkerSandkitApi` is ambient from the same package. CSS imports (`*.css` as a string) load through [`modkit/css.d.ts`](../modkit/css.d.ts) (`files` in `tsconfig.mod.json`).
 
 Commands and build output: [Builds](builds.md).

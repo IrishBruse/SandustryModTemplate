@@ -6,7 +6,8 @@ Shared kit for Sandustry mods. It includes:
 - **Utils** — small helpers (`safe`, settings, scene checks, retro console registration)
 - **Live tests** — Node helpers that talk to an isolated test renderer on CDP `:9223`
 - **UI** — shared React components under `modkit/ui/`. Live canvases and PNGs live under `docs/ui/canvas/` (`npm run ui:css` / `ui:previews`).
-- **Modinfo helpers** — `defineModInfo` / `definePatches` with colocated manifest and patch types
+- **Modinfo helpers** — `defineModInfo` with colocated manifest types
+- **Patch helpers** — `definePatches` and patch types in `@modkit/patches`
 
 Mods import this folder through the `@modkit/*` path alias. The game still loads a single bundled `main.js` (esbuild `esm`, no entry exports). Do not emit `import` / `export` in the output.
 
