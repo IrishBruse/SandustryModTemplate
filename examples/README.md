@@ -20,6 +20,7 @@ Workshop mod references live in `sandustry-workshop-mods/workshop/` (sibling rep
 | ----------------------------------------------------- | -------------------------------------------------- |
 | [`custom-element`](content/custom-element/)           | `api.elements.register` for one powder             |
 | [`collectable-element`](content/collectable-element/) | `collectable.value` on a mod element               |
+| [`collector-element`](content/collector-element/)     | Platinum + Collector admission patches             |
 | [`custom-terrain`](content/custom-terrain/)           | `api.terrains.register` for one terrain            |
 | [`element-reaction`](content/element-reaction/)       | `api.reactions.registerContact`                    |
 | [`register-structure`](content/register-structure/)   | `api.structures.register` + mod sprite             |
@@ -32,7 +33,7 @@ Workshop mod references live in `sandustry-workshop-mods/workshop/` (sibling rep
 | --------------------------------------------- | ------------------------------------------ |
 | [`events`](api/events/)                       | `api.events.on("game:ready")`              |
 | [`triggers-interval`](api/triggers-interval/) | `api.triggers.register` repeating callback |
-| [`hooks-intercept`](api/hooks-intercept/)     | `api.hooks.intercept` + `context.cancel()` |
+| [`hooks-intercept`](api/hooks-intercept/)     | `api.hooks.intercept` on `input:escape`    |
 | [`schedule-idle`](api/schedule-idle/)         | `schedule.nextTick` + `grid.mutate`        |
 | [`i18n`](api/i18n/)                           | `api.i18n.register` + `i18n.t`             |
 | [`storage`](api/storage/)                     | `api.storage.ensure` in the save file      |
@@ -51,3 +52,10 @@ Workshop mod references live in `sandustry-workshop-mods/workshop/` (sibling rep
 | [`retro-game`](games/retro-game/) | Retro Console demo |
 
 The hot-reload companion docs live under [`../docs/hot-reload/`](../docs/hot-reload/) (debug install / release staging). Do not copy that mod as a starting sample.
+
+Integration tests (`*.integration.test.ts`) run with `npm run test:integration`. Each sample folder has one. Pass the folder name to run one sample:
+
+```bash
+nr test:integration:view overlay-hotkey
+nr test:integration overlay-hotkey
+```

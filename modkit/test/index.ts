@@ -1,19 +1,13 @@
 /**
- * Node helpers for live Sandustry tests (isolated host, CDP `:9223`).
- * Import from `*.test.ts` only. Do not import from mod `main.ts`.
+ * Node helpers for live Sandustry tests (extracted dist in Chromium, CDP `:9224`).
+ * Import from `*.integration.test.ts` only. Do not import from mod `main.ts`.
  */
 if (typeof globalThis.document !== "undefined") {
-  throw new Error("@modkit/test runs under Node. Import it from *.test.ts only.");
+  throw new Error("@modkit/test runs under Node. Import it from *.integration.test.ts only.");
 }
 
 export { SANDUSTRY_CDP_PORT, isSandustryAvailable } from "./cdp.ts";
-export {
-  startSandustryTestHost,
-  stopSandustryTestHost,
-  prepareSandustryTestUserData,
-  testCompanionSettings,
-  hostWindowMode,
-} from "./host.ts";
+export { startSandustryTestHost, stopSandustryTestHost } from "./host.ts";
 export type { HostStartResult, HostWindowMode } from "./host.ts";
 export {
   installedModMain,
@@ -22,11 +16,19 @@ export {
   sandustryUserDataDir,
   tryReadInstalledModMain,
   SANDUSTRY_TEST_CDP_PORT,
+  SANDUSTRY_TEST_HTTP_PORT,
 } from "./paths.ts";
-export { sandustryTest } from "./sandustry-test.ts";
+export { setupGame } from "./setup-game.ts";
 export { SandustrySession } from "./session.ts";
+export { expect } from "./expect.ts";
 export { toPageExpression } from "./serialize.ts";
 export { waitFor } from "./wait.ts";
-export type { SandustryTestFn } from "./sandustry-test.ts";
-export type { ModMainFile, SessionWaitForOptions } from "./session.ts";
+export type {
+  ModMainFile,
+  ScreenshotClip,
+  ScreenshotOptions,
+  SessionWaitForOptions,
+} from "./session.ts";
+export type { BufferExpect, SessionExpect, ToHaveScreenshotOptions } from "./expect.ts";
+export type { ImageMatchOptions } from "./screenshot.ts";
 export type { WaitForOptions } from "./wait.ts";

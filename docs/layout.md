@@ -44,6 +44,7 @@ On **0.5.5+**, prefer Sandkit hooks and `configOverrides` over bundle patches; [
 | UI      | [`input-binding`](../examples/ui/input-binding/)                  | `registerBinding` + `getDisplayKey`                        |
 | Content | [`custom-element`](../examples/content/custom-element/)           | `api.elements.register` for one powder                     |
 | Content | [`collectable-element`](../examples/content/collectable-element/) | `collectable.value` on a mod element                       |
+| Content | [`collector-element`](../examples/content/collector-element/)     | Platinum + Collector admission patches                     |
 | Content | [`custom-terrain`](../examples/content/custom-terrain/)           | `api.terrains.register` for one terrain                    |
 | Content | [`element-reaction`](../examples/content/element-reaction/)       | `api.reactions.registerContact`                            |
 | Content | [`register-structure`](../examples/content/register-structure/)   | `api.structures.register` + mod sprite                     |
@@ -101,15 +102,15 @@ Add these when you need them:
 
 Import `@modkit/*` and files in your own folder only.
 
-| Import                                        | From                                                                          |
-| --------------------------------------------- | ----------------------------------------------------------------------------- |
-| `@modkit/modinfo`                             | `defineModInfo`                                                               |
-| `@modkit/patches`                             | `definePatches` and patch types. Browser stub keeps payloads out of `main.js` |
-| `@modkit/react` / JSX                         | Runtime React from `sandkit.react`                                            |
-| `@modkit/utils`                               | `safe`, `isEnabled`, `inGame`, `registerRetroGame`                            |
-| `@modkit/test`                                | Isolated live tests (CDP `:9223`). Import from `*.test.ts` only               |
-| `@modkit/ui`                                  | Shared React UI components                                                    |
-| `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix                         |
+| Import                                        | From                                                                                     |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `@modkit/modinfo`                             | `defineModInfo`                                                                          |
+| `@modkit/patches`                             | `definePatches` and patch types. Browser stub keeps payloads out of `main.js`            |
+| `@modkit/react` / JSX                         | Runtime React from `sandkit.react`                                                       |
+| `@modkit/utils`                               | `safe`, `isEnabled`, `inGame`, `registerRetroGame`                                       |
+| `@modkit/test`                                | Extracted-game integration tests (CDP `:9224`). Import from `*.integration.test.ts` only |
+| `@modkit/ui`                                  | Shared React UI components                                                               |
+| `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix                                    |
 
 Sandkit API types come from [`@sandustry-modding/types`](https://www.npmjs.com/package/@sandustry-modding/types). Browse the reference at [SandustryTypes](https://sandustry-modding.github.io/SandustryTypes/#/). Ambient `sandkit` loads through [`tsconfig.mod.json`](../tsconfig.mod.json) (`compilerOptions.types`). `WorkerSandkitApi` is ambient from the same package. CSS imports (`*.css` as a string) load through [`modkit/css.d.ts`](../modkit/css.d.ts) (`files` in `tsconfig.mod.json`).
 

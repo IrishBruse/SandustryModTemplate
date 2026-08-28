@@ -2,11 +2,11 @@
 
 ## MCP unreachable
 
-| Signal                               | Fix                                                                                                                                                      |
-| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `list_pages` empty or errors         | Game not running, or debug port off. Steam/F5 uses `:9222`. Live tests: `npm test` or `npm run test:integration` brings up the isolated host on `:9223`. |
-| Page list has no **Sandustry** title | Wait for load, or pick the `file://.../dist/index.html` renderer tab.                                                                                    |
-| Call fails after game reload         | Re-run `list_pages`; stale `pageId` is the usual cause.                                                                                                  |
+| Signal                               | Fix                                                                                                                                      |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `list_pages` empty or errors         | Game not running, or debug port off. Steam/F5 uses `:9222`. Integration tests: `npm run test:integration` brings up Chromium on `:9224`. |
+| Page list has no **Sandustry** title | Wait for load, or pick the `file://.../dist/index.html` renderer tab.                                                                    |
+| Call fails after game reload         | Re-run `list_pages`; stale `pageId` is the usual cause.                                                                                  |
 
 ## Probe returns garbage
 
@@ -15,6 +15,7 @@
 | `hasSandkit: false`, `hasDebug: true` | Use `__debug.state` paths from **sandustry-world** / **sandustry-internals**.                      |
 | `sandkit is not defined`              | Mod scope symbol missing - open a save in **Game** scene first, see attach script in `scripts.md`. |
 | `scene` not Game                      | Main menu or loading - load a save, or wait for auto-load (`modkit/test/session.ts` retries).      |
+| `gameReady` false or `#loading` shown | Boot still running (shader warmup can take ~30s after scene Game). `setupGame()` waits for both.     |
 | Exception in evaluate                 | Wrap risky calls in try/catch inside the function, return `{ error: String(e) }`.                  |
 | Huge inline response                  | Re-run with `filePath: ".tmp/..."`.                                                                |
 

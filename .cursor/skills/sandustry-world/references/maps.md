@@ -4,6 +4,8 @@ Custom map selection, artifact markers, and session start. Not the in-game simul
 
 Official: [sandkit.html - api.maps](https://sandustry.com/sandkit.html). Types: `@sandustry-modding/types` `sandkit/api/maps.d.ts`, `shared/api/maps.d.ts`.
 
+`map.width` / `map.height` in `modinfo.json` are integers from **1** to **3840** (loader `MAX_MAP_DIMENSION`). Campaign / Void saves still allocate **3840 x 3840**. A custom map can be smaller.
+
 ## Methods
 
 | Method                   | Role                                         |
@@ -17,7 +19,11 @@ Call `getArtifactLocations()` after `game:ready` when placing UI markers. Live 0
 
 `AvailableMapV1`: `{ id, name?, … }`.
 
-`ActiveMapV1`: optional `deployment`, `spawn`, `topBounds`, `parallax`, `depthLight`, etc.
+`maps.start` loads blueprint PNGs through the same join as `api.assets.getUrl`: `new URL(relative, rootUrl)`. Vanilla throws `Asset path resolves outside the mod folder` unless `rootUrl` and the result use the **`file:`** protocol and the result stays under `rootUrl/` (not equal to the folder URL). The host sets `rootUrl` from `pathToFileURL(folder + sep)` in `workshop-mods.js`.
+
+`map.colorMappings` values are **built-in `CellType` names** (lookup is case-insensitive) that have a terrain definition. Official HTML examples: `GoldSoil`, `SandiumSoil`, `Obsidian`. Structure **Block** (`cellId` 15) is not a terrain id. Unknown names throw `references unknown built-in terrain`.
+
+Reserved RGB keys (terrain blueprint format, `workshop-mods.js`): `255, 255, 255`, `170, 170, 170`, `0, 0, 255`, `102, 0, 255`, `102, 204, 255`, `255, 0, 0`, `153, 0, 0`.
 
 ## Live session
 

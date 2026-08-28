@@ -8,4 +8,4 @@ Vanilla facts: Read `.cursor/skills/sandustry/SKILL.md`, then **one** domain `SK
 
 Live session: **sandustry-mcp**. Do not kill Sandustry. Ask the user for a hard reload.
 
-Extracted game source: `sandustry/<version>-mods/` (`npm run setup`).
+Extracted game: `sandustry/<version>-mods/` (`npm run setup`).

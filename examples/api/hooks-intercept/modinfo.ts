@@ -8,7 +8,7 @@ export const modinfo = defineModInfo({
   apiVersion: 1,
   entry: "main.js",
   author: "Your Name",
-  description: "Cancel the pause-menu escape key with hooks.intercept.",
+  description: "Register hooks.intercept on input:escape without blocking the pause menu.",
   dependencies: [],
   loadOrder: 0,
   configSchema: {

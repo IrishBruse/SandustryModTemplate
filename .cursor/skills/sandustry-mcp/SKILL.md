@@ -1,6 +1,6 @@
 ---
 name: sandustry-mcp
-description: "Use when attaching to live Sandustry: evaluate_script, list_pages, click, CDP :9222/:9223, void-world batches. Official API HTML. Domain facts: Read sandustry/SKILL.md then one domain SKILL.md."
+description: "Use when attaching to live Sandustry: evaluate_script, list_pages, click, CDP :9222/:9224, void-world batches. Official API HTML. Domain facts: Read sandustry/SKILL.md then one domain SKILL.md."
 ---
 
 # Sandustry MCP
@@ -14,10 +14,10 @@ Chrome DevTools MCP on the Sandustry Electron renderer. Official Sandkit API: `.
 3. Remember `pageId`; it changes after reload, reconnect, or a new tab. Re-run `list_pages` when a call fails or the game restarted.
 4. Done when the next MCP call succeeds on that `pageId`.
 
-| Port    | Instance                                                                            |
-| ------- | ----------------------------------------------------------------------------------- |
-| `:9222` | Player / Steam / F5 debug renderer                                                  |
-| `:9223` | Isolated test host (`.tmp/sandustry-test`, `npm test` / `npm run test:integration`) |
+| Port    | Instance                                                                           |
+| ------- | ---------------------------------------------------------------------------------- |
+| `:9222` | Player / Steam / F5 debug renderer                                                 |
+| `:9224` | Extracted-game Chromium (`npm run test:integration`, `.tmp/sandustry-test-chrome`) |
 
 Never kill Sandustry. Ask the user for a hard reload when code or mods changed.
 

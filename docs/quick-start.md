@@ -53,7 +53,7 @@ Do not import files from another mod folder. Shared code goes in `modkit/`.
 
 ### Setup and game
 
-- **`npm run setup`** — Check install, extract game source to `sandustry/<version>-<branch>/`, link `dist/` and `logs/`
+- **`npm run setup`** — Check install, extract `app.asar` (except `node_modules/`) to `sandustry/<version>-<branch>/`, link `dist/` and `logs/`
 - **`npm run sandustry`** — Start the game (no build)
 
 ### Development

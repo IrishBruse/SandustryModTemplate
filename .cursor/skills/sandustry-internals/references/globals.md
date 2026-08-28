@@ -10,7 +10,7 @@ Renderer `window` extras (0.5.5 vanilla). Standard DOM APIs omitted.
 | `webpackChunksand_v1` | Webpack chunk array (length 1 after load) |
 | `__reflow`            | Number (layout tick, changes over time)   |
 
-`sandkit` top-level keys (live 0.5.5): `api`, `apiVersion`, `engine`, `enums`, `react`, `state`. Injected into mod `entry` / `workerEntry` per official HTML. Ambient `sandkit` works in MCP `evaluate_script`. This Steam 0.5.5 session: `typeof window.sandkit === "object"`. After reload, verify again (may be `"undefined"`).
+`sandkit` top-level keys (live 0.5.5): `api`, `apiVersion`, `engine`, `enums`, `react`, `state`. Injected into mod `entry` / `workerEntry` per official HTML (Function wrap around `entrySource`). Vanilla does not assign `window.sandkit`. Empty `getSandkitMods` still reaches Game HUD. Ambient `sandkit` in MCP `evaluate_script` needs a loaded entry (Steam session with mods, or a harness that sets `globalThis.sandkit`). This Steam 0.5.5 session: `typeof window.sandkit === "object"`. After reload, verify again (may be `"undefined"`).
 
 Official API reference: `.tmp/Sandkit - Sandustry Modding API.html`. Prefer **`api.grid`**; live **`api.world`** is a **deprecated alias** of grid mutate/dims plus `pickups`, `runWhenSimulationIdle`, `redrawAroundCellWhenIdle` (`world.mutate === grid.mutate` on live 0.5.5).
 

@@ -4,7 +4,7 @@ Shared kit for Sandustry mods. It includes:
 
 - **React runtime** — `sandkit.react` wired through `modkit/internal/esbuild/react.ts` and JSX runtimes
 - **Utils** — small helpers (`safe`, settings, scene checks, retro console registration)
-- **Live tests** — Node helpers that talk to an isolated test renderer on CDP `:9223`
+- **Integration tests** — Node helpers that talk to the extracted game in Chromium (CDP `:9224`)
 - **UI** — shared React components under `modkit/ui/`. Live canvases and PNGs live under `docs/ui/canvas/` (`npm run ui:css` / `ui:previews`).
 - **Modinfo helpers** — `defineModInfo` with colocated manifest types
 - **Patch helpers** — `definePatches` and patch types in `@modkit/patches`
@@ -22,7 +22,7 @@ Sibling mods (for example `sandustry-doom-mod`) can use a symlink to this folder
 | Sandkit API types  | [SandustryTypes](https://sandustry-modding.github.io/SandustryTypes/#/) |
 | React and JSX      | [react.md](react.md)                                                    |
 | Utils              | [utils.md](utils.md)                                                    |
-| Live tests         | [test.md](test.md)                                                      |
+| Integration tests  | [test.md](test.md)                                                      |
 | Mod `configSchema` | [config-schema.md](../config-schema.md)                                 |
 | Manifest fields    | [../modinfo.md](../modinfo.md)                                          |
 | UI components      | [../ui/README.md](../ui/README.md)                                      |

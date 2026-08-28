@@ -37,6 +37,7 @@ test("resolveGameBranchKey prefers Steam beta, then sandkit, then release", () =
   assert.equal(resolveGameBranchKey("mods", false), "mods");
   assert.equal(resolveGameBranchKey("", true), "mods");
   assert.equal(resolveGameBranchKey("", false), "release");
+  assert.equal(resolveGameBranchKey("0.5.5", true), "mods");
 });
 
 test("bundleHasSandkit detects sandkit marker", () => {

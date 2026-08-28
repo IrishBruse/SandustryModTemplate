@@ -14,7 +14,9 @@ const api = sandkit.api;
 let stopLocalReload: (() => void) | undefined;
 
 function syncLocalModReload(): void {
-  const on = settingOn(api, "watchLocalMods");
+  const testHost = (globalThis as typeof globalThis & { __sandustryTestHost?: boolean })
+    .__sandustryTestHost;
+  const on = testHost === true || settingOn(api, "watchLocalMods");
   if (on && !stopLocalReload) stopLocalReload = installLocalModReload(api, modinfo.id);
   if (!on && stopLocalReload) {
     stopLocalReload();

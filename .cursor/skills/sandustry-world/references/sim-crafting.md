@@ -10,6 +10,14 @@ Registration and pattern helpers for world sim. Official: [sandkit.html](https:/
 - `outputA`, `outputB` - element string ids or `null`
 - `orientation` (optional): `"any"` | `"stacked"`
 
+Live store (0.5.5): registered contacts land in `state.sandkit.mods.recipes.contacts` (often empty). Contact **mix** lookup also merges:
+
+1. Engine builtins (not in `recipes.contacts`): Water+Sand→WetSand, Water+Seed→WetSeed, Water+Lava→Steam, Water+Flame→Steam
+2. Element defs with `mixes[]`: `{ elementType, result, secondaryResult? }` (example: Void Petal + Redsand → Voidbloom)
+3. Mod `registerContact` rows (participant-bound A/B outputs; skipped when a mix already covers the pair)
+
+Same `recipes` bag also holds machine rows: `condensers`, `steamDryers`, `synthesizers`, `snowmakers`, `smelters`, `growers`, `shakers`, `kineticPresses`.
+
 ## `api.excavation` (main)
 
 `registerProfile(id, definition)`:

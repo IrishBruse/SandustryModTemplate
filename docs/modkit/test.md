@@ -1,36 +1,93 @@
-# Live tests
+# Integration tests
 
-Node helpers for tests that talk to a **test-only** Sandustry renderer. Import from `*.test.ts` only.
+Node helpers for tests that talk to the **extracted game** in Chromium. Import from `*.integration.test.ts` only.
 
 ```ts
-import { sandustryTest } from "@modkit/test";
+import test from "node:test";
+import { expect, setupGame } from "@modkit/test";
+
+const game = await setupGame();
+
+test("a", async () => {
+  await game.evaluate(() => sandkit.api.player.getPositionAtWorld());
+});
+
+test("void world", async () => {
+  await expect(game).toHaveScreenshot("void-world.png");
+});
 ```
 
-`npm test` starts that host, then loads `scripts/test/register-modkit.js` so Node can resolve `@modkit/*`. tsconfig paths do not apply to `node --test`. After the tests, it stops the host.
+`setupGame()` connects once per test file. Later calls in that file reuse the session. The file closes the CDP socket when it finishes so the Node test worker can exit.
 
-`npm run test:integration` runs the **same** files against a **visible** test window. Use that when you want to watch the Game scene or inspect a failed live case. On failure, the host stays up on CDP **:9223** until you press Ctrl+C. Do not open Electron DevTools (F12) while the tests run. That steals CDP from the runner.
+`npm test` runs **unit** files only (`*.test.ts`, not `*.integration.test.ts`). It does not start Chromium.
 
-The test host is a second Electron process. It does not attach to Steam or F5, and it does not stop them.
+`npm run test:integration`:
 
-- User data: `.tmp/sandustry-test/` (Steam stays in `~/.config/sandustry` / `%APPDATA%\sandustry`)
-- CDP port: **9223** (Steam / F5 stay on **9222**)
-- `npm test` on Linux / macOS: `xvfb-run` plus `--ozone-platform=x11` (no window)
-- `npm test` on Windows: Electron `--headless=new`
-- `npm run test:integration`: always a visible window. It needs a desktop (`DISPLAY` on Linux).
+1. Builds `src/` and `examples/` with `--debug` into `dist/`.
+2. Boots `sandustry/<version>-<branch>/dist` in headless Chromium (CDP **:9224**).
+3. Waits for boot to finish (`game:ready`, `#loading` removed, Game scene).
+4. Runs every `*.integration.test.ts` with `--test-concurrency=1` (async spawn so
+   the host HTTP server keeps serving `/mods/...` during the run).
 
-Electron-only flags are not enough for this packaged game (Electron 33): `--ozone-platform=headless` stalls before CDP HTTP works, and `--headless=new` still opens a desktop window. Linux / macOS therefore use a virtual X display.
+Use **`npm run test:integration:view`** to open a visible Chrome window instead of headless.
+That script passes `--view` to the runner. On Linux it needs `DISPLAY`.
 
-It copies `author.template` and `hot-reload` from `dist/` (or the OS mods folder). It copies the last played `.save` so auto-load can enter the Game scene. After `npm test`, the runner stops only the test host.
+### Performance
 
-Import `@modkit/test` from `*.test.ts` only. The esbuild alias rejects a game bundle import. The module also throws if `document` exists.
+The host is heavy: it boots the full game in Chromium with sim workers and WebGL. To reduce lag on your machine (and on Steam Sandustry):
+
+| Goal | Command |
+| ---- | ------- |
+| Run one mod only | `nr test:integration template` |
+| Run one mod with a window | `nr test:integration:view collector-element` |
+| Run example samples only | `nr test:integration --examples` |
+| Skip the full example build | pass a mod folder (or `--mod`) |
+
+Local runs:
+
+- Use the GPU (SwiftShader only in `CI`, for screenshot baselines).
+- Cap `navigator.hardwareConcurrency` at 4 so vanilla spawns about **2** sim workers (not ~`cores − 2`).
+- Launch Chrome under `nice -n 10` and limit raster / renderer processes.
+- Allow Chrome timer throttling (full frame-rate flags stay on in CI only).
+- Pause the sim after boot until a test needs live frames.
+
+Pass a mod folder name (or `--mod <folder>`) to build that mod, load only that
+mod in the host, and run only its integration tests. Repeat folders / `--mod`
+to select several. Pass `--examples` to build every sample and run only
+`examples/**/*.integration.test.ts`.
+
+```bash
+nr test:integration:view overlay-hotkey
+nr test:integration template
+nr test:integration overlay-hotkey i18n
+nr test:integration --examples
+```
+
+If the host is not running, `setupGame()` throws. Run integration files only through `npm run test:integration`.
+
+When the tests finish, the host stops. Do not open Chrome DevTools on that window while the tests run. That steals CDP from the runner.
+
+This host does not attach to Steam or F5, and it does not stop them.
+
+| Item           | Path / value                                          |
+| -------------- | ----------------------------------------------------- |
+| Game files     | `sandustry/<version>-<branch>/dist` (`npm run setup`) |
+| Chrome profile | `.tmp/sandustry-test-chrome/`                         |
+| Test mods copy | `.tmp/sandustry-test/mods/`                           |
+| CDP            | **9224** (Steam / F5 stay on **9222**)                |
+| HTTP           | `http://127.0.0.1:4173` with COOP/COEP                |
+| Window         | Headless by default; `npm run test:integration:view` for a visible window |
+| Viewport       | Locked once at host boot (1280×720). `:view` does not re-apply Emulation metrics per test file |
+
+It copies every built mod from `dist/` (then fills gaps from the OS mods folder) and enables them. `--mod` copies only those mods. It loads the tracked Void save `modkit/test/fixtures/Empty.save` with `?db_load=<meta.id>` (vanilla file name is `{id}.save`). A harness mod sets `globalThis.sandkit`. Hot-reload can fetch `main.js` from `/mods/<id>/`. Vanilla HUD textures stay at `/mods/<file>.png` from extracted `dist/mods/`. The host rewrites the served `js/bundle.js` so `assets.getUrl` / map blueprints accept HTTP `rootUrl` (vanilla join allows `file:` only). `sessionStorage.splashShown` is set; `?db_load=` still runs vanilla shader wait.
+
+Import `@modkit/test` from test files only. The esbuild alias rejects a game bundle import. The module also throws if `document` exists.
 
 `npm test` strips types. Assign constructor arguments to fields in the constructor body. Use `import type` for type-only imports.
 
-## When a case runs
+Name integration files `*.integration.test.ts` (for example `src/template/template.integration.test.ts`).
 
-`sandustryTest` is a `node:test` case. It **skips** when the Sandustry binary, `xvfb-run` (Unix), or test mods are missing, or when the renderer does not reach the Game scene.
-
-Inside the case, skip when the ordered mod list is not ready.
+Tests that write the same world (for example player position) must run in order. Use `describe(..., { concurrency: false }, () => { ... })`.
 
 ## Session
 
@@ -38,6 +95,8 @@ Inside the case, skip when the ordered mod list is not ready.
 | ------------------------------------ | --------------------------------------------------------------------------------------------- |
 | `game.evaluate(fn, ...args)`         | Run `fn` in the renderer. Arguments must be JSON values. Closures do not capture Node locals. |
 | `game.waitFor(read, match, options)` | Poll `read` in the page until `match` is true in Node.                                        |
+| `game.orderedModIds()`               | Return live `manifest.id` values from the ordered mod list.                                   |
+| `game.screenshot(options)`           | Capture a PNG of the compositor (WebGL plus DOM). Returns a `Buffer`.                         |
 | `game.withModMain(id, fn)`           | Edit the test-host `main.js`, then restore the original bytes.                                |
 | `game.tryReadModMain(id)`            | Return the test-host bundle, or `null`.                                                       |
 
@@ -45,20 +104,40 @@ Inside the case, skip when the ordered mod list is not ready.
 
 Return values from `evaluate` must be JSON-serializable.
 
-## Example
+## Screenshots
 
-```ts
-import assert from "node:assert/strict";
-import { sandustryTest } from "@modkit/test";
+`expect(game).toHaveScreenshot(name)` captures, then compares against a PNG next to the test file. `expect(png).toMatchSnapshot(name)` compares a buffer you already captured. Value checks stay on `node:assert`.
 
-sandustryTest("toast text is visible", async (_t, game) => {
-  const text = await game.waitFor(
-    () => document.body.textContent,
-    (value) => typeof value === "string" && value.includes("Template inject"),
-    { message: "inject probe missing" },
-  );
-  assert.ok(text);
-});
-```
+| Item             | Value                                                    |
+| ---------------- | -------------------------------------------------------- |
+| Baseline folder  | `<file>.integration.test.ts-snapshots/`                  |
+| File name        | `{name}-chromium-{platform}.png`                         |
+| Fail artifacts   | `.tmp/sandustry-test-screenshots/`                       |
+| Update baselines | `npm run test:integration -- --test-update-snapshots`    |
+| Missing snapshot | Write the PNG, then fail. In `CI`, fail without a write. |
+| Retry            | Same as `waitFor`: 8000 ms timeout, 250 ms interval      |
 
-The hot-reload live case is `src/hot-reload/reload/live.test.ts`.
+Capture options:
+
+| Option       | Role                                           |
+| ------------ | ---------------------------------------------- |
+| `clip`       | CSS-pixel rectangle                            |
+| `selector`   | Clip to a DOM node (`getBoundingClientRect`)   |
+| `mask`       | CSS selectors painted `#FF00FF` before capture |
+| `path`       | Write the PNG to that path                     |
+| `animations` | `"disabled"` (default) or `"allow"`            |
+
+Compare options: `maxDiffPixels`, `maxDiffPixelRatio`, `threshold` (default `0.2`).
+
+Game rules:
+
+- The host uses SwiftShader only in CI so PNG baselines match across machines. Local runs prefer the GPU.
+- The test page reports `hardwareConcurrency` as 4 so vanilla keeps about two sim workers.
+- Chrome launches under `nice -n 10` (Unix) with fewer raster threads.
+- After boot the host pauses the sim (`session.paused`) until a test needs live frames.
+- `animations: "disabled"` pauses the sim (`session.paused`), then waits on a short timer.
+  It does not open the pause menu. It does not use `requestAnimationFrame` (pause can
+  stop the page frame loop and hang CDP).
+- Prefer `selector` or `mask` for HUD clocks and other live UI.
+
+Kit smoke: `modkit/test/game.integration.test.ts`. Template: `src/template/template.integration.test.ts`. Samples: every `examples/**/*.integration.test.ts`. Hot-reload: `src/hot-reload/reload/integration.test.ts`.
