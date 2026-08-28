@@ -2,24 +2,6 @@
 
 Rules for editing files under `docs/`.
 
-## Writing style
-
-Use **ASD-STE100 Simplified Technical English**:
-
-- Short sentences. One idea per sentence.
-- Prefer active voice and clear verbs (`run`, `set`, `open`, `write`).
-- Prefer lists. Use a markdown table only when the table stays narrow.
-- Prefer concrete paths, commands, and UI labels over vague wording.
-- Prefer **bold** for key terms and UI labels. Do not bold whole sentences.
-- Link related pages with relative paths (`layout.md`, `hot-reload/`).
-- Match the tone of nearby pages. Do not invent a new voice.
-
-Avoid:
-
-- Long compound sentences and filler.
-- Marketing tone in guide pages.
-- Duplicating large code samples that already live next to the feature.
-
 ## Sandkit API reference
 
 Do **not** keep API reference pages in this repo. The live reference is:

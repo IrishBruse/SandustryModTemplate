@@ -1,48 +1,35 @@
-TypeScript template for Sandustry mods (Steam **[mods]** branch).
+TypeScript template for Sandustry mods on Steam **[mods]** beta (game **0.5.5**).
 
-**Repo:** https://github.com/IrishBruse/SandustryModTemplate
-**Docs:** https://ethanconneely.com/SandustryModTemplate/
+**Repo:** https://github.com/sandustry-modding/SandustryModTemplate
+**Docs:** https://sandustry-modding.github.io/SandustryModTemplate/#/
+**Types:** https://sandustry-modding.github.io/SandustryTypes/#/
+**Sandkit API:** https://sandustry.com/sandkit.html
 
 ## Quick start
 
-Node 24 installed. Full guide: https://ethanconneely.com/SandustryModTemplate/#/quick-start
+Node 24. See Docs for the full guide.
 
 ```
-git clone https://github.com/IrishBruse/SandustryModTemplate.git <project-name>
+git clone https://github.com/sandustry-modding/SandustryModTemplate.git <project-name>
 cd <project-name>
 npm install
-npm run setup # one time only
+npm run setup
 npm run dev
 ```
 
-1. Press **F5** in VS Code, or run `npm run sandustry`.
-2. Edit `src/template/` (`modinfo.ts`: `id`, `name`, `author`, `description`). Copy that folder to `src/<your-mod>/` for a second mod.
+1. **F5** in VS Code, or `npm run sandustry`.
+2. Edit `src/template/modinfo.ts`, then copy the folder for a second mod.
 
 # Features
 
-**TypeScript:**
-Split each mod across files in `src/<mod-name>/`.
-esbuild bundles them to one `main.js`.
-Sandkit API types: [`@sandustry-modding/types`](https://www.npmjs.com/package/@sandustry-modding/types) · [reference](https://sandustry-modding.github.io/SandustryTypes/#/).
+**TypeScript:** Split mods across files in `src/<mod-name>/`; esbuild bundles to `main.js`.
 
-**React HUD:**
-Write JSX overlays with the UI kit.
-Runtime React comes from `sandkit.react`.
+**React HUD:** JSX overlays via the UI kit (`sandkit.react`).
 
-**Tailwind:**
-The game CSS is purged, so extra classes have no rules. The build compiles only the utilities your bundle uses and injects a `<style>` tag.
+**Tailwind:** Build injects only the utility classes your bundle uses.
 
-**Watch rebuild:**
-Run `npm run dev`. Save a file. Restart the game to load the new bundle.
+**Hot reload:** `npm run dev` + **Watch local mods** reloads renderer code. Restart for workers and patches. Debug builds add F12 DevTools and auto-load save (`src/hot-reload`; not published).
 
-**Debug helpers:**
-Debug builds install the **hot-reload** companion (`src/hot-reload`). It adds F12 DevTools, auto-load save, and console globals. `npm run build` stages that mod; `npm run publish` does not list it.
+**Typed `modinfo.ts`:** Manifest and patches in one file per mod folder.
 
-**Typed `modinfo.ts`:**
-One file per mod for the manifest and patches. Each `src/<mod-name>/` folder with a `modinfo.ts` is a separate game mod.
-
-**VS Code launch and debugger:**
-Press **F5** to stop and launch the game (Linux and Windows).
-Keep `npm run dev` running.
-
-Questions and feedback are welcome.
+**VS Code:** **F5** launches the game (Linux/Windows). Keep `npm run dev` running.
