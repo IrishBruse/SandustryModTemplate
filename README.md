@@ -22,7 +22,7 @@ More: [Quick start](https://ethanconneely.com/SandustryModTemplate/#/quick-start
 
 ### Setup and game
 
-- **`npm run setup`** — Check install, extract game source to `sandustry/<version>-<branch>/`, link `dist/` and `logs/`
+- **`npm run setup`** — Check install, extract `app.asar` (except `node_modules/`) to `sandustry/<version>-<branch>/`, link `dist/` and `logs/`
 - **`npm run sandustry`** — Stop and launch the game (no build)
 
 ### Development
@@ -40,7 +40,8 @@ More: [Quick start](https://ethanconneely.com/SandustryModTemplate/#/quick-start
 ### Quality
 
 - **`npm run typecheck`** — TypeScript check
-- **`npm run test`** — Node tests (`src/**/*.test.ts`, `scripts/**/*.test.js`)
+- **`npm run test`** — Unit tests only (`*.test.ts`). No Chromium.
+- **`npm run test:integration`** — Build mods, boot extracted dist in Chrome (CDP `:9224`), run `*.live.test.ts`
 - **`npm run lint`** — Typecheck, oxlint, and format check
 - **`npm run lint:fix`** — oxlint `--fix` and oxfmt
 

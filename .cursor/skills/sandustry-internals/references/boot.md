@@ -19,7 +19,7 @@ Progress max is **7**. `PI(key, 7)` sets **Starting game**. That label stays unt
 
 Order after `?db_load=` / Continue:
 
-1. Load save (`electron.load`). Parse store, wall, matrix, shadow, authorization.
+1. Load save (`electron.load` when the host check in `electron.md` is true; otherwise IndexedDB). Parse store, wall, matrix, shadow, authorization.
 2. Build Pixi/session, then allocate SharedArrayBuffers for `store.world.size` (vanilla **3840 x 3840**): `cellIds` ~56 MB, `mapData` ~56 MB, wall + shadow ~14 MB each, plus **1000000** element slots and **14** sim workers.
 3. `pj()` - key bindings + Pixi overlay containers (`ET.init`).
 4. Run external mods.

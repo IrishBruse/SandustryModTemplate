@@ -107,7 +107,7 @@ Import `@modkit/*` and files in your own folder only.
 | `@modkit/patches`                             | `definePatches` and patch types. Browser stub keeps payloads out of `main.js` |
 | `@modkit/react` / JSX                         | Runtime React from `sandkit.react`                                            |
 | `@modkit/utils`                               | `safe`, `isEnabled`, `inGame`, `registerRetroGame`                            |
-| `@modkit/test`                                | Isolated live tests (CDP `:9223`). Import from `*.test.ts` only               |
+| `@modkit/test`                                | Extracted-game live tests (CDP `:9224`). Import from `*.live.test.ts` only    |
 | `@modkit/ui`                                  | Shared React UI components                                                    |
 | `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix                         |
 

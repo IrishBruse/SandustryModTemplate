@@ -1,12 +1,12 @@
 /**
- * Local dev setup: check the machine, extract Sandustry game source, link logs.
+ * Local dev setup: check the machine, extract Sandustry from app.asar, link logs.
  * Usage: npm run setup
  *
  * Checks: Node major, root npm packages, per-mod node_modules,
  * Sandustry binary, app.asar, Steam [mods] beta, sandkit in the extracted bundle.
  *
  * Layout:
- *   sandustry/<version>-<branch>/  game JS/JSON/HTML/CSS from app.asar (e.g. 0.5.2-mods)
+ *   sandustry/<version>-<branch>/  app.asar files except node_modules (e.g. 0.5.5-mods)
  *   dist/        symlink (Linux) / junction (Windows) to sandustry mods folder
  *   logs/        symlink (Linux) / junction (Windows) to sandustry logs
  *                Linux: ~/.config/sandustry/logs
@@ -22,7 +22,7 @@ import {
   rmSync,
   writeFileSync,
 } from "node:fs";
-import { dirname, extname, join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { asarExtractPath, asarRelPath } from "../lib/asar-path.js";
 import {
@@ -56,7 +56,11 @@ const SANDUSTRY_APP_ID = "2764460";
 /** Previous references/ folder (source extract, logs link, workshop copies). */
 const LEGACY_REFERENCES = join(ROOT, "references");
 
-const SOURCE_EXTENSIONS = new Set([".js", ".json", ".html", ".css", ".txt", ".md"]);
+function isExtractableAsarFile(relPath) {
+  if (!relPath) return false;
+  if (relPath === "node_modules" || relPath.startsWith("node_modules/")) return false;
+  return true;
+}
 
 const IS_WIN = process.platform === "win32";
 
@@ -75,11 +79,6 @@ function warn(message) {
 function fail(message) {
   failCount += 1;
   console.error(`FAIL  ${message}`);
-}
-
-function isGameSourceFile(relPath) {
-  if (relPath === "node_modules" || relPath.startsWith("node_modules/")) return false;
-  return SOURCE_EXTENSIONS.has(extname(relPath));
 }
 
 function expectedNodeMajor() {
@@ -240,20 +239,24 @@ function extractGameSource(listed, sourceDest, folderName) {
   let count = 0;
   for (const entry of listed) {
     const relPath = asarRelPath(entry);
-    if (!relPath || !isGameSourceFile(relPath)) continue;
+    if (!isExtractableAsarFile(relPath)) continue;
 
     const dest = join(sourceDest, relPath);
     mkdirSync(dirname(dest), { recursive: true });
-    writeFileSync(dest, extractFile(ASAR, asarExtractPath(entry)));
+    try {
+      writeFileSync(dest, extractFile(ASAR, asarExtractPath(entry)));
+    } catch {
+      continue;
+    }
     count += 1;
   }
 
   if (count === 0) {
-    fail("Extracted 0 game source files from app.asar.");
+    fail("Extracted 0 files from app.asar.");
     return false;
   }
 
-  ok(`Extracted ${count} game source files -> sandustry/${folderName}/`);
+  ok(`Extracted ${count} asar files -> sandustry/${folderName}/`);
   return true;
 }
 

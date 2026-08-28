@@ -15,9 +15,7 @@
     "paths": {
       "*": ["./*"],
       "@modkit/*": ["./modkit/*"],
-      "@sandustry-modding/types/*": [
-        "./node_modules/@sandustry-modding/types/*"
-      ]
+      "@sandustry-modding/types/*": ["./node_modules/@sandustry-modding/types/*"]
     }
   },
   "files": ["./modkit/css.d.ts"]

@@ -23,6 +23,6 @@ CLI: `--sandustry-locale=`, `--sandustry-gpu-pref-relaunched`. SharedArrayBuffer
 
 `dist/index.html` loads `js/bundle.js`. Layers: `#canvas`, `#overlay-canvas`, `#ui`, splash `#loading`. Loader / **Starting game**: `boot.md`.
 
-Workers: `js/simulation-worker.js`, `manager-worker.js`, `utility-worker.js`, `external-mod-runtime.js`, `external-mod-worker-runtime.js`. Locales under `js/locales/`. Procgen prefab `img/procgen/prefabs/*/config.json`.
+`npm run setup` extracts the full asar tree except `node_modules/` (img, fonts, sfx, hashed `dist/js/*.ttf`). Workers: `js/simulation-worker.js`, `manager-worker.js`, `utility-worker.js`, `external-mod-runtime.js`, `external-mod-worker-runtime.js`. Locales under `js/locales/`. Procgen prefab `img/procgen/prefabs/*/config.json`.
 
 Pretty bundle for patch `find` strings: `sandustry/0.5.5-mods/.formatted-source/bundle.js`. Copy finds from the matching version folder after a game update (`docs/patches.md`).

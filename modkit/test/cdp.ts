@@ -1,6 +1,6 @@
 import { SANDUSTRY_TEST_CDP_PORT } from "./paths.ts";
 
-/** Isolated live-test renderer CDP. F5 / Steam debug stays on :9222. */
+/** Isolated integration Chromium CDP. F5 / Steam debug stays on :9222. */
 export const SANDUSTRY_CDP_PORT = SANDUSTRY_TEST_CDP_PORT;
 
 const DEFAULT_TIMEOUT_MS = 8000;
@@ -17,7 +17,7 @@ export async function isSandustryAvailable(port = SANDUSTRY_CDP_PORT): Promise<b
 }
 
 async function pageWebSocketUrl(port: string): Promise<string> {
-  const response = await fetch(`http://127.0.0.1:${port}/json`, {
+  const response = await fetch(`http://127.0.0.1:${port}/json/list`, {
     signal: AbortSignal.timeout(2000),
   });
   if (!response.ok) throw new Error(`CDP /json failed: ${response.status}`);
@@ -29,10 +29,10 @@ async function pageWebSocketUrl(port: string): Promise<string> {
       typeof entry === "object" &&
       entry.type === "page" &&
       typeof entry.webSocketDebuggerUrl === "string" &&
-      typeof entry.title === "string" &&
-      /Sandustry/i.test(entry.title),
+      typeof entry.url === "string" &&
+      (entry.url.includes("127.0.0.1") || /Sandustry/i.test(String(entry.title ?? ""))),
   );
-  if (!page) throw new Error("No Sandustry page on CDP");
+  if (!page) throw new Error("No integration test page on CDP");
   return page.webSocketDebuggerUrl;
 }
 

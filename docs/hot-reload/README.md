@@ -113,7 +113,7 @@ Each reload runs tracked disposers first:
 
 Hot eval wraps `api.ui.toast` so messages show the mod id and reload generation, for example `Template loaded (author.template v4)`. The console logs `reloaded <id> vN`.
 
-The starter template shows **Template inject** (top-left) and **Template hotbar** on the hotbar. `npm test` starts an isolated Sandustry host (`.tmp/sandustry-test`, CDP **:9223**) and runs `src/hot-reload/reload/live.test.ts` against it. `npm run test:integration` runs the same files with a **visible** window. Those cases **skip** when the binary or test mods are missing. They do not attach to the Steam window on **:9222**. See [Live tests](../modkit/test.md).
+The starter template shows **Template inject** (top-left) and **Template hotbar** on the hotbar. `npm run test:integration` boots the extracted game in Chrome (`.tmp/sandustry-test`, CDP **:9224**) and runs `*.live.test.ts` against it, including `src/hot-reload/reload/live.test.ts`. `npm test` is unit tests only. Those live cases **skip** when the Game scene or test mods are missing. They do not attach to the Steam window on **:9222**. See [Live tests](../modkit/test.md).
 
 Content `register` calls (`elements`, `structures`, `i18n`, …) have no unregister. The game updates the same id when you register again.
 

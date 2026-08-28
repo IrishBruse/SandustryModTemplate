@@ -43,8 +43,10 @@ export function sanitizeBranchKey(branchKey) {
  */
 export function resolveGameBranchKey(steamBetaKey, hasSandkit) {
   const beta = sanitizeBranchKey(steamBetaKey);
-  if (beta) return beta;
+  const versionLike = /^\d/.test(beta);
+  if (beta && !versionLike) return beta;
   if (hasSandkit) return "mods";
+  if (beta) return beta;
   return "release";
 }
 

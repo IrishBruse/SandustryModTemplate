@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+import { buildModsForIntegration } from "./build-mods.js";
 import { runNodeTests } from "./run.js";
 
-process.exit(await runNodeTests({ visible: true }));
+buildModsForIntegration();
+process.exit(await runNodeTests({ integration: true }));

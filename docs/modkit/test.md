@@ -1,36 +1,57 @@
 # Live tests
 
-Node helpers for tests that talk to a **test-only** Sandustry renderer. Import from `*.test.ts` only.
+Node helpers for tests that talk to the **extracted game** in Chromium. Import from `*.live.test.ts` only.
 
 ```ts
-import { sandustryTest } from "@modkit/test";
+import test from "node:test";
+import { setupGame } from "@modkit/test";
+
+const game = await setupGame();
+
+test("a", async () => {
+  await game.evaluate(() => sandkit.api.player.getPositionAtWorld());
+});
+
+test("b", async () => {
+  await game.evaluate(() => sandkit.api);
+});
 ```
 
-`npm test` starts that host, then loads `scripts/test/register-modkit.js` so Node can resolve `@modkit/*`. tsconfig paths do not apply to `node --test`. After the tests, it stops the host.
+`setupGame()` connects once per Node process. Later calls reuse that session. Do not call `game.close()` in the test file. The integration runner stops Chrome.
 
-`npm run test:integration` runs the **same** files against a **visible** test window. Use that when you want to watch the Game scene or inspect a failed live case. On failure, the host stays up on CDP **:9223** until you press Ctrl+C. Do not open Electron DevTools (F12) while the tests run. That steals CDP from the runner.
+`npm test` runs **unit** files only (`*.test.ts`, not `*.live.test.ts`). It does not start Chromium.
 
-The test host is a second Electron process. It does not attach to Steam or F5, and it does not stop them.
+`npm run test:integration`:
 
-- User data: `.tmp/sandustry-test/` (Steam stays in `~/.config/sandustry` / `%APPDATA%\sandustry`)
-- CDP port: **9223** (Steam / F5 stay on **9222**)
-- `npm test` on Linux / macOS: `xvfb-run` plus `--ozone-platform=x11` (no window)
-- `npm test` on Windows: Electron `--headless=new`
-- `npm run test:integration`: always a visible window. It needs a desktop (`DISPLAY` on Linux).
+1. Builds `src/` and `examples/` with `--debug` into `dist/`.
+2. Boots `sandustry/<version>-<branch>/dist` in Chrome (CDP **:9224**).
+3. Waits for the Game scene.
+4. Runs every `*.live.test.ts` with `--test-concurrency=1`.
 
-Electron-only flags are not enough for this packaged game (Electron 33): `--ozone-platform=headless` stalls before CDP HTTP works, and `--headless=new` still opens a desktop window. Linux / macOS therefore use a virtual X display.
+If the host is not running, `setupGame()` throws. Run live files only through `npm run test:integration`.
 
-It copies `author.template` and `hot-reload` from `dist/` (or the OS mods folder). It copies the last played `.save` so auto-load can enter the Game scene. After `npm test`, the runner stops only the test host.
+On failure, the host stays up until you press Ctrl+C. Do not open Chrome DevTools on that window while the tests run. That steals CDP from the runner.
 
-Import `@modkit/test` from `*.test.ts` only. The esbuild alias rejects a game bundle import. The module also throws if `document` exists.
+This host does not attach to Steam or F5, and it does not stop them.
+
+| Item           | Path / value                                          |
+| -------------- | ----------------------------------------------------- |
+| Game files     | `sandustry/<version>-<branch>/dist` (`npm run setup`) |
+| Chrome profile | `.tmp/sandustry-test-chrome/`                         |
+| Test mods copy | `.tmp/sandustry-test/mods/`                           |
+| CDP            | **9224** (Steam / F5 stay on **9222**)                |
+| HTTP           | `http://127.0.0.1:4173` with COOP/COEP                |
+| Display        | Desktop (`DISPLAY` on Linux) so WebGL works           |
+
+It copies every built mod from `dist/` (then fills gaps from the OS mods folder) and enables them. It does **not** load the last-played save. A harness mod sets `globalThis.sandkit`. A generated **80×80** custom map (`sandustry-test.tiny-map`) calls `api.maps.start` so boot stays small. Hot-reload can fetch `main.js` from `/mods/<id>/`. `sessionStorage.splashShown` is set so shader wait is skipped when the URL has no `db_load`.
+
+Import `@modkit/test` from test files only. The esbuild alias rejects a game bundle import. The module also throws if `document` exists.
 
 `npm test` strips types. Assign constructor arguments to fields in the constructor body. Use `import type` for type-only imports.
 
-## When a case runs
+Name live files `*.live.test.ts` (for example `src/template/template.live.test.ts`).
 
-`sandustryTest` is a `node:test` case. It **skips** when the Sandustry binary, `xvfb-run` (Unix), or test mods are missing, or when the renderer does not reach the Game scene.
-
-Inside the case, skip when the ordered mod list is not ready.
+Tests that write the same world (for example player position) must run in order. Use `describe(..., { concurrency: false }, () => { ... })`.
 
 ## Session
 
@@ -45,20 +66,4 @@ Inside the case, skip when the ordered mod list is not ready.
 
 Return values from `evaluate` must be JSON-serializable.
 
-## Example
-
-```ts
-import assert from "node:assert/strict";
-import { sandustryTest } from "@modkit/test";
-
-sandustryTest("toast text is visible", async (_t, game) => {
-  const text = await game.waitFor(
-    () => document.body.textContent,
-    (value) => typeof value === "string" && value.includes("Template inject"),
-    { message: "inject probe missing" },
-  );
-  assert.ok(text);
-});
-```
-
-The hot-reload live case is `src/hot-reload/reload/live.test.ts`.
+Kit smoke: `modkit/test/game.live.test.ts`. Template: `src/template/template.live.test.ts`. Samples: `examples/**/*.live.test.ts`. Hot-reload: `src/hot-reload/reload/live.test.ts`.

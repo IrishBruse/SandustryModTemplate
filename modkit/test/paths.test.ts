@@ -7,7 +7,7 @@ import {
   sandustryTestUserDataDir,
   sandustryUserDataDir,
 } from "./paths.ts";
-import { testCompanionSettings } from "./host.ts";
+import { companionSettings } from "./mods.ts";
 
 test("installedModMain joins the isolated test mods folder", () => {
   const userData = sandustryTestUserDataDir();
@@ -21,14 +21,16 @@ test("installedModMain joins the isolated test mods folder", () => {
   assert.notEqual(userData, sandustryUserDataDir());
 });
 
-test("testCompanionSettings enables watch and auto-load", () => {
-  const settings = testCompanionSettings() as {
+test("companionSettings enables watch and disables auto-load for hot-reload", () => {
+  const settings = companionSettings(["hot-reload", "author.template"]) as {
     externalModSettings: {
       "hot-reload": { watchLocalMods: boolean; autoLoad: boolean; openDevTools: boolean };
+      "author.template": { enabled: boolean };
     };
   };
   const companion = settings.externalModSettings["hot-reload"];
   assert.equal(companion.watchLocalMods, true);
-  assert.equal(companion.autoLoad, true);
+  assert.equal(companion.autoLoad, false);
   assert.equal(companion.openDevTools, false);
+  assert.equal(settings.externalModSettings["author.template"].enabled, true);
 });

@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { sandustryTest } from "@modkit/test";
+import test from "node:test";
+import { setupGame } from "@modkit/test";
 import { setTimeout as sleep } from "node:timers/promises";
 
 const TEMPLATE_ID = "author.template";
@@ -21,7 +22,7 @@ type LiveSnapshot = {
 
 type RendererGlobal = typeof globalThis & {
   sandkit?: {
-    api?: { settings?: { get: (key: string) => unknown } };
+    api?: { settings?: { get: (key: string) => unknown; getAll: () => Record<string, unknown> } };
     enums?: { Scene?: { Game?: number } };
     engine?: {
       state?: {
@@ -67,8 +68,16 @@ function readLive(modId: string): LiveSnapshot {
     sandkit && sandkit.api && sandkit.api.settings
       ? sandkit.api.settings.get("watchLocalMods")
       : null;
+  const all =
+    sandkit && sandkit.api && sandkit.api.settings && sandkit.api.settings.getAll
+      ? sandkit.api.settings.getAll()
+      : null;
+  const watchFromAll =
+    all && typeof all === "object" && typeof all.watchLocalMods === "boolean"
+      ? all.watchLocalMods
+      : null;
   return {
-    watch: typeof watchValue === "boolean" ? watchValue : null,
+    watch: typeof watchValue === "boolean" ? watchValue : watchFromAll,
     scene: state && state.store && state.store.scene ? (state.store.scene.active ?? null) : null,
     gameScene:
       sandkit && sandkit.enums && sandkit.enums.Scene ? (sandkit.enums.Scene.Game ?? null) : null,
@@ -81,7 +90,9 @@ function readLive(modId: string): LiveSnapshot {
   };
 }
 
-sandustryTest("live hot reload updates inject and hotbar probes", async (t, game) => {
+const game = await setupGame();
+
+test("live hot reload updates inject and hotbar probes", async (t) => {
   const live = await game.evaluate(readLive, TEMPLATE_ID);
 
   if (live.watch !== true) {

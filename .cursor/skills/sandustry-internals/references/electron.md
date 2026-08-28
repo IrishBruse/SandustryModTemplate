@@ -4,6 +4,12 @@ Source of truth: `sandustry/preload.js`. Main handlers: `sandustry/main.js`. Liv
 
 Bridge object: `window.electron`.
 
+## Host check
+
+Webpack helper `b8()` is true when `navigator.userAgent` contains `"Electron"` **or** `window.process.type === "renderer"`. `electron.load` / `save` run only then. Otherwise the renderer uses IndexedDB (`A(e)`). A Chromium host that is not Electron must set one of those before `js/bundle.js`.
+
+Throw text `Save not found: "<id>"` is the same for a failed `electron.load` and a missing IndexedDB save.
+
 ## Sync (startup-safe)
 
 | Method                              | IPC                                                                           |
