@@ -25,7 +25,7 @@ test("b", async () => {
 
 1. Builds `src/` and `examples/` with `--debug` into `dist/`.
 2. Boots `sandustry/<version>-<branch>/dist` in Chrome (CDP **:9224**).
-3. Waits for the Game scene.
+3. Waits for boot to finish (`game:ready`, `#loading` removed, Game scene).
 4. Runs every `*.integration.test.ts` with `--test-concurrency=1`.
 
 If the host is not running, `setupGame()` throws. Run integration files only through `npm run test:integration`.

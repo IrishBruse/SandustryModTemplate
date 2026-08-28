@@ -2,6 +2,13 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { setTimeout as sleep } from "node:timers/promises";
 import { CdpConnection } from "./cdp.ts";
 import { installedModMain, tryReadInstalledModMain } from "./paths.ts";
+import {
+  formatRendererReadySnapshot,
+  GAME_READY_POLL_MS,
+  GAME_READY_TIMEOUT_MS,
+  isRendererReady,
+  readRendererReadySnapshot,
+} from "./readiness.ts";
 import { toPageExpression } from "./serialize.ts";
 import { waitFor, type WaitForOptions } from "./wait.ts";
 
@@ -29,43 +36,29 @@ export class SandustrySession {
   }
 
   /**
-   * Connect and wait until `sandkit` is in the Game scene. Retries after auto-load navigation.
+   * Connect and wait until the save has finished booting: Game scene, `game:ready`,
+   * and the `#loading` overlay removed. Retries after auto-load navigation.
    */
   static async connectReady(options?: {
     port?: string;
     timeoutMs?: number;
   }): Promise<SandustrySession> {
-    const timeoutMs = options?.timeoutMs ?? 45000;
+    const timeoutMs = options?.timeoutMs ?? GAME_READY_TIMEOUT_MS;
     const deadline = Date.now() + timeoutMs;
     let lastError = "Sandustry renderer not ready";
     while (Date.now() < deadline) {
       let session: SandustrySession | undefined;
       try {
         session = await SandustrySession.connect(options);
-        const state = await session.evaluate(() => {
-          const sandkit = (
-            globalThis as typeof globalThis & {
-              sandkit?: {
-                api?: unknown;
-                enums?: { Scene?: { Game?: number } };
-                engine?: { state?: { store?: { scene?: { active?: number } } } };
-              };
-            }
-          ).sandkit;
-          return {
-            api: Boolean(sandkit && sandkit.api),
-            scene: sandkit?.engine?.state?.store?.scene?.active ?? null,
-            game: sandkit?.enums?.Scene?.Game ?? null,
-          };
-        });
-        if (state.api && state.game != null && state.scene === state.game) return session;
-        lastError = "Sandustry is not in the Game scene";
+        const snapshot = await session.evaluate(readRendererReadySnapshot);
+        if (isRendererReady(snapshot)) return session;
+        lastError = `Sandustry boot is not finished: ${formatRendererReadySnapshot(snapshot)}`;
         session.close();
       } catch (error) {
         lastError = error instanceof Error ? error.message : String(error);
         session?.close();
       }
-      await sleep(250);
+      await sleep(GAME_READY_POLL_MS);
     }
     throw new Error(lastError);
   }

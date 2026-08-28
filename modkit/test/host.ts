@@ -28,7 +28,15 @@ import {
   sandustryTestUserDataDir,
   SANDUSTRY_TEST_CDP_PORT,
 } from "./paths.ts";
+import {
+  formatRendererReadySnapshot,
+  GAME_READY_POLL_MS,
+  GAME_READY_TIMEOUT_MS,
+  isRendererReady,
+  readRendererReadySnapshot,
+} from "./readiness.ts";
 import { parseSaveFile, readSaveMetaLine, steamSettingsJson, installEmptySave } from "./saves.ts";
+import { toPageExpression } from "./serialize.ts";
 
 export type { HostWindowMode } from "./chrome.ts";
 export { hostWindowMode } from "./chrome.ts";
@@ -74,8 +82,6 @@ const ISOLATION_HEADERS = {
   "Cross-Origin-Resource-Policy": "same-origin",
   "Cache-Control": "no-store",
 };
-
-const GAME_SCENE_WAIT_MS = 90000;
 
 type Runtime = { http: TestHttpServer; chrome: ChildProcess | null };
 
@@ -321,34 +327,29 @@ function writeHostRecord(record: HostRecord): void {
   writeFileSync(sandustryTestHostFile(), `${JSON.stringify(record, null, 2)}\n`);
 }
 
-async function waitForGameScene(): Promise<boolean> {
-  const deadline = Date.now() + GAME_SCENE_WAIT_MS;
+async function waitForGameReady(): Promise<boolean> {
+  const deadline = Date.now() + GAME_READY_TIMEOUT_MS;
+  let lastSnapshot = "no CDP snapshot";
   while (Date.now() < deadline) {
     if (!(await isSandustryAvailable(SANDUSTRY_TEST_CDP_PORT))) {
-      await sleep(250);
+      await sleep(GAME_READY_POLL_MS);
       continue;
     }
     let cdp: CdpConnection | undefined;
     try {
       cdp = await CdpConnection.connect({ timeoutMs: 8000 });
-      const state = (await cdp.evaluate(`(() => {
-        const g = globalThis;
-        const sk = typeof sandkit !== "undefined" ? sandkit : g.sandkit;
-        return {
-          api: Boolean(sk && sk.api),
-          scene: sk && sk.engine && sk.engine.state && sk.engine.state.store
-            ? sk.engine.state.store.scene.active
-            : null,
-          game: sk && sk.enums && sk.enums.Scene ? sk.enums.Scene.Game : null,
-        };
-      })()`)) as { api: boolean; scene: number | null; game: number | null };
+      const snapshot = (await cdp.evaluate(
+        toPageExpression(readRendererReadySnapshot),
+      )) as ReturnType<typeof readRendererReadySnapshot>;
       cdp.close();
-      if (state.api && state.game != null && state.scene === state.game) return true;
+      lastSnapshot = formatRendererReadySnapshot(snapshot);
+      if (isRendererReady(snapshot)) return true;
     } catch {
       cdp?.close();
     }
-    await sleep(500);
+    await sleep(GAME_READY_POLL_MS);
   }
+  console.error(`Integration host boot timed out: ${lastSnapshot}`);
   return false;
 }
 
@@ -409,10 +410,13 @@ export async function startSandustryTestHost(options?: {
     writeHostRecord({ pid: child.pid, port: SANDUSTRY_TEST_CDP_PORT, launchedAt: Date.now() });
   }
 
-  const ready = await waitForGameScene();
+  const ready = await waitForGameReady();
   if (!ready) {
     await stopSandustryTestHost();
-    return { ok: false, reason: "Game scene did not start. See .tmp/sandustry-test-chrome.log" };
+    return {
+      ok: false,
+      reason: "Game did not finish booting (game:ready and loading overlay). See .tmp/sandustry-test-chrome.log",
+    };
   }
   return { ok: true, reused: false };
 }

@@ -22,7 +22,12 @@ type LiveSnapshot = {
 
 type RendererGlobal = typeof globalThis & {
   sandkit?: {
-    api?: { settings?: { get: (key: string) => unknown; getAll: () => Record<string, unknown> } };
+    api?: {
+      settings?: {
+        get: (key: string) => unknown;
+        getAll: () => Record<string, unknown>;
+      };
+    };
     enums?: { Scene?: { Game?: number } };
     engine?: {
       state?: {
@@ -145,7 +150,11 @@ test("live hot reload updates inject and hotbar probes", async (t) => {
         snapshot.hotbarText === hotbarNext &&
         snapshot.globalIds.includes(GLOBAL_OVERLAY_ID) &&
         !snapshot.globalIds.some((id) => id.startsWith("hot-reload:") && id.includes(TEMPLATE_ID)),
-      { timeoutMs: 12000, args: [TEMPLATE_ID], message: "hot reload probes did not update" },
+      {
+        timeoutMs: 12000,
+        args: [TEMPLATE_ID],
+        message: "hot reload probes did not update",
+      },
     );
 
     assert.ok(latest.generation > generationBefore);
