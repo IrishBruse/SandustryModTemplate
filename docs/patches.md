@@ -30,7 +30,7 @@ Define the list with `definePatches` from `@modkit/patches`. Export it from that
 
 Release (`npm run build`, `npm run dev:release`) omits `debugPatches`. Dev (`npm run dev`) includes both.
 
-The hot-reload companion ships **`debugPatches`**. **Fast dev boot** (`localStorage["hot-reload.fastBoot"]` is `"true"`) skips `foliage.generate`. Raster fill, shadow rebuild, and shader compile stay vanilla. Auto-load last save is a runtime helper on that companion, not a file patch.
+The dev-tools companion ships **`debugPatches`**. **Fast dev boot** (`localStorage["dev-tools.fastBoot"]` is `"true"`) skips `foliage.generate`. Raster fill, shadow rebuild, and shader compile stay vanilla. Auto-load last save is a runtime helper on that companion, not a file patch.
 
 The browser bundle stubs `@modkit/patches` so patch payloads stay out of `main.js`.
 

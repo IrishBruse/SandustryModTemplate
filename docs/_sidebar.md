@@ -7,7 +7,7 @@
   - [Folder layout](layout.md)
   - [Builds](builds.md)
   - [Troubleshooting](troubleshooting.md)
-  - [Hot Reload](hot-reload/)
+  - [Dev Tools](dev-tools/)
 
 - Modkit
   - [Overview](modkit/README.md)

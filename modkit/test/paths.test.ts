@@ -21,14 +21,14 @@ test("installedModMain joins the isolated test mods folder", () => {
   assert.notEqual(userData, sandustryUserDataDir());
 });
 
-test("companionSettings enables watch and disables auto-load for hot-reload", () => {
-  const settings = companionSettings(["hot-reload", "author.template"]) as {
+test("companionSettings enables watch and disables auto-load for dev-tools", () => {
+  const settings = companionSettings(["dev-tools", "author.template"]) as {
     externalModSettings: {
-      "hot-reload": { watchLocalMods: boolean; autoLoad: boolean; openDevTools: boolean };
+      "dev-tools": { watchLocalMods: boolean; autoLoad: boolean; openDevTools: boolean };
       "author.template": { enabled: boolean };
     };
   };
-  const companion = settings.externalModSettings["hot-reload"];
+  const companion = settings.externalModSettings["dev-tools"];
   assert.equal(companion.watchLocalMods, true);
   assert.equal(companion.autoLoad, false);
   assert.equal(companion.openDevTools, false);

@@ -105,5 +105,5 @@ export function definePatches<const T extends readonly Patch[]>(patches: T): T {
   return patches;
 }
 
-/** Shared framework patches. Empty — auto-load last save lives on hot-reload. */
+/** Shared framework patches. Empty — auto-load last save lives on dev-tools. */
 export const modkitDebugPatches = definePatches([]);

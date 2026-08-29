@@ -70,7 +70,7 @@ Mods in `src/`:
 | Folder                         | What it shows                                                                 |
 | ------------------------------ | ----------------------------------------------------------------------------- |
 | [`template`](../src/template/) | Starter mod. Toast on load. Change `id` / `name` / `author` in `modinfo.ts`   |
-| [`hot-reload`](hot-reload/)    | Dev companion. Debug installs it; `npm run build` stages it. Do not copy this |
+| [`dev-tools`](dev-tools/)    | Dev companion. Debug installs it; `npm run build` stages it. Do not copy this |
 
 ## Files in a mod folder
 

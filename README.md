@@ -28,7 +28,7 @@ More: [Quick start](https://ethanconneely.com/SandustryModTemplate/#/quick-start
 ### Development
 
 - **`npm run dev`** — Watch all `src/` mods; remove owned mods when the watch stops
-- **`npm run dev:release`** — Same watch as `dev`, without debug helpers, sourcemaps, or `hot-reload`. Use to test mods before upload to workshop.
+- **`npm run dev:release`** — Same watch as `dev`, without debug helpers, sourcemaps, or `dev-tools`. Use to test mods before upload to workshop.
 - **`npm run dev:pick`** — Same as `dev`, with a TTY picker first
 - **`npm run examples`** — Watch `examples/` mods (optional `--mod <name>`)
 

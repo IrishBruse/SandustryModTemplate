@@ -36,7 +36,7 @@ Then launch the game:
 - **F5** in VS Code, or
 - `npm run sandustry`
 
-Keep `npm run dev` running. Save a file. The hot-reload companion re-evals renderer `main.js` when **Watch local mods** is on. Restart the game for workers and patches.
+Keep `npm run dev` running. Save a file. The dev-tools companion re-evals renderer `main.js` when **Watch local mods** is on. Restart the game for workers and patches.
 
 In game, look for the toast **Template loaded**. **Alt+E** opens the overlay sample (`examples/overlay-hotkey`).
 
@@ -59,7 +59,7 @@ Do not import files from another mod folder. Shared code goes in `modkit/`.
 ### Development
 
 - **`npm run dev`** — Watch all `src/` mods (debug)
-- **`npm run dev:release`** — Watch without debug / `hot-reload`
+- **`npm run dev:release`** — Watch without debug / `dev-tools`
 - **`npm run dev:pick`** — Same as `dev`, with a TTY picker first
 - **`npm run examples`** — Watch `examples/` mods
 

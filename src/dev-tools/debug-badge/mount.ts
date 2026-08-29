@@ -1,5 +1,5 @@
 /** DOM id for the always-on debug marker. */
-export const DEBUG_BADGE_ELEMENT_ID = "hot-reload-debug-badge";
+export const DEBUG_BADGE_ELEMENT_ID = "dev-tools-debug-badge";
 
 const BADGE_STYLE: Partial<CSSStyleDeclaration> = {
   position: "fixed",

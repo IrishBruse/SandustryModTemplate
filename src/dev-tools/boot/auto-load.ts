@@ -11,10 +11,7 @@ export const BOOT_QUERY_KEYS = [
 ] as const;
 
 /** sessionStorage key — skip auto-load after exit to main menu (page reload). */
-export const AUTO_LOAD_SESSION_KEY = "hot-reload.autoLoadDone";
-
-/** Legacy session key from before the hot-reload rename. */
-export const LEGACY_AUTO_LOAD_SESSION_KEY = "irishbruse.debug:autoLoadDone";
+export const AUTO_LOAD_SESSION_KEY = "dev-tools.autoLoadDone";
 
 export type AutoLoadContext = {
   search: string;
@@ -33,10 +30,7 @@ export function isBootQueryActive(search = window.location.search): boolean {
 /** True when this browser session already ran auto-load (early patch or late fallback). */
 export function autoLoadSessionDone(): boolean {
   try {
-    return (
-      sessionStorage.getItem(AUTO_LOAD_SESSION_KEY) === "1" ||
-      sessionStorage.getItem(LEGACY_AUTO_LOAD_SESSION_KEY) === "1"
-    );
+    return sessionStorage.getItem(AUTO_LOAD_SESSION_KEY) === "1";
   } catch {
     return false;
   }

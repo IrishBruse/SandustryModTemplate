@@ -10,8 +10,8 @@ TypeScript template for [Sandustry](https://store.steampowered.com/app/2764460/S
 - **[Multi-mod](layout.md)** — One repo, many mods. Each `src/<name>/` or `examples/<name>/` with a `modinfo.ts` builds to its own game folder.
 - **[TypeScript](https://sandustry-modding.github.io/SandustryTypes/#/)** — Sandkit API types (`@sandustry-modding/types`)
 - **[React HUD](modkit/react.md)** — JSX via `sandkit.react`, plus the [UI kit gallery](ui/README.md).
-- **[Watch rebuild](builds.md)** — `npm run dev` writes `main.js`. The hot-reload companion re-evals the renderer bundle.
-- **[Hot Reload](hot-reload/)** — companion mod: F12 DevTools, auto-load last save, F3, in-game `main.js` reload.
+- **[Watch rebuild](builds.md)** — `npm run dev` writes `main.js`. The dev-tools companion re-evals the renderer bundle.
+- **[Dev Tools](dev-tools/)** — companion mod: F12 DevTools, auto-load last save, F3, in-game `main.js` reload.
 - **[Typed `modinfo.ts`](modinfo.md)** — Manifest fields. Optional [patches](patches.md) from the same folder.
 
 ## Get started
@@ -34,7 +34,7 @@ Full steps: **[Quick start](quick-start.md)**.
 ### Development
 
 - **`npm run dev`** — Watch all `src/` mods; remove owned mods when the watch stops
-- **`npm run dev:release`** — Same watch as `dev`, without debug helpers, sourcemaps, or `hot-reload`
+- **`npm run dev:release`** — Same watch as `dev`, without debug helpers, sourcemaps, or `dev-tools`
 - **`npm run dev:pick`** — Same as `dev`, with a TTY picker first
 - **`npm run examples`** — Watch `examples/` mods (optional `--mod <name>`)
 

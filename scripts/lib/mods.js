@@ -27,7 +27,7 @@ export function resolveModRoots(argv) {
 }
 
 /** Companion mod folder. Debug builds install it to the OS mods folder; release still stages it under `build/`. */
-export const DEBUG_MOD_FOLDER = "hot-reload";
+export const DEBUG_MOD_FOLDER = "dev-tools";
 
 /** Workshop staging root (`npm run build` / `npm run publish`). */
 export const PUBLISH_OUT_ROOT = join(ROOT, "build");
@@ -292,7 +292,7 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
     }
   } else if (!stageDebugCompanion && !filters.includes(DEBUG_MOD_FOLDER)) {
     // OS install without debug kit (e.g. `npm run dev:release`): omit companion
-    // unless `--mod hot-reload`. Release staging keeps it when discovered under src/.
+    // unless `--mod dev-tools`. Release staging keeps it when discovered under src/.
     selected = selected.filter((mod) => mod.folder !== DEBUG_MOD_FOLDER);
   }
 
@@ -347,7 +347,7 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
 /**
  * Link `dist/` to the OS mods folder and create each game mod folder.
  * Stale game folders are removed only when a src folder is gone, not when `--mod` filters the build.
- * Non-debug installs omit `src/hot-reload` from keepFolders so leftover companion folders are removed.
+ * Non-debug installs omit `src/dev-tools` from keepFolders so leftover companion folders are removed.
  * @param {string} repoRoot
  * @param {LoadedMod[]} mods
  * @param {{ includeDebugKit?: boolean }} [options]

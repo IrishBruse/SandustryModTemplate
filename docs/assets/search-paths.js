@@ -3,7 +3,7 @@ window.SMT_SEARCH_PATHS = [
   "/builds",
   "/config-schema",
   "/discord-post",
-  "/hot-reload/README",
+  "/dev-tools/README",
   "/layout",
   "/modinfo",
   "/modkit/react",

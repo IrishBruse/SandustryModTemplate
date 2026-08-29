@@ -1,6 +1,6 @@
 type MenuWindow = { open?: boolean };
 
-const HOOK_KEY = "__hotReloadPauseMenuOpenHook__";
+const HOOK_KEY = "__devToolsPauseMenuOpenHook__";
 
 type MenuOpenListener = (open: boolean) => void;
 

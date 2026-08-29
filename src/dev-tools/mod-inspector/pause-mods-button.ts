@@ -11,7 +11,7 @@ import { setModInspectorOpen } from "./state";
 
 const api = sandkit.api;
 
-const BTN_ATTR = "data-hot-reload-pause-mods";
+const BTN_ATTR = "data-dev-tools-pause-mods";
 const ROW_SEL = ".w-64.mb-2.relative.group.cursor-pointer.pointer-events-auto";
 
 /** Match vanilla pause `ZO` hover debounce (`qO = 150`). */

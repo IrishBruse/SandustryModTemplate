@@ -10,14 +10,14 @@ const discovered = [
   { folder: "overlay-hotkey", root: "examples", repoPath: "examples/ui/overlay-hotkey" },
   { folder: "i18n", root: "examples", repoPath: "examples/api/i18n" },
   { folder: "template", root: "src", repoPath: "src/template" },
-  { folder: "hot-reload", root: "src", repoPath: "src/hot-reload" },
+  { folder: "dev-tools", root: "src", repoPath: "src/dev-tools" },
 ];
 
 const files = [
   "examples/api/i18n/i18n.integration.test.ts",
   "examples/ui/overlay-hotkey/overlay.integration.test.ts",
   "modkit/test/game.integration.test.ts",
-  "src/hot-reload/reload/integration.test.ts",
+  "src/dev-tools/reload/integration.test.ts",
   "src/template/template.integration.test.ts",
 ];
 
@@ -50,8 +50,8 @@ test("filterIntegrationFiles keeps files under a selected mod folder", () => {
   assert.deepEqual(filterIntegrationFiles(files, ["examples/ui/overlay-hotkey"]), [
     "examples/ui/overlay-hotkey/overlay.integration.test.ts",
   ]);
-  assert.deepEqual(filterIntegrationFiles(files, ["src/hot-reload"]), [
-    "src/hot-reload/reload/integration.test.ts",
+  assert.deepEqual(filterIntegrationFiles(files, ["src/dev-tools"]), [
+    "src/dev-tools/reload/integration.test.ts",
   ]);
 });
 

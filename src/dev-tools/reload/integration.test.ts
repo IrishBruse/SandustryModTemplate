@@ -3,7 +3,7 @@ import test from "node:test";
 import { setupGame } from "@modkit/test";
 import { setTimeout as sleep } from "node:timers/promises";
 
-const COMPANION_ID = "hot-reload";
+const COMPANION_ID = "dev-tools";
 const TEMPLATE_ID = "author.template";
 const INJECT_PROBE = "Template inject";
 const HOTBAR_PROBE = "Template hotbar";
@@ -60,8 +60,8 @@ function readLive(modId: string): LiveSnapshot {
   const sandkit = g.sandkit;
   const state = sandkit?.engine?.state;
   const overlays = state?.session?.ui?.overlays;
-  const injectEl = document.querySelector('[data-hot-reload-probe="inject"]');
-  const hotbarEl = document.querySelector('[data-hot-reload-probe="hotbar"]');
+  const injectEl = document.querySelector('[data-dev-tools-probe="inject"]');
+  const hotbarEl = document.querySelector('[data-dev-tools-probe="hotbar"]');
   const ordered = state?.session?.externalMods?.orderedMods ?? [];
   const localIds: string[] = [];
   const orderedIds: string[] = [];
@@ -73,7 +73,7 @@ function readLive(modId: string): LiveSnapshot {
   }
   const generations = g.__sandkitHotGenerations__ ?? {};
   const hosts = g.__sandkitByMod ?? {};
-  const companionId = "hot-reload";
+  const companionId = "dev-tools";
   const companion = hosts[companionId];
   const companionGet =
     companion &&
@@ -110,7 +110,7 @@ type SkipReason = string | null;
 
 function skipReason(live: LiveSnapshot): SkipReason {
   if (live.companionEnabled === false) return `${COMPANION_ID} is disabled`;
-  if (live.watch !== true) return "Watch local mods is off on the hot-reload companion";
+  if (live.watch !== true) return "Watch local mods is off on the dev-tools companion";
   if (live.gameScene == null || live.scene !== live.gameScene)
     return "Sandustry is not in the Game scene";
   if (!live.orderedIds.includes(COMPANION_ID)) return `${COMPANION_ID} is not loaded`;
@@ -126,7 +126,7 @@ function skipReason(live: LiveSnapshot): SkipReason {
 
 const game = await setupGame();
 
-test("hot-reload preflight: companion watch is on and template probes mount", async (t) => {
+test("dev-tools preflight: companion watch is on and template probes mount", async (t) => {
   const live = await game.evaluate(readLive, TEMPLATE_ID);
   const reason = skipReason(live);
   if (reason) {
@@ -170,7 +170,7 @@ test("live hot reload updates inject and hotbar probes", async (t) => {
       t.skip("installed template bundle has no probe strings; rebuild the template");
       return;
     }
-    if (!file.original.includes("data-hot-reload-probe")) {
+    if (!file.original.includes("data-dev-tools-probe")) {
       t.skip("installed template bundle has no inject probe attribute; rebuild the template");
       return;
     }
@@ -253,7 +253,7 @@ test("hot reload does not poll the companion mod main.js", async (t) => {
   await sleep(2000);
 
   await game.withModMain(COMPANION_ID, async (file) => {
-    const marker = `/* integration-hot-reload-self-poll ${token} */`;
+    const marker = `/* integration-dev-tools-self-poll ${token} */`;
     if (file.original.includes(marker)) {
       t.skip("companion bundle already contains the integration marker");
       return;

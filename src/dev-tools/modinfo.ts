@@ -10,13 +10,13 @@ export { debugPatches } from "./patches.ts";
 export const modinfo = defineModInfo({
   manifestVersion: 1,
   id: COMPANION_MOD_ID,
-  name: "Hot Reload Dev Tools",
+  name: "Dev Tools",
   version: "0.0.2",
   apiVersion: 1,
   entry: "main.js",
   author: "IrishBruse",
   description:
-    "Dev companion: watch local mods, DevTools, auto-load save, disable autosave, F3 overlay. Debug builds install it; release stages build/hot-reload/.",
+    "Dev companion: watch local mods, DevTools, auto-load save, disable autosave, F3 overlay. Debug builds install it; release stages build/dev-tools/.",
   dependencies: [],
   loadOrder: -1000,
   configSchema: {

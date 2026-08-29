@@ -17,9 +17,9 @@ Keep the real Markdown under `docs/` so Docsify can serve it. Do not put a symli
 When a kit or mod needs a `docs/` folder next to the code, make that folder a symlink into `docs/`:
 
 - [`modkit/docs`](../modkit/docs/) → `docs/modkit/`
-- [`src/hot-reload/docs`](../src/hot-reload/docs/) → `docs/hot-reload/`
+- [`src/dev-tools/docs`](../src/dev-tools/docs/) → `docs/dev-tools/`
 
-Write kit pages in [`docs/modkit/`](modkit/). Write companion pages in [`docs/hot-reload/`](hot-reload/). Do not put companion pages under `docs/modkit/`.
+Write kit pages in [`docs/modkit/`](modkit/). Write companion pages in [`docs/dev-tools/`](dev-tools/). Do not put companion pages under `docs/modkit/`.
 
 Mods that are not on the site may keep a real `src/<name>/docs/` folder. Builds do not copy `docs/` folders.
 

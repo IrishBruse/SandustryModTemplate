@@ -1,5 +1,5 @@
 /** Companion mod id — must match `modinfo.id` in `../modinfo.ts`. */
-export const COMPANION_MOD_ID = "hot-reload";
+export const COMPANION_MOD_ID = "dev-tools";
 
 /** Sentinel: resolve to the game's last played save at boot time. */
 export const AUTO_LOAD_LAST_PLAYED = "__last__";
@@ -15,9 +15,6 @@ export const START_SAVE_STORAGE_KEY = "startSave";
 
 /** Same as `COMPANION_MOD_ID` — namespace for `api.storage` on this companion. */
 export const DEBUG_MOD_ID = COMPANION_MOD_ID;
-
-/** Pre-rename companion id; read once when the current namespace is empty. */
-const LEGACY_DEBUG_MOD_ID = "irishbruse.debug";
 
 type ElectronBridge = {
   getLastPlayedGameSync?(): string | null;
@@ -70,18 +67,10 @@ export function getLastPlayedSaveId(): string | null {
   }
 }
 
-/** Read `startSave` from companion storage, migrating from the legacy mod id once. */
+/** Read `startSave` from companion storage. */
 export function getStorageSaveId(api: SandkitApi): string | null {
   api.storage.ensure(DEBUG_MOD_ID);
-  let value = api.storage.get(DEBUG_MOD_ID, START_SAVE_STORAGE_KEY);
-  if (typeof value !== "string" || !value) {
-    api.storage.ensure(LEGACY_DEBUG_MOD_ID);
-    const legacy = api.storage.get(LEGACY_DEBUG_MOD_ID, START_SAVE_STORAGE_KEY);
-    if (typeof legacy === "string" && legacy) {
-      api.storage.set(DEBUG_MOD_ID, START_SAVE_STORAGE_KEY, legacy);
-      value = legacy;
-    }
-  }
+  const value = api.storage.get(DEBUG_MOD_ID, START_SAVE_STORAGE_KEY);
   if (typeof value !== "string" || !value) return null;
   if (value === AUTO_LOAD_LAST_PLAYED || value === AUTO_LOAD_FROM_STORAGE) return null;
   if (!saveExists(value)) return null;

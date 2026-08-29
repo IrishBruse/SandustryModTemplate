@@ -49,7 +49,7 @@ Default probe includes `%ProgramFiles(x86)%\Steam` and `%ProgramFiles%\Steam`, p
 
 **Debugger Restart says "No debugger available"** — Select **Sandustry** (the Node launch), not a renderer-only attach. Restart must kill and relaunch the game process; Chrome attach Restart is a page reload and cannot run after that process is gone.
 
-**Code changes do not show in game** — Keep `npm run dev` running so the watch rebuilds `main.js`. With **Watch local mods** on, the hot-reload companion re-evals renderer `main.js`. Restart the game for `worker.js` and `patches.json`. A DevTools page reload does not restart workers or re-apply `patches.json`. Overlay / Tailwind saves must log `built` in the watch terminal.
+**Code changes do not show in game** — Keep `npm run dev` running so the watch rebuilds `main.js`. With **Watch local mods** on, the dev-tools companion re-evals renderer `main.js`. Restart the game for `worker.js` and `patches.json`. A DevTools page reload does not restart workers or re-apply `patches.json`. Overlay / Tailwind saves must log `built` in the watch terminal.
 
 **`npm run publish` hangs after a successful upload** — SteamCMD used to keep the `Steam>` prompt because it inherited the terminal. Publish now closes stdin and stops SteamCMD if it does not exit. See [Workshop publish](builds.md#workshop-publish).
 

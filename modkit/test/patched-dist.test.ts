@@ -8,7 +8,7 @@ import { buildPatchedDistSources, collectTestHostPatches } from "./patched-dist.
 
 const BUILT_MODS = join(repoRoot(), "dist");
 
-test("collectTestHostPatches reads hot-reload stash patch from built mods", () => {
+test("collectTestHostPatches reads dev-tools stash patch from built mods", () => {
   const patches = collectTestHostPatches(BUILT_MODS);
   assert.ok(patches.length > 0);
   assert.ok(

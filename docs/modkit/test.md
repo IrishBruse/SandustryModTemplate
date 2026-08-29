@@ -79,7 +79,7 @@ This host does not attach to Steam or F5, and it does not stop them.
 | Window         | Headless by default; `npm run test:integration:view` for a visible window |
 | Viewport       | Locked once at host boot (1280×720). `:view` does not re-apply Emulation metrics per test file |
 
-It copies every built mod from `dist/` (then fills gaps from the OS mods folder) and enables them. `--mod` copies only those mods. It loads the tracked Void save `modkit/test/fixtures/Empty.save` with `?db_load=<meta.id>` (vanilla file name is `{id}.save`). A harness mod sets `globalThis.sandkit`. Hot-reload can fetch `main.js` from `/mods/<id>/`. Vanilla HUD textures stay at `/mods/<file>.png` from extracted `dist/mods/`. The host rewrites the served `js/bundle.js` so `assets.getUrl` / map blueprints accept HTTP `rootUrl` (vanilla join allows `file:` only). `sessionStorage.splashShown` is set; `?db_load=` still runs vanilla shader wait.
+It copies every built mod from `dist/` (then fills gaps from the OS mods folder) and enables them. `--mod` copies only those mods. It loads the tracked Void save `modkit/test/fixtures/Empty.save` with `?db_load=<meta.id>` (vanilla file name is `{id}.save`). A harness mod sets `globalThis.sandkit`. Dev-tools can fetch `main.js` from `/mods/<id>/`. Vanilla HUD textures stay at `/mods/<file>.png` from extracted `dist/mods/`. The host rewrites the served `js/bundle.js` so `assets.getUrl` / map blueprints accept HTTP `rootUrl` (vanilla join allows `file:` only). `sessionStorage.splashShown` is set; `?db_load=` still runs vanilla shader wait.
 
 Import `@modkit/test` from test files only. The esbuild alias rejects a game bundle import. The module also throws if `document` exists.
 
@@ -140,4 +140,4 @@ Game rules:
   stop the page frame loop and hang CDP).
 - Prefer `selector` or `mask` for HUD clocks and other live UI.
 
-Kit smoke: `modkit/test/game.integration.test.ts`. Template: `src/template/template.integration.test.ts`. Samples: every `examples/**/*.integration.test.ts`. Hot-reload: `src/hot-reload/reload/integration.test.ts`.
+Kit smoke: `modkit/test/game.integration.test.ts`. Template: `src/template/template.integration.test.ts`. Samples: every `examples/**/*.integration.test.ts`. Dev-tools: `src/dev-tools/reload/integration.test.ts`.

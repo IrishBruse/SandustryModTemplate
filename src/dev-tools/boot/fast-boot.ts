@@ -14,7 +14,6 @@ export {
 
 export {
   AUTO_LOAD_SESSION_KEY,
-  LEGACY_AUTO_LOAD_SESSION_KEY,
   autoLoadSessionDone,
   markAutoLoadSessionDone,
 } from "./auto-load.ts";

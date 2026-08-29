@@ -51,7 +51,7 @@ Workshop mod references live in `sandustry-workshop-mods/workshop/` (sibling rep
 | --------------------------------- | ------------------ |
 | [`retro-game`](games/retro-game/) | Retro Console demo |
 
-The hot-reload companion docs live under [`../docs/hot-reload/`](../docs/hot-reload/) (debug install / release staging). Do not copy that mod as a starting sample.
+The dev-tools companion docs live under [`../docs/dev-tools/`](../docs/dev-tools/) (debug install / release staging). Do not copy that mod as a starting sample.
 
 Integration tests (`*.integration.test.ts`) run with `npm run test:integration`. Each sample folder has one. Pass the folder name to run one sample:
 

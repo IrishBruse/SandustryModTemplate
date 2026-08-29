@@ -2,13 +2,14 @@ import { definePatches } from "@modkit/patches";
 import { earlyDebugBadgePatchIife } from "./debug-badge/mount.ts";
 import { bootMarkHelperIife, markCall } from "./boot/boot-marks.ts";
 import { earlyAutoLoadPatchIife } from "./boot/auto-load.ts";
-import { FAST_BOOT_STORAGE_KEY } from "./boot/fast-boot-keys.ts";
+import { fastBootLocalStorageExpr } from "./boot/fast-boot-keys.ts";
 
 /**
  * Boot marks and fast-boot skips. Find strings matched against
  * `sandustry/0.5.5-mods/dist/js/` (game 0.5.5). Re-test after each game update.
  */
-const FAST = `localStorage.getItem(${JSON.stringify(FAST_BOOT_STORAGE_KEY)})==="true"`;
+const FAST = fastBootLocalStorageExpr();
+
 
 /** Redirect to ?db_load= before assets, shaders, and mods load (avoids a full double boot). */
 const EARLY_AUTO_LOAD = earlyAutoLoadPatchIife();

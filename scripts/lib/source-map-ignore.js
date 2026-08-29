@@ -6,8 +6,8 @@ export const CONSOLE_INJECT_SOURCE_SUFFIX = "modkit/internal/esbuild/console.ts"
  * companion bundle so DevTools does not show `hotEvalMain` / `tick`.
  */
 export const HOT_RELOAD_POLLER_SOURCE_SUFFIXES = [
-  "src/hot-reload/reload/hot-eval.ts",
-  "src/hot-reload/reload/install.ts",
+  "src/dev-tools/reload/hot-eval.ts",
+  "src/dev-tools/reload/install.ts",
 ];
 
 function posixPath(source) {

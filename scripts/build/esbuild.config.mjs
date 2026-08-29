@@ -81,7 +81,7 @@ function resolveSourcemap() {
 
 const sourcemap = resolveSourcemap();
 
-// Release staging still builds discovered `hot-reload` under `build/`.
+// Release staging still builds discovered `dev-tools` under `build/`.
 // OS installs only get it when the debug kit is on (`npm run dev`).
 const mods = await loadMods(args, {
   includeDebugKit,
@@ -258,7 +258,7 @@ function toSourceMapFileUrl(source, outDir) {
 }
 
 /**
- * Mark the console inject shim (and hot-reload poller files) as ignore-listed.
+ * Mark the console inject shim (and dev-tools poller files) as ignore-listed.
  * Debuggers and DevTools then skip those frames on console output.
  * @param {{ sources?: string[]; ignoreList?: number[] }} map
  */

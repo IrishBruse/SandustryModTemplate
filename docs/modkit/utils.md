@@ -41,7 +41,7 @@ if (isEnabled(api) && otherFlag) {
 }
 ```
 
-Session debug switches live on the **hot-reload** companion, not on every example. See [Hot Reload](../hot-reload/).
+Session debug switches live on the **dev-tools** companion, not on every example. See [Dev Tools](../dev-tools/).
 
 ## `inGame`
 

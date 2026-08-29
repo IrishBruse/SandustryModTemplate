@@ -156,8 +156,8 @@ export function companionSettings(modIds: string[]): Record<string, unknown> {
     }
     externalModSettings[id] = { enabled: true };
   }
-  if (modIds.includes("hot-reload")) {
-    externalModSettings["hot-reload"] = {
+  if (modIds.includes("dev-tools")) {
+    externalModSettings["dev-tools"] = {
       enabled: true,
       autoLoad: false,
       startSave: "__last__",

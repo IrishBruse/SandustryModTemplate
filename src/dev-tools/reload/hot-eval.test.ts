@@ -48,8 +48,8 @@ test("wrapHotSource keeps the inline source map (loader line offset stays valid)
 
 test("template source keeps toast, probes, and load log", () => {
   assert.ok(TEMPLATE_MAIN.includes('api.ui.toast("Template loaded", {})'));
-  assert.ok(TEMPLATE_MAIN.includes('"data-hot-reload-probe": "inject"'));
-  assert.ok(TEMPLATE_MAIN.includes('"data-hot-reload-probe": "hotbar"'));
+  assert.ok(TEMPLATE_MAIN.includes('"data-dev-tools-probe": "inject"'));
+  assert.ok(TEMPLATE_MAIN.includes('"data-dev-tools-probe": "hotbar"'));
   assert.ok(TEMPLATE_MAIN.includes("Template inject"));
   assert.ok(TEMPLATE_MAIN.includes("Template hotbar"));
   assert.ok(TEMPLATE_MAIN.includes('console.log("loaded — template")'));
@@ -310,22 +310,22 @@ test("hotEvalMain replaces overlay render by slot id on the target host", async 
   assert.deepEqual(Object.keys(template.overlays.hotbar), ["author.template"]);
 });
 
-test("hotEvalMain keeps the host inject prefix; companion host would mint hot-reload ids", async () => {
+test("hotEvalMain keeps the host inject prefix; companion host would mint dev-tools ids", async () => {
   const template = gameOverlayHost("author.template");
-  const companion = gameOverlayHost("hot-reload");
+  const companion = gameOverlayHost("dev-tools");
   await hotEvalMain("author.template", INJECT_V1, template.host);
   assert.ok(template.overlays.global["author.template:author.template"]);
-  assert.equal(companion.overlays.global?.["hot-reload:author.template"], undefined);
+  assert.equal(companion.overlays.global?.["dev-tools:author.template"], undefined);
 
   await hotEvalMain("author.template", INJECT_V1, companion.host);
-  assert.ok(companion.overlays.global["hot-reload:author.template"]);
-  assert.equal(template.overlays.global["hot-reload:author.template"], undefined);
+  assert.ok(companion.overlays.global["dev-tools:author.template"]);
+  assert.equal(template.overlays.global["dev-tools:author.template"], undefined);
 });
 
 test("sandkitHostForMod reads the stashed host and skips a missing id", () => {
   const target: SandkitHost = { api: { n: 1 } };
   const globals = { __sandkitByMod: { "author.template": target } } as unknown as typeof globalThis;
   assert.equal(sandkitHostForMod("author.template", globals), target);
-  assert.equal(sandkitHostForMod("hot-reload", globals), null);
+  assert.equal(sandkitHostForMod("dev-tools", globals), null);
   assert.equal(sandkitHostForMod("author.template", {} as typeof globalThis), null);
 });

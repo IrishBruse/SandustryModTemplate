@@ -1,6 +1,6 @@
 /** Type id drift detection (from uolkx mod-inspector). */
 
-const MOD_ID = "hot-reload";
+const MOD_ID = "dev-tools";
 const TYPE_MAP_KEY = "typeMap";
 
 export type TypeDriftEntry = {

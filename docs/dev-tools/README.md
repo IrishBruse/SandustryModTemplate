@@ -1,22 +1,22 @@
-# Hot Reload Dev Tools
+# Dev Tools
 
-Dev companion mod. The game folder name is **`hot-reload`** (`mods/hot-reload`, from `modinfo.id`). Debug builds (`npm run dev`, `--debug`) install it. `npm run build` stages a release bundle under `build/hot-reload/`. `npm run publish` does not list it.
+Dev companion mod. The game folder name is **`dev-tools`** (`mods/dev-tools`, from `modinfo.id`). Debug builds (`npm run dev`, `--debug`) install it. `npm run build` stages a release bundle under `build/dev-tools/`. `npm run publish` does not list it.
 
 Manifest **`loadOrder`** is `-2147483648` so this companion runs before other local mods.
 
-When **Watch local mods** is on, this companion polls other mods' `main.js` and re-evals the renderer bundle after a save. It does not reload itself. Restart the game for `worker.js` and `patches.json`. Turn the setting on in **Options → Mods → hot-reload**.
+When **Watch local mods** is on, this companion polls other mods' `main.js` and re-evals the renderer bundle after a save. It does not reload itself. Restart the game for `worker.js` and `patches.json`. Turn the setting on in **Options → Mods → dev-tools**.
 
-Settings live on this mod. Open **Options → Mods → hot-reload**.
+Settings live on this mod. Open **Options → Mods → dev-tools**.
 
 ## When it is installed
 
 | Build         | Command                                       | This mod                      | `debugPatches` |
 | ------------- | --------------------------------------------- | ----------------------------- | -------------- |
-| Release       | `npm run build`                               | Staged (`build/hot-reload/`)  | Omitted        |
-| Dev           | `npm run dev`, `--watch`, `--game`, `--debug` | Installed (`mods/hot-reload`) | Included       |
+| Release       | `npm run build`                               | Staged (`build/dev-tools/`)  | Omitted        |
+| Dev           | `npm run dev`, `--watch`, `--game`, `--debug` | Installed (`mods/dev-tools`) | Included       |
 | Release watch | `npm run dev:release` / `--no-debug`          | Not installed                 | Omitted        |
 
-`--mod template` on a debug build still installs **hot-reload**. `--mod hot-reload` builds only this folder.
+`--mod template` on a debug build still installs **dev-tools**. `--mod dev-tools` builds only this folder.
 
 ## Settings
 
@@ -113,7 +113,7 @@ Each reload runs tracked disposers first:
 
 Hot eval wraps `api.ui.toast` so messages show the mod id and reload generation, for example `Template loaded (author.template v4)`. The console logs `reloaded <id> vN`.
 
-The starter template shows **Template inject** (top-left) and **Template hotbar** on the hotbar. `npm run test:integration` boots the extracted game in Chrome (`.tmp/sandustry-test`, CDP **:9224**) and runs `*.integration.test.ts` against it, including `src/hot-reload/reload/integration.test.ts`. `npm test` is unit tests only. Those integration cases **skip** when the Game scene or test mods are missing. They do not attach to the Steam window on **:9222**. See [Integration tests](../modkit/test.md).
+The starter template shows **Template inject** (top-left) and **Template hotbar** on the hotbar. `npm run test:integration` boots the extracted game in Chrome (`.tmp/sandustry-test`, CDP **:9224**) and runs `*.integration.test.ts` against it, including `src/dev-tools/reload/integration.test.ts`. `npm test` is unit tests only. Those integration cases **skip** when the Game scene or test mods are missing. They do not attach to the Steam window on **:9222**. See [Integration tests](../modkit/test.md).
 
 Content `register` calls (`elements`, `structures`, `i18n`, …) have no unregister. The game updates the same id when you register again.
 

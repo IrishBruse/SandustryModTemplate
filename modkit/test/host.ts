@@ -127,7 +127,7 @@ function wrapIndexHtml(distDir: string): string {
 function mergedSettingsJson(modIds: string[]): string {
   const companion = companionSettings(modIds);
   // Do not merge the developer Steam settings file. It seeds unrelated mod ids
-  // and leaves `hot-reload` as `{}` in session while `watchLocalMods` lives only
+  // and leaves `dev-tools` as `{}` in session while `watchLocalMods` lives only
   // on the companion entry from `companionSettings`.
   return JSON.stringify({
     settingsVersion: 12,

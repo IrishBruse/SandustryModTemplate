@@ -14,12 +14,12 @@ test("collectModIds skips the companion id and dedupes", () => {
   assert.deepEqual(
     collectModIds(
       [
-        { id: "hot-reload" },
+        { id: "dev-tools" },
         { id: "author.template" },
         { modId: "author.template" },
         "events-example",
       ],
-      "hot-reload",
+      "dev-tools",
     ),
     ["author.template", "events-example"],
   );
@@ -27,28 +27,28 @@ test("collectModIds skips the companion id and dedupes", () => {
 
 test("collectModIds reads object maps keyed by id", () => {
   assert.deepEqual(
-    collectModIds({ "author.template": { id: "author.template" }, "hot-reload": {} }, "hot-reload"),
+    collectModIds({ "author.template": { id: "author.template" }, "dev-tools": {} }, "dev-tools"),
     ["author.template"],
   );
 });
 
 test("rewriteMainUrl swaps workshop and file paths", () => {
   assert.equal(
-    rewriteMainUrl("sandkit-workshop://hot-reload/main.js", "hot-reload", "author.template"),
+    rewriteMainUrl("sandkit-workshop://dev-tools/main.js", "dev-tools", "author.template"),
     "sandkit-workshop://author.template/main.js",
   );
   assert.equal(
     rewriteMainUrl(
-      "file:///home/me/.config/sandustry/mods/hot-reload/main.js",
-      "hot-reload",
+      "file:///home/me/.config/sandustry/mods/dev-tools/main.js",
+      "dev-tools",
       "author.template",
     ),
     "file:///home/me/.config/sandustry/mods/author.template/main.js",
   );
   assert.equal(
     rewriteMainUrl(
-      "file:///C:/Users/me/AppData/Roaming/sandustry/mods/hot-reload/main.js",
-      "hot-reload",
+      "file:///C:/Users/me/AppData/Roaming/sandustry/mods/dev-tools/main.js",
+      "dev-tools",
       "a",
     ),
     "file:///C:/Users/me/AppData/Roaming/sandustry/mods/a/main.js",
@@ -57,14 +57,14 @@ test("rewriteMainUrl swaps workshop and file paths", () => {
 
 test("rewriteMainUrl falls back to workshop protocol", () => {
   assert.equal(
-    rewriteMainUrl("blob:unknown", "hot-reload", "author.template"),
+    rewriteMainUrl("blob:unknown", "dev-tools", "author.template"),
     "sandkit-workshop://author.template/main.js",
   );
 });
 
 test("discoverLocalMods skips self", () => {
-  const mods = discoverLocalMods("hot-reload", "sandkit-workshop://hot-reload/main.js", [
-    { id: "hot-reload" },
+  const mods = discoverLocalMods("dev-tools", "sandkit-workshop://dev-tools/main.js", [
+    { id: "dev-tools" },
     { id: "author.template" },
   ]);
   assert.deepEqual(mods, [
@@ -73,7 +73,7 @@ test("discoverLocalMods skips self", () => {
 });
 
 test("modsStateFromStore reads __sandkitExternalRuntimeV1.order", () => {
-  const order = [{ id: "hot-reload" }, { id: "author.template", version: "0.0.1" }];
+  const order = [{ id: "dev-tools" }, { id: "author.template", version: "0.0.1" }];
   assert.deepEqual(
     modsStateFromStore({
       items: {},
@@ -102,10 +102,10 @@ test("isLocalExternalMod requires discoveredVia local", () => {
 });
 
 test("discoverLocalMods polls local orderedMods and skips Workshop", () => {
-  const mods = discoverLocalMods("hot-reload", "file:///mods/hot-reload/main.js", [
+  const mods = discoverLocalMods("dev-tools", "file:///mods/dev-tools/main.js", [
     {
-      manifest: { id: "hot-reload" },
-      rootUrl: "file:///mods/hot-reload/",
+      manifest: { id: "dev-tools" },
+      rootUrl: "file:///mods/dev-tools/",
       workshop: { itemId: null, discoveredVia: ["local"] },
     },
     {
@@ -126,7 +126,7 @@ test("discoverLocalMods polls local orderedMods and skips Workshop", () => {
 
 test("discoverLocalMods does not poll Workshop-only orderedMods", () => {
   assert.deepEqual(
-    discoverLocalMods("hot-reload", "file:///mods/hot-reload/main.js", [
+    discoverLocalMods("dev-tools", "file:///mods/dev-tools/main.js", [
       {
         manifest: { id: "workshop.mod" },
         rootUrl: "sandkit-workshop://workshop.mod/",

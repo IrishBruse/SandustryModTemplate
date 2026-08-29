@@ -28,7 +28,7 @@ npm run dev
 
 **Tailwind:** Build injects only the utility classes your bundle uses.
 
-**Hot reload:** `npm run dev` + **Watch local mods** reloads renderer code. Restart for workers and patches. Debug builds add F12 DevTools and auto-load save (`src/hot-reload`; not published).
+**Hot reload:** `npm run dev` + **Watch local mods** reloads renderer code. Restart for workers and patches. Debug builds add F12 DevTools and auto-load save (`src/dev-tools`; not published).
 
 **Typed `modinfo.ts`:** Manifest and patches in one file per mod folder.
 
