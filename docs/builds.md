@@ -17,11 +17,11 @@ Debug builds emit **inline** source maps on `main.js` (needed for `new Function`
 
 Session debug helpers (DevTools, auto-load last save, disable autosave, F3, watch reload) live on the **dev-tools** companion. Settings are on that mod only. See [Dev Tools](dev-tools/).
 
-`__MOD_DEBUG__` is `true` in dev builds and `false` in release. All builds inject `console.ts` so bare `console.*` calls get a `[modId]` prefix and are written to the game log file.
+`__MOD_DEBUG__` is `true` in dev builds and `false` in release. All builds inject `console.ts` so bare `console.*` calls get a styled `[modId]` badge and are written to the game log file.
 
 ## File logging (`console`)
 
-All builds inject [`modkit/internal/esbuild/console.ts`](../modkit/internal/esbuild/console.ts) via esbuild [`inject`](https://esbuild.github.io/api/#inject). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code get a `[modId]` prefix in DevTools and are forwarded to `window.electron.log` (IPC `log:write`). The host appends them to `logs/main.log` with the mod id as scope (workspace `logs/` → OS sandustry logs: `~/.config/sandustry/logs` or `%APPDATA%/sandustry/logs`). `__MOD_ID__` comes from that mod's `modinfo.ts` at build time. The shim uses bound native methods (not per-call wrappers) so DevTools links console output to your mod source. Debug builds also add `console.ts` to the source map `ignoreList` so breakpoints skip the shim when stepping.
+All builds inject [`modkit/internal/esbuild/console.ts`](../modkit/internal/esbuild/console.ts) via esbuild [`inject`](https://esbuild.github.io/api/#inject). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code get a styled `[modId]` badge in DevTools (`%c` CSS) and are forwarded to `window.electron.log` (IPC `log:write`). The host appends them to `logs/main.log` with the mod id as scope (workspace `logs/` → OS sandustry logs: `~/.config/sandustry/logs` or `%APPDATA%/sandustry/logs`). `__MOD_ID__` comes from that mod's `modinfo.ts` at build time. The shim uses bound native methods (not per-call wrappers) so DevTools links console output to your mod source. Debug builds also add `console.ts` to the source map `ignoreList` so breakpoints skip the shim when stepping.
 
 Use `createLogger` from `@modkit/log` when you want a custom scope tag without going through `console`.
 

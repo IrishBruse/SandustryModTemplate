@@ -1,14 +1,16 @@
 /**
  * esbuild `inject` target. Bare `console.*` in the mod bundle call through here
- * so every line gets a `[modId]` prefix in DevTools and is forwarded to the
+ * so every line gets a styled `[modId]` badge in DevTools and is forwarded to the
  * Electron file logger (`window.electron.log` → `logs/main.log`).
  *
  * Use `globalThis.console` only — never the exported name — or inject recurses.
  *
- * Log methods use `native[level].bind(native, prefix)` so DevTools links to the
+ * Log methods use `emit.bind(native, format, style)` so DevTools links to the
  * mod call site instead of this file (wrappers around each call would always
  * show `console.ts`).
  */
+import { badgeCss } from "./console-badge.ts";
+
 declare const __MOD_ID__: string;
 
 const native = globalThis.console;
@@ -67,11 +69,14 @@ function boundLevel(level: ConsoleLevel): (...args: unknown[]) => void {
   let bound = boundLevels[level];
   if (!bound) {
     const nativeFn = native[level] as (...args: unknown[]) => void;
+    const format = `%c${MOD_PREFIX}`;
+    const style = badgeCss(level);
     const emit = (...args: unknown[]) => {
       nativeFn.call(native, ...args);
-      mirrorToFile(level, args.slice(1));
+      // Skip `%c…` format + CSS string; file log stays plain text.
+      mirrorToFile(level, args.slice(2));
     };
-    bound = emit.bind(native, MOD_PREFIX);
+    bound = emit.bind(native, format, style);
     boundLevels[level] = bound;
   }
   return bound;

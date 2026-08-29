@@ -430,7 +430,7 @@ function bundleOptions(mod) {
 
 /**
  * Worker bundle — same esm script body + free `sandkit`, no React inject.
- * Console inject prefixes every `console.*` line with `[modId]`.
+ * Console inject adds a styled `[modId]` badge on every `console.*` line.
  * @param {import("../lib/mods.js").LoadedMod} mod
  * @returns {import("esbuild").BuildOptions}
  */
