@@ -414,7 +414,7 @@ export async function startSandustryTestHost(options?: {
   if (!extractedDistDir()) {
     return { ok: false, reason: "No sandustry/<version>-<branch>/dist. Run npm run setup." };
   }
-  if (visible && process.platform !== "win32" && !process.env.DISPLAY) {
+  if (visible && process.platform === "linux" && !process.env.DISPLAY) {
     return { ok: false, reason: "DISPLAY is missing" };
   }
 
