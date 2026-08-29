@@ -12,6 +12,17 @@ import {
 } from "./readiness.ts";
 import { toPageExpression } from "./serialize.ts";
 import { waitFor, type WaitForOptions } from "./helpers/wait.ts";
+import {
+  buildLayout,
+  buildStructures,
+  runSimulation,
+  setSimulationPaused,
+  type ElementSeed,
+  type StructureLayout,
+  type StructureLayoutPhase,
+  type StructureLayoutSymbol,
+  type StructurePlacement,
+} from "../../test/helpers/world.ts";
 
 export type ModMainFile = {
   path: string;
@@ -24,6 +35,14 @@ export type ModMainFile = {
 export type SessionWaitForOptions<TArgs extends unknown[] = unknown[]> = WaitForOptions & {
   args?: TArgs;
 };
+
+export type {
+  ElementSeed,
+  StructureLayout,
+  StructureLayoutPhase,
+  StructureLayoutSymbol,
+  StructurePlacement,
+} from "../../test/helpers/world.ts";
 
 export type { ScreenshotClip };
 
@@ -103,6 +122,34 @@ export class SandustrySession {
   ): Promise<T> {
     const pageArgs = (options?.args ?? []) as TArgs;
     return waitFor(() => this.evaluate(read, ...pageArgs), match, options);
+  }
+
+  /** Build several structures in one renderer turn and wait for their anchors. */
+  async buildStructures(placements: readonly StructurePlacement[]): Promise<void> {
+    await buildStructures(this, placements);
+  }
+
+  /** Build a readable 4-cell-grid fixture, optionally in explicit phases. */
+  async buildLayout(layout: StructureLayout): Promise<void> {
+    await buildLayout(this, layout);
+  }
+
+  /** Pause or resume the simulation without opening the in-game pause UI. */
+  async setSimulationPaused(paused: boolean): Promise<void> {
+    await setSimulationPaused(this, paused);
+  }
+
+  async pauseSimulation(): Promise<void> {
+    await this.setSimulationPaused(true);
+  }
+
+  async resumeSimulation(): Promise<void> {
+    await this.setSimulationPaused(false);
+  }
+
+  /** Run the simulation for a wall-clock interval, then restore its prior state. */
+  async runSimulation(durationMs: number): Promise<void> {
+    await runSimulation(this, durationMs);
   }
 
   /** Return `manifest.id` values from the live ordered mod list. */

@@ -20,6 +20,14 @@ export {
 } from "./paths.ts";
 export { setupGame } from "./setup-game.ts";
 export { SandustrySession } from "./session.ts";
+export {
+  buildLayout,
+  buildStructures,
+  pauseSimulation,
+  resumeSimulation,
+  runSimulation,
+  setSimulationPaused,
+} from "../../test/helpers/world.ts";
 export { expect } from "./helpers/expect.ts";
 export { toPageExpression } from "./serialize.ts";
 export { waitFor } from "./helpers/wait.ts";
@@ -28,6 +36,11 @@ export type {
   ScreenshotClip,
   ScreenshotOptions,
   SessionWaitForOptions,
+  StructureLayout,
+  ElementSeed,
+  StructureLayoutPhase,
+  StructureLayoutSymbol,
+  StructurePlacement,
 } from "./session.ts";
 export type { BufferExpect, SessionExpect, ToHaveScreenshotOptions } from "./helpers/expect.ts";
 export type { ImageMatchOptions } from "./helpers/screenshot.ts";

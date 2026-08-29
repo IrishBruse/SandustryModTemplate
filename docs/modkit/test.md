@@ -95,6 +95,12 @@ Tests that write the same world (for example player position) must run in order.
 | ------------------------------------ | --------------------------------------------------------------------------------------------- |
 | `game.evaluate(fn, ...args)`         | Run `fn` in the renderer. Arguments must be JSON values. Closures do not capture Node locals. |
 | `game.waitFor(read, match, options)` | Poll `read` in the page until `match` is true in Node.                                        |
+| `game.buildStructures(placements)`   | Build several structures in one renderer turn and wait for every anchor.                    |
+| `game.buildLayout(layout)`            | Expand a visual fixture diagram into phased structure placements.                            |
+| `game.setSimulationPaused(paused)`   | Pause or resume the simulation without opening the in-game pause menu.                       |
+| `game.pauseSimulation()`              | Pause the simulation.                                                                         |
+| `game.resumeSimulation()`             | Resume the simulation.                                                                        |
+| `game.runSimulation(durationMs)`      | Run live simulation for a wall-clock duration, then restore the prior pause state.            |
 | `game.orderedModIds()`               | Return live `manifest.id` values from the ordered mod list.                                   |
 | `game.screenshot(options)`           | Capture a PNG of the compositor (WebGL plus DOM). Returns a `Buffer`.                         |
 | `game.withModMain(id, fn)`           | Edit the test-host `main.js`, then restore the original bytes.                                |
@@ -103,6 +109,68 @@ Tests that write the same world (for example player position) must run in order.
 `waitFor` defaults: 8000 ms timeout, 250 ms interval.
 
 Return values from `evaluate` must be JSON-serializable.
+
+### Structure fixtures
+
+`game.buildStructures(placements)` builds a batch of structures and waits for
+their anchors to appear. Each placement uses cell coordinates and can include
+`options` or seeded `data`. Seeded data is applied after the structure anchor
+exists, which makes it reliable for custom structure initialization.
+
+The helper resumes the simulation while building, then restores its previous
+pause state. An empty placement list is a no-op.
+
+For fixtures that are easier to understand as a diagram, use
+`game.buildLayout()`. Each character represents one structure on a 4-cell
+grid; `.` leaves a cell empty:
+
+```ts
+await game.buildLayout({
+  origin: { x: 2400, y: 1612 },
+  cells: ["fff", "fsf", "fff"],
+  legend: {
+    f: { type: "foundation" },
+    s: { type: "mySource", data: { mode: "sand" } },
+  },
+});
+```
+
+Use `phases` when placement order matters. Every phase is expanded and built
+before the next phase begins:
+
+```ts
+await game.buildLayout({
+  origin: { x: 2400, y: 1612 },
+  phases: [
+    {
+      cells: ["fff", "f.f", "fff"],
+      legend: { f: { type: "foundation" } },
+    },
+    {
+      cells: ["...", ".s.", "..."],
+      legend: { s: { type: "mySource" } },
+    },
+  ],
+});
+```
+
+The top-left character is placed at `origin`; columns and rows add four cells
+per step. Use either top-level `cells` and `legend`, or `phases`, but not both.
+
+### Simulation control
+
+The integration host starts with the simulation paused. Use
+`runSimulation()` for a bounded behavior check; it resumes the simulation for
+the requested wall-clock duration and restores the state afterward:
+
+```ts
+await game.runSimulation(1000);
+```
+
+For longer workflows, use `resumeSimulation()` and `pauseSimulation()`
+explicitly. `setSimulationPaused(value)` is useful when a test needs to
+restore or assert a specific state. These helpers change the engine session
+state directly and do not open the game’s pause menu.
 
 ## Screenshots
 
