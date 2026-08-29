@@ -40,11 +40,19 @@ export type StructureLayoutPhase = {
   legend: Readonly<Record<string, StructureLayoutSymbol>>;
 };
 
+export type ElementSeed = {
+  x: number;
+  y: number;
+  element: string | number;
+  count?: number;
+};
+
 export type StructureLayout = {
   origin: { x: number; y: number };
   cells?: readonly string[];
   legend?: Readonly<Record<string, StructureLayoutSymbol>>;
   phases?: readonly StructureLayoutPhase[];
+  seeds?: readonly ElementSeed[];
 };
 
 export type { ScreenshotClip };
@@ -264,6 +272,8 @@ export class SandustrySession {
           const symbol = phase.cells[row]?.[column];
           if (!symbol || symbol === ".") continue;
           const definition = phase.legend[symbol];
+          const isSeed = layout.seeds?.some((seed) => seed.x === column && seed.y === row);
+          if (!definition && isSeed) continue;
           if (!definition) {
             throw new Error(`Structure layout phase ${index} has no legend entry for "${symbol}"`);
           }
@@ -275,6 +285,33 @@ export class SandustrySession {
         }
       }
       await this.buildStructures(placements);
+    }
+
+    if (layout.seeds?.length) {
+      await this.evaluate((origin, seeds) => {
+        for (const seed of seeds) {
+          const elementType =
+            typeof seed.element === "number"
+              ? seed.element
+              : sandkit.api.elements.getTypeById(seed.element);
+          if (typeof elementType !== "number") {
+            throw new Error(`Unknown seeded element: ${String(seed.element)}`);
+          }
+          const count = seed.count ?? 1;
+          if (!Number.isInteger(count) || count < 1 || count > 16) {
+            throw new Error(`Element seed count must be an integer from 1 to 16: ${count}`);
+          }
+          const cellX = origin.x + seed.x * 4;
+          const cellY = origin.y + seed.y * 4;
+          for (let index = 0; index < count; index += 1) {
+            sandkit.api.elements.createAtCell(
+              cellX + (index % 4),
+              cellY + Math.floor(index / 4),
+              elementType,
+            );
+          }
+        }
+      }, layout.origin, layout.seeds);
     }
   }
 

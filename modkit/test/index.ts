@@ -29,6 +29,7 @@ export type {
   ScreenshotOptions,
   SessionWaitForOptions,
   StructureLayout,
+  ElementSeed,
   StructureLayoutPhase,
   StructureLayoutSymbol,
   StructurePlacement,
