@@ -25,6 +25,13 @@ export type SessionWaitForOptions<TArgs extends unknown[] = unknown[]> = WaitFor
   args?: TArgs;
 };
 
+export type StructurePlacement = {
+  type: string | number;
+  x: number;
+  y: number;
+  options?: Record<string, unknown>;
+};
+
 export type { ScreenshotClip };
 
 export type ScreenshotOptions = {
@@ -103,6 +110,131 @@ export class SandustrySession {
   ): Promise<T> {
     const pageArgs = (options?.args ?? []) as TArgs;
     return waitFor(() => this.evaluate(read, ...pageArgs), match, options);
+  }
+
+  /** Build several structures in one renderer turn and wait for their anchors. */
+  async buildStructures(placements: readonly StructurePlacement[]): Promise<void> {
+    if (placements.length === 0) return;
+    const priorPaused = await this.evaluate(() => {
+      const session = (
+        globalThis as typeof globalThis & {
+          sandkit?: { engine?: { state?: { session?: { paused?: boolean } } } };
+        }
+      ).sandkit?.engine?.state?.session;
+      if (!session) throw new Error("Sandustry session state is unavailable");
+      return Boolean(session.paused);
+    });
+    try {
+      await this.resumeSimulation();
+      await this.evaluate((items: readonly StructurePlacement[]) => {
+        const api = (
+          globalThis as typeof globalThis & {
+            sandkit?: {
+              api?: {
+                structures?: {
+                  buildAtCell?: (
+                    x: number,
+                    y: number,
+                    type: string | number,
+                    options?: Record<string, unknown>,
+                  ) => void;
+                };
+              };
+            };
+          }
+        ).sandkit?.api;
+        if (typeof api?.structures?.buildAtCell !== "function") {
+          throw new Error("Sandustry structures.buildAtCell is unavailable");
+        }
+        for (const item of items) {
+          api.structures.buildAtCell(item.x, item.y, item.type, item.options);
+        }
+      }, placements);
+
+      await this.waitFor(
+        (items: readonly StructurePlacement[]) => {
+          const api = (
+            globalThis as typeof globalThis & {
+              sandkit?: {
+                api?: {
+                  structures?: {
+                    getAtCell?: (
+                      cellX: number,
+                      cellY: number,
+                    ) => {
+                      x: number;
+                      y: number;
+                      type: string | number;
+                    } | null;
+                  };
+                };
+              };
+            }
+          ).sandkit?.api;
+          return items.map((item) => {
+            const structure = api?.structures?.getAtCell?.(item.x, item.y);
+            if (!structure || structure.type !== item.type) return null;
+            return { x: structure.x, y: structure.y, type: structure.type };
+          });
+        },
+        (structures) => structures.every((structure) => structure !== null),
+        {
+          args: [placements],
+          message: "Structures were not built at every requested anchor",
+        },
+      );
+    } finally {
+      await this.setSimulationPaused(priorPaused);
+    }
+  }
+
+  /** Pause or resume the simulation without opening the in-game pause UI. */
+  async setSimulationPaused(paused: boolean): Promise<void> {
+    await this.evaluate((nextPaused: boolean) => {
+      const session = (
+        globalThis as typeof globalThis & {
+          sandkit?: { engine?: { state?: { session?: { paused?: boolean } } } };
+        }
+      ).sandkit?.engine?.state?.session;
+      if (!session) throw new Error("Sandustry session state is unavailable");
+      session.paused = nextPaused;
+    }, paused);
+  }
+
+  async pauseSimulation(): Promise<void> {
+    await this.setSimulationPaused(true);
+  }
+
+  async resumeSimulation(): Promise<void> {
+    await this.setSimulationPaused(false);
+  }
+
+  /** Run the simulation for a wall-clock interval, then restore its prior state. */
+  async runSimulation(durationMs: number): Promise<void> {
+    if (!Number.isFinite(durationMs) || durationMs < 0) {
+      throw new Error(`Simulation duration must be a non-negative finite number: ${durationMs}`);
+    }
+    const priorPaused = await this.evaluate(() => {
+      const session = (
+        globalThis as typeof globalThis & {
+          sandkit?: { engine?: { state?: { session?: { paused?: boolean } } } };
+        }
+      ).sandkit?.engine?.state?.session;
+      if (!session) throw new Error("Sandustry session state is unavailable");
+      return Boolean(session.paused);
+    });
+    try {
+      await this.resumeSimulation();
+      await this.evaluate(
+        (duration: number) =>
+          new Promise<void>((resolve) => {
+            setTimeout(resolve, duration);
+          }),
+        durationMs,
+      );
+    } finally {
+      await this.setSimulationPaused(priorPaused);
+    }
   }
 
   /** Return `manifest.id` values from the live ordered mod list. */

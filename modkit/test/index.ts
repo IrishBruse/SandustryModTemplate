@@ -28,6 +28,7 @@ export type {
   ScreenshotClip,
   ScreenshotOptions,
   SessionWaitForOptions,
+  StructurePlacement,
 } from "./session.ts";
 export type { BufferExpect, SessionExpect, ToHaveScreenshotOptions } from "./helpers/expect.ts";
 export type { ImageMatchOptions } from "./helpers/screenshot.ts";
