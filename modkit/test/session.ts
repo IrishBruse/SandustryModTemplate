@@ -12,6 +12,17 @@ import {
 } from "./readiness.ts";
 import { toPageExpression } from "./serialize.ts";
 import { waitFor, type WaitForOptions } from "./helpers/wait.ts";
+import {
+  buildLayout,
+  buildStructures,
+  runSimulation,
+  setSimulationPaused,
+  type ElementSeed,
+  type StructureLayout,
+  type StructureLayoutPhase,
+  type StructureLayoutSymbol,
+  type StructurePlacement,
+} from "../../test/helpers/world.ts";
 
 export type ModMainFile = {
   path: string;
@@ -25,35 +36,13 @@ export type SessionWaitForOptions<TArgs extends unknown[] = unknown[]> = WaitFor
   args?: TArgs;
 };
 
-export type StructurePlacement = {
-  type: string | number;
-  x: number;
-  y: number;
-  options?: Record<string, unknown>;
-  data?: Record<string, unknown>;
-};
-
-export type StructureLayoutSymbol = Omit<StructurePlacement, "x" | "y">;
-
-export type StructureLayoutPhase = {
-  cells: readonly string[];
-  legend: Readonly<Record<string, StructureLayoutSymbol>>;
-};
-
-export type ElementSeed = {
-  x: number;
-  y: number;
-  element: string | number;
-  count?: number;
-};
-
-export type StructureLayout = {
-  origin: { x: number; y: number };
-  cells?: readonly string[];
-  legend?: Readonly<Record<string, StructureLayoutSymbol>>;
-  phases?: readonly StructureLayoutPhase[];
-  seeds?: readonly ElementSeed[];
-};
+export type {
+  ElementSeed,
+  StructureLayout,
+  StructureLayoutPhase,
+  StructureLayoutSymbol,
+  StructurePlacement,
+} from "../../test/helpers/world.ts";
 
 export type { ScreenshotClip };
 
@@ -137,195 +126,17 @@ export class SandustrySession {
 
   /** Build several structures in one renderer turn and wait for their anchors. */
   async buildStructures(placements: readonly StructurePlacement[]): Promise<void> {
-    if (placements.length === 0) return;
-    const priorPaused = await this.evaluate(() => {
-      const session = (
-        globalThis as typeof globalThis & {
-          sandkit?: { engine?: { state?: { session?: { paused?: boolean } } } };
-        }
-      ).sandkit?.engine?.state?.session;
-      if (!session) throw new Error("Sandustry session state is unavailable");
-      return Boolean(session.paused);
-    });
-    try {
-      await this.resumeSimulation();
-      await this.evaluate((items: readonly StructurePlacement[]) => {
-        const api = (
-          globalThis as typeof globalThis & {
-            sandkit?: {
-              api?: {
-                structures?: {
-                  buildAtCell?: (
-                    x: number,
-                    y: number,
-                    type: string | number,
-                    options?: Record<string, unknown>,
-                  ) => void;
-                  getAtCell?: (x: number, y: number) => unknown;
-                  setData?: (structure: unknown, data: Record<string, unknown>) => void;
-                };
-              };
-            };
-          }
-        ).sandkit?.api;
-        if (typeof api?.structures?.buildAtCell !== "function") {
-          throw new Error("Sandustry structures.buildAtCell is unavailable");
-        }
-        for (const item of items) {
-          api.structures.buildAtCell(item.x, item.y, item.type, {
-            ...item.options,
-            ...(item.data ? { data: item.data } : {}),
-          });
-        }
-      }, placements);
-
-      await this.waitFor(
-        (items: readonly StructurePlacement[]) => {
-          const api = (
-            globalThis as typeof globalThis & {
-              sandkit?: {
-                api?: {
-                  structures?: {
-                    getAtCell?: (
-                      cellX: number,
-                      cellY: number,
-                    ) => {
-                      x: number;
-                      y: number;
-                      type: string | number;
-                    } | null;
-                  };
-                };
-              };
-            }
-          ).sandkit?.api;
-          return items.map((item) => {
-            const structure = api?.structures?.getAtCell?.(item.x, item.y);
-            if (!structure || structure.type !== item.type) return null;
-            return { x: structure.x, y: structure.y, type: structure.type };
-          });
-        },
-        (structures) => structures.every((structure) => structure !== null),
-        {
-          args: [placements],
-          message: "Structures were not built at every requested anchor",
-        },
-      );
-
-      const withData = placements.filter((item) => item.data);
-      if (withData.length > 0) {
-        await this.evaluate((items: readonly StructurePlacement[]) => {
-          const api = (
-            globalThis as typeof globalThis & {
-              sandkit?: {
-                api?: {
-                  structures?: {
-                    getAtCell?: (x: number, y: number) => unknown;
-                    setData?: (structure: unknown, data: Record<string, unknown>) => void;
-                  };
-                };
-              };
-            }
-          ).sandkit?.api;
-          if (typeof api?.structures?.getAtCell !== "function") {
-            throw new Error("Sandustry structures.getAtCell is unavailable");
-          }
-          if (typeof api.structures.setData !== "function") {
-            throw new Error("Sandustry structures.setData is unavailable");
-          }
-          for (const item of items) {
-            const structure = api.structures.getAtCell(item.x, item.y);
-            if (!structure || !item.data) {
-              throw new Error(
-                `Sandustry could not initialize structure data at ${item.x},${item.y}`,
-              );
-            }
-            api.structures.setData(structure, item.data);
-          }
-        }, withData);
-      }
-    } finally {
-      await this.setSimulationPaused(priorPaused);
-    }
+    await buildStructures(this, placements);
   }
 
   /** Build a readable 4-cell-grid fixture, optionally in explicit phases. */
   async buildLayout(layout: StructureLayout): Promise<void> {
-    const phases =
-      layout.phases ??
-      (layout.cells && layout.legend ? [{ cells: layout.cells, legend: layout.legend }] : []);
-    if (phases.length === 0) {
-      throw new Error("A structure layout needs cells and legend, or at least one phase");
-    }
-    if (layout.phases && (layout.cells || layout.legend)) {
-      throw new Error("A structure layout cannot mix top-level cells/legend with phases");
-    }
-
-    for (const [index, phase] of phases.entries()) {
-      const placements: StructurePlacement[] = [];
-      const width = phase.cells[0]?.length ?? 0;
-      if (width === 0 || phase.cells.some((row) => row.length !== width)) {
-        throw new Error(`Structure layout phase ${index} must contain a non-empty rectangle`);
-      }
-      for (let row = 0; row < phase.cells.length; row += 1) {
-        for (let column = 0; column < width; column += 1) {
-          const symbol = phase.cells[row]?.[column];
-          if (!symbol || symbol === ".") continue;
-          const definition = phase.legend[symbol];
-          const isSeed = layout.seeds?.some((seed) => seed.x === column && seed.y === row);
-          if (!definition && isSeed) continue;
-          if (!definition) {
-            throw new Error(`Structure layout phase ${index} has no legend entry for "${symbol}"`);
-          }
-          placements.push({
-            ...definition,
-            x: layout.origin.x + column * 4,
-            y: layout.origin.y + row * 4,
-          });
-        }
-      }
-      await this.buildStructures(placements);
-    }
-
-    if (layout.seeds?.length) {
-      await this.evaluate((origin, seeds) => {
-        for (const seed of seeds) {
-          const elementType =
-            typeof seed.element === "number"
-              ? seed.element
-              : sandkit.api.elements.getTypeById(seed.element);
-          if (typeof elementType !== "number") {
-            throw new Error(`Unknown seeded element: ${String(seed.element)}`);
-          }
-          const count = seed.count ?? 1;
-          if (!Number.isInteger(count) || count < 1 || count > 16) {
-            throw new Error(`Element seed count must be an integer from 1 to 16: ${count}`);
-          }
-          const cellX = origin.x + seed.x * 4;
-          const cellY = origin.y + seed.y * 4;
-          for (let index = 0; index < count; index += 1) {
-            sandkit.api.elements.createAtCell(
-              cellX + (index % 4),
-              cellY + Math.floor(index / 4),
-              elementType,
-            );
-          }
-        }
-      }, layout.origin, layout.seeds);
-    }
+    await buildLayout(this, layout);
   }
 
   /** Pause or resume the simulation without opening the in-game pause UI. */
   async setSimulationPaused(paused: boolean): Promise<void> {
-    await this.evaluate((nextPaused: boolean) => {
-      const session = (
-        globalThis as typeof globalThis & {
-          sandkit?: { engine?: { state?: { session?: { paused?: boolean } } } };
-        }
-      ).sandkit?.engine?.state?.session;
-      if (!session) throw new Error("Sandustry session state is unavailable");
-      session.paused = nextPaused;
-    }, paused);
+    await setSimulationPaused(this, paused);
   }
 
   async pauseSimulation(): Promise<void> {
@@ -338,30 +149,7 @@ export class SandustrySession {
 
   /** Run the simulation for a wall-clock interval, then restore its prior state. */
   async runSimulation(durationMs: number): Promise<void> {
-    if (!Number.isFinite(durationMs) || durationMs < 0) {
-      throw new Error(`Simulation duration must be a non-negative finite number: ${durationMs}`);
-    }
-    const priorPaused = await this.evaluate(() => {
-      const session = (
-        globalThis as typeof globalThis & {
-          sandkit?: { engine?: { state?: { session?: { paused?: boolean } } } };
-        }
-      ).sandkit?.engine?.state?.session;
-      if (!session) throw new Error("Sandustry session state is unavailable");
-      return Boolean(session.paused);
-    });
-    try {
-      await this.resumeSimulation();
-      await this.evaluate(
-        (duration: number) =>
-          new Promise<void>((resolve) => {
-            setTimeout(resolve, duration);
-          }),
-        durationMs,
-      );
-    } finally {
-      await this.setSimulationPaused(priorPaused);
-    }
+    await runSimulation(this, durationMs);
   }
 
   /** Return `manifest.id` values from the live ordered mod list. */
