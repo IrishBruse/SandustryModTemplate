@@ -6,7 +6,7 @@ import {
   type ElementSourceKind,
 } from "../mod-source";
 import { matterLabel } from "./matter-labels";
-import type { Rgb } from "./element-colors";
+import { metaColorToCss, type Rgb } from "./element-colors";
 
 const api = sandkit.api;
 
@@ -120,6 +120,15 @@ function modIdForType(type: number, modMap: Map<number, ModElementEntry>): strin
   return modIdFromRegistryEntry(modMap.get(type));
 }
 
+function rgbFromMetaColor(metaColor: number): Rgb {
+  return [(metaColor >> 16) & 0xff, (metaColor >> 8) & 0xff, metaColor & 0xff];
+}
+
+/**
+ * Sand-grain color for inspector swatches / tiles.
+ * Prefer a live color variant when present; otherwise `metaColor` (vanilla
+ * definitions often have only that field).
+ */
 function pickBackground(
   definition: ReturnType<typeof api.elements.getDefinitionByType>,
   modEntry: ModElementEntry | undefined,
@@ -129,10 +138,15 @@ function pickBackground(
     const rgb: Rgb = [variant[0]!, variant[1]!, variant[2]!];
     return { backgroundCss: `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`, rgb };
   }
-  if (typeof modEntry?.metaColor === "number") {
-    const c = modEntry.metaColor;
-    const rgb: Rgb = [(c >> 16) & 0xff, (c >> 8) & 0xff, c & 0xff];
-    return { backgroundCss: `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`, rgb };
+  const meta =
+    typeof definition?.metaColor === "number"
+      ? definition.metaColor
+      : typeof modEntry?.metaColor === "number"
+        ? modEntry.metaColor
+        : null;
+  if (meta != null) {
+    const rgb = rgbFromMetaColor(meta);
+    return { backgroundCss: metaColorToCss(meta), rgb };
   }
   return { backgroundCss: "rgb(71, 85, 105)", rgb: [71, 85, 105] };
 }

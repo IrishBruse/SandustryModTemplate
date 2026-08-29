@@ -41,9 +41,16 @@ function openWorkshopPage(itemId: string): void {
 function DetailRow({ label, value }: { label: string; value: ReactNode }) {
   if (value == null || value === "") return null;
   return (
-    <div className="flex justify-between gap-3">
-      <span className="text-gray-500 shrink-0">{label}</span>
-      <span className="text-gray-200 text-right break-all">{value}</span>
+    <div
+      className="grid items-baseline py-1.5"
+      style={{
+        gridTemplateColumns: "9.5rem minmax(0, 1fr)",
+        columnGap: "12px",
+        borderBottom: "1px solid rgba(71, 85, 105, 0.35)",
+      }}
+    >
+      <span className="text-gray-500">{label}</span>
+      <span className="text-gray-200 text-left break-all min-w-0">{value}</span>
     </div>
   );
 }
@@ -52,120 +59,200 @@ function yesNo(value: boolean): string {
   return value ? "yes" : "no";
 }
 
-function ModDetails({
+function formatBytes(value: number | null): string | null {
+  if (value == null) return null;
+  if (value < 1024) return `${value} B`;
+  if (value < 1024 * 1024) return `${(value / 1024).toFixed(1)} KB`;
+  return `${(value / (1024 * 1024)).toFixed(2)} MB`;
+}
+
+function formatDiagnostic(entry: { code: string; modId: string | null; message: string }): string {
+  if (entry.modId && entry.message.includes(entry.modId)) {
+    return `[${entry.code}] ${entry.message}`;
+  }
+  return `[${entry.code}]${entry.modId ? ` ${entry.modId}` : ""}: ${entry.message}`;
+}
+
+function ContributeBag({ bag, count, items }: { bag: string; count: number; items: string[] }) {
+  const [open, setOpen] = useState(count <= 12);
+  return (
+    <details
+      open={open}
+      onToggle={(event) => {
+        setOpen((event.currentTarget as HTMLDetailsElement).open);
+      }}
+    >
+      <summary className="cursor-pointer select-none py-1 text-[12px] text-slate-200 hover:text-[#ffe700] flex items-center gap-2 [&::-webkit-details-marker]:hidden">
+        <span className="text-slate-500 inline-block w-3 text-center" aria-hidden="true">
+          {open ? "▾" : "▸"}
+        </span>
+        <span>
+          {bag} <span className="text-slate-500">({count})</span>
+        </span>
+      </summary>
+      <ul
+        className="pb-2 pt-1 space-y-1"
+        style={{ margin: "0 0 0 1.25rem", paddingLeft: "1.1rem", listStyleType: "disc" }}
+      >
+        {items.map((item) => (
+          <li
+            key={item}
+            className="font-mono text-[11px] text-slate-300 break-all leading-snug"
+            style={{ paddingLeft: "0.25rem" }}
+          >
+            {item}
+          </li>
+        ))}
+      </ul>
+    </details>
+  );
+}
+
+function ModDetailView({
   mod,
   diagnostics,
+  onBack,
   onOpenWorkshop,
 }: {
   mod: ModReportEntry;
   diagnostics: ModDiagnostic[];
+  onBack: () => void;
   onOpenWorkshop: (itemId: string) => void;
 }) {
   const ownDiagnostics = diagnostics.filter((entry) => entry.modId === mod.id);
 
   return (
-    <div className="mt-3 pt-3 border-t border-gray-700 space-y-3 text-xs text-gray-300">
-      <div className="space-y-1">
-        <DetailRow
-          label="Status"
-          value={
-            <span className={`font-semibold uppercase ${statusTone(mod.status)}`}>
-              {mod.status}
-            </span>
-          }
-        />
-        <DetailRow label="Load index" value={String(mod.order + 1)} />
-        <DetailRow label="Source" value={modSourceLabel(mod.sourceKind)} />
-        <DetailRow
-          label="Discovered via"
-          value={mod.discoveredVia.length > 0 ? mod.discoveredVia.join(", ") : "—"}
-        />
-        <DetailRow label="Folder" value={mod.folder} />
-        <DetailRow label="Root URL" value={mod.rootUrl} />
-        <DetailRow label="API" value={mod.apiVersion != null ? String(mod.apiVersion) : null} />
-        <DetailRow
-          label="Manifest"
-          value={mod.manifestVersion != null ? String(mod.manifestVersion) : null}
-        />
-        <DetailRow
-          label="Load order"
-          value={mod.loadOrder != null ? String(mod.loadOrder) : null}
-        />
-        <DetailRow label="Entry" value={mod.entry} />
-        <DetailRow label="Has main.js" value={yesNo(mod.hasEntrySource)} />
-        <DetailRow label="Has worker" value={yesNo(mod.hasWorker)} />
-        <DetailRow label="Settings" value={yesNo(mod.hasSettings)} />
-        {mod.dependencies.length > 0 ? (
-          <DetailRow label="Depends on" value={mod.dependencies.join(", ")} />
-        ) : (
-          <DetailRow label="Depends on" value="none" />
-        )}
-      </div>
-
-      {mod.itemId ? (
-        <div>
-          <p className="text-gray-500 mb-1">Workshop item {mod.itemId}</p>
+    <div className="flex-1 min-h-0 flex flex-col">
+      <div className="shrink-0 mb-3 flex items-start justify-between gap-3">
+        <div className="min-w-0">
           <button
             type="button"
-            onClick={() => onOpenWorkshop(mod.itemId!)}
-            className="px-3 py-1.5 text-xs text-gray-300 bg-black border border-gray-600 rounded hover:text-[#ffe700] item-button-transition"
+            onClick={onBack}
+            className="text-[12px] text-slate-400 hover:text-[#ffe700] transition-colors mb-1"
           >
-            Open Workshop page
+            ← Mods
           </button>
+          <h3 className="text-base font-semibold text-white truncate">{mod.name}</h3>
+          <p className="text-xs text-gray-500 truncate">
+            Version {mod.version} • {mod.id}
+          </p>
+          {mod.author ? (
+            <p className="text-xs text-gray-500 truncate">By {mod.author}</p>
+          ) : null}
         </div>
-      ) : null}
+        <button
+          type="button"
+          onClick={onBack}
+          className="px-3 py-1.5 text-xs text-white bg-black border rounded-tr-lg rounded-bl-lg border-slate-200 hover:text-[#ffe700] item-button-transition shrink-0"
+        >
+          Close
+        </button>
+      </div>
 
-      {mod.description ? <p className="text-gray-300 leading-snug">{mod.description}</p> : null}
+      <div className="flex-1 min-h-0 overflow-y-auto pr-2 space-y-4 text-xs text-gray-300">
+        {mod.description ? (
+          <p className="text-[13px] text-gray-200 leading-relaxed whitespace-pre-wrap">
+            {mod.description}
+          </p>
+        ) : (
+          <p className="text-gray-500">No description.</p>
+        )}
 
-      {mod.registry.length > 0 ? (
         <div>
-          <p className="text-gray-400 mb-1">Registered ids ({mod.id}:…)</p>
-          <div className="space-y-1">
-            {mod.registry.map((entry) => (
-              <div key={entry.bag}>
-                <p className="text-gray-500">
-                  {entry.bag} ({entry.count})
-                </p>
-                <p className="font-mono text-gray-300 break-all">{entry.sample.join(", ")}</p>
-              </div>
+          <p className="text-gray-400 mb-1 text-[11px] uppercase tracking-wider">Details</p>
+          <DetailRow
+            label="Status"
+            value={
+              <span className={`font-semibold uppercase ${statusTone(mod.status)}`}>
+                {mod.status}
+              </span>
+            }
+          />
+          <DetailRow label="Load index" value={String(mod.order + 1)} />
+          <DetailRow label="Source" value={modSourceLabel(mod.sourceKind)} />
+          <DetailRow
+            label="Discovered via"
+            value={mod.discoveredVia.length > 0 ? mod.discoveredVia.join(", ") : "—"}
+          />
+          <DetailRow label="Folder" value={mod.folder} />
+          <DetailRow label="API" value={mod.apiVersion != null ? String(mod.apiVersion) : null} />
+          <DetailRow
+            label="Manifest"
+            value={mod.manifestVersion != null ? String(mod.manifestVersion) : null}
+          />
+          <DetailRow
+            label="Load order"
+            value={mod.loadOrder != null ? String(mod.loadOrder) : null}
+          />
+          <DetailRow label="Entry" value={mod.entry} />
+          <DetailRow label="Worker entry" value={mod.workerEntry} />
+          <DetailRow label="Has main.js" value={yesNo(mod.hasEntrySource)} />
+          <DetailRow label="Entry size" value={formatBytes(mod.entrySourceBytes)} />
+          <DetailRow label="Has worker" value={yesNo(mod.hasWorker)} />
+          <DetailRow label="Worker size" value={formatBytes(mod.workerSourceBytes)} />
+          <DetailRow label="Settings schema" value={yesNo(mod.hasSettings)} />
+          {mod.dependencies.length > 0 ? (
+            <DetailRow label="Depends on" value={mod.dependencies.join(", ")} />
+          ) : (
+            <DetailRow label="Depends on" value="none" />
+          )}
+        </div>
+
+        {mod.registry.length > 0 ? (
+          <div className="pt-1 border-t border-gray-700/60">
+            <p className="text-gray-400 mb-2 text-[11px] uppercase tracking-wider pt-3">
+              Contributes
+            </p>
+            <div className="space-y-1.5">
+              {mod.registry.map((entry) => (
+                <ContributeBag
+                  key={entry.bag}
+                  bag={entry.bag}
+                  count={entry.count}
+                  items={entry.items}
+                />
+              ))}
+            </div>
+          </div>
+        ) : (
+          <p className="text-gray-500 pt-1 border-t border-gray-700/60 pt-3">
+            No registered contributions found for this mod id.
+          </p>
+        )}
+
+        {mod.itemId ? (
+          <div>
+            <p className="text-gray-500 mb-1">Workshop item {mod.itemId}</p>
+            <button
+              type="button"
+              onClick={() => onOpenWorkshop(mod.itemId!)}
+              className="px-3 py-1.5 text-xs text-gray-300 bg-black border border-gray-600 rounded hover:text-[#ffe700] item-button-transition"
+            >
+              Open Workshop page
+            </button>
+          </div>
+        ) : null}
+
+        {ownDiagnostics.length > 0 ? (
+          <div>
+            <p className="text-yellow-200 mb-1">Diagnostics</p>
+            {ownDiagnostics.map((entry, index) => (
+              <p key={index} className="font-mono text-yellow-200 leading-snug">
+                {formatDiagnostic(entry)}
+              </p>
             ))}
           </div>
-        </div>
-      ) : (
-        <p className="text-gray-500">No sandkit.mods ids prefixed with this mod id.</p>
-      )}
+        ) : null}
 
-      {ownDiagnostics.length > 0 ? (
-        <div>
-          <p className="text-yellow-200 mb-1">Diagnostics</p>
-          {ownDiagnostics.map((entry, index) => (
-            <p key={index} className="font-mono text-yellow-200 leading-snug">
-              {formatDiagnostic(entry)}
-            </p>
-          ))}
-        </div>
-      ) : null}
-
-      {mod.error ? (
-        <pre className="text-red-300 whitespace-pre-wrap font-mono leading-snug">{mod.error}</pre>
-      ) : null}
+        {mod.error ? (
+          <pre className="text-red-300 whitespace-pre-wrap font-mono leading-snug">{mod.error}</pre>
+        ) : null}
+      </div>
     </div>
   );
 }
 
-function ModCard({
-  mod,
-  open,
-  diagnostics,
-  onToggle,
-  onOpenWorkshop,
-}: {
-  mod: ModReportEntry;
-  open: boolean;
-  diagnostics: ModDiagnostic[];
-  onToggle: () => void;
-  onOpenWorkshop: (itemId: string) => void;
-}) {
+function ModCard({ mod, onOpen }: { mod: ModReportEntry; onOpen: () => void }) {
   return (
     <div className="p-3 bg-gray-900 bg-opacity-50 rounded border border-gray-700">
       <div className="flex items-start justify-between gap-3">
@@ -178,29 +265,16 @@ function ModCard({
             <div className="text-xs text-gray-500 truncate">By {mod.author}</div>
           ) : null}
         </div>
-        <div className="flex gap-2 shrink-0">
-          <button
-            type="button"
-            onClick={onToggle}
-            className="px-3 py-1.5 text-xs text-white bg-black border rounded-tr-lg rounded-bl-lg border-slate-200 hover:text-[#ffe700] item-button-transition"
-          >
-            {open ? "Close" : "Open"}
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={onOpen}
+          className="px-3 py-1.5 text-xs text-white bg-black border rounded-tr-lg rounded-bl-lg border-slate-200 hover:text-[#ffe700] item-button-transition shrink-0"
+        >
+          Open
+        </button>
       </div>
-
-      {open ? (
-        <ModDetails mod={mod} diagnostics={diagnostics} onOpenWorkshop={onOpenWorkshop} />
-      ) : null}
     </div>
   );
-}
-
-function formatDiagnostic(entry: { code: string; modId: string | null; message: string }): string {
-  if (entry.modId && entry.message.includes(entry.modId)) {
-    return `[${entry.code}] ${entry.message}`;
-  }
-  return `[${entry.code}]${entry.modId ? ` ${entry.modId}` : ""}: ${entry.message}`;
 }
 
 function SaveIssues({
@@ -303,6 +377,10 @@ function IssueBlock({
   );
 }
 
+function modKey(mod: ModReportEntry): string {
+  return `${mod.order}:${mod.id}`;
+}
+
 export function ModsTab() {
   const [openModKey, setOpenModKey] = useState<string | null>(null);
   const [saveIssuesOpen, setSaveIssuesOpen] = useState(false);
@@ -338,6 +416,21 @@ export function ModsTab() {
     );
   }
 
+  const openMod = openModKey
+    ? (report.mods.find((mod) => modKey(mod) === openModKey) ?? null)
+    : null;
+
+  if (openMod) {
+    return (
+      <ModDetailView
+        mod={openMod}
+        diagnostics={report.diagnostics}
+        onBack={() => setOpenModKey(null)}
+        onOpenWorkshop={openWorkshopPage}
+      />
+    );
+  }
+
   return (
     <div className="flex-1 min-h-0 flex flex-col">
       <div className="shrink-0 mb-2 flex items-baseline justify-between gap-2">
@@ -348,19 +441,9 @@ export function ModsTab() {
       </div>
 
       <div className="flex-1 min-h-0 overflow-y-auto pr-2 space-y-2">
-        {report.mods.map((mod) => {
-          const key = `${mod.order}:${mod.id}`;
-          return (
-            <ModCard
-              key={key}
-              mod={mod}
-              open={openModKey === key}
-              diagnostics={report.diagnostics}
-              onToggle={() => setOpenModKey((current) => (current === key ? null : key))}
-              onOpenWorkshop={openWorkshopPage}
-            />
-          );
-        })}
+        {report.mods.map((mod) => (
+          <ModCard key={modKey(mod)} mod={mod} onOpen={() => setOpenModKey(modKey(mod))} />
+        ))}
 
         <SaveIssues
           open={saveIssuesOpen}

@@ -42,7 +42,7 @@ Turn on **Watch local mods**, **Fast dev boot**, **Auto-load save**, **F3 debug 
 - **Auto-load save** (`boot/boot-menu.ts`, `boot/auto-load-save.ts`) — reloads with `?db_load=` for the **Start save** pick.
 - **Disable autosave** (`boot/autosave.ts`) — sets interval to `0` on load.
 - **F3 debug overlay** (`f3/F3DebugOverlay.tsx`) — Minecraft-style text HUD. Extend with `registerF3Section` / `globalThis.debugF3`.
-- **Dev Tools** (`mod-inspector/`) — pause **Dev Tools** opens a 980×720 panel. **Mods** tab: compact loaded-mod cards with **Open** for details; save issues (missing, diagnostics, type-id drift) stay collapsed. **Elements**: family sand table. **Recipes**: placeholder.
+- **Dev Tools** (`mod-inspector/`) — pause **Dev Tools** opens a 1100×720 panel. **Mods** tab: compact loaded-mod cards; **Open** fills the tab with details (description first, then contributes, then load meta); save issues stay collapsed. **Elements**: family sand table. **Chains**: element explorer — pick an element, then expand outline **Made from** / **Used in** trees (step nodes as branches, elements nested beneath; duplicates allowed per path).
 - **Watch local mods** (`reload/`) — poll and re-eval other mods' renderer `main.js`.
 - **Fast dev boot** (`patches.ts`, `boot/fast-boot.ts`) — when on, skips `foliage.generate` only. Raster fill, shadow rebuild, and outline compile stay vanilla. Needs `debugPatches` (dev). Restart once after you turn it on.
 

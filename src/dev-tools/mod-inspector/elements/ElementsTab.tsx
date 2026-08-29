@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { elementSourceLabel } from "../mod-source";
+import { ElementPixel } from "./ElementPixel";
 import { contrastText, tileFillCss } from "./element-colors";
 import { listElements, type ElementRow } from "./list-elements";
 import { buildMatterGroups } from "./matter-layout";
@@ -42,8 +43,11 @@ function ElementTile({
       }}
     >
       <div className="flex items-start justify-between gap-1 shrink-0">
-        <span className="text-[12px] font-mono font-semibold tabular-nums leading-none">
-          {element.elementType}
+        <span className="flex items-center gap-1 min-w-0">
+          <ElementPixel element={element} size={12} />
+          <span className="text-[12px] font-mono font-semibold tabular-nums leading-none">
+            {element.elementType}
+          </span>
         </span>
         {showMatterLabel ? (
           <span className="text-[9px] uppercase tracking-wide opacity-70 truncate max-w-[50%] leading-none pt-0.5">
@@ -196,10 +200,13 @@ function ElementDetailBar({ element }: { element: ElementRow | null }) {
           borderRadius: 0,
         }}
       >
-        <Copyable
-          value={String(element.elementType)}
-          className="text-[11px] font-bold leading-none tabular-nums"
-        />
+        <div className="flex items-center justify-between gap-1">
+          <Copyable
+            value={String(element.elementType)}
+            className="text-[11px] font-bold leading-none tabular-nums"
+          />
+          <ElementPixel element={element} size={14} />
+        </div>
         <div className="min-w-0">
           <p className="text-[12px] font-semibold leading-tight truncate">
             <Copyable value={element.name} />

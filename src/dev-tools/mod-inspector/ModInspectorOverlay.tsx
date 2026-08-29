@@ -1,6 +1,8 @@
 import { useEffect, useState, type MouseEvent } from "react";
 import { Interactive, OverlayRoot } from "@modkit/ui";
 import { inGame, safe } from "@modkit/utils";
+import { DEV_TOOLS_Z, useAbovePauseMenu } from "./above-pause";
+import { ReactionChainsTab } from "./chains/ReactionChainsTab";
 import { readUiScale } from "./list-mods";
 import { ElementsTab } from "./elements/ElementsTab";
 import { ModsTab } from "./ModsTab";
@@ -9,15 +11,15 @@ import { isModInspectorOpen, setModInspectorOpen, subscribeModInspector } from "
 
 const api = sandkit.api;
 
-const PANEL_WIDTH = 980;
+const PANEL_WIDTH = 1100;
 const PANEL_HEIGHT = 720;
 
-type TabId = "mods" | "elements" | "recipes";
+type TabId = "mods" | "elements" | "chains";
 
 const TABS: { id: TabId; label: string }[] = [
   { id: "mods", label: "Mods" },
   { id: "elements", label: "Elements" },
-  { id: "recipes", label: "Recipes" },
+  { id: "chains", label: "Chains" },
 ];
 
 function playHover(): void {
@@ -33,14 +35,6 @@ function closePanel(): void {
   setModInspectorOpen(false);
 }
 
-function PlaceholderTab({ label }: { label: string }) {
-  return (
-    <div className="flex-1 flex items-center justify-center">
-      <p className="text-[13px] text-slate-400 text-center py-8">{label} — placeholder for now.</p>
-    </div>
-  );
-}
-
 /** Save Game–style Dev Tools panel. Pause **Dev Tools** only. */
 export function ModInspectorOverlay() {
   const [open, setOpen] = useState(isModInspectorOpen);
@@ -49,6 +43,7 @@ export function ModInspectorOverlay() {
   useEffect(() => subscribeModInspector(setOpen), []);
 
   const show = open && inGame();
+  useAbovePauseMenu(show);
 
   useEffect(() => {
     if (!show) return;
@@ -81,7 +76,7 @@ export function ModInspectorOverlay() {
   const scale = readUiScale();
 
   return (
-    <OverlayRoot style={{ zIndex: 10010 }}>
+    <OverlayRoot style={{ zIndex: DEV_TOOLS_Z }}>
       <Interactive>
         <div
           className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
@@ -133,7 +128,7 @@ export function ModInspectorOverlay() {
               <div className="px-5 pt-4 pb-4 flex-1 min-h-0 flex flex-col">
                 {tab === "mods" ? <ModsTab /> : null}
                 {tab === "elements" ? <ElementsTab /> : null}
-                {tab === "recipes" ? <PlaceholderTab label="Recipes" /> : null}
+                {tab === "chains" ? <ReactionChainsTab /> : null}
               </div>
             </div>
           </div>
