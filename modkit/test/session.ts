@@ -33,6 +33,20 @@ export type StructurePlacement = {
   data?: Record<string, unknown>;
 };
 
+export type StructureLayoutSymbol = Omit<StructurePlacement, "x" | "y">;
+
+export type StructureLayoutPhase = {
+  cells: readonly string[];
+  legend: Readonly<Record<string, StructureLayoutSymbol>>;
+};
+
+export type StructureLayout = {
+  origin: { x: number; y: number };
+  cells?: readonly string[];
+  legend?: Readonly<Record<string, StructureLayoutSymbol>>;
+  phases?: readonly StructureLayoutPhase[];
+};
+
 export type { ScreenshotClip };
 
 export type ScreenshotOptions = {
@@ -224,6 +238,43 @@ export class SandustrySession {
       }
     } finally {
       await this.setSimulationPaused(priorPaused);
+    }
+  }
+
+  /** Build a readable 4-cell-grid fixture, optionally in explicit phases. */
+  async buildLayout(layout: StructureLayout): Promise<void> {
+    const phases =
+      layout.phases ??
+      (layout.cells && layout.legend ? [{ cells: layout.cells, legend: layout.legend }] : []);
+    if (phases.length === 0) {
+      throw new Error("A structure layout needs cells and legend, or at least one phase");
+    }
+    if (layout.phases && (layout.cells || layout.legend)) {
+      throw new Error("A structure layout cannot mix top-level cells/legend with phases");
+    }
+
+    for (const [index, phase] of phases.entries()) {
+      const placements: StructurePlacement[] = [];
+      const width = phase.cells[0]?.length ?? 0;
+      if (width === 0 || phase.cells.some((row) => row.length !== width)) {
+        throw new Error(`Structure layout phase ${index} must contain a non-empty rectangle`);
+      }
+      for (let row = 0; row < phase.cells.length; row += 1) {
+        for (let column = 0; column < width; column += 1) {
+          const symbol = phase.cells[row]?.[column];
+          if (!symbol || symbol === ".") continue;
+          const definition = phase.legend[symbol];
+          if (!definition) {
+            throw new Error(`Structure layout phase ${index} has no legend entry for "${symbol}"`);
+          }
+          placements.push({
+            ...definition,
+            x: layout.origin.x + column * 4,
+            y: layout.origin.y + row * 4,
+          });
+        }
+      }
+      await this.buildStructures(placements);
     }
   }
 

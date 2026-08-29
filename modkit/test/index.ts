@@ -28,6 +28,9 @@ export type {
   ScreenshotClip,
   ScreenshotOptions,
   SessionWaitForOptions,
+  StructureLayout,
+  StructureLayoutPhase,
+  StructureLayoutSymbol,
   StructurePlacement,
 } from "./session.ts";
 export type { BufferExpect, SessionExpect, ToHaveScreenshotOptions } from "./helpers/expect.ts";
