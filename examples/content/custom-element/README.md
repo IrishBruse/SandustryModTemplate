@@ -14,6 +14,6 @@ Spark Dust uses `MatterType.Powder`. It falls and piles like sand.
 
 Copy `examples/content/custom-element/` to `src/<your-mod>/`. Change `id`, element id, and colours in `modinfo.ts` and `main.ts`.
 
-For a collectable payout value, see [`collectable-element`](../collectable-element/). For a buildable machine, see [`register-structure`](../register-structure/) and [`structure-processor`](../structure-processor/).
+For a Collector payout, see [`collector-element`](../collector-element/). For a buildable machine, see [`register-structure`](../register-structure/) and [`structure-processor`](../structure-processor/).
 
 Workshop reference: `whisper.gold-refinement`, `sandustry-labs.red-sand-production`.

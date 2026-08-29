@@ -43,7 +43,6 @@ On **0.5.5+**, prefer Sandkit hooks and `configOverrides` over bundle patches; [
 | UI      | [`management-button`](../examples/ui/management-button/)          | Management-column row                                      |
 | UI      | [`input-binding`](../examples/ui/input-binding/)                  | `registerBinding` + `getDisplayKey`                        |
 | Content | [`custom-element`](../examples/content/custom-element/)           | `api.elements.register` for one powder                     |
-| Content | [`collectable-element`](../examples/content/collectable-element/) | `collectable.value` on a mod element                       |
 | Content | [`collector-element`](../examples/content/collector-element/)     | Platinum + Collector admission patches                     |
 | Content | [`custom-terrain`](../examples/content/custom-terrain/)           | `api.terrains.register` for one terrain                    |
 | Content | [`element-reaction`](../examples/content/element-reaction/)       | `api.reactions.registerContact`                            |

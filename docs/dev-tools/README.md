@@ -2,7 +2,7 @@
 
 Dev companion mod. The game folder name is **`dev-tools`** (`mods/dev-tools`, from `modinfo.id`). Debug builds (`npm run dev`, `--debug`) install it. `npm run build` stages a release bundle under `build/dev-tools/`. `npm run publish` does not list it.
 
-Manifest **`loadOrder`** is `-2147483648` so this companion runs before other local mods.
+Manifest **`loadOrder`** is `-2147483648`. Session entry order may still run other mods first, so API-call logging is installed in an early boot patch before any mod `main.js`.
 
 When **Watch local mods** is on, this companion polls other mods' `main.js` and re-evals the renderer bundle after a save. It does not reload itself. Restart the game for `worker.js` and `patches.json`. Turn the setting on in **Options → Mods → dev-tools**.
 
@@ -10,11 +10,11 @@ Settings live on this mod. Open **Options → Mods → dev-tools**.
 
 ## When it is installed
 
-| Build         | Command                                       | This mod                      | `debugPatches` |
-| ------------- | --------------------------------------------- | ----------------------------- | -------------- |
+| Build         | Command                                       | This mod                     | `debugPatches` |
+| ------------- | --------------------------------------------- | ---------------------------- | -------------- |
 | Release       | `npm run build`                               | Staged (`build/dev-tools/`)  | Omitted        |
 | Dev           | `npm run dev`, `--watch`, `--game`, `--debug` | Installed (`mods/dev-tools`) | Included       |
-| Release watch | `npm run dev:release` / `--no-debug`          | Not installed                 | Omitted        |
+| Release watch | `npm run dev:release` / `--no-debug`          | Not installed                | Omitted        |
 
 `--mod template` on a debug build still installs **dev-tools**. `--mod dev-tools` builds only this folder.
 
@@ -42,7 +42,7 @@ Turn on **Watch local mods**, **Fast dev boot**, **Auto-load save**, **F3 debug 
 - **Auto-load save** (`boot/boot-menu.ts`, `boot/auto-load-save.ts`) — reloads with `?db_load=` for the **Start save** pick.
 - **Disable autosave** (`boot/autosave.ts`) — sets interval to `0` on load.
 - **F3 debug overlay** (`f3/F3DebugOverlay.tsx`) — Minecraft-style text HUD. Extend with `registerF3Section` / `globalThis.debugF3`.
-- **Dev Tools** (`mod-inspector/`) — pause **Dev Tools** opens a 1100×720 panel. **Mods** tab: compact loaded-mod cards; **Open** fills the tab with details (description first, then contributes, then load meta); save issues stay collapsed. **Elements**: family sand table. **Chains**: element explorer — pick an element, then expand outline **Made from** / **Used in** trees (step nodes as branches, elements nested beneath; duplicates allowed per path).
+- **Dev Tools** (`mod-inspector/`) — pause **Dev Tools** opens a 1100×720 panel. **Mods** tab: compact loaded-mod cards; **Open** fills the tab with details (description first, then contributes, then load meta); save issues stay collapsed. **Elements**: family sand table. **Chains**: pick an element. **Does** shows where it goes (`Gold → Smelter → Liquid Gold`). **Comes from** shows how it is made. Depth 1 is one recipe hop.
 - **Watch local mods** (`reload/`) — poll and re-eval other mods' renderer `main.js`.
 - **Fast dev boot** (`patches.ts`, `boot/fast-boot.ts`) — when on, skips `foliage.generate` only. Raster fill, shadow rebuild, and outline compile stay vanilla. Needs `debugPatches` (dev). Restart once after you turn it on.
 
@@ -103,6 +103,8 @@ After boot, `globalThis.debugF3.registerSection` is the same API for DevTools ex
 
 When **Watch local mods** is on, the companion polls other **local** mods' `main.js` about twice per second. It uses `session.externalMods.orderedMods` with `discoveredVia: local`. It does not poll Workshop ids from the save order list. After `npm run dev` writes a new bundle, it re-evals that renderer entry with **that mod's** `sandkit` (stashed at first load as `globalThis.__sandkitByMod[id]`). It does not wrap the companion `sandkit`.
 
+On first load, an early boot patch installs `__devToolsWrapSandkit` (log-only) before any mod entry runs — session order does not always put this companion first despite `loadOrder`. `stash-sandkit-by-mod` stashes the raw host, then passes a wrapped copy into `c(sandkit)`. Companion `main.js` upgrades the hook to the full hot-reload wrap (dispose tracking). Hot eval wraps again the same way.
+
 Each reload runs tracked disposers first:
 
 - `api.ui.inject` return functions
@@ -113,9 +115,11 @@ Each reload runs tracked disposers first:
 
 Hot eval wraps `api.ui.toast` so messages show the mod id and reload generation, for example `Template loaded (author.template v4)`. The console logs `reloaded <id> vN`.
 
-The starter template shows **Template inject** (top-left) and **Template hotbar** on the hotbar. `npm run test:integration` boots the extracted game in Chrome (`.tmp/sandustry-test`, CDP **:9224**) and runs `*.integration.test.ts` against it, including `src/dev-tools/reload/integration.test.ts`. `npm test` is unit tests only. Those integration cases **skip** when the Game scene or test mods are missing. They do not attach to the Steam window on **:9222**. See [Integration tests](../modkit/test.md).
+Those same hot-reload paths also log when called:
 
-Content `register` calls (`elements`, `structures`, `i18n`, …) have no unregister. The game updates the same id when you register again.
+`[dev-tools] <modId> api.ui.inject …`
+
+Content `register` calls (`elements`, `structures`, `i18n`, …) are not wrapped — they have no unregister and the game updates the same id on re-register.
 
 It does not:
 

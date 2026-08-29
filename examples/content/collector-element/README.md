@@ -26,5 +26,4 @@ and `patches.ts`.
 `patches.ts` find strings match `sandustry/0.5.5-mods/dist/js/`. Re-match from
 the extracted bundle when the game updates.
 
-For the element only, see [`collectable-element`](../collectable-element/).
 For the patches only, see [`collector-patches`](../../api/collector-patches/).

@@ -19,7 +19,6 @@ Workshop mod references live in `sandustry-workshop-mods/workshop/` (sibling rep
 | Folder                                                | What it shows                                      |
 | ----------------------------------------------------- | -------------------------------------------------- |
 | [`custom-element`](content/custom-element/)           | `api.elements.register` for one powder             |
-| [`collectable-element`](content/collectable-element/) | `collectable.value` on a mod element               |
 | [`collector-element`](content/collector-element/)     | Platinum + Collector admission patches             |
 | [`custom-terrain`](content/custom-terrain/)           | `api.terrains.register` for one terrain            |
 | [`element-reaction`](content/element-reaction/)       | `api.reactions.registerContact`                    |
