@@ -1,0 +1,4 @@
+{
+  "extends": "../../tsconfig.mod.json",
+  "include": ["worker.ts", "modinfo.ts", "elements/ids.ts", "sim", "../../modkit"]
+}
