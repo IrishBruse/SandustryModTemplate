@@ -86,8 +86,8 @@ test("callerTestFile skips helper frames", () => {
   const file = "/home/econn/git/modkit/test/game.integration.test.ts";
   const stack = [
     "Error",
-    "    at callerTestFile (/home/econn/git/modkit/test/screenshot.ts:10:5)",
-    "    at Object.toHaveScreenshot (/home/econn/git/modkit/test/expect.ts:40:11)",
+    "    at callerTestFile (/home/econn/git/modkit/test/helpers/screenshot.ts:10:5)",
+    "    at Object.toHaveScreenshot (/home/econn/git/modkit/test/helpers/expect.ts:40:11)",
     `    at TestContext.<anonymous> (${file}:12:3)`,
   ].join("\n");
   assert.equal(callerTestFile(stack), file);

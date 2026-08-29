@@ -11,7 +11,7 @@ import {
   readRendererReadySnapshot,
 } from "./readiness.ts";
 import { toPageExpression } from "./serialize.ts";
-import { waitFor, type WaitForOptions } from "./wait.ts";
+import { waitFor, type WaitForOptions } from "./helpers/wait.ts";
 
 export type ModMainFile = {
   path: string;

@@ -219,7 +219,7 @@ export interface ModManifest {
   author?: string;
   /** Other mods by `id`. Empty list is fine. */
   dependencies?: string[];
-  /** Load order. Lower runs first. Dev Tools uses `-2147483648`. */
+  /** Load order hint. Lower sorts earlier. Dev Tools uses `-2147483648`. */
   loadOrder?: number;
   /** Optional game version gate (0.5.5+). */
   gameVersion?: GameVersionRange;

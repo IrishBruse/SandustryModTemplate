@@ -3,7 +3,7 @@ import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import pixelmatch from "pixelmatch";
 import { PNG } from "pngjs";
-import { sandustryTestScreenshotsDir } from "./paths.ts";
+import { sandustryTestScreenshotsDir } from "../paths.ts";
 
 export type ImageMatchOptions = {
   maxDiffPixels?: number;
@@ -180,8 +180,7 @@ function stackLineFile(line: string): string | null {
 function isHelperFile(file: string): boolean {
   const normalized = file.replaceAll("\\", "/");
   return (
-    normalized.endsWith("/modkit/test/expect.ts") ||
-    normalized.endsWith("/modkit/test/screenshot.ts") ||
+    normalized.includes("/modkit/test/helpers/") ||
     normalized.endsWith("/modkit/test/session.ts") ||
     normalized.endsWith("/modkit/test/index.ts")
   );

@@ -15,10 +15,9 @@ type ApplyPatchSet = (
   patches: unknown[],
 ) => { sources: Map<string, string>; results: PatchResult[] };
 
-/** Stash per-mod sandkit and sync electron mod settings before the first main eval. */
-/** Keep the companion stash patch shape; settings sync is handled in the test host boot flag. */
+/** Stash per-mod sandkit and wrap via companion hook when present. */
 const TEST_HOST_STASH_AND_SYNC =
-  "const t=we(e,{manifest:o,discovered:r});(globalThis.__sandkitByMod||(globalThis.__sandkitByMod={}))[o.id]=t;e.store.integrity.modsUsed=!0,await c(t)";
+  "const t=we(e,{manifest:o,discovered:r});(globalThis.__sandkitByMod||(globalThis.__sandkitByMod={}))[o.id]=t;e.store.integrity.modsUsed=!0,await c((typeof globalThis.__devToolsWrapSandkit==='function'?globalThis.__devToolsWrapSandkit(o.id,t):t))";
 
 /** Drop the companion stash patch when the test host replaces it with settings sync. */
 const TEST_HOST_PATCHES: Array<Record<string, unknown>> = [

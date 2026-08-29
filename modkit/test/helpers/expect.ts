@@ -9,7 +9,7 @@ import {
   writeScreenshotArtifacts,
   type ImageMatchOptions,
 } from "./screenshot.ts";
-import { SandustrySession, type ScreenshotOptions } from "./session.ts";
+import { SandustrySession, type ScreenshotOptions } from "../session.ts";
 import { WAIT_FOR_INTERVAL_MS, WAIT_FOR_TIMEOUT_MS, type WaitForOptions } from "./wait.ts";
 
 export type ToHaveScreenshotOptions = ScreenshotOptions & ImageMatchOptions & WaitForOptions;

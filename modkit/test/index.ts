@@ -20,15 +20,15 @@ export {
 } from "./paths.ts";
 export { setupGame } from "./setup-game.ts";
 export { SandustrySession } from "./session.ts";
-export { expect } from "./expect.ts";
+export { expect } from "./helpers/expect.ts";
 export { toPageExpression } from "./serialize.ts";
-export { waitFor } from "./wait.ts";
+export { waitFor } from "./helpers/wait.ts";
 export type {
   ModMainFile,
   ScreenshotClip,
   ScreenshotOptions,
   SessionWaitForOptions,
 } from "./session.ts";
-export type { BufferExpect, SessionExpect, ToHaveScreenshotOptions } from "./expect.ts";
-export type { ImageMatchOptions } from "./screenshot.ts";
-export type { WaitForOptions } from "./wait.ts";
+export type { BufferExpect, SessionExpect, ToHaveScreenshotOptions } from "./helpers/expect.ts";
+export type { ImageMatchOptions } from "./helpers/screenshot.ts";
+export type { WaitForOptions } from "./helpers/wait.ts";
