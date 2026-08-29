@@ -52,7 +52,7 @@ test("wrapApi does not log intercepted calls", () => {
   }
 });
 
-test("wrapApi tracks inject and on, not toast; generation annotates toast", () => {
+test("wrapApi tracks inject and on; toast stays plain", () => {
   const host = {
     api: {
       toast: () => "no",
@@ -73,8 +73,8 @@ test("wrapApi tracks inject and on, not toast; generation annotates toast", () =
   assert.equal(disposeLists()["mod-b"]?.length, 2);
   runDisposers("mod-b");
 
-  const hot = wrapSandkit(host, "mod-b", 4);
-  assert.equal(hot.api.ui.toast("Template loaded"), "Template loaded (mod-b v4)");
+  const hot = wrapSandkit(host, "mod-b");
+  assert.equal(hot.api.ui.toast("Template loaded"), "Template loaded");
 });
 
 test("wrapApi unregisters overlays.register on reload", () => {

@@ -113,7 +113,7 @@ Each reload runs tracked disposers first:
 - `api.input.registerBinding` handlers (they stop after reload)
 - `api.events.on`, `api.settings.onChange`, `api.hooks.intercept` / `modify`
 
-Hot eval wraps `api.ui.toast` so messages show the mod id and reload generation, for example `Template loaded (author.template v4)`. The console logs `reloaded <id> vN`.
+Hot eval leaves `api.ui.toast` messages unchanged. The console logs `Reloaded <id> vN`.
 
 Content `register` calls (`elements`, `structures`, `i18n`, …) are not wrapped — they have no unregister and the game updates the same id on re-register.
 

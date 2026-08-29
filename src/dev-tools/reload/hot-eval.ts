@@ -39,7 +39,7 @@ export async function hotEvalMain(
 ): Promise<number> {
   runDisposers(modId);
   const generation = nextHotGeneration(modId);
-  const wrapped = wrapSandkit(host, modId, generation);
+  const wrapped = wrapSandkit(host, modId);
   const fn = new Function("__sandkit", wrapHotSource(source, modId));
   await fn(wrapped);
   return generation;

@@ -1,8 +1,5 @@
 import { disableSessionAutosave } from "./boot/autosave";
-import {
-  registerDevToolsShortcut,
-  scheduleMainMenuBoot
-} from "./boot/boot-menu";
+import { registerDevToolsShortcut, scheduleMainMenuBoot } from "./boot/boot-menu";
 import { syncFastBootPrefs } from "./boot/fast-boot";
 import { settingOn } from "./boot/settings";
 import { installDebugCompanion } from "./f3/install";
@@ -17,12 +14,10 @@ const api = sandkit.api;
 let stopLocalReload: (() => void) | undefined;
 
 function syncLocalModReload(): void {
-  const testHost = (
-    globalThis as typeof globalThis & { __sandustryTestHost?: boolean }
-  ).__sandustryTestHost;
+  const testHost = (globalThis as typeof globalThis & { __sandustryTestHost?: boolean })
+    .__sandustryTestHost;
   const on = testHost === true || settingOn(api, "watchLocalMods");
-  if (on && !stopLocalReload)
-    stopLocalReload = installLocalModReload(api, modinfo.id);
+  if (on && !stopLocalReload) stopLocalReload = installLocalModReload(api, modinfo.id);
   if (!on && stopLocalReload) {
     stopLocalReload();
     stopLocalReload = undefined;
@@ -55,7 +50,7 @@ function main() {
     syncLocalModReload();
   });
 
-  console.log("loaded");
+  console.log("Loaded");
 }
 
 main();

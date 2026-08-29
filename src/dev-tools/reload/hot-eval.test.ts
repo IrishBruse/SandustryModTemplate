@@ -146,7 +146,7 @@ test("hotEvalMain runs the template source on a frozen proxied sandkit", async (
   const hostApi = host.api;
   const g1 = await hotEvalMain("author.template", TEMPLATE_SOURCE, host);
   assert.deepEqual(seen, [
-    ["toast", `Template loaded (author.template v${g1})`, {}],
+    ["toast", "Template loaded", {}],
     "inject:author.template",
     "reg:hotbar:author.template",
     "mount:hotbar:author.template",
@@ -157,7 +157,7 @@ test("hotEvalMain runs the template source on a frozen proxied sandkit", async (
   const g2 = await hotEvalMain("author.template", TEMPLATE_SOURCE, host);
   assert.equal(g2, g1 + 1);
   assert.deepEqual(seen, [
-    ["toast", `Template loaded (author.template v${g1})`, {}],
+    ["toast", "Template loaded", {}],
     "inject:author.template",
     "reg:hotbar:author.template",
     "mount:hotbar:author.template",
@@ -165,7 +165,7 @@ test("hotEvalMain runs the template source on a frozen proxied sandkit", async (
     "dispose:author.template",
     "unreg:hotbar:author.template",
     "unmount:hotbar:author.template",
-    ["toast", `Template loaded (author.template v${g2})`, {}],
+    ["toast", "Template loaded", {}],
     "inject:author.template",
     "reg:hotbar:author.template",
     "mount:hotbar:author.template",

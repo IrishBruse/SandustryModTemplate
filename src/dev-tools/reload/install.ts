@@ -46,7 +46,7 @@ export function installLocalModReload(api: SandkitApi, selfId: string): () => vo
     try {
       const generation = await hotEvalMain(mod.id, text, host);
       lastApplied.set(mod.id, text);
-      console.log(`reloaded ${mod.id} v${generation}`);
+      console.log(`Reloaded ${mod.id} v${generation}`);
     } catch (error) {
       console.error(`hot reload failed for ${mod.id}`, error);
     }

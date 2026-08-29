@@ -1,5 +1,4 @@
 import { pushDispose } from "./dispose.ts";
-import { formatHotToastMessage } from "./generation.ts";
 
 export type ApiNamespaces = {
   ui?: {
@@ -178,18 +177,9 @@ function wrapInput<T extends object>(input: T, modId: string): T {
   return copy;
 }
 
-function wrapToast(
-  toast: (...args: unknown[]) => unknown,
-  modId: string,
-  generation: number,
-): (...args: unknown[]) => unknown {
-  return (message, options, ...rest) =>
-    toast(formatHotToastMessage(message, modId, generation), options, ...rest);
-}
-
 function wrapUi<
   T extends { overlays?: object; regions?: object; toast?: (...args: unknown[]) => unknown },
->(ui: T, modId: string, generation?: number): T {
+>(ui: T, modId: string): T {
   const copy = wrapMethods(ui, ["inject"], modId);
   if (ui.overlays) {
     copy.overlays = wrapRegisterUnregister(ui.overlays, "register", "unregister", 2, modId);
@@ -197,16 +187,13 @@ function wrapUi<
   if (ui.regions) {
     copy.regions = wrapRegionsMount(ui.regions, modId);
   }
-  if (typeof generation === "number" && typeof ui.toast === "function") {
-    copy.toast = wrapToast(ui.toast.bind(ui), modId, generation);
-  }
   return copy;
 }
 
 /** Wrap only APIs that leave lasting side effects across hot reload. */
-export function wrapApi<T extends ApiNamespaces>(api: T, modId: string, generation?: number): T {
+export function wrapApi<T extends ApiNamespaces>(api: T, modId: string): T {
   const copy = copyOwn(api);
-  if (api.ui) copy.ui = wrapUi(api.ui, modId, generation);
+  if (api.ui) copy.ui = wrapUi(api.ui, modId);
   if (api.events) copy.events = wrapMethods(api.events, ["on"], modId);
   if (api.settings) copy.settings = wrapMethods(api.settings, ["onChange"], modId);
   if (api.hooks) {
@@ -217,12 +204,8 @@ export function wrapApi<T extends ApiNamespaces>(api: T, modId: string, generati
 }
 
 /** Plain object passed as `__sandkit`. Does not Proxy the host. */
-export function wrapSandkit<T extends { api: object }>(
-  host: T,
-  modId: string,
-  generation?: number,
-): T {
+export function wrapSandkit<T extends { api: object }>(host: T, modId: string): T {
   const copy = copyOwn(host);
-  copy.api = wrapApi(host.api as ApiNamespaces, modId, generation) as T["api"];
+  copy.api = wrapApi(host.api as ApiNamespaces, modId) as T["api"];
   return copy;
 }

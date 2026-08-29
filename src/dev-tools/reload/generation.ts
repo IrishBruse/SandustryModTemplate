@@ -22,9 +22,3 @@ export function nextHotGeneration(modId: string): number {
 export function hotGeneration(modId: string): number {
   return store()[modId] ?? 0;
 }
-
-/** Append `(modId vN)` so reload toasts show which eval ran. */
-export function formatHotToastMessage(message: unknown, modId: string, generation: number): string {
-  const base = typeof message === "string" ? message : String(message ?? "");
-  return `${base} (${modId} v${generation})`;
-}
