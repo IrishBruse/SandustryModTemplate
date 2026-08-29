@@ -27,7 +27,7 @@ export {
   resumeSimulation,
   runSimulation,
   setSimulationPaused,
-} from "../../test/helpers/world.ts";
+} from "./helpers/world.ts";
 export { expect } from "./helpers/expect.ts";
 export { toPageExpression } from "./serialize.ts";
 export { waitFor } from "./helpers/wait.ts";

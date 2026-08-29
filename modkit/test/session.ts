@@ -22,7 +22,7 @@ import {
   type StructureLayoutPhase,
   type StructureLayoutSymbol,
   type StructurePlacement,
-} from "../../test/helpers/world.ts";
+} from "./helpers/world.ts";
 
 export type ModMainFile = {
   path: string;
@@ -42,7 +42,7 @@ export type {
   StructureLayoutPhase,
   StructureLayoutSymbol,
   StructurePlacement,
-} from "../../test/helpers/world.ts";
+} from "./helpers/world.ts";
 
 export type { ScreenshotClip };
 
