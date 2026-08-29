@@ -22,7 +22,7 @@ export function hostWindowMode(input?: {
   const visible = input?.visible === true;
   const platform = input?.platform ?? process.platform;
   const display = input && "display" in input ? input.display : process.env.DISPLAY;
-  if (visible && (platform === "win32" || display)) return "window";
+  if (visible && (platform === "win32" || platform === "darwin" || display)) return "window";
   return "headless";
 }
 

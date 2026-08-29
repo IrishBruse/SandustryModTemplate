@@ -13,8 +13,9 @@ test("hostWindowMode is headless when not visible", () => {
   assert.equal(hostWindowMode({ platform: "darwin", display: undefined }), "headless");
 });
 
-test("hostWindowMode uses a window only when visible and a display exists", () => {
+test("hostWindowMode uses a window when visible on desktop platforms", () => {
   assert.equal(hostWindowMode({ visible: true, platform: "win32" }), "window");
+  assert.equal(hostWindowMode({ visible: true, platform: "darwin" }), "window");
   assert.equal(hostWindowMode({ visible: true, platform: "linux", display: ":1" }), "window");
 });
 
@@ -48,7 +49,6 @@ test("chromeLaunchArgs pins ozone screen size in headless", () => {
   const window = chromeLaunchArgs("window");
   assert.ok(!window.some((arg) => arg.startsWith("--ozone-override-screen-size=")));
 });
-
 
 test("resolveHostStaticFile prefers live /mods/<id>/ then vanilla dist/mods", () => {
   const root = mkdtempSync(join(tmpdir(), "sandustry-host-"));
