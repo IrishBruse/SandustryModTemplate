@@ -30,17 +30,18 @@ function mockStorage(): Storage {
   };
 }
 
-test("autoLoadSessionDone honours legacy session key", () => {
+test("autoLoadSessionDone uses the current session key only", () => {
   const session = mockStorage();
   const originalSession = globalThis.sessionStorage;
   Object.defineProperty(globalThis, "sessionStorage", { value: session, configurable: true });
   try {
     assert.equal(autoLoadSessionDone(), false);
     session.setItem("irishbruse.debug:autoLoadDone", "1");
-    assert.equal(autoLoadSessionDone(), true);
-    session.clear();
+    session.setItem("hot-reload.autoLoadDone", "1");
+    assert.equal(autoLoadSessionDone(), false);
     markAutoLoadSessionDone();
     assert.equal(session.getItem(AUTO_LOAD_SESSION_KEY), "1");
+    assert.equal(autoLoadSessionDone(), true);
   } finally {
     Object.defineProperty(globalThis, "sessionStorage", {
       value: originalSession,
