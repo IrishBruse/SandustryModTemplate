@@ -1,5 +1,4 @@
 import { definePatches } from "@modkit/patches";
-import { earlyDebugBadgePatchIife } from "./debug-badge/mount.ts";
 import { bootMarkHelperIife, markCall } from "./boot/boot-marks.ts";
 import { earlyAutoLoadPatchIife } from "./boot/auto-load.ts";
 import { fastBootLocalStorageExpr } from "./boot/fast-boot-keys.ts";
@@ -14,13 +13,10 @@ const FAST = fastBootLocalStorageExpr();
 /** Redirect to ?db_load= before assets, shaders, and mods load (avoids a full double boot). */
 const EARLY_AUTO_LOAD = earlyAutoLoadPatchIife();
 
-/** Top-left debug marker before mods and React UI (splash included). */
-const EARLY_DEBUG_BADGE = earlyDebugBadgePatchIife();
-
 /** Log wrap for other mods' sandkit before any mod entry runs. */
 const EARLY_API_WRAP = bootstrapApiWrapIife();
 
-const EARLY_BOOT = EARLY_DEBUG_BADGE + bootMarkHelperIife() + EARLY_API_WRAP + EARLY_AUTO_LOAD;
+const EARLY_BOOT = bootMarkHelperIife() + EARLY_API_WRAP + EARLY_AUTO_LOAD;
 
 export const debugPatches = definePatches([
   {
