@@ -11,8 +11,6 @@ Shared kit for Sandustry mods. It includes:
 
 Mods import this folder through the `@modkit/*` path alias. The game still loads a single bundled `main.js` (esbuild `esm`, no entry exports). Do not emit `import` / `export` in the output.
 
-The **dev-tools** companion is a mod, not part of this kit. See [Dev Tools](../dev-tools/).
-
 Sibling mods (for example `sandustry-doom-mod`) can use a symlink to this folder instead of a copy.
 
 ## Topics

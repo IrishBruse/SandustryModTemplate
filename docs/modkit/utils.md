@@ -41,8 +41,6 @@ if (isEnabled(api) && otherFlag) {
 }
 ```
 
-Session debug switches live on the **dev-tools** companion, not on every example. See [Dev Tools](../dev-tools/).
-
 ## `inGame`
 
 ```ts

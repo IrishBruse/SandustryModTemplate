@@ -4,18 +4,16 @@ The game runs `main.js` as a script body (`new Function`). The loader wraps the 
 
 ## Debug vs release
 
-| Command               | Debug helpers                           | `debugPatches` | Output                                                           |
-| --------------------- | --------------------------------------- | -------------- | ---------------------------------------------------------------- |
-| `npm run build`       | Stage all `src/` (incl. `dev-tools`)   | Omitted        | `build/<modinfo.id>/` only (no OS mods folder, no `dist/` links) |
-| `npm run dev`         | Included; install `src/dev-tools`      | Included       | OS mods folder while watching; removed when the watch stops      |
-| `npm run dev:release` | Omitted; no `dev-tools`, no sourcemaps | Omitted        | OS mods folder while watching (same cleanup as `dev`)            |
-| `--game` / `--debug`  | Included; install `src/dev-tools`      | Included       | Game mods folder                                                 |
+| Command               | `debugPatches` | Sourcemaps | Output                                                           |
+| --------------------- | -------------- | ---------- | ---------------------------------------------------------------- |
+| `npm run build`       | Omitted        | Off        | `build/<modinfo.id>/` only (no OS mods folder, no `dist/` links) |
+| `npm run dev`         | Included       | Inline     | OS mods folder while watching; removed when the watch stops      |
+| `npm run dev:release` | Omitted        | Off        | OS mods folder while watching (same cleanup as `dev`)            |
+| `--game` / `--debug`  | Included       | Inline     | Game mods folder                                                 |
 
-`--no-debug` forces a release-style bundle even when watch or game flags are set (`npm run dev:release` uses this). `--mod <folder>` builds one mod folder (repeat `--mod` for several). Debug builds (`npm run dev`, `--game`, `--debug`) install to the OS mods folder (`dist/` links there) unless you pass only `--mod dev-tools`. `npm run build` and `npm run dev` discover every `src/*/modinfo.ts` (including `dev-tools`). Use `npm run examples` or `npm run build -- --examples` for `examples/*/modinfo.ts`. `npm run publish` never lists the companion.
+`--no-debug` forces a release-style bundle even when watch or game flags are set (`npm run dev:release` uses this). `--mod <folder>` builds one mod folder (repeat `--mod` for several). Debug builds (`npm run dev`, `--game`, `--debug`) install to the OS mods folder (`dist/` links there). `npm run build` and `npm run dev` discover every `src/*/modinfo.ts`. Use `npm run examples` or `npm run build -- --examples` for `examples/*/modinfo.ts`.
 
 Debug builds emit **inline** source maps on `main.js` (needed for `new Function` eval). Use `--sourcemap` to force maps on a release build, or `--no-sourcemap` to omit them from a debug build.
-
-Session debug helpers (DevTools, auto-load last save, disable autosave, F3, watch reload) live on the **dev-tools** companion. Settings are on that mod only. See [Dev Tools](dev-tools/).
 
 `__MOD_DEBUG__` is `true` in dev builds and `false` in release. All builds inject `console.ts` so bare `console.*` calls get a styled `[modId]` badge and are written to the game log file.
 
@@ -32,8 +30,6 @@ console.log("my-feature", payload);
 ```
 
 The shim uses `globalThis.console` internally so it does not recurse.
-
-See [Dev Tools](dev-tools/) for what the companion does at runtime.
 
 ## Tailwind CSS
 
@@ -70,7 +66,7 @@ In game:
 ```bash
 npm run setup            # check install, extract sandustry/<version>-<branch>/, link dist/ and logs/ (one time)
 npm run dev              # watch all src/ mods (debug + sourcemaps)
-npm run dev:release      # watch without debug helpers, sourcemaps, or dev-tools
+npm run dev:release      # watch without debugPatches or sourcemaps
 npm run dev:pick         # TTY picker; last choice pre-selected
 npm run dev -- --mod overlay-hotkey
 npm run dev -- --mod overlay-hotkey --mod template
@@ -92,13 +88,13 @@ npm run ui:previews      # compile preview CSS, then screenshot preview.html
 
 When `npm run dev` stops (Ctrl+C, terminal close, or process exit), it removes the OS mod folders this template built in that watch session. The `dist/` link stays. Use `npm run build` when you want mods to stay installed.
 
-`npm run dev` watches every `src/*/modinfo.ts` mod. Use `npm run dev:pick` for a keyboard picker before the watch starts. **All mods** is the first row. Mods are grouped under **src** (including the **dev-tools** companion). Type to filter the list, **Space** toggles mods, **Enter** confirms (All, checked mods, or the highlighted mod). Your last choice is saved under `.tmp/dev-mod-selection.json` and pre-selected next time. Pass `--mod` to skip the picker. Non-TTY `dev:pick` watches all mods.
+`npm run dev` watches every `src/*/modinfo.ts` mod. Use `npm run dev:pick` for a keyboard picker before the watch starts. **All mods** is the first row. Mods are grouped under **src** and **mods**. Type to filter the list, **Space** toggles mods, **Enter** confirms (All, checked mods, or the highlighted mod). Your last choice is saved under `.tmp/dev-mod-selection.json` and pre-selected next time. Pass `--mod` to skip the picker. Non-TTY `dev:pick` watches all mods.
 
 **F5** (VS Code `Sandustry` launch) stops any running game, launches with `--remote-debugging-port`, waits until CDP `:9222` responds, then attaches the debugger to the **renderer** (where mods run). It does not rebuild the mod — keep `npm run dev` running for the bundle. **Restart** in the debugger toolbar kills that Electron process and starts a new one, then the renderer attach reconnects — a page reload does not restart workers or re-apply patches. If attach fails or ports linger, press F5 again or run the **sandustry:stop** task.
 
-The watch rebuilds when you save a file in the bundle graph (mod sources and imported `modkit/` files), `modinfo.ts`, or static files under `mod/`. A Tailwind CSS change queues a second rebuild after the current one finishes, so the next save is not dropped. With **Watch local mods** on, the dev-tools companion re-evals renderer `main.js`. Restart the game for `worker.js` and `patches.json`.
+The watch rebuilds when you save a file in the bundle graph (mod sources and imported `modkit/` files), `modinfo.ts`, or static files under `mod/`. A Tailwind CSS change queues a second rebuild after the current one finishes, so the next save is not dropped. Restart the game (F5) after `worker.js` or `patches.json` changes. Save reload (`?db_load=`) does not re-apply those on Steam.
 
-Renderer attach loads source maps from scripts named `sandkit-workshop://<modId>/main.js` (and from the OS mods folder / `dist/`). Debug builds rewrite inline maps to `file://` sources, add a sandkit loader line offset, set matching `sourceURL`, and mark injected `console.ts` as ignore-listed so breakpoints resolve to mod source instead of the console shim. Console log links use bound native methods so they point at the mod call site. Do not press **F12** while the IDE debugger is attached — Electron DevTools steals that session. Keep **Open DevTools on load** off under F5 for the same reason.
+Renderer attach loads source maps from scripts named `sandkit-workshop://<modId>/main.js` (and from the OS mods folder / `dist/`). Debug builds rewrite inline maps to `file://` sources, add a sandkit loader line offset, set matching `sourceURL`, and mark injected `console.ts` as ignore-listed so breakpoints resolve to mod source instead of the console shim. Console log links use bound native methods so they point at the mod call site.
 
 ## Workshop publish
 

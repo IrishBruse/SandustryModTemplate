@@ -56,7 +56,7 @@ Patch exports can live on `modinfo.ts` (`export { patches } from "./patches"`).
 
 The build writes `modinfo.json` into `dist/<modinfo.id>/` (and `build/<modinfo.id>/` on `npm run build`) **without** `$schema`. The game folder name is **`id`**, not the repo folder and not **`name`**.
 
-Shapes: `@sandustry-modding/types/configs` (`ModInfo`), via [`modkit/modinfo.ts`](../modkit/modinfo.ts). Settings UI: [configSchema](config-schema.md). Bundle rewrites: [Patches](patches.md). Layout: [Folder layout](layout.md).
+Shapes: `@sandustry-modding/types/configs` (`ModInfo`), via [`modkit/modinfo.ts`](../modkit/modinfo.ts). Settings UI: [configSchema](config-schema.md). Bundle rewrites: [Patches](patches.md). Layout: [repository README](https://github.com/IrishBruse/SandustryModTemplate#folder-layout).
 
 Canonical starter: [`src/template/modinfo.json`](../src/template/modinfo.json). Settings showcase: [`examples/api/settings/`](../examples/api/settings/).
 

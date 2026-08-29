@@ -362,7 +362,7 @@ console.log("");
 if (failCount > 0) {
   console.error(`Setup failed (${failCount} error${failCount === 1 ? "" : "s"}).`);
   console.error("Fix the FAIL lines, then run npm run setup again.");
-  console.error("Help: docs/troubleshooting.md");
+  console.error("Help: README.md (Troubleshooting).");
   process.exit(1);
 }
 
