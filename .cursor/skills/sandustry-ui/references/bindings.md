@@ -22,6 +22,6 @@ Options -> Controls. **+** adds a second key. Enum: https://sandustry-modding.gi
 
 Right-click cancel also: Corraller release, Digger recall, Pipes remove, Prefabulator cancel, Recon despawn, Signal unlink, Sweeper cancel, Wall remove.
 
-**OTHER** this session: `author.template.paint` P; Ignore Angle Lock B, selection-capture F7/F8, survival `debugHeal` H; Esc menu; `trimCreativeConfigure` K, trimHatchet [ ]; ZoomIn/Out = -.
+**OTHER** holds vanilla leftovers plus every mod binding, so it differs per session: Ignore Angle Lock B, Esc menu, `trimCreativeConfigure` K, trimHatchet [ ], ZoomIn/Out = -.
 
 Game **F5** is Quick Save, not the VS Code launch, while the window has focus.
