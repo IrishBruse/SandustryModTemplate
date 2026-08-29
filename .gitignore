@@ -1,4 +1,5 @@
 node_modules/
+src/irishbruse.*/
 dist
 dist/
 /build
