@@ -18,7 +18,8 @@ export const modinfo = defineModInfo({
   description:
     "Dev companion: watch local mods, DevTools, auto-load save, disable autosave, F3 overlay. Debug builds install it; release stages build/dev-tools/.",
   dependencies: [],
-  loadOrder: 1000,
+  /** Lowest int32 so this companion runs before every other local mod. */
+  loadOrder: -2147483648,
   configSchema: {
     enabled: {
       type: "boolean",

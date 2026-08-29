@@ -34,6 +34,59 @@ export function copyOwn<T extends object>(obj: T): T {
   return out;
 }
 
+/** Summarize args for console / file logs (skip huge objects and functions). */
+export function summarizeArg(value: unknown): unknown {
+  switch (typeof value) {
+    case "function": {
+      const name = (value as { name?: string }).name;
+      return name ? `[Function ${name}]` : "[Function]";
+    }
+    case "symbol":
+      return value.toString();
+    case "bigint":
+      return value.toString();
+    case "object": {
+      if (value === null) return null;
+      if (Array.isArray(value)) {
+        if (value.length > 12) {
+          return [...value.slice(0, 12).map(summarizeArg), `...+${value.length - 12}`];
+        }
+        return value.map(summarizeArg);
+      }
+      try {
+        const entries = Object.entries(value as Record<string, unknown>);
+        const out: Record<string, unknown> = {};
+        for (const [key, entry] of entries.slice(0, 12)) {
+          out[key] = summarizeArg(entry);
+        }
+        if (entries.length > 12) out["..."] = `+${entries.length - 12}`;
+        return out;
+      } catch {
+        return Object.prototype.toString.call(value);
+      }
+    }
+    default:
+      return value;
+  }
+}
+
+/** Log one intercepted sandkit call (`[dev-tools]` prefix comes from console inject). */
+export function logApiCall(modId: string, path: string, args: unknown[]): void {
+  console.log(`${modId} ${path}`, ...args.map(summarizeArg));
+}
+
+/** Call `fn` after logging `path` for this mod. */
+export function withApiLog(
+  path: string,
+  modId: string,
+  fn: (...args: unknown[]) => unknown,
+): (...args: unknown[]) => unknown {
+  return (...args: unknown[]) => {
+    logApiCall(modId, path, args);
+    return fn(...args);
+  };
+}
+
 export function trackDisposeReturn(
   fn: (...args: unknown[]) => unknown,
   modId: string,
@@ -45,7 +98,12 @@ export function trackDisposeReturn(
   };
 }
 
-function wrapMethods<T extends object>(ns: T, names: readonly string[], modId: string): T {
+function wrapMethods<T extends object>(
+  ns: T,
+  names: readonly string[],
+  modId: string,
+  pathPrefix: string,
+): T {
   const copy = copyOwn(ns);
   const source = ns as Record<string, unknown>;
   const target = copy as Record<string, unknown>;
@@ -53,7 +111,7 @@ function wrapMethods<T extends object>(ns: T, names: readonly string[], modId: s
     const fn = source[name];
     if (typeof fn !== "function") continue;
     const bound = (fn as (...args: unknown[]) => unknown).bind(ns);
-    target[name] = trackDisposeReturn(bound, modId);
+    target[name] = trackDisposeReturn(withApiLog(`${pathPrefix}.${name}`, modId, bound), modId);
   }
   return copy;
 }
@@ -67,6 +125,7 @@ export function wrapRegisterUnregister<T extends object>(
   unregisterName: string,
   arity: number,
   modId: string,
+  pathPrefix: string,
 ): T {
   const copy = copyOwn(ns);
   const source = ns as Record<string, unknown>;
@@ -81,7 +140,8 @@ export function wrapRegisterUnregister<T extends object>(
       ? (unregister as (...args: unknown[]) => unknown).bind(ns)
       : undefined;
 
-  target[registerName] = (...args: unknown[]) => {
+  const path = `${pathPrefix}.${registerName}`;
+  target[registerName] = withApiLog(path, modId, (...args: unknown[]) => {
     const result = boundRegister(...args);
     if (typeof result === "function") {
       pushDispose(modId, result as () => void);
@@ -92,7 +152,7 @@ export function wrapRegisterUnregister<T extends object>(
       });
     }
     return result;
-  };
+  });
   return copy;
 }
 
@@ -105,7 +165,7 @@ export function wrapRegionsMount<T extends object>(ns: T, modId: string): T {
   if (typeof mount !== "function") return copy;
 
   const boundMount = (mount as (...args: unknown[]) => unknown).bind(ns);
-  target.mount = (...args: unknown[]) => {
+  target.mount = withApiLog("api.ui.regions.mount", modId, (...args: unknown[]) => {
     const result = boundMount(...args);
     if (typeof result === "function") {
       pushDispose(modId, result as () => void);
@@ -118,7 +178,7 @@ export function wrapRegionsMount<T extends object>(ns: T, modId: string): T {
       pushDispose(modId, unmount.bind(result));
     }
     return result;
-  };
+  });
   return copy;
 }
 
@@ -137,7 +197,7 @@ export function wrapRegisterBinding(
   fn: (...args: unknown[]) => unknown,
   modId: string,
 ): (...args: unknown[]) => unknown {
-  return (bindingId: unknown, defaultKeys: unknown, definition: unknown) => {
+  return withApiLog("api.input.registerBinding", modId, (bindingId, defaultKeys, definition) => {
     let live = true;
     const def = definition as BindingDefinition | undefined;
     const handlers = def?.handlers;
@@ -165,7 +225,7 @@ export function wrapRegisterBinding(
       live = false;
     });
     return result;
-  };
+  });
 }
 
 function wrapInput<T extends object>(input: T, modId: string): T {
@@ -183,16 +243,24 @@ function wrapToast(
   modId: string,
   generation: number,
 ): (...args: unknown[]) => unknown {
-  return (message: unknown, options?: unknown, ...rest: unknown[]) =>
-    toast(formatHotToastMessage(message, modId, generation), options, ...rest);
+  return withApiLog("api.ui.toast", modId, (message, options, ...rest) =>
+    toast(formatHotToastMessage(message, modId, generation), options, ...rest),
+  );
 }
 
 function wrapUi<
   T extends { overlays?: object; regions?: object; toast?: (...args: unknown[]) => unknown },
 >(ui: T, modId: string, generation?: number): T {
-  const copy = wrapMethods(ui, ["inject"], modId);
+  const copy = wrapMethods(ui, ["inject"], modId, "api.ui");
   if (ui.overlays) {
-    copy.overlays = wrapRegisterUnregister(ui.overlays, "register", "unregister", 2, modId);
+    copy.overlays = wrapRegisterUnregister(
+      ui.overlays,
+      "register",
+      "unregister",
+      2,
+      modId,
+      "api.ui.overlays",
+    );
   }
   if (ui.regions) {
     copy.regions = wrapRegionsMount(ui.regions, modId);
@@ -203,12 +271,15 @@ function wrapUi<
   return copy;
 }
 
+/** Wrap only APIs that leave lasting side effects across hot reload. */
 export function wrapApi<T extends ApiNamespaces>(api: T, modId: string, generation?: number): T {
   const copy = copyOwn(api);
   if (api.ui) copy.ui = wrapUi(api.ui, modId, generation);
-  if (api.events) copy.events = wrapMethods(api.events, ["on"], modId);
-  if (api.settings) copy.settings = wrapMethods(api.settings, ["onChange"], modId);
-  if (api.hooks) copy.hooks = wrapMethods(api.hooks, ["intercept", "modify"], modId);
+  if (api.events) copy.events = wrapMethods(api.events, ["on"], modId, "api.events");
+  if (api.settings) copy.settings = wrapMethods(api.settings, ["onChange"], modId, "api.settings");
+  if (api.hooks) {
+    copy.hooks = wrapMethods(api.hooks, ["intercept", "modify"], modId, "api.hooks");
+  }
   if (api.input) copy.input = wrapInput(api.input, modId);
   return copy;
 }

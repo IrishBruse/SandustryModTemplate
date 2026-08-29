@@ -46,13 +46,8 @@ test("wrapHotSource keeps the inline source map (loader line offset stays valid)
   assert.equal(body.includes("//# sourceURL=sandkit-workshop://author.template/main.js\n"), false);
 });
 
-test("template source keeps toast, probes, and load log", () => {
+test("template source keeps a load toast", () => {
   assert.ok(TEMPLATE_MAIN.includes('api.ui.toast("Template loaded", {})'));
-  assert.ok(TEMPLATE_MAIN.includes('"data-dev-tools-probe": "inject"'));
-  assert.ok(TEMPLATE_MAIN.includes('"data-dev-tools-probe": "hotbar"'));
-  assert.ok(TEMPLATE_MAIN.includes("Template inject"));
-  assert.ok(TEMPLATE_MAIN.includes("Template hotbar"));
-  assert.ok(TEMPLATE_MAIN.includes('console.log("loaded — template")'));
 });
 
 /**

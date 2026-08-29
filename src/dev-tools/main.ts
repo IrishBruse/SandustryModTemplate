@@ -6,6 +6,7 @@ import { installDebugBadge } from "./debug-badge/install";
 import { installDebugCompanion } from "./f3/install";
 import { installModInspector } from "./mod-inspector/install";
 import { modinfo } from "./modinfo";
+import { installFirstLoadApiWrap } from "./reload/first-load-wrap.ts";
 import { installLocalModReload } from "./reload/install.ts";
 import { isEnabled } from "modkit/utils";
 
@@ -31,6 +32,9 @@ function syncBootPatches(): void {
 
 function main() {
   if (!isEnabled(api)) return;
+
+  // Before other mods eval: wrap their sandkit so intercepted API calls log.
+  installFirstLoadApiWrap(modinfo.id);
 
   const { enums, react } = sandkit;
   Object.assign(globalThis, { sandkit, api, enums, react });

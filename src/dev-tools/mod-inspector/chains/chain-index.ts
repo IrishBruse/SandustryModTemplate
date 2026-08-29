@@ -124,6 +124,17 @@ function addStep(
   step: ChainStep,
 ): void {
   if (steps.has(step.id)) return;
+  // Collapse Collector (and similar) listed twice under different structure refs.
+  if (step.kind === "structure" && step.outputs.length === 0) {
+    const dup = [...steps.values()].find(
+      (other) =>
+        other.kind === "structure" &&
+        other.outputs.length === 0 &&
+        other.label === step.label &&
+        other.inputs.join(",") === step.inputs.join(","),
+    );
+    if (dup) return;
+  }
   steps.set(step.id, step);
   for (const input of step.inputs) pushIndex(consumedBy, input, step.id);
   for (const out of step.outputs) pushIndex(producedBy, out.elementType, step.id);

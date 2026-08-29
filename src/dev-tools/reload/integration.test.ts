@@ -5,8 +5,8 @@ import { setTimeout as sleep } from "node:timers/promises";
 
 const COMPANION_ID = "dev-tools";
 const TEMPLATE_ID = "author.template";
-const INJECT_PROBE = "Template inject";
-const HOTBAR_PROBE = "Template hotbar";
+const TOAST_PROBE = "Template loaded";
+const HOT_PROBE_KEY = "__devToolsHotProbe";
 
 type SandkitHost = {
   api?: {
@@ -26,9 +26,7 @@ type LiveSnapshot = {
   companionGeneration: number;
   hasHost: boolean;
   hasCompanionHost: boolean;
-  injectText: string | null;
-  hotbarText: string | null;
-  globalIds: string[];
+  hotProbe: string | null;
   localIds: string[];
   orderedIds: string[];
 };
@@ -40,7 +38,6 @@ type RendererGlobal = typeof globalThis & {
       state?: {
         store?: { scene?: { active?: number } };
         session?: {
-          ui?: { overlays?: { global?: Record<string, unknown> } };
           externalMods?: {
             orderedMods?: Array<{
               manifest?: { id?: string };
@@ -53,15 +50,13 @@ type RendererGlobal = typeof globalThis & {
   };
   __sandkitHotGenerations__?: Record<string, number>;
   __sandkitByMod?: Record<string, SandkitHost>;
+  __devToolsHotProbe?: unknown;
 };
 
 function readLive(modId: string): LiveSnapshot {
   const g = globalThis as RendererGlobal;
   const sandkit = g.sandkit;
   const state = sandkit?.engine?.state;
-  const overlays = state?.session?.ui?.overlays;
-  const injectEl = document.querySelector('[data-dev-tools-probe="inject"]');
-  const hotbarEl = document.querySelector('[data-dev-tools-probe="hotbar"]');
   const ordered = state?.session?.externalMods?.orderedMods ?? [];
   const localIds: string[] = [];
   const orderedIds: string[] = [];
@@ -73,8 +68,7 @@ function readLive(modId: string): LiveSnapshot {
   }
   const generations = g.__sandkitHotGenerations__ ?? {};
   const hosts = g.__sandkitByMod ?? {};
-  const companionId = "dev-tools";
-  const companion = hosts[companionId];
+  const companion = hosts["dev-tools"];
   const companionGet =
     companion &&
     companion.api &&
@@ -89,18 +83,17 @@ function readLive(modId: string): LiveSnapshot {
   };
   const testHost = (g as typeof g & { __sandustryTestHost?: boolean }).__sandustryTestHost === true;
   const watchValue = readCompanionBool("watchLocalMods");
+  const hotProbe = g.__devToolsHotProbe;
   return {
     watch: watchValue === true || testHost,
     companionEnabled: readCompanionBool("enabled"),
     scene: state?.store?.scene?.active ?? null,
     gameScene: sandkit?.enums?.Scene?.Game ?? null,
     generation: generations[modId] ?? 0,
-    companionGeneration: generations[companionId] ?? 0,
+    companionGeneration: generations["dev-tools"] ?? 0,
     hasHost: Boolean(hosts[modId]),
-    hasCompanionHost: Boolean(hosts[companionId]),
-    injectText: injectEl?.textContent?.trim() ?? null,
-    hotbarText: hotbarEl?.textContent?.trim() ?? null,
-    globalIds: overlays?.global ? Object.keys(overlays.global) : [],
+    hasCompanionHost: Boolean(hosts["dev-tools"]),
+    hotProbe: typeof hotProbe === "string" ? hotProbe : null,
     localIds,
     orderedIds,
   };
@@ -124,16 +117,21 @@ function skipReason(live: LiveSnapshot): SkipReason {
   return null;
 }
 
+function appendHotProbe(original: string, token: string): string {
+  return `${original}\n;globalThis.${HOT_PROBE_KEY}=${JSON.stringify(token)};\n`;
+}
+
 const game = await setupGame();
 
-test("dev-tools preflight: companion watch is on and template probes mount", async (t) => {
+test("dev-tools preflight: companion watch is on and template is local", async (t) => {
   const live = await game.evaluate(readLive, TEMPLATE_ID);
   const reason = skipReason(live);
   if (reason) {
     t.skip(reason);
     return;
   }
-  if (game.tryReadModMain(TEMPLATE_ID) === null) {
+  const main = game.tryReadModMain(TEMPLATE_ID);
+  if (main === null) {
     t.skip(`installed ${TEMPLATE_ID}/main.js is missing`);
     return;
   }
@@ -141,11 +139,10 @@ test("dev-tools preflight: companion watch is on and template probes mount", asy
   assert.equal(live.watch, true);
   assert.ok(live.orderedIds.includes(COMPANION_ID));
   assert.ok(live.localIds.includes(TEMPLATE_ID));
-  assert.equal(live.injectText, INJECT_PROBE);
-  assert.equal(live.hotbarText, HOTBAR_PROBE);
+  assert.ok(main.includes(TOAST_PROBE));
 });
 
-test("live hot reload updates inject and hotbar probes", async (t) => {
+test("live hot reload evals new template source", async (t) => {
   const live = await game.evaluate(readLive, TEMPLATE_ID);
   const reason = skipReason(live);
   if (reason) {
@@ -158,42 +155,31 @@ test("live hot reload updates inject and hotbar probes", async (t) => {
   }
 
   const token = `t${Date.now().toString(36)}`;
-  const injectNext = `${INJECT_PROBE} ${token}`;
-  const hotbarNext = `${HOTBAR_PROBE} ${token}`;
   const generationBefore = live.generation;
 
   // First poller fetch is a baseline. Wait so that fetch records the original bundle.
   await sleep(2000);
 
   await game.withModMain(TEMPLATE_ID, async (file) => {
-    if (!file.original.includes(INJECT_PROBE) || !file.original.includes(HOTBAR_PROBE)) {
-      t.skip("installed template bundle has no probe strings; rebuild the template");
-      return;
-    }
-    if (!file.original.includes("data-dev-tools-probe")) {
-      t.skip("installed template bundle has no inject probe attribute; rebuild the template");
+    if (!file.original.includes(TOAST_PROBE)) {
+      t.skip("installed template bundle has no load toast; rebuild the template");
       return;
     }
 
-    file.replaceAll(INJECT_PROBE, injectNext);
-    file.replaceAll(HOTBAR_PROBE, hotbarNext);
+    file.write(appendHotProbe(file.original, token));
 
     const latest = await game.waitFor(
       readLive,
-      (snapshot) =>
-        snapshot.generation > generationBefore &&
-        snapshot.injectText === injectNext &&
-        snapshot.hotbarText === hotbarNext,
+      (snapshot) => snapshot.generation > generationBefore && snapshot.hotProbe === token,
       {
         timeoutMs: 12000,
         args: [TEMPLATE_ID],
-        message: "hot reload probes did not update",
+        message: "hot reload did not eval the new template source",
       },
     );
 
     assert.ok(latest.generation > generationBefore);
-    assert.equal(latest.injectText, injectNext);
-    assert.equal(latest.hotbarText, hotbarNext);
+    assert.equal(latest.hotProbe, token);
   });
 });
 
@@ -214,12 +200,12 @@ test("hot reload increments the generation counter", async (t) => {
   await sleep(2000);
 
   await game.withModMain(TEMPLATE_ID, async (file) => {
-    if (!file.original.includes(INJECT_PROBE)) {
-      t.skip("installed template bundle has no probe strings; rebuild the template");
+    if (!file.original.includes(TOAST_PROBE)) {
+      t.skip("installed template bundle has no load toast; rebuild the template");
       return;
     }
 
-    file.replaceAll(INJECT_PROBE, `${INJECT_PROBE} ${token}`);
+    file.write(`${file.original}\n/* ${token} */\n`);
 
     const latest = await game.waitFor(
       readLive,

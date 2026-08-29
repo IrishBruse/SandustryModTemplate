@@ -3,6 +3,7 @@ import { earlyDebugBadgePatchIife } from "./debug-badge/mount.ts";
 import { bootMarkHelperIife, markCall } from "./boot/boot-marks.ts";
 import { earlyAutoLoadPatchIife } from "./boot/auto-load.ts";
 import { fastBootLocalStorageExpr } from "./boot/fast-boot-keys.ts";
+import { bootstrapApiWrapIife } from "./reload/first-load-wrap.ts";
 
 /**
  * Boot marks and fast-boot skips. Find strings matched against
@@ -10,14 +11,16 @@ import { fastBootLocalStorageExpr } from "./boot/fast-boot-keys.ts";
  */
 const FAST = fastBootLocalStorageExpr();
 
-
 /** Redirect to ?db_load= before assets, shaders, and mods load (avoids a full double boot). */
 const EARLY_AUTO_LOAD = earlyAutoLoadPatchIife();
 
 /** Top-left debug marker before mods and React UI (splash included). */
 const EARLY_DEBUG_BADGE = earlyDebugBadgePatchIife();
 
-const EARLY_BOOT = EARLY_DEBUG_BADGE + bootMarkHelperIife() + EARLY_AUTO_LOAD;
+/** Log wrap for other mods' sandkit before any mod entry runs. */
+const EARLY_API_WRAP = bootstrapApiWrapIife();
+
+const EARLY_BOOT = EARLY_DEBUG_BADGE + bootMarkHelperIife() + EARLY_API_WRAP + EARLY_AUTO_LOAD;
 
 export const debugPatches = definePatches([
   {
@@ -98,7 +101,10 @@ export const debugPatches = definePatches([
     file: "js/external-mod-runtime.js",
     find: "const t=we(e,{manifest:o,discovered:r});e.store.integrity.modsUsed=!0,await c(t)",
     operation: "replace",
-    code: "const t=we(e,{manifest:o,discovered:r});(globalThis.__sandkitByMod||(globalThis.__sandkitByMod={}))[o.id]=t;e.store.integrity.modsUsed=!0,await c(t)",
+    // Stash the raw host for hot reload. Wrap the copy passed to `c` when
+    // `__devToolsWrapSandkit` is set (early boot installs a log wrap; companion
+    // main upgrades it for dispose tracking).
+    code: "const t=we(e,{manifest:o,discovered:r});(globalThis.__sandkitByMod||(globalThis.__sandkitByMod={}))[o.id]=t;e.store.integrity.modsUsed=!0,await c((typeof globalThis.__devToolsWrapSandkit==='function'?globalThis.__devToolsWrapSandkit(o.id,t):t))",
     expectedMatches: 1,
   },
   {
