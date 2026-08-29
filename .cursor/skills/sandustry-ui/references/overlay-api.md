@@ -1,6 +1,6 @@
 # Overlay API
 
-Declarations: `node_modules/@sandustry-modding/types/sandkit/api/ui.d.ts`. Reference: https://sandustry-modding.github.io/SandustryTypes/#/ and `.tmp/Sandkit - Sandustry Modding API.html`.
+Declarations: `node_modules/@sandustry-modding/types/src/sandkit/api/ui.d.ts`. Reference: https://sandustry-modding.github.io/SandustryTypes/#/ and `.tmp/Sandkit - Sandustry Modding API.html`.
 
 ## Calls
 

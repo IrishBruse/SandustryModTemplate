@@ -10,13 +10,12 @@
     "skipLibCheck": false,
     "isolatedModules": true,
     "lib": ["ES2021", "DOM"],
-    "types": ["react", "node", "@sandustry-modding/types"],
+    "types": ["react", "node"],
     "allowImportingTsExtensions": true,
     "paths": {
       "*": ["./*"],
-      "@modkit/*": ["./modkit/*"],
-      "@sandustry-modding/types/*": ["./node_modules/@sandustry-modding/types/*"]
+      "@modkit/*": ["./modkit/*"]
     }
   },
-  "files": ["./modkit/css.d.ts"]
+  "files": ["./modkit/css.d.ts", "./modkit/sandkit.d.ts"]
 }

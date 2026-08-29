@@ -1,6 +1,6 @@
 # Enums
 
-Live on `sandkit.enums` (0.5.5). Reference: https://sandustry.com/sandkit.html and `node_modules/@sandustry-modding/types/sandkit/enums/index.d.ts`.
+Live on `sandkit.enums` (0.5.5). Reference: https://sandustry.com/sandkit.html and `node_modules/@sandustry-modding/types/src/sandkit/enums/index.d.ts`.
 
 ## DroneType
 

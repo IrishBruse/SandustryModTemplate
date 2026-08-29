@@ -1,6 +1,6 @@
 # Bindings
 
-Options -> Controls. **+** adds a second key. Enum: https://sandustry-modding.github.io/SandustryTypes/#/ and `node_modules/@sandustry-modding/types/sandkit/enums`.
+Options -> Controls. **+** adds a second key. Enum: https://sandustry-modding.github.io/SandustryTypes/#/ and `node_modules/@sandustry-modding/types/src/sandkit/enums`.
 
 | Group     | Action                                | Default                   |
 | --------- | ------------------------------------- | ------------------------- |

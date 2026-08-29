@@ -1,6 +1,6 @@
 # Progression
 
-Public API: `sandkit.api.progression`. Types: `node_modules/@sandustry-modding/types/sandkit/api/progression.d.ts`.
+Public API: `sandkit.api.progression`. Types: `node_modules/@sandustry-modding/types/src/sandkit/api/progression.d.ts`.
 
 ## API (0.5.5)
 

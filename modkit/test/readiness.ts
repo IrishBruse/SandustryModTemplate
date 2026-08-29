@@ -38,7 +38,12 @@ export function readRendererReadySnapshot(): RendererReadySnapshot {
     };
   };
   const sk = typeof sandkit !== "undefined" ? sandkit : g.sandkit;
-  const state = sk?.engine?.state;
+  const state = sk?.engine?.state as
+    | {
+        store?: { scene?: { active?: number } };
+        sandkit?: { gameReady?: boolean };
+      }
+    | undefined;
   return {
     api: Boolean(sk?.api),
     scene: state?.store?.scene?.active ?? null,

@@ -17,7 +17,7 @@ Keep each `find` / `code` string small. Set `expectedMatches`.
 
 Patch `code` runs **outside** the game bundle IIFE. Put shared runtime helpers on `globalThis` when patch code must call them.
 
-Types: [`modkit/patches.ts`](../modkit/patches.ts). Manifest: [`modinfo.ts`](modinfo.md). Canonical multi-file example: [`examples/api/collector-patches/patches.ts`](../examples/api/collector-patches/patches.ts).
+Types: `@sandustry-modding/types/configs` (`BundlePatch`), via [`modkit/patches.ts`](../modkit/patches.ts). Manifest: [`modinfo.ts`](modinfo.md). Canonical multi-file example: [`examples/content/collector-element/patches.ts`](../examples/content/collector-element/patches.ts).
 
 ## Layout
 

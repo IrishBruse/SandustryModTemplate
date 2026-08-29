@@ -138,9 +138,10 @@ function pickBackground(
     const rgb: Rgb = [variant[0]!, variant[1]!, variant[2]!];
     return { backgroundCss: `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`, rgb };
   }
+  const liveMeta = (definition as unknown as { metaColor?: number } | undefined)?.metaColor;
   const meta =
-    typeof definition?.metaColor === "number"
-      ? definition.metaColor
+    typeof liveMeta === "number"
+      ? liveMeta
       : typeof modEntry?.metaColor === "number"
         ? modEntry.metaColor
         : null;

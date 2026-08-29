@@ -44,33 +44,27 @@ describe("collector-element", { concurrency: false }, () => {
       return;
     }
 
-    const placed = await game.evaluate(
+    const prepared = await game.evaluate(
       (elementId: string, cellX: number, cellY: number, cellSize: number) => {
         const api = sandkit.api;
-        const st = sandkit.engine.state;
-        if (st.session) st.session.paused = false;
-
-        const collectorType = sandkit.enums.StructureType.Collector;
         if (api.structures.getAtCell(cellX, cellY)) {
           api.structures.removeAtCell(cellX, cellY);
         }
-        api.structures.buildAtCell(cellX, cellY, collectorType);
 
-        let elementType: number;
+        let elementOk = false;
         try {
-          elementType = api.elements.getTypeById(elementId);
+          const elementType = api.elements.getTypeById(elementId);
+          elementOk = typeof elementType === "number" && Number.isFinite(elementType);
         } catch {
-          return { ok: false as const, reason: `${elementId} is not registered` };
+          elementOk = false;
         }
-        if (typeof elementType !== "number" || !Number.isFinite(elementType)) {
+        if (!elementOk) {
           return { ok: false as const, reason: `${elementId} is not registered` };
         }
 
-        const worldX = (cellX + 2) * cellSize;
-        const worldY = (cellY + 2) * cellSize;
-        api.camera.setFocusAtWorld(worldX, worldY);
-
-        return { ok: true as const, sx: cellX, sy: cellY, elementType, collectorType };
+        const collectorType = sandkit.enums.StructureType.Collector;
+        api.camera.setFocusAtWorld((cellX + 2) * cellSize, (cellY + 2) * cellSize);
+        return { ok: true as const, collectorType };
       },
       ELEMENT_ID,
       COLLECTOR_CELL.x,
@@ -78,47 +72,44 @@ describe("collector-element", { concurrency: false }, () => {
       CELL_SIZE,
     );
 
-    if (!placed.ok) {
-      t.skip(placed.reason);
+    if (!prepared.ok) {
+      t.skip(prepared.reason);
       return;
     }
 
     await viewPause();
 
-    await game.waitFor(
-      (sx: number, sy: number, collectorType: number) =>
-        sandkit.api.structures.getAtCell(sx, sy)?.type === collectorType,
-      (ready) => ready === true,
-      {
-        args: [placed.sx, placed.sy, placed.collectorType],
-        message: "collector did not build",
-        timeoutMs: 8000,
+    const before = await game.evaluate(() => {
+      const shared = sandkit.engine.state.shared as { gold: ArrayLike<number> };
+      return Number(shared.gold[0]);
+    });
+
+    await game.buildLayout({
+      origin: COLLECTOR_CELL,
+      cells: ["c"],
+      legend: {
+        c: { type: prepared.collectorType },
       },
-    );
+      seeds: [{ x: 0, y: 0, element: ELEMENT_ID, count: 2 }],
+    });
 
     await viewPause();
 
-    const before = await game.evaluate(() => Number(sandkit.engine.state.shared.gold[0]));
+    await game.resumeSimulation();
+    try {
+      const after = await game.waitFor(
+        () => {
+          const shared = sandkit.engine.state.shared as { gold: ArrayLike<number> };
+          return Number(shared.gold[0]);
+        },
+        (gold) => gold >= before + COLLECTABLE_VALUE,
+        { message: "collector did not add gold for Platinum", timeoutMs: 8000 },
+      );
+      assert.ok(after >= before + COLLECTABLE_VALUE);
+    } finally {
+      await game.pauseSimulation();
+    }
 
-    await game.evaluate(
-      (sx: number, sy: number, elementType: number) => {
-        sandkit.api.elements.createAtCell(sx, sy, elementType);
-        sandkit.api.elements.createAtCell(sx + 1, sy, elementType);
-      },
-      placed.sx,
-      placed.sy,
-      placed.elementType,
-    );
-
-    await viewPause();
-
-    const after = await game.waitFor(
-      () => Number(sandkit.engine.state.shared.gold[0]),
-      (gold) => gold >= before + COLLECTABLE_VALUE,
-      { message: "collector did not add gold for Platinum", timeoutMs: 8000 },
-    );
-
-    assert.ok(after >= before + COLLECTABLE_VALUE);
     await viewPause();
   });
 });

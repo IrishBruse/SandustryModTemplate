@@ -1,5 +1,7 @@
 /**
- * Bundle patch shapes and `definePatches`.
+ * Bundle patch helpers and `definePatches`.
+ *
+ * Shapes come from `@sandustry-modding/types/configs` (`BundlePatch` and related).
  *
  * Prefer Sandkit API before patches. Use patches only when public API cannot
  * do the job. Keep replacements small, set `expectedMatches`, and put runtime
@@ -28,70 +30,21 @@
  * resolves the real module.
  */
 
-/** How a patch changes each match. */
-export type PatchOperation = "insertBefore" | "replace" | "wrap";
+import type { BundlePatch, BundlePatchRegex } from "@sandustry-modding/types/configs";
 
-/** Regex match — use only when exact `find` is not stable enough. */
-export interface PatchRegex {
-  /** Regex pattern string (not a `RegExp` literal). */
-  pattern: string;
-  /** Optional flags (for example `"g"`). */
-  flags?: string;
-}
-
-/** Shared fields for every patch. */
-interface PatchBase {
-  /** Unique patch id. */
-  id: string;
-  /** Target file under the game bundle, e.g. `js/bundle.js`. */
-  file: string;
-  /** Fail mod load if match count differs. */
-  expectedMatches: number;
-  /** All patches in the group must succeed together. */
-  atomicGroup?: string;
-}
-
-/** Exact string match — preferred over regex. */
-export interface PatchFind extends PatchBase {
-  /** Exact substring to match. */
-  find: string;
-  regex?: never;
-}
-
-/** Regex-based match. Prefer `PatchFind` when the text is stable. */
-export interface PatchRegexMatch extends PatchBase {
-  regex: PatchRegex;
-  find?: never;
-}
-
-/** Either exact or regex match fields on a patch. */
-export type PatchMatch = PatchFind | PatchRegexMatch;
-
-/** Insert `code` before each match. */
-export type InsertBeforePatch = PatchMatch & {
-  operation: "insertBefore";
-  /** Text inserted before each match. */
-  code: string;
-};
-
-/** Replace each match with `code`. */
-export type ReplacePatch = PatchMatch & {
-  operation: "replace";
-  /** Replacement text for each match. */
-  code: string;
-};
-
-/** Wrap each match with `before` + match + `after`. */
-export type WrapPatch = PatchMatch & {
-  operation: "wrap";
-  /** Text inserted before each match. */
-  before: string;
-  /** Text inserted after each match. */
-  after: string;
-};
+export type {
+  BundlePatch,
+  BundlePatchRegex,
+  BundlePatchesFile,
+  PatchOperation,
+  PatchTargetFile,
+} from "@sandustry-modding/types/configs";
 
 /** One entry in the `patches` / `debugPatches` list. */
-export type Patch = InsertBeforePatch | ReplacePatch | WrapPatch;
+export type Patch = BundlePatch;
+
+/** @deprecated Use {@link BundlePatchRegex}. */
+export type PatchRegex = BundlePatchRegex;
 
 /**
  * Type-safe patch list builder.
@@ -101,7 +54,7 @@ export type Patch = InsertBeforePatch | ReplacePatch | WrapPatch;
  * export const patches = definePatches([ ... ]);
  * ```
  */
-export function definePatches<const T extends readonly Patch[]>(patches: T): T {
+export function definePatches<const T extends readonly BundlePatch[]>(patches: T): T {
   return patches;
 }
 

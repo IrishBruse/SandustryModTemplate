@@ -1,6 +1,6 @@
 # `api.elements`
 
-Official: [sandkit.html - api.elements](https://sandustry.com/sandkit.html). Types: `@sandustry-modding/types` `sandkit/api/elements.d.ts`, `shared/api/elements.d.ts`.
+Official: [sandkit.html - api.elements](https://sandustry.com/sandkit.html). Types: `@sandustry-modding/types` `src/sandkit/api/elements.d.ts`, `src/shared/api/elements.d.ts`.
 
 Main entry: registration and deferred cell mutations. Worker entry: immediate mutations plus extra move/swap helpers (see **Worker-only** below).
 

@@ -55,7 +55,9 @@ type RecipeBag = {
   kineticPresses?: Array<RecipeRow & { minimumDownwardVelocity?: number }>;
 };
 
-const MACHINE_BAGS: { bag: keyof RecipeBag; machineId: string; label: string }[] = [
+type MachineBagKey = Exclude<keyof RecipeBag, "contacts">;
+
+const MACHINE_BAGS: { bag: MachineBagKey; machineId: string; label: string }[] = [
   { bag: "condensers", machineId: "condenser", label: "Condenser" },
   { bag: "steamDryers", machineId: "steamDryer", label: "Steam Dryer" },
   { bag: "synthesizers", machineId: "synthesizer", label: "Synthesizer" },
@@ -66,7 +68,7 @@ const MACHINE_BAGS: { bag: keyof RecipeBag; machineId: string; label: string }[]
   { bag: "kineticPresses", machineId: "kineticPress", label: "Kinetic Press" },
 ];
 
-const MACHINE_ID_BY_BAG: Partial<Record<keyof RecipeBag, string>> = Object.fromEntries(
+const MACHINE_ID_BY_BAG: Partial<Record<MachineBagKey, string>> = Object.fromEntries(
   MACHINE_BAGS.map(({ bag, machineId }) => [bag, machineId]),
 );
 
@@ -109,7 +111,7 @@ function structureIdKey(ref: string | number): string {
   try {
     const d = sandkit.api.structures.getDefinitionByType(ref);
     const key = d?.nameKey;
-    const match = typeof key === "string" && /^structures\|([^|]+)\|/.exec(key);
+    const match = typeof key === "string" ? /^structures\|([^|]+)\|/.exec(key) : null;
     if (match?.[1]) return match[1];
   } catch {
     /* ignore */
@@ -288,12 +290,12 @@ export function buildChainIndex(): ChainIndex {
             const machineMeta = STRUCTURE_MACHINE[idKey] ?? STRUCTURE_MACHINE[String(ref)];
 
             if (machineMeta) {
-              const bag = machineMeta.bag as keyof RecipeBag;
+              const bag = machineMeta.bag as MachineBagKey;
               const machineId = MACHINE_ID_BY_BAG[bag] ?? machineMeta.bag;
               if (steps.has(`machine:${machineId}:${type}`)) continue;
               const rows = recipes[bag];
               const match = Array.isArray(rows)
-                ? rows.find((row) => row && row.input === type)
+                ? rows.find((row) => row && typeof row.input === "number" && row.input === type)
                 : undefined;
               if (match) {
                 addMachineStep(steps, producedBy, consumedBy, machineId, machineMeta.label, match);

@@ -1,6 +1,6 @@
 # Enums
 
-Live on `sandkit.enums`. Types: `node_modules/@sandustry-modding/types/sandkit/enums/index.d.ts`. Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
+Live on `sandkit.enums`. Types: `node_modules/@sandustry-modding/types/src/sandkit/enums/index.d.ts`. Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
 
 ## TechStatus
 
@@ -26,7 +26,7 @@ String examples: `FluxEmanator="fluxEmanator"`, plus mod string ids (`aurixiteCr
 
 Use `String(Tech.Conveyors)` (`"2"`) or a registered string id (`"fluxEmanator"`). Enum **key names** (`"Conveyors"`, `"Shaker"`) return **`null`** from `getDefinitionById`. Lowercase slugs (`"conveyor"`) also return null.
 
-Live `sandkit.enums.Tech` has **221** keys on 0.5.5 (numeric core + string mod ids). Types package core enum is in `node_modules/@sandustry-modding/types/sandkit/enums/index.d.ts` lines 289-401 (~110 built-in entries).
+Live `sandkit.enums.Tech` has **221** keys on 0.5.5 (numeric core + string mod ids). Types package core enum is in `node_modules/@sandustry-modding/types/src/sandkit/enums/index.d.ts` lines 289-401 (~110 built-in entries).
 
 ## Related enums
 

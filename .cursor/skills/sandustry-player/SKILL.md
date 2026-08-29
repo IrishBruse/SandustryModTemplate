@@ -7,7 +7,7 @@ description: "Use when working with vanilla player, inventory, items, grabber, c
 
 Live **player map** of Early Access **0.5.5**. Screen clicks and HUD hotbar rows stay in **sandustry-ui**. Structure recipes stay in **sandustry-factory**. Host IPC stays in **sandustry-internals**.
 
-Public mod calls: official HTML `.tmp/Sandkit - Sandustry Modding API.html` (`api.player`, `api.input`, `api.items`, `api.tools.grabber`, `api.camera`, `api.action`, `api.cooldown`, `api.building`). Types: `node_modules/@sandustry-modding/types/sandkit/api/`. Access: CDP `:9222` (`sandustry-mcp`).
+Public mod calls: official HTML `.tmp/Sandkit - Sandustry Modding API.html` (`api.player`, `api.input`, `api.items`, `api.tools.grabber`, `api.camera`, `api.action`, `api.cooldown`, `api.building`). Types: `node_modules/@sandustry-modding/types/src/sandkit/api/`. Access: CDP `:9222` (`sandustry-mcp`).
 
 ## Probe
 

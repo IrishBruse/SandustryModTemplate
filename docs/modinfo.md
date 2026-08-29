@@ -4,7 +4,7 @@ Manifest for one mod. Export `const modinfo = defineModInfo({ ... })` from `@mod
 
 The build writes `modinfo.json` into `dist/<modinfo.id>/` (and `build/<modinfo.id>/` on `npm run build`). The game folder name is **`id`**, not the repo folder and not **`name`**.
 
-Shapes: [`modkit/modinfo.ts`](../modkit/modinfo.ts). Settings UI: [configSchema](config-schema.md). Bundle rewrites: [Patches](patches.md). Layout: [Folder layout](layout.md).
+Shapes: `@sandustry-modding/types/configs` (`ModInfo`), via [`modkit/modinfo.ts`](../modkit/modinfo.ts). Settings UI: [configSchema](config-schema.md). Bundle rewrites: [Patches](patches.md). Layout: [Folder layout](layout.md).
 
 Canonical starter: [`src/template/modinfo.ts`](../src/template/modinfo.ts). Settings showcase: [`examples/api/settings/`](../examples/api/settings/).
 
@@ -29,14 +29,14 @@ The build fails if `id` or `name` is missing or blank.
 | `description`      | `string`                 | Loader / Workshop fallback when `workshop/workshop.md` is missing.                                                                                                                        |
 | `author`           | `string`                 | Author label.                                                                                                                                                                             |
 | `dependencies`     | `string[]`               | Other mods by **`id`**. Empty list is fine.                                                                                                                                               |
-| `loadOrder`        | `number`                 | Load order hint. Lower sorts earlier in host analysis. Entry eval may still follow save/session order — Dev Tools installs its API wrap in an early boot patch.                                                                                          |
-| `gameVersion`      | `GameVersionRange`       | Optional `minimum` and `maximum` strings (0.5.5+). Set `minimum: "0.5.5"` when the mod needs new hooks or APIs. Use Steam Workshop **Link to Game Version** to cap patch mods at `0.5.2`. |
+| `loadOrder`        | `number`                 | Load order hint. Lower sorts earlier in host analysis. Entry eval may still follow save/session order — Dev Tools installs its API wrap in an early boot patch.                           |
+| `gameVersion`      | `ModGameVersion`         | Optional `minimum` and `maximum` strings (0.5.5+). Set `minimum: "0.5.5"` when the mod needs new hooks or APIs. Use Steam Workshop **Link to Game Version** to cap patch mods at `0.5.2`. |
 | `configSchema`     | object                   | Options → Mods fields. Max 64. See [configSchema](config-schema.md).                                                                                                                      |
 | `configOverrides`  | `Record<string, string>` | Paths under `config/`.                                                                                                                                                                    |
 | `shaderOverrides`  | `ShaderOverrides`        | Maps shader IDs to relative `.glsl` paths (for example `sky` → `shaders/sky.glsl`).                                                                                                       |
 | `textureOverrides` | sheets or path strings   | Paths under `assets/`. A sheet needs `path`, `frameWidth`, `frames`, `intervalMs`.                                                                                                        |
-| `provides`         | `AssetProvider[]`        | Asset provider bundles. Each entry has `kind`, `id`, and `textureOverrides` (same shape as top-level `textureOverrides`).                                                                 |
-| `map`              | `MapConfig`              | Custom map under `map/` (`blueprints`, `width`, `height`, `spawn`, optional unstuck / deployment / bounds / lighting / parallax / colour maps).                                           |
+| `provides`         | `ModProvide[]`           | Asset provider bundles. Each entry has `kind`, `id`, and `textureOverrides` (same shape as top-level `textureOverrides`).                                                                 |
+| `map`              | `ModMapDefinition`       | Custom map under `map/` (`blueprints`, `width`, `height`, `spawn`, optional unstuck / deployment / bounds / lighting / parallax / colour maps).                                           |
 
 ## Extra exports (not inside `modinfo`)
 

@@ -7,7 +7,7 @@ description: "Use when working with vanilla energy networks, signals, collector,
 
 Live **power and signal map** for Early Access **0.5.5**. Mod calls use `sandkit.api.*`. Host-only runtime uses `sandkit.engine.api` - see **sandustry-internals**.
 
-Official API: `.tmp/Sandkit - Sandustry Modding API.html` (`api.energy`, `api.signals`, `api.resources`, `api.collector`). Types: `node_modules/@sandustry-modding/types/sandkit/api/energy.d.ts`, `signals.d.ts`. Heat transfer is **sandustry-world**; only touch it when energy mechanics tie in.
+Official API: `.tmp/Sandkit - Sandustry Modding API.html` (`api.energy`, `api.signals`, `api.resources`, `api.collector`). Types: `node_modules/@sandustry-modding/types/src/sandkit/api/energy.d.ts`, `node_modules/@sandustry-modding/types/src/sandkit/api/signals.d.ts`. Heat transfer is **sandustry-world**; only touch it when energy mechanics tie in.
 
 ## Probe
 

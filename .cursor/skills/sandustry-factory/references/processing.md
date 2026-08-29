@@ -13,7 +13,7 @@ Official HTML documents machine recipes as `api.structures.recipes.register(id, 
 | `kineticPress`                                                   | Press velocity threshold + outputs  |
 | `condenser`, `steamDryer`, `synthesizer`, `snowmaker`, `smelter` | Weighted refinery outputs           |
 
-Recipe shapes: `node_modules/@sandustry-modding/types/sandkit/api/structures.d.ts` (`recipes.register` overloads). Weighted outputs use `{ elementType, chance }`.
+Recipe shapes: `node_modules/@sandustry-modding/types/src/sandkit/api/structures.d.ts` (`recipes.register` overloads). Weighted outputs use `{ elementType, chance }`.
 
 Live extra (not in official HTML): top-level `sandkit.api.processing` with `registerGrower`, `registerShaker`, `registerKineticPress`. Prefer `structures.recipes.register`.
 

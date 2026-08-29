@@ -106,4 +106,4 @@ Call `isEnabled` in `main.ts` when the mod must respect **Mod enabled**. The bui
 
 ## Types
 
-TypeScript shapes live in [`modkit/modinfo.ts`](../modkit/modinfo.ts) (`ConfigSchema`, `ConfigSchemaField`, …). Keep them aligned with the game validator — do not add field types the game rejects.
+TypeScript shapes come from `@sandustry-modding/types/configs` (re-exported by [`modkit/modinfo.ts`](../modkit/modinfo.ts)). Keep them aligned with the game validator — do not add field types the game rejects.

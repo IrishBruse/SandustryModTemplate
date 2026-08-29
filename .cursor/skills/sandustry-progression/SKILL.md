@@ -7,7 +7,7 @@ description: "Use when working with vanilla tech, upgrades, discoveries, conserv
 
 Early Access **0.5.5** ids and store fields for tech, upgrades, discoveries, viability, conservatory, tutorial, lexicon, and objectives. Screen clicks stay in **sandustry-ui**. Factory tier reads and process ids: **sandustry-factory** (`api.factory` + `engine.api.factory`).
 
-Official API: `.tmp/Sandkit - Sandustry Modding API.html`. Types: `node_modules/@sandustry-modding/types/sandkit/api/`.
+Official API: `.tmp/Sandkit - Sandustry Modding API.html`. Types: `node_modules/@sandustry-modding/types/src/sandkit/api/`.
 
 ## Probe
 

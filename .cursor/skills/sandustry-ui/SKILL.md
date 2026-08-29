@@ -7,7 +7,7 @@ description: "Use when working with vanilla HUD, pause, Options, management over
 
 Live **screen map** of the Electron renderer (Early Access **0.5.5**, English). Kit _components_ are not this skill: read [`docs/ui/overview.md`](../../../docs/ui/overview.md).
 
-Official API (overlays, `api.ui`): `.tmp/Sandkit - Sandustry Modding API.html` or https://sandustry.com/sandkit.html. Types (secondary): `node_modules/@sandustry-modding/types/sandkit/api/ui.d.ts`.
+Official API (overlays, `api.ui`): `.tmp/Sandkit - Sandustry Modding API.html` or https://sandustry.com/sandkit.html. Types (secondary): `node_modules/@sandustry-modding/types/src/sandkit/api/ui.d.ts`.
 
 Capture: **sandustry-mcp** (attach + click rules). Labels drift, re-snapshot before click. Uids die after each DOM change.
 

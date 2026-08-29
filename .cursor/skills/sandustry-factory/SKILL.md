@@ -7,7 +7,7 @@ description: "Use when working with vanilla structures, pipes, recipes, factory 
 
 Live **simulation map** for structures, machines, pipes, conveyors, factory tiers, and build authorization. Early Access **0.5.5**.
 
-Public mod calls: official HTML `.tmp/Sandkit - Sandustry Modding API.html` (structures, pipes, factory, blueprints, structureBehaviors, authorization, building, processing/recipes). Types: `node_modules/@sandustry-modding/types/sandkit/api/`. Screen structure lists: **sandustry-ui** `references/building.md`. Placement session flags: **sandustry-player** `references/building.md`.
+Public mod calls: official HTML `.tmp/Sandkit - Sandustry Modding API.html` (structures, pipes, factory, blueprints, structureBehaviors, authorization, building, processing/recipes). Types: `node_modules/@sandustry-modding/types/src/sandkit/api/`. Screen structure lists: **sandustry-ui** `references/building.md`. Placement session flags: **sandustry-player** `references/building.md`.
 
 ## Probe
 

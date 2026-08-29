@@ -5,7 +5,7 @@ description: "Use when working with vanilla grid, elements, terrains, maps, fog,
 
 # Sandustry world
 
-Live **world map** of Early Access **0.5.5**. Public API: [sandkit.html](https://sandustry.com/sandkit.html) (source of truth for signatures). Types: `@sandustry-modding/types` 0.3.x. Screen clicks stay in **sandustry-ui**. Host IPC and `__debug` stay in **sandustry-internals**.
+Live **world map** of Early Access **0.5.5**. Public API: [sandkit.html](https://sandustry.com/sandkit.html) (source of truth for signatures). Types: `@sandustry-modding/types` 0.4.x. Screen clicks stay in **sandustry-ui**. Host IPC and `__debug` stay in **sandustry-internals**.
 
 ## Probe
 

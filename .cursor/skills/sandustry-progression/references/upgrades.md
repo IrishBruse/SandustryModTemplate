@@ -1,6 +1,6 @@
 # Upgrades
 
-Public API: `sandkit.api.upgrades`. Types: `node_modules/@sandustry-modding/types/sandkit/api/upgrades.d.ts`. UI map: **sandustry-ui** `../../sandustry-ui/references/upgrades.md`.
+Public API: `sandkit.api.upgrades`. Types: `node_modules/@sandustry-modding/types/src/sandkit/api/upgrades.d.ts`. UI map: **sandustry-ui** `../../sandustry-ui/references/upgrades.md`.
 
 ## API
 

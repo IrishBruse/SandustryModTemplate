@@ -69,7 +69,7 @@ Mods in `src/`:
 | Folder                         | What it shows                                                                 |
 | ------------------------------ | ----------------------------------------------------------------------------- |
 | [`template`](../src/template/) | Starter mod. Toast on load. Change `id` / `name` / `author` in `modinfo.ts`   |
-| [`dev-tools`](dev-tools/)    | Dev companion. Debug installs it; `npm run build` stages it. Do not copy this |
+| [`dev-tools`](dev-tools/)      | Dev companion. Debug installs it; `npm run build` stages it. Do not copy this |
 
 ## Files in a mod folder
 
@@ -111,6 +111,6 @@ Import `@modkit/*` and files in your own folder only.
 | `@modkit/ui`                                  | Shared React UI components                                                               |
 | `sandkit` / `SandkitApi` / `WorkerSandkitApi` | Ambient globals. Do not import with a `types/` prefix                                    |
 
-Sandkit API types come from [`@sandustry-modding/types`](https://www.npmjs.com/package/@sandustry-modding/types). Browse the reference at [SandustryTypes](https://sandustry-modding.github.io/SandustryTypes/#/). Ambient `sandkit` loads through [`tsconfig.mod.json`](../tsconfig.mod.json) (`compilerOptions.types`). `WorkerSandkitApi` is ambient from the same package. CSS imports (`*.css` as a string) load through [`modkit/css.d.ts`](../modkit/css.d.ts) (`files` in `tsconfig.mod.json`).
+Sandkit API types come from [`@sandustry-modding/types`](https://www.npmjs.com/package/@sandustry-modding/types). Browse the reference at [SandustryTypes](https://sandustry-modding.github.io/SandustryTypes/#/). Ambient `sandkit` loads through [`modkit/sandkit.d.ts`](../modkit/sandkit.d.ts) (`/// <reference types="@sandustry-modding/types" />`, listed in `files` in [`tsconfig.mod.json`](../tsconfig.mod.json)). Do not list this package under `compilerOptions.types`. `WorkerSandkitApi` is ambient from the same package. Manifest and patch schemas: `@sandustry-modding/types/configs`. CSS imports (`*.css` as a string) load through [`modkit/css.d.ts`](../modkit/css.d.ts).
 
 Commands and build output: [Builds](builds.md).

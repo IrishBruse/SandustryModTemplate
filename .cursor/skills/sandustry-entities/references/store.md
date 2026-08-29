@@ -1,6 +1,6 @@
 # Store
 
-`sandkit.state.store` holds live runtime arrays. Types: `node_modules/@sandustry-modding/types/sandkit/engine/state.d.ts` (thin stubs).
+`sandkit.state.store` holds live runtime arrays. Types: `node_modules/@sandustry-modding/types/src/sandkit/engine/state.d.ts` (thin stubs).
 
 ## Entity-related keys
 

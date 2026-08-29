@@ -30,14 +30,27 @@ test("wrapApi does not log intercepted calls", () => {
     const host = {
       api: {
         ui: {
-          inject: () => () => {},
+          inject:
+            (..._args: unknown[]) =>
+            () => {},
           toast: (message: unknown) => message,
         },
-        events: { on: () => () => {} },
-        hooks: { intercept: () => () => {}, modify: () => () => {} },
+        events: {
+          on:
+            (..._args: unknown[]) =>
+            () => {},
+        },
+        hooks: {
+          intercept:
+            (..._args: unknown[]) =>
+            () => {},
+          modify:
+            (..._args: unknown[]) =>
+            () => {},
+        },
       },
     };
-    const wrapped = wrapSandkit(host, "mod-log", 2);
+    const wrapped = wrapSandkit(host, "mod-log");
     wrapped.api.ui.inject("mod-log", function Overlay() {
       return null;
     });

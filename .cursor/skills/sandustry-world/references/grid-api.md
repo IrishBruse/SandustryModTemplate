@@ -2,7 +2,7 @@
 
 Main thread only. Cell iteration helpers, full grid surface in `world-api.md`.
 
-Official: [sandkit.html - api.grid](https://sandustry.com/sandkit.html). Types: `@sandustry-modding/types` `sandkit/api/grid.d.ts`.
+Official: [sandkit.html - api.grid](https://sandustry.com/sandkit.html). Types: `@sandustry-modding/types` `src/sandkit/api/grid.d.ts`.
 
 ## Iteration methods
 

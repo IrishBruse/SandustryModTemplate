@@ -1,6 +1,6 @@
 # State
 
-`sandkit.state` keys: `environment`, `sandkit`, `session`, `shared`, `store`. Stubs in `node_modules/@sandustry-modding/types/sandkit/engine/state.d.ts` are thinner than live.
+`sandkit.state` keys: `environment`, `sandkit`, `session`, `shared`, `store`. Stubs in `node_modules/@sandustry-modding/types/src/sandkit/engine/state.d.ts` are thinner than live.
 
 ## `session` (live)
 

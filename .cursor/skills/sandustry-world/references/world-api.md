@@ -1,6 +1,6 @@
 # `api.grid`, `api.world`, and `api.pickups`
 
-Official signatures: [sandkit.html - api.grid](https://sandustry.com/sandkit.html), [api.pickups](https://sandustry.com/sandkit.html). Types: `@sandustry-modding/types` `sandkit/api/grid.d.ts`, `pickups.d.ts`.
+Official signatures: [sandkit.html - api.grid](https://sandustry.com/sandkit.html), [api.pickups](https://sandustry.com/sandkit.html). Types: `@sandustry-modding/types` `src/sandkit/api/grid.d.ts`, `src/sandkit/api/pickups.d.ts`.
 
 **Main** entry grid mutations are deferred, reads see the old grid until they apply. **Worker** entry mutations are immediate. For state-dependent writes, use `api.grid.mutate`.
 
