@@ -32,7 +32,7 @@ function syncBootPatches(): void {
 function main() {
   if (!isEnabled(api)) return;
 
-  // Before other mods eval: wrap their sandkit so intercepted API calls log.
+  // Before other mods eval: wrap their sandkit for hot-reload dispose tracking.
   installFirstLoadApiWrap(modinfo.id);
 
   const { enums, react } = sandkit;

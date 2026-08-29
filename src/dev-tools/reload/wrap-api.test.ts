@@ -1,14 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { disposeLists, runDisposers } from "./dispose.ts";
-import {
-  copyOwn,
-  summarizeArg,
-  trackDisposeReturn,
-  wrapApi,
-  wrapRegionsMount,
-  wrapSandkit,
-} from "./wrap-api.ts";
+import { copyOwn, trackDisposeReturn, wrapApi, wrapRegionsMount, wrapSandkit } from "./wrap-api.ts";
 
 test("copyOwn does not proxy the host and leaves it unchanged", () => {
   const host = { api: { n: 1 } };
@@ -27,7 +20,7 @@ test("trackDisposeReturn records function returns for that mod", () => {
   runDisposers("mod-a");
 });
 
-test("wrapApi logs intercepted calls with mod id and path", () => {
+test("wrapApi does not log intercepted calls", () => {
   const lines: unknown[][] = [];
   const original = console.log;
   console.log = (...args: unknown[]) => {
@@ -52,28 +45,11 @@ test("wrapApi logs intercepted calls with mod id and path", () => {
     wrapped.api.hooks.intercept("x", () => {});
     wrapped.api.ui.toast("hi");
 
-    assert.deepEqual(lines[0], ["mod-log api.ui.inject", "mod-log", "[Function Overlay]"]);
-    assert.deepEqual(lines[1], ["mod-log api.events.on", "tick", "[Function]"]);
-    assert.deepEqual(lines[2], ["mod-log api.hooks.intercept", "x", "[Function]"]);
-    assert.deepEqual(lines[3], ["mod-log api.ui.toast", "hi"]);
+    assert.equal(lines.length, 0);
   } finally {
     console.log = original;
     runDisposers("mod-log");
   }
-});
-
-test("summarizeArg collapses functions and caps object keys", () => {
-  const named = function Named() {};
-  assert.equal(summarizeArg(named), "[Function Named]");
-  assert.equal(
-    summarizeArg(() => {}),
-    "[Function]",
-  );
-  const big: Record<string, number> = {};
-  for (let i = 0; i < 20; i++) big[`k${i}`] = i;
-  const summarized = summarizeArg(big) as Record<string, unknown>;
-  assert.equal(Object.keys(summarized).length, 13);
-  assert.equal(summarized["..."], "+8");
 });
 
 test("wrapApi tracks inject and on, not toast; generation annotates toast", () => {

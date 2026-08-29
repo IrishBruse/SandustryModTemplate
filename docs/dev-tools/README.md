@@ -103,7 +103,7 @@ After boot, `globalThis.debugF3.registerSection` is the same API for DevTools ex
 
 When **Watch local mods** is on, the companion polls other **local** mods' `main.js` about twice per second. It uses `session.externalMods.orderedMods` with `discoveredVia: local`. It does not poll Workshop ids from the save order list. After `npm run dev` writes a new bundle, it re-evals that renderer entry with **that mod's** `sandkit` (stashed at first load as `globalThis.__sandkitByMod[id]`). It does not wrap the companion `sandkit`.
 
-On first load, an early boot patch installs `__devToolsWrapSandkit` (log-only) before any mod entry runs — session order does not always put this companion first despite `loadOrder`. `stash-sandkit-by-mod` stashes the raw host, then passes a wrapped copy into `c(sandkit)`. Companion `main.js` upgrades the hook to the full hot-reload wrap (dispose tracking). Hot eval wraps again the same way.
+On first load, companion `main.js` installs `__devToolsWrapSandkit` for dispose tracking. `stash-sandkit-by-mod` stashes the raw host, then passes a wrapped copy into `c(sandkit)`. Hot eval wraps again the same way.
 
 Each reload runs tracked disposers first:
 
@@ -114,10 +114,6 @@ Each reload runs tracked disposers first:
 - `api.events.on`, `api.settings.onChange`, `api.hooks.intercept` / `modify`
 
 Hot eval wraps `api.ui.toast` so messages show the mod id and reload generation, for example `Template loaded (author.template v4)`. The console logs `reloaded <id> vN`.
-
-Those same hot-reload paths also log when called:
-
-`[dev-tools] <modId> api.ui.inject …`
 
 Content `register` calls (`elements`, `structures`, `i18n`, …) are not wrapped — they have no unregister and the game updates the same id on re-register.
 
