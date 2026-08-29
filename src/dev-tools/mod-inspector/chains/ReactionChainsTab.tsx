@@ -144,7 +144,13 @@ function SelectionPanel({ index, selection }: { index: ChainIndex; selection: Se
               width={32}
               height={32}
               className="mb-2"
-              style={{ imageRendering: "pixelated" }}
+              style={{
+                width: 32,
+                height: 32,
+                objectFit: "cover",
+                objectPosition: "top left",
+                imageRendering: "pixelated",
+              }}
             />
           ) : null}
           <p className="text-[10px] uppercase tracking-wider text-slate-400 mb-1">Inputs</p>

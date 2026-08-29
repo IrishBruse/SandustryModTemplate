@@ -18,7 +18,13 @@ function StepGlyph({ step, size = 16 }: { step: ChainStep; size?: number }) {
         width={size}
         height={size}
         className="shrink-0"
-        style={{ imageRendering: "pixelated" }}
+        style={{
+          width: size,
+          height: size,
+          objectFit: "cover",
+          objectPosition: "top left",
+          imageRendering: "pixelated",
+        }}
       />
     );
   }
