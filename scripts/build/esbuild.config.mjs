@@ -27,8 +27,6 @@ import {
   modIsolationPlugin,
   prepareModOutputs,
   publishStagingDir,
-  parseModFilters,
-  DEBUG_MOD_FOLDER,
   PUBLISH_OUT_ROOT,
 } from "../lib/mods.js";
 import { copyWorkshopInstallFiles, removeWorkshopPublishFiles } from "../lib/workshop-files.js";
@@ -50,21 +48,12 @@ const sourcemapFlag = args.includes("--sourcemap");
 const noSourcemapFlag = args.includes("--no-sourcemap");
 
 /** @returns {boolean} */
-function resolveIncludeDebugKit() {
-  if (noDebugFlag) return false;
-  if (debugFlag) return true;
-  if (parseModFilters(args).includes(DEBUG_MOD_FOLDER)) return true;
-  return watch || game;
-}
-
-/** @returns {boolean} */
 function resolveModDebug() {
   if (noDebugFlag) return false;
   if (debugFlag) return true;
   return watch || game;
 }
 
-const includeDebugKit = resolveIncludeDebugKit();
 const modDebug = resolveModDebug();
 /** Release `npm run build` — write to `build/<modinfo.id>/` only; no OS mods folder or `dist/` links. */
 const releaseBuild = !watch && !modDebug;
@@ -82,12 +71,7 @@ function resolveSourcemap() {
 
 const sourcemap = resolveSourcemap();
 
-// Release staging still builds discovered `dev-tools` under `build/`.
-// OS installs only get it when the debug kit is on (`npm run dev`).
-const mods = await loadMods(args, {
-  includeDebugKit,
-  stageDebugCompanion: releaseBuild,
-});
+const mods = await loadMods(args);
 if (releaseBuild) {
   for (const mod of mods) {
     mod.outDir = publishStagingDir(mod.gameId);
@@ -101,7 +85,7 @@ if (releaseBuild) {
     }
   }
 } else {
-  prepareModOutputs(ROOT, mods, { includeDebugKit });
+  prepareModOutputs(ROOT, mods);
 }
 
 console.log(

@@ -56,7 +56,7 @@ export async function buildModsForIntegration(argv = process.argv.slice(2)) {
   const loadArgv = esbuildArgs.filter((arg) => arg !== "--debug");
   let loaded;
   try {
-    loaded = await loadMods(loadArgv, { includeDebugKit: false });
+    loaded = await loadMods(loadArgv);
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));
     process.exit(1);

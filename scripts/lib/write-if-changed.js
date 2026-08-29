@@ -1,6 +1,6 @@
 /**
  * Skip disk writes when output text is unchanged.
- * The debug companion polls mod folders for content changes on restart files.
+ * Avoids bumping mtimes when a watch polls mod folders for content changes.
  */
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 

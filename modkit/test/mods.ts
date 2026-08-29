@@ -156,19 +156,6 @@ export function companionSettings(modIds: string[]): Record<string, unknown> {
     }
     externalModSettings[id] = { enabled: true };
   }
-  if (modIds.includes("dev-tools")) {
-    externalModSettings["dev-tools"] = {
-      enabled: true,
-      autoLoad: false,
-      startSave: "__last__",
-      disableAutosave: true,
-      watchLocalMods: true,
-      fastBoot: true,
-      openDevTools: false,
-      f12DevTools: false,
-      f3Debug: false,
-    };
-  }
   return {
     settingsVersion: 12,
     windowMode: "windowed",

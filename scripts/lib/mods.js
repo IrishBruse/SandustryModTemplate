@@ -32,9 +32,6 @@ export function resolveModRoots(argv) {
   return DEFAULT_MOD_ROOTS;
 }
 
-/** Companion mod folder. Debug builds install it to the OS mods folder; release still stages it under `build/`. */
-export const DEBUG_MOD_FOLDER = "dev-tools";
-
 /** Workshop staging root (`npm run build` / `npm run publish`). */
 export const PUBLISH_OUT_ROOT = join(ROOT, "build");
 
@@ -258,12 +255,9 @@ export function parseModFilter(argv) {
 
 /**
  * @param {string[]} [argv]
- * @param {{ includeDebugKit?: boolean; stageDebugCompanion?: boolean }} [options]
  * @returns {Promise<LoadedMod[]>}
  */
-export async function loadMods(argv = process.argv.slice(2), options = {}) {
-  const includeDebugKit = options.includeDebugKit === true;
-  const stageDebugCompanion = options.stageDebugCompanion === true;
+export async function loadMods(argv = process.argv.slice(2)) {
   const modRoots = resolveModRoots(argv);
   const discovered = discoverMods({ roots: modRoots });
   const allDiscovered = modRoots.length === MOD_ROOTS.length ? discovered : discoverMods();
@@ -292,17 +286,6 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
         `No mods matched --mod. Found: ${allDiscovered.map((m) => m.folder).join(", ")}`,
       );
     }
-  }
-
-  if (includeDebugKit) {
-    const debugMod = allDiscovered.find((mod) => mod.folder === DEBUG_MOD_FOLDER);
-    if (debugMod && !selected.some((mod) => mod.folder === DEBUG_MOD_FOLDER)) {
-      selected = [...selected, debugMod];
-    }
-  } else if (!stageDebugCompanion && !filters.includes(DEBUG_MOD_FOLDER)) {
-    // OS install without debug kit (e.g. `npm run dev:release`): omit companion
-    // unless `--mod dev-tools`. Release staging keeps it when discovered under src/.
-    selected = selected.filter((mod) => mod.folder !== DEBUG_MOD_FOLDER);
   }
 
   /** @type {LoadedMod[]} */
@@ -361,15 +344,9 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
 /**
  * Link `dist/` to the OS mods folder and create each game mod folder.
  * Stale game folders are removed only when a src folder is gone, not when `--mod` filters the build.
- * Non-debug installs omit `src/dev-tools` from keepFolders so leftover companion folders are removed.
  * @param {string} repoRoot
  * @param {LoadedMod[]} mods
- * @param {{ includeDebugKit?: boolean }} [options]
  */
-export function prepareModOutputs(repoRoot, mods, options = {}) {
-  const includeDebugKit = options.includeDebugKit === true;
-  const keepFolders = discoverModFolders().filter(
-    (folder) => folder !== DEBUG_MOD_FOLDER || includeDebugKit,
-  );
-  syncModGameFolders(repoRoot, mods, keepFolders);
+export function prepareModOutputs(repoRoot, mods) {
+  syncModGameFolders(repoRoot, mods, discoverModFolders());
 }

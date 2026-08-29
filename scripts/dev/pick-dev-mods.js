@@ -5,7 +5,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { styleText } from "../lib/cli-style.js";
-import { DEBUG_MOD_FOLDER, discoverMods, parseModFilters, resolveModRoots } from "../lib/mods.js";
+import { discoverMods, parseModFilters, resolveModRoots } from "../lib/mods.js";
 import { isCliTty, tuiModCombobox } from "../lib/tui.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
@@ -77,7 +77,7 @@ export async function pickDevModArgs(argv, options = {}) {
         .sort((a, b) => a.folder.localeCompare(b.folder))
         .map((mod) => ({
           folder: mod.folder,
-          hint: mod.folder === DEBUG_MOD_FOLDER ? `${mod.repoPath} · companion` : mod.repoPath,
+          hint: mod.repoPath,
         }));
 
     /** @type {{ label: string, mods: { folder: string, hint?: string }[] }[]} */

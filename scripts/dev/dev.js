@@ -5,7 +5,7 @@
  *  Windows: %APPDATA%/sandustry/mods/<modinfo.id>).
  * On stop (Ctrl+C, terminal close, or child exit), remove those owned mods.
  * Usage: npm run dev [-- --mod template]
- *        npm run dev:release  — watch without debug / sourcemaps / dev-tools
+ *        npm run dev:release  — watch without debug / sourcemaps
  *        npm run dev:pick  — TTY mod picker (last choice pre-selected)
  */
 import { spawn } from "node:child_process";
