@@ -1,4 +1,4 @@
-import { modinfo } from "./modinfo";
+import modinfo from "./modinfo.json";
 import { Overlay } from "./ui/Overlay";
 import tailwindCss from "@modkit/ui/tailwind.css";
 

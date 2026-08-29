@@ -1,5 +1,5 @@
 /**
- * Write patches.json from a mod's `modinfo.ts` (`patches` + optional `debugPatches`).
+ * Write patches.json from a mod folder (`patches.json`, `patches.ts`, or `modinfo.ts` exports).
  */
 import { mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -15,6 +15,7 @@ const JS_PATCH_PATH = /^js\/[^/]+\.js$/;
 const OPERATIONS = new Set(["insertBefore", "replace", "wrap"]);
 
 import { modkitAliasPlugin } from "./modkit-alias.js";
+import { loadModManifestExports } from "./mod-manifest.js";
 import { writeJsonIfChanged } from "./write-if-changed.js";
 /**
  * Bundle a TypeScript entry and import it as Node ESM.
@@ -97,17 +98,23 @@ function validatePatches(patches) {
  * @param {string} outDir
  * @param {{
  *   modDebug?: boolean;
- *   modTs: string;
+ *   modDir: string;
  *   cachePrefix: string;
  *   label?: string;
- *   loaded?: Awaited<ReturnType<typeof bundleAndImport>>;
+ *   loaded?: Awaited<ReturnType<typeof loadModManifestExports>>;
  * }} options
  */
 export async function buildPatches(outDir, options) {
-  const { modDebug = false, modTs, cachePrefix, label = "modinfo.ts", loaded } = options;
+  const {
+    modDebug = false,
+    modDir,
+    cachePrefix,
+    label = "modinfo.json",
+    loaded: provided,
+  } = options;
   mkdirSync(outDir, { recursive: true });
 
-  const mod = loaded ?? (await bundleAndImport(modTs, `${cachePrefix}-patches.mjs`));
+  const mod = provided ?? (await loadModManifestExports(modDir, `${cachePrefix}-patches`, label));
   const production = structuredClone(mod.patches ?? []);
   const debugPatches = structuredClone(mod.debugPatches ?? []);
 

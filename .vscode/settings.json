@@ -3,5 +3,15 @@
   "debug.showSubSessionsInToolBar": false,
   "[typescriptreact]": {
     "editor.defaultFormatter": "oxc.oxc-vscode"
-  }
+  },
+  "json.schemas": [
+    {
+      "fileMatch": ["**/modinfo.json"],
+      "url": "https://sandustry-modding.github.io/SandustryTypes/schemas/modinfo.json"
+    },
+    {
+      "fileMatch": ["**/patches.json"],
+      "url": "https://sandustry-modding.github.io/SandustryTypes/schemas/patches.json"
+    }
+  ]
 }

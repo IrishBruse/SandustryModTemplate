@@ -17,6 +17,6 @@
   - [Integration tests](modkit/test.md)
 
 - Reference
-  - [modinfo.ts](modinfo.md)
-    - [configSchema](config-schema.md)
+- [modinfo.json](modinfo.md)
+  - [configSchema](config-schema.md)
   - [patches.md](patches.md)

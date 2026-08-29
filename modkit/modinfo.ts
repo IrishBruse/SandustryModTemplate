@@ -1,23 +1,16 @@
 /**
- * Mod manifest helpers — canonical example: `src/<name>/modinfo.ts`.
+ * Mod manifest helpers — use `modinfo.json` or `modinfo.ts`.
  *
  * Shapes come from `@sandustry-modding/types/configs` (`ModInfo` and related).
- * Use `defineModInfo` for a type-safe manifest. Export the result as `modinfo`.
- * Use `modinfo.id` for the mod id and the OS mods folder name.
+ * Author either:
  *
- * ```ts
- * export const modinfo = defineModInfo({ ... });
- * ```
+ * - `modinfo.json` with `$schema`, imported from `main.ts` as `import modinfo from "./modinfo.json"`
+ * - `modinfo.ts` with `defineModInfo({ ... })` or `modinfoFromJson(manifest)`
  *
- * Read mod settings from `configSchema` with `api.settings.get(key)`.
- * Put feature switches in `configSchema` rather than hard-coded flags.
+ * When both manifest files exist, the build loads **`modinfo.ts` first**.
  *
- * Game-supported field types (validated in `sandustry/workshop-mods.js`):
- * `boolean`, `number`, `choice`. See `docs/config-schema.md`.
- *
- * Extra exports next to `modinfo` (not inside the object):
- * - `patches` — production patches (`definePatches` from `@modkit/patches`); build writes `patches.json`
- * - `debugPatches` — `npm run dev` / `--debug` only; omitted from `npm run build`
+ * Patch lists can live in `patches.json`, `patches.ts`, or be re-exported from
+ * `modinfo.ts`. See `@modkit/patches`.
  */
 
 import type {
@@ -32,6 +25,13 @@ import type {
   ModProvide,
   TextureOverride,
 } from "@sandustry-modding/types/configs";
+
+export {
+  MODINFO_JSON_SCHEMA,
+  PATCHES_JSON_SCHEMA,
+  stripJsonSchema,
+  withModinfoSchema,
+} from "./schemas.ts";
 
 export type {
   ConfigSchemaBoolean,
@@ -92,7 +92,7 @@ export interface WorkshopManifest {
 }
 
 /**
- * Type-safe mod manifest builder — use in `src/<name>/modinfo.ts`.
+ * Type-safe manifest for `modinfo.ts`.
  *
  * ```ts
  * export const modinfo = defineModInfo({ ... });
@@ -100,4 +100,10 @@ export interface WorkshopManifest {
  */
 export function defineModInfo<const T extends ModInfo>(manifest: T): T {
   return manifest;
+}
+
+/** Wrap an imported `modinfo.json` value (strips optional `$schema`). */
+export function modinfoFromJson(raw: ModInfo & { $schema?: string }): ModInfo {
+  const { $schema: _schema, ...manifest } = raw;
+  return defineModInfo(manifest);
 }

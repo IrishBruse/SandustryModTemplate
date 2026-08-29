@@ -10,7 +10,7 @@ import {
 } from "node:fs";
 import { dirname, isAbsolute, join, normalize } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { buildPatches, bundleAndImport } from "../lib/build-patches.js";
+import { buildPatches } from "../lib/build-patches.js";
 import { kv, styleText } from "../lib/cli-style.js";
 import { debugIgnoreSourceSuffixes, markDebugSourcesIgnored } from "../lib/source-map-ignore.js";
 import {
@@ -33,6 +33,8 @@ import {
 } from "../lib/mods.js";
 import { copyWorkshopInstallFiles, removeWorkshopPublishFiles } from "../lib/workshop-files.js";
 import { modkitAliasPlugin } from "../lib/modkit-alias.js";
+import { stripJsonSchema } from "../lib/json-schemas.js";
+import { loadModManifestExports } from "../lib/mod-manifest.js";
 import { writeJsonIfChanged, writeTextIfChanged } from "../lib/write-if-changed.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
@@ -109,12 +111,12 @@ console.log(kv("mod debug", modDebug ? styleText("green", "on") : styleText("dim
 console.log(kv("sourcemap", sourcemap ?? styleText("dim", "off")));
 
 /**
- * Write modinfo.json from that mod's `modinfo.ts`.
+ * Write modinfo.json from the loaded manifest.
  * @param {import("../lib/mods.js").LoadedMod} mod
  * @param {import("../lib/mods.js").LoadedMod["manifest"]} manifest
  */
 function writeModinfo(mod, manifest) {
-  writeJsonIfChanged(join(mod.outDir, "modinfo.json"), structuredClone(manifest));
+  writeJsonIfChanged(join(mod.outDir, "modinfo.json"), stripJsonSchema(structuredClone(manifest)));
 }
 
 /**
@@ -123,7 +125,7 @@ function writeModinfo(mod, manifest) {
  */
 async function syncModFiles(mod) {
   mkdirSync(mod.outDir, { recursive: true });
-  const loaded = await bundleAndImport(mod.modTs, `${mod.folder}-sync.mjs`);
+  const loaded = await loadModManifestExports(mod.dir, `${mod.folder}-sync`, mod.manifestLabel);
   writeModinfo(mod, loaded.modinfo);
   copyWorkshopInstallFiles(mod.dir, mod.outDir);
   removeWorkshopPublishFiles(mod.outDir);
@@ -139,9 +141,9 @@ async function syncModFiles(mod) {
   }
   await buildPatches(mod.outDir, {
     modDebug,
-    modTs: mod.modTs,
+    modDir: mod.dir,
     cachePrefix: mod.folder,
-    label: `${mod.repoPath}/modinfo.ts`,
+    label: mod.manifestLabel,
     loaded,
   });
 }
@@ -517,7 +519,7 @@ function collectWatchDirs(root) {
 
 /**
  * Watch roots outside the module graph. Imported `modkit/` files are already
- * watched. `modinfo.ts` is in `watchFiles`. Static copies live under `mod/`.
+ * watched. The mod manifest path is in `watchFiles`. Static copies live under `mod/`.
  * @param {import("./mods.js").LoadedMod} mod
  * @returns {string[]}
  */
@@ -528,7 +530,7 @@ function extraWatchDirs(mod) {
 /**
  * Main entry only (workers skip this):
  * Wrap the entry body in try/catch so load failures log with `console.error`
- * (modId prefix via inject). Attach watch roots for `modinfo.ts` and static `mod/`.
+ * (modId prefix via inject). Attach watch roots for the manifest and static `mod/`.
  *
  * Uses a block wrap (not top-level `return`) because entries with `import` are
  * ESM and reject top-level return.
@@ -549,7 +551,7 @@ function mainEntryBootstrapPlugin(mod) {
             .filter((part) => part.length > 0)
             .join("\n"),
           loader,
-          watchFiles: [args.path, mod.modTs],
+          watchFiles: [args.path, mod.manifestPath],
           watchDirs: extraWatchDirs(mod),
         };
       });

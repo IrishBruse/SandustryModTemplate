@@ -12,6 +12,7 @@ import { spawn } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { styleText } from "../lib/cli-style.js";
+import { DEFAULT_MOD_ROOTS } from "../lib/mods.js";
 import { removeOwnedGameMods } from "../lib/mod-path.js";
 import { pickDevModArgs } from "./pick-dev-mods.js";
 
@@ -20,10 +21,13 @@ const raw = process.argv.slice(2);
 const pick = raw.includes("--pick");
 const release = raw.includes("--no-debug");
 const extra = raw.filter((arg) => arg !== "--pick");
-const modArgs = await pickDevModArgs(extra, { roots: ["src"], skipPicker: !pick });
+const modArgs = await pickDevModArgs(extra, { roots: DEFAULT_MOD_ROOTS, skipPicker: !pick });
 
 console.log(
-  styleText(["bold", "cyan"], release ? "Watching src/ mods (release)" : "Watching src/ mods"),
+  styleText(
+    ["bold", "cyan"],
+    release ? "Watching src/ and mods/ (release)" : "Watching src/ and mods/",
+  ),
 );
 
 const child = spawn(

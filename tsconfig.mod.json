@@ -12,10 +12,11 @@
     "lib": ["ES2021", "DOM"],
     "types": ["react", "node"],
     "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
     "paths": {
       "*": ["./*"],
       "@modkit/*": ["./modkit/*"]
     }
   },
-  "files": ["./modkit/css.d.ts", "./modkit/sandkit.d.ts"]
+  "files": ["./modkit/css.d.ts", "./modkit/json.d.ts", "./modkit/sandkit.d.ts"]
 }

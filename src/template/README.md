@@ -14,6 +14,6 @@ Check the console for `[author.template] loaded — template`.
 
 ## Edit this mod
 
-Set `id`, `name`, `author`, and `description` in `modinfo.ts`. Edit `main.ts` and `ui/Overlay.tsx`.
+Set `id`, `name`, `author`, and `description` in `modinfo.json`. Edit `main.ts` and `ui/Overlay.tsx`.
 
 Copy `src/template/` to `src/<your-mod>/` when you want a second mod.

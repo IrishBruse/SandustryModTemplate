@@ -4,7 +4,7 @@ On **0.5.5+**, prefer the public [Sandkit API](https://sandustry.com/sandkit.htm
 
 `patches.json` breaks when the game updates. Minified `find` strings move. Re-test every patch after a game update.
 
-Set **`gameVersion`** in `modinfo.json` to declare compatibility ([`modinfo.ts`](modinfo.md)):
+Set **`gameVersion`** in the manifest to declare compatibility ([Mod manifest](modinfo.md)):
 
 - **Patch-only mods** (bundle rewrites tied to old minified text): set **`maximum: "0.5.2"`**, or use Steam Workshop **Link to Game Version** with the same cap.
 - **New API mods** (hooks, `configOverrides`, 0.5.5 Sandkit): set **`minimum: "0.5.5"`**.
@@ -17,11 +17,38 @@ Keep each `find` / `code` string small. Set `expectedMatches`.
 
 Patch `code` runs **outside** the game bundle IIFE. Put shared runtime helpers on `globalThis` when patch code must call them.
 
-Types: `@sandustry-modding/types/configs` (`BundlePatch`), via [`modkit/patches.ts`](../modkit/patches.ts). Manifest: [`modinfo.ts`](modinfo.md). Canonical multi-file example: [`examples/content/collector-element/patches.ts`](../examples/content/collector-element/patches.ts).
+Types: `@sandustry-modding/types/configs` (`BundlePatch`), via [`modkit/patches.ts`](../modkit/patches.ts). Manifest: [Mod manifest](modinfo.md). Canonical multi-file example: [`examples/content/collector-element/patches.json`](../examples/content/collector-element/patches.json).
+
+For IDE validation of generated `patches.json`, use schema URL `https://sandustry-modding.github.io/SandustryTypes/schemas/patches.json` (configured in this repo's `.vscode/settings.json`). Runtime output stays a bare JSON array.
 
 ## Layout
 
-Define the list with `definePatches` from `@modkit/patches`. Export it from that mod's `modinfo.ts`. You may keep the array in `patches.ts` at the mod root and re-export it.
+Use **either** JSON or TypeScript. When both patch files exist, **`patches.ts` wins**.
+
+**JSON** — bare array at the mod root (IDE validation via `.vscode/settings.json` and `PATCHES_JSON_SCHEMA`):
+
+```json
+[
+  {
+    "id": "bundle-log-prefix",
+    "file": "js/bundle.js",
+    "find": "initializing workers",
+    "operation": "insertBefore",
+    "code": "[patched]",
+    "expectedMatches": 1
+  }
+]
+```
+
+**TypeScript** — `patches.ts` with `definePatches`:
+
+```ts
+import { definePatches } from "@modkit/patches";
+
+export const patches = definePatches([ ... ]);
+```
+
+You can also re-export from `modinfo.ts` when you use a TypeScript manifest.
 
 | Export         | When it is written                                |
 | -------------- | ------------------------------------------------- |

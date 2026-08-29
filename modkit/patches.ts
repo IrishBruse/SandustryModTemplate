@@ -1,5 +1,5 @@
 /**
- * Bundle patch helpers and `definePatches`.
+ * Bundle patch helpers — use `patches.json` or `patches.ts`.
  *
  * Shapes come from `@sandustry-modding/types/configs` (`BundlePatch` and related).
  *
@@ -7,8 +7,13 @@
  * do the job. Keep replacements small, set `expectedMatches`, and put runtime
  * helpers on `globalThis` (patch code runs outside the bundle IIFE).
  *
- * Export `patches` / `debugPatches` from `src/<name>/modinfo.ts` (or from
- * `patches.ts` and re-export). The build writes `patches.json`.
+ * Author either:
+ *
+ * - `patches.json` — bare array; IDE validation via `.vscode/settings.json` schema map
+ * - `patches.ts` — `export const patches = definePatches([...])`
+ *
+ * When both patch files exist, the build loads **`patches.ts` first**.
+ * `debugPatches` are supported from `patches.ts` (or `modinfo.ts` re-exports) only.
  *
  * ```ts
  * import { definePatches } from "@modkit/patches";
@@ -47,8 +52,7 @@ export type Patch = BundlePatch;
 export type PatchRegex = BundlePatchRegex;
 
 /**
- * Type-safe patch list builder.
- * The build writes the list to `patches.json`.
+ * Type-safe patch list for `patches.ts`.
  *
  * ```ts
  * export const patches = definePatches([ ... ]);

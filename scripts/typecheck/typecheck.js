@@ -22,16 +22,16 @@ function typecheck(project) {
 
 typecheck("tsconfig.json");
 
-const mods = discoverMods();
+const mods = discoverMods({ roots: ["src", "examples"] });
 if (mods.length === 0) {
-  console.error("No mods found. Add src/<name>/modinfo.ts or examples/<name>/modinfo.ts");
+  console.error("No mods found. Add src/<name>/modinfo.json or examples/<name>/modinfo.json");
   process.exit(1);
 }
 
 for (const { repoPath } of mods) {
   const project = join(repoPath, "tsconfig.json");
   if (!existsSync(join(ROOT, project))) {
-    console.error(`${repoPath}/modinfo.ts has no tsconfig.json`);
+    console.error(`${repoPath} has no tsconfig.json`);
     process.exit(1);
   }
   typecheck(project);

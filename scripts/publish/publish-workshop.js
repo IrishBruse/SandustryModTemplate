@@ -440,13 +440,15 @@ try {
 
 const account = steamAccountName();
 const allMods = (await loadMods([], { includeDebugKit: false })).filter(
-  (mod) => mod.root === "src" && mod.folder !== DEBUG_MOD_FOLDER,
+  (mod) => (mod.root === "src" || mod.root === "mods") && mod.folder !== DEBUG_MOD_FOLDER,
 );
 const selected = await pickMod(allMods);
 
 const publishState = workshopState(selected);
 if (publishState.error) fail(publishState.error);
-if (!publishState.ready) fail(`src/${selected.folder}/ is not ready for Workshop publish.`);
+if (!publishState.ready) {
+  fail(`${selected.root}/${selected.folder}/ is not ready for Workshop publish.`);
+}
 
 const publishedFileId = publishState.publishedFileId ?? WORKSHOP_NEW_ITEM_ID;
 const isNewItem = publishedFileId === WORKSHOP_NEW_ITEM_ID;

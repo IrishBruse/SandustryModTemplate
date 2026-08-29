@@ -2,9 +2,9 @@
 
 This page lists the folders you use when you write a mod.
 
-Each `src/<name>/` or `examples/<name>/` folder with a `modinfo.ts` is one game mod.
+Each `src/<name>/`, `mods/<name>/`, or `examples/<name>/` folder with a `modinfo.json` is one game mod.
 Put shared code in `modkit/`.
-Do not import files from another mod folder (in `src/` or `examples/`).
+Do not import files from another mod folder (in `src/`, `mods/`, or `examples/`).
 
 New to the template? Start with [Quick start](quick-start.md).
 
@@ -12,14 +12,17 @@ New to the template? Start with [Quick start](quick-start.md).
 
 | Path                  | What it is                                   |
 | --------------------- | -------------------------------------------- |
-| `src/<name>/`         | Your mod (`modinfo.ts` + `main.ts`)          |
+| `src/<name>/`         | Your mod (`modinfo.json` + `main.ts`)        |
+| `mods/<name>/`        | Optional private mods (gitignored worktree)  |
 | `examples/<name>/`    | Sample mods to copy into `src/`              |
 | `modkit/`             | Shared kit. Import as `@modkit/*`            |
 | `dist/`               | Link to the Sandustry mods folder on disk    |
 | `build/<modinfo.id>/` | Workshop staging (copied on `npm run build`) |
 | `logs/`               | Link to Sandustry log files                  |
 
-The game folder and Workshop staging use the `id` field in `modinfo.ts`, not the repo folder name or display `name`.
+`mods/` is optional. On this repo it is a gitignored worktree of branch `irishbruse-mods`, whose tree root is only mod folders. `main` does not track it. Same `modinfo` rules as `src/`. `npm run build`, `npm run dev`, and `npm run publish` include it.
+
+The game folder and Workshop staging use the `id` field in `modinfo.json`, not the repo folder name or display `name`.
 `dist/` points at the OS mods folder. Each built mod lives at `dist/<modinfo.id>/`. Release staging is `build/<modinfo.id>/`.
 
 You do not copy files into the game folder by hand. `npm run dev` and `npm run build` write them.
@@ -68,27 +71,29 @@ Mods in `src/`:
 
 | Folder                         | What it shows                                                                 |
 | ------------------------------ | ----------------------------------------------------------------------------- |
-| [`template`](../src/template/) | Starter mod. Toast on load. Change `id` / `name` / `author` in `modinfo.ts`   |
+| [`template`](../src/template/) | Starter mod. Toast on load. Change `id` / `name` / `author` in `modinfo.json` |
 | [`dev-tools`](dev-tools/)      | Dev companion. Debug installs it; `npm run build` stages it. Do not copy this |
 
 ## Files in a mod folder
 
-Every mod under `src/<name>/` or `examples/<name>/` needs these files:
+Every mod under `src/<name>/`, `mods/<name>/`, or `examples/<name>/` needs these files:
 
-| File            | Role                                                                                                                                                   |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `modinfo.ts`    | Manifest. See [modinfo.ts](modinfo.md). Optional `patches` export (or re-export from `patches.ts`). The build writes `modinfo.json` and `patches.json` |
-| `main.ts`       | Mod entry                                                                                                                                              |
-| `tsconfig.json` | Isolated TypeScript project. This folder cannot see sibling mods                                                                                       |
+| File            | Role                                                                                  |
+| --------------- | ------------------------------------------------------------------------------------- |
+| `modinfo.json`  | JSON manifest with `$schema` for IDE validation. See [Mod manifest](modinfo.md)       |
+| `modinfo.ts`    | TypeScript manifest (`defineModInfo` or `modinfoFromJson`). Optional patch re-exports |
+| `main.ts`       | Mod entry                                                                             |
+| `tsconfig.json` | Isolated TypeScript project. This folder cannot see sibling mods                      |
 
-Keep extra TypeScript out of the mod root. Only `modinfo.ts`, `main.ts`, optional `worker.ts`, and optional `patches.ts` may sit next to `tsconfig.json`. Put other source files in feature folders (`ui/`, `health/`, `capture/`, …).
+Keep extra TypeScript out of the mod root. Only `modinfo.json` and/or `modinfo.ts`, `main.ts`, optional `worker.ts`, and optional `patches.json` / `patches.ts` may sit next to `tsconfig.json`. Put other source files in feature folders (`ui/`, `health/`, `capture/`, …).
 
 Add these when you need them:
 
 | File                         | Role                                                                                       |
 | ---------------------------- | ------------------------------------------------------------------------------------------ |
 | `worker.ts`                  | Worker entry at the mod root. The build writes `worker.js`                                 |
-| `patches.ts`                 | Optional patch list. Re-export from `modinfo.ts`. See [Patches](patches.md).               |
+| `patches.json`               | Optional patch list (JSON array). See [Patches](patches.md).                               |
+| `patches.ts`                 | Optional patch list (`definePatches`). See [Patches](patches.md).                          |
 | `ui/`                        | React overlays                                                                             |
 | Feature folders              | Other source files (`health/`, `capture/`, …). Keep tests next to the file they test       |
 | `mod/`                       | Static files copied into the output folder                                                 |

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://sandustry-modding.github.io/SandustryTypes/schemas/modinfo.json",
+  "manifestVersion": 1,
+  "id": "example.schedule-idle",
+  "name": "Schedule Idle",
+  "version": "0.0.1",
+  "apiVersion": 1,
+  "entry": "main.js",
+  "author": "Your Name",
+  "description": "Defer work until the simulation is idle.",
+  "dependencies": [],
+  "loadOrder": 0,
+  "configSchema": {
+    "enabled": {
+      "type": "boolean",
+      "default": true,
+      "labelKey": "Mod enabled",
+      "descriptionKey": "Turn the mod off without unsubscribing."
+    }
+  }
+}

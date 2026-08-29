@@ -20,10 +20,10 @@ Credits should rise while Platinum sits on Collector cells.
 ## Copy this mod
 
 Copy `examples/content/collector-element/` to `src/<your-mod>/`. Change `id`,
-element id, colours, collectable value, and patches in `modinfo.ts`, `main.ts`,
-and `patches.ts`.
+element id, colours, collectable value, and patches in `modinfo.json`, `main.ts`,
+and `patches.json`.
 
-`patches.ts` find strings match `sandustry/0.5.5-mods/dist/js/`. Re-match from
+`patches.json` find strings match `sandustry/0.5.5-mods/dist/js/`. Re-match from
 the extracted bundle when the game updates.
 
 For the patches only, see [`collector-patches`](../../api/collector-patches/).

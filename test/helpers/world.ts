@@ -91,7 +91,11 @@ export async function buildStructures(
       (items: readonly StructurePlacement[]) => {
         const api = (
           globalThis as typeof globalThis & {
-            sandkit?: { api?: { structures?: { getAtCell?: (x: number, y: number) => unknown } } };
+            sandkit?: {
+              api?: {
+                structures?: { getAtCell?: (x: number, y: number) => unknown };
+              };
+            };
           }
         ).sandkit?.api;
         return items.map((item) => {
@@ -104,7 +108,10 @@ export async function buildStructures(
         });
       },
       (structures) => structures.every((structure) => structure !== null),
-      { args: [placements], message: "Structures were not built at every requested anchor" },
+      {
+        args: [placements],
+        message: "Structures were not built at every requested anchor",
+      },
     );
 
     const withData = placements.filter((item) => item.data);

@@ -1,20 +1,26 @@
 /**
- * Discover `src/<name>/modinfo.ts` and `examples/<name>/modinfo.ts` folders and load each manifest.
+ * Discover `src/<name>/modinfo.json` or `modinfo.ts` folders and load each manifest.
  * Optional `--mod <folder>` (repeatable, or `--mod=<folder>`) selects one or more.
  */
 import { existsSync, readdirSync, statSync } from "node:fs";
 import { basename, dirname, isAbsolute, join, normalize, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
-import { bundleAndImport } from "./build-patches.js";
+import {
+  hasModManifest,
+  loadModManifestExports,
+  manifestLabel,
+  modManifestPath,
+  modManifestSource,
+} from "./mod-manifest.js";
 import { gameModDir, syncModGameFolders } from "./mod-path.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 
 /** All mod source roots (discovery, isolation, setup). */
-export const MOD_ROOTS = ["src", "examples"];
+export const MOD_ROOTS = ["src", "mods", "examples"];
 
-/** Default for `npm run build` / `npm run dev` — `src/` only. */
-export const DEFAULT_MOD_ROOTS = ["src"];
+/** Default for `npm run build` / `npm run dev` — `src/` and private `mods/`. */
+export const DEFAULT_MOD_ROOTS = ["src", "mods"];
 
 /**
  * @param {string[]} argv
@@ -60,7 +66,7 @@ export function modFolderFromPath(filePath, root = ROOT) {
     while (true) {
       const rel = relative(base, current);
       if (!rel || rel.startsWith("..") || isAbsolute(rel)) break;
-      if (existsSync(join(current, "modinfo.ts"))) return basename(current);
+      if (hasModManifest(current)) return basename(current);
       const parent = dirname(current);
       if (parent === current) break;
       current = parent;
@@ -107,14 +113,15 @@ export function modIsolationPlugin(root = ROOT) {
 /**
  * @typedef {object} DiscoveredMod
  * @property {string} folder Leaf folder name (`--mod` id)
- * @property {string} root `src` or `examples`
+ * @property {string} root `src`, `mods`, or `examples`
  * @property {string} dir Absolute path to the mod folder
  * @property {string} repoPath Repo-relative path (for example `examples/ui/overlay-hotkey`)
  */
 
 /**
- * Walk a mod root and collect every directory that contains `modinfo.ts`.
- * @param {string} modRoot `src` or `examples`
+ * Walk a mod root and collect every directory that contains `modinfo.json`
+ * or `modinfo.ts`.
+ * @param {string} modRoot `src`, `mods`, or `examples`
  * @returns {DiscoveredMod[]}
  */
 function discoverModsInTree(modRoot) {
@@ -126,7 +133,7 @@ function discoverModsInTree(modRoot) {
 
   /** @param {string} dir */
   function walk(dir) {
-    if (existsSync(join(dir, "modinfo.ts"))) {
+    if (hasModManifest(dir)) {
       mods.push({
         folder: basename(dir),
         root: modRoot,
@@ -183,7 +190,7 @@ export function discoverMods(options = {}) {
   return mods.sort((a, b) => a.folder.localeCompare(b.folder));
 }
 
-/** @returns {string[]} Sorted folder names that contain `modinfo.ts`. */
+/** @returns {string[]} Sorted folder names that contain a mod manifest. */
 export function discoverModFolders() {
   return discoverMods().map((mod) => mod.folder);
 }
@@ -238,7 +245,9 @@ export function parseModFilter(argv) {
  * @property {string} root
  * @property {string} repoPath
  * @property {string} dir
- * @property {string} modTs
+ * @property {string} manifestPath `modinfo.json` or `modinfo.ts`
+ * @property {"json" | "ts"} manifestSource
+ * @property {string} manifestLabel Repo path used in build errors
  * @property {string} main
  * @property {string | null} worker
  * @property {string} tsconfig
@@ -261,10 +270,10 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
   if (discovered.length === 0) {
     const hint =
       modRoots.length === 1 && modRoots[0] === "examples"
-        ? "Add examples/<name>/modinfo.ts"
-        : modRoots.length === 1 && modRoots[0] === "src"
-          ? "Add src/<name>/modinfo.ts"
-          : "Add src/<name>/modinfo.ts or examples/<name>/modinfo.ts";
+        ? "Add examples/<name>/modinfo.json"
+        : modRoots.every((root) => root === "src" || root === "mods")
+          ? "Add src/<name>/modinfo.json or mods/<name>/modinfo.json"
+          : "Add src/<name>/modinfo.json, mods/<name>/modinfo.json, or examples/<name>/modinfo.json";
     throw new Error(`No mods found. ${hint}`);
   }
 
@@ -300,25 +309,28 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
   const mods = [];
   for (const entry of selected) {
     const { folder, dir, repoPath } = entry;
-    const modTs = join(dir, "modinfo.ts");
+    const manifestPath = modManifestPath(dir);
+    const source = modManifestSource(dir);
+    if (!manifestPath || !source) {
+      throw new Error(`${repoPath} is missing modinfo.json`);
+    }
+    const label = manifestLabel(repoPath, source);
     const main = join(dir, "main.ts");
     const workerTs = join(dir, "worker.ts");
     const tsconfig = join(dir, "tsconfig.json");
     if (!existsSync(main)) {
-      throw new Error(`${repoPath}/modinfo.ts needs ${repoPath}/main.ts`);
+      throw new Error(`${label} needs ${repoPath}/main.ts`);
     }
 
-    const loaded = await bundleAndImport(modTs, `modinfo-${folder}.mjs`);
+    const loaded = await loadModManifestExports(dir, `modinfo-${folder}`, label);
     const manifest = structuredClone(loaded.modinfo);
     const id = manifest?.id;
     if (typeof id !== "string" || !id.trim()) {
-      throw new Error(
-        `${repoPath}/modinfo.ts modinfo.id must be a non-empty string (OS mods folder name)`,
-      );
+      throw new Error(`${label} id must be a non-empty string (OS mods folder name)`);
     }
     const name = manifest?.name;
     if (typeof name !== "string" || !name.trim()) {
-      throw new Error(`${repoPath}/modinfo.ts modinfo.name must be a non-empty string`);
+      throw new Error(`${label} name must be a non-empty string`);
     }
 
     const worker = existsSync(workerTs) ? workerTs : null;
@@ -332,7 +344,9 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
       root: entry.root,
       repoPath,
       dir,
-      modTs,
+      manifestPath,
+      manifestSource: source,
+      manifestLabel: label,
       main,
       worker,
       tsconfig,

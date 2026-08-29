@@ -1,12 +1,64 @@
-# `modinfo.ts`
+# Mod manifest (`modinfo.json` / `modinfo.ts`)
 
-Manifest for one mod. Export `const modinfo = defineModInfo({ ... })` from `@modkit/modinfo`.
+Manifest for one mod. Use **either** JSON or TypeScript. The build supports both.
 
-The build writes `modinfo.json` into `dist/<modinfo.id>/` (and `build/<modinfo.id>/` on `npm run build`). The game folder name is **`id`**, not the repo folder and not **`name`**.
+When both `modinfo.json` and `modinfo.ts` exist in the same folder, **`modinfo.ts` wins**.
+
+## JSON manifest
+
+Author `modinfo.json` with `$schema` for IDE validation:
+
+```json
+{
+  "$schema": "https://sandustry-modding.github.io/SandustryTypes/schemas/modinfo.json",
+  "manifestVersion": 1,
+  "id": "author.template",
+  "name": "Template",
+  "version": "0.0.1",
+  "apiVersion": 1,
+  "entry": "main.js"
+}
+```
+
+Import it from `main.ts`:
+
+```ts
+import modinfo from "./modinfo.json";
+```
+
+## TypeScript manifest
+
+Use `defineModInfo` in `modinfo.ts`:
+
+```ts
+import { defineModInfo } from "@modkit/modinfo";
+
+export const modinfo = defineModInfo({
+  manifestVersion: 1,
+  id: "author.template",
+  name: "Template",
+  version: "0.0.1",
+  apiVersion: 1,
+  entry: "main.js",
+});
+```
+
+Or import JSON through the helper:
+
+```ts
+import manifest from "./modinfo.json";
+import { modinfoFromJson } from "@modkit/modinfo";
+
+export const modinfo = modinfoFromJson(manifest);
+```
+
+Patch exports can live on `modinfo.ts` (`export { patches } from "./patches"`).
+
+The build writes `modinfo.json` into `dist/<modinfo.id>/` (and `build/<modinfo.id>/` on `npm run build`) **without** `$schema`. The game folder name is **`id`**, not the repo folder and not **`name`**.
 
 Shapes: `@sandustry-modding/types/configs` (`ModInfo`), via [`modkit/modinfo.ts`](../modkit/modinfo.ts). Settings UI: [configSchema](config-schema.md). Bundle rewrites: [Patches](patches.md). Layout: [Folder layout](layout.md).
 
-Canonical starter: [`src/template/modinfo.ts`](../src/template/modinfo.ts). Settings showcase: [`examples/api/settings/`](../examples/api/settings/).
+Canonical starter: [`src/template/modinfo.json`](../src/template/modinfo.json). Settings showcase: [`examples/api/settings/`](../examples/api/settings/).
 
 ## Required fields
 
@@ -38,52 +90,16 @@ The build fails if `id` or `name` is missing or blank.
 | `provides`         | `ModProvide[]`           | Asset provider bundles. Each entry has `kind`, `id`, and `textureOverrides` (same shape as top-level `textureOverrides`).                                                                 |
 | `map`              | `ModMapDefinition`       | Custom map under `map/` (`blueprints`, `width`, `height`, `spawn`, optional unstuck / deployment / bounds / lighting / parallax / colour maps).                                           |
 
-## Extra exports (not inside `modinfo`)
+## Patches
 
-Keep these next to `export const modinfo` in the same file, or re-export them:
-
-| Export         | Role                                                                                           |
-| -------------- | ---------------------------------------------------------------------------------------------- |
-| `patches`      | Production patches. Array from `definePatches` (`@modkit/patches`). Written to `patches.json`. |
-| `debugPatches` | Extra patches for `npm run dev` / `--debug` only. Omitted from `npm run build`.                |
-
-Example re-export from `patches.ts`:
-
-```ts
-export { patches } from "./patches";
-```
-
-See [`examples/api/collector-patches/modinfo.ts`](../examples/api/collector-patches/modinfo.ts).
+See [Patches](patches.md). Patch lists can live in `patches.json` or `patches.ts`.
 
 ## Minimal example
 
-```ts
-import { defineModInfo } from "@modkit/modinfo";
+[`src/template/modinfo.json`](../src/template/modinfo.json) is the starter JSON manifest.
 
-export const modinfo = defineModInfo({
-  manifestVersion: 1,
-  id: "author.template",
-  name: "Template",
-  version: "0.0.1",
-  apiVersion: 1,
-  entry: "main.js",
-  author: "Your Name",
-  description: "Starter mod. Toast on load.",
-  dependencies: [],
-  loadOrder: 0,
-  configSchema: {
-    enabled: {
-      type: "boolean",
-      default: true,
-      labelKey: "Mod enabled",
-      descriptionKey: "Turn the mod off without unsubscribing.",
-    },
-  },
-});
-```
-
-Use `modinfo.id` in code when you need the mod id. Do not hard-code a second copy of the id string.
+Use the `id` field in code when you need the mod id. Do not hard-code a second copy of the id string.
 
 ## Workshop
 
-`workshop/workshop.json` is not part of `defineModInfo`. It uses `schemaVersion: 1` and `publishedFileId`. See [Builds](builds.md).
+`workshop/workshop.json` is not part of the manifest. It uses `schemaVersion: 1` and `publishedFileId`. See [Builds](builds.md).
