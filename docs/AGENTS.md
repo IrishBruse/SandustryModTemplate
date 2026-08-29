@@ -12,16 +12,17 @@ Edit declarations in [SandustryTypes](https://github.com/sandustry-modding/Sandu
 
 ## Site pages and code-side links
 
-Keep the real Markdown under `docs/` so Docsify can serve it. Do not put a symlink inside `docs/` that points outside that tree.
+The install guide, folder layout, commands, and troubleshooting live in the [repository README](../README.md). Do not duplicate those pages under `docs/`.
 
-When a kit or mod needs a `docs/` folder next to the code, make that folder a symlink into `docs/`:
+Keep kit and reference Markdown under `docs/` so Docsify can serve it. Do not put a symlink inside `docs/` that points outside that tree.
+
+When a kit needs a `docs/` folder next to the code, make that folder a symlink into `docs/`:
 
 - [`modkit/docs`](../modkit/docs/) → `docs/modkit/`
-- [`src/dev-tools/docs`](../src/dev-tools/docs/) → `docs/dev-tools/`
 
-Write kit pages in [`docs/modkit/`](modkit/). Write companion pages in [`docs/dev-tools/`](dev-tools/). Do not put companion pages under `docs/modkit/`.
+Write kit pages in [`docs/modkit/`](modkit/). Do not put mod-specific pages under `docs/modkit/`.
 
-Mods that are not on the site may keep a real `src/<name>/docs/` folder. Builds do not copy `docs/` folders.
+A mod with its own repo documents in that repo with `README.md` and `CHANGELOG.md`. Builds do not copy those files.
 
 ## Sample mod READMEs (`examples/*/README.md`)
 
@@ -39,7 +40,7 @@ Each shipped mod may keep `src/<name>/CHANGELOG.md`. `npm run publish` sends the
 - Write for **players**, not developers.
 - Say what changed in play (controls, options, feel, fixes you can notice).
 - Do **not** mention patches, APIs, file paths, internals, or implementation unless that detail changes how the mod plays.
-- Keep technical notes in that mod's `docs/` folder, or in `docs/<name>/` when the site has a page. Do not put mod-specific pages under `docs/modkit/`.
+- Keep technical notes in that mod's `README.md`. `docs/modkit/` is kit-only.
 
 ### `discord-post.md`
 
