@@ -30,6 +30,7 @@ export type StructurePlacement = {
   x: number;
   y: number;
   options?: Record<string, unknown>;
+  data?: Record<string, unknown>;
 };
 
 export type { ScreenshotClip };
@@ -138,6 +139,8 @@ export class SandustrySession {
                     type: string | number,
                     options?: Record<string, unknown>,
                   ) => void;
+                  getAtCell?: (x: number, y: number) => unknown;
+                  setData?: (structure: unknown, data: Record<string, unknown>) => void;
                 };
               };
             };
@@ -147,7 +150,10 @@ export class SandustrySession {
           throw new Error("Sandustry structures.buildAtCell is unavailable");
         }
         for (const item of items) {
-          api.structures.buildAtCell(item.x, item.y, item.type, item.options);
+          api.structures.buildAtCell(item.x, item.y, item.type, {
+            ...item.options,
+            ...(item.data ? { data: item.data } : {}),
+          });
         }
       }, placements);
 
@@ -183,6 +189,39 @@ export class SandustrySession {
           message: "Structures were not built at every requested anchor",
         },
       );
+
+      const withData = placements.filter((item) => item.data);
+      if (withData.length > 0) {
+        await this.evaluate((items: readonly StructurePlacement[]) => {
+          const api = (
+            globalThis as typeof globalThis & {
+              sandkit?: {
+                api?: {
+                  structures?: {
+                    getAtCell?: (x: number, y: number) => unknown;
+                    setData?: (structure: unknown, data: Record<string, unknown>) => void;
+                  };
+                };
+              };
+            }
+          ).sandkit?.api;
+          if (typeof api?.structures?.getAtCell !== "function") {
+            throw new Error("Sandustry structures.getAtCell is unavailable");
+          }
+          if (typeof api.structures.setData !== "function") {
+            throw new Error("Sandustry structures.setData is unavailable");
+          }
+          for (const item of items) {
+            const structure = api.structures.getAtCell(item.x, item.y);
+            if (!structure || !item.data) {
+              throw new Error(
+                `Sandustry could not initialize structure data at ${item.x},${item.y}`,
+              );
+            }
+            api.structures.setData(structure, item.data);
+          }
+        }, withData);
+      }
     } finally {
       await this.setSimulationPaused(priorPaused);
     }
