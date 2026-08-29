@@ -105,9 +105,7 @@ export function structureIconSrc(ref: string | number): string | null {
   const alias = typeof ref === "string" ? (MACHINE_ICON_ID[ref] ?? ref) : ref;
   try {
     const type =
-      typeof alias === "string"
-        ? (sandkit.api.structures.getTypeById(alias) ?? alias)
-        : alias;
+      typeof alias === "string" ? (sandkit.api.structures.getTypeById(alias) ?? alias) : alias;
     const def = sandkit.api.structures.getDefinitionByType(type);
     const fromSprite = spriteSrc(def?.render?.imageName);
     if (fromSprite) return fromSprite;

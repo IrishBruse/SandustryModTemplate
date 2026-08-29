@@ -6,17 +6,17 @@ Main entry: registration and deferred cell mutations. Worker entry: immediate mu
 
 ## Shared reads (main and worker)
 
-| Method                                    | Role                         |
-| ----------------------------------------- | ---------------------------- |
-| `getTypeById(elementId)`                  | String id -> type handle     |
-| `getIdByType(elementType)`                | Type handle -> string id     |
-| `getDefinitionByType(elementType)`        | Mod definition               |
-| `getTypeAtCell`, `getResolvedTypeAtCell`  | Type at cell                 |
-| `getResolvedTypeFromCellId(cellId)`       | Type from packed id          |
-| `getInfoAtCell`                           | Type, particle flag, indices |
-| `getMatterTypeAtCell`                     | Matter category              |
-| `isTypeAtCell`, `isFreeFallingAtCell`     | Boolean checks               |
-| `getVelocityAtCell`, `getDataFieldAtCell` | Per-cell data                |
+| Method                                    | Role                                                                                                    |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `getTypeById(elementId)`                  | String id -> type handle. Builtins (`residue`, `wetSand`) resolve even when absent from `mods.elements` |
+| `getIdByType(elementType)`                | Type handle -> string id                                                                                |
+| `getDefinitionByType(elementType)`        | Mod definition                                                                                          |
+| `getTypeAtCell`, `getResolvedTypeAtCell`  | Type at cell                                                                                            |
+| `getResolvedTypeFromCellId(cellId)`       | Type from packed id                                                                                     |
+| `getInfoAtCell`                           | Type, particle flag, indices                                                                            |
+| `getMatterTypeAtCell`                     | Matter category                                                                                         |
+| `isTypeAtCell`, `isFreeFallingAtCell`     | Boolean checks                                                                                          |
+| `getVelocityAtCell`, `getDataFieldAtCell` | Per-cell data                                                                                           |
 
 Deprecated alias: `getTypeFromId` -> `getTypeById`.
 
@@ -57,20 +57,20 @@ Worker `createAtCell` / `replaceAtCell` / etc. apply immediately (no `*WhenIdle`
 
 Public TypeScript lists `id`, `nameKey`, `density`, `matterType`, `colors`, `defaultDataFields`. Live configs also carry:
 
-| Key                               | Role                                                                 |
-| --------------------------------- | -------------------------------------------------------------------- |
-| `descriptionKey` / `description`  | Lexicon copy                                                         |
-| `metaColor`                       | RGB packed as `0xRRGGBB`                                             |
-| `materialId`                      | Render / sim material index                                          |
-| `hidden`                          | Hide from some UI                                                    |
-| `isGrabbable` / `isTransportable` | Grabber and conveyor                                                 |
-| `duration` / `durationRandom`     | Lifetime seconds                                                     |
-| `horizontalSpeed`                 | Sideways motion                                                      |
-| `flammable`                       | Burn output id, chance, fire duration                                |
-| `collectable.value`               | Collector gold                                                       |
-| `mixes`                           | Contact mix `{ elementType, result }`                                |
-| `interactions`                    | Tooltip kinds (`flammable`, `freezable`, ...)                        |
-| `getExtraProps().data`            | Extra sim bags (Steam `energy`, Fire `temperature`, Seedling growth) |
+| Key                               | Role                                                                                                                                                                |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `descriptionKey` / `description`  | Lexicon copy                                                                                                                                                        |
+| `metaColor`                       | RGB packed as `0xRRGGBB`                                                                                                                                            |
+| `materialId`                      | Render / sim material index                                                                                                                                         |
+| `hidden`                          | Hide from some UI                                                                                                                                                   |
+| `isGrabbable` / `isTransportable` | Grabber and conveyor                                                                                                                                                |
+| `duration` / `durationRandom`     | Lifetime seconds                                                                                                                                                    |
+| `horizontalSpeed`                 | Sideways motion                                                                                                                                                     |
+| `flammable`                       | Burn output id, chance, fire duration. Builtins may omit this object                                                                                                |
+| `collectable.value`               | Collector gold                                                                                                                                                      |
+| `mixes`                           | Contact mix `{ elementType, result }`                                                                                                                               |
+| `interactions`                    | Tooltip kinds (`flammable`, `freezable`, ...). Residue is `kind: "flammable"` only; engine fire writes Burnt Residue at 25% (**sandustry-world** `sim-crafting.md`) |
+| `getExtraProps().data`            | Extra sim bags (Steam `energy`, Fire `temperature`, Seedling growth)                                                                                                |
 
 Built-in enum: `sandkit.enums.ElementType` - Sand (1) ... Basalt (20), **Gloom (8)**. String id for mods is `definition.id`; for builtins parse `nameKey` (`elements|sand|name`).
 

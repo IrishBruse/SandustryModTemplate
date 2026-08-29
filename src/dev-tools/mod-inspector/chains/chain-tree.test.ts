@@ -117,10 +117,7 @@ test("kind filter hides machine steps", () => {
 
 test("does blurb reads Gold as the subject", () => {
   const text = flowBlurb(fixtureIndex(), 2, "down", ALL_KINDS);
-  assert.equal(
-    text,
-    "Gold → Smelter → Liquid Gold (50%). Gold → Collector.",
-  );
+  assert.equal(text, "Gold → Smelter → Liquid Gold (50%). Gold → Collector.");
 });
 
 test("from blurb reads toward Gold", () => {

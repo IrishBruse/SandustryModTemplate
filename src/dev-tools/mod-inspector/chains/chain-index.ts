@@ -1,6 +1,9 @@
 /** Live reaction / recipe index for the Dev Tools Chains element explorer. */
 
 import { listElements, type ElementRow } from "../elements/list-elements";
+import { resolveLiveEngineSteps } from "./engine-builtins";
+import { getCachedLiveEngineRecipes, type LiveEngineRecipes } from "./live-engine-recipes";
+import { contactStepId, machineOutputsFromRow, type RecipeRow } from "./recipe-rows";
 import {
   burnIconSrc,
   machineIconSrc,
@@ -33,8 +36,6 @@ export type ChainIndex = {
   };
 };
 
-type RecipeOutput = { elementType: number; chance?: number };
-type WeightedRecipe = { input: number; outputs: RecipeOutput[] };
 type ContactRecipe = {
   inputA: number | string;
   inputB: number | string;
@@ -44,14 +45,14 @@ type ContactRecipe = {
 
 type RecipeBag = {
   contacts?: ContactRecipe[];
-  condensers?: WeightedRecipe[];
-  steamDryers?: WeightedRecipe[];
-  synthesizers?: WeightedRecipe[];
-  snowmakers?: WeightedRecipe[];
-  smelters?: WeightedRecipe[];
-  shakers?: WeightedRecipe[];
-  growers?: WeightedRecipe[];
-  kineticPresses?: Array<WeightedRecipe & { minimumDownwardVelocity?: number }>;
+  condensers?: RecipeRow[];
+  steamDryers?: RecipeRow[];
+  synthesizers?: RecipeRow[];
+  snowmakers?: RecipeRow[];
+  smelters?: RecipeRow[];
+  shakers?: RecipeRow[];
+  growers?: RecipeRow[];
+  kineticPresses?: Array<RecipeRow & { minimumDownwardVelocity?: number }>;
 };
 
 const MACHINE_BAGS: { bag: keyof RecipeBag; machineId: string; label: string }[] = [
@@ -69,6 +70,8 @@ const MACHINE_ID_BY_BAG: Partial<Record<keyof RecipeBag, string>> = Object.fromE
   MACHINE_BAGS.map(({ bag, machineId }) => [bag, machineId]),
 );
 
+const EMPTY_LIVE: LiveEngineRecipes = { contacts: [], burns: [], machines: [] };
+
 function recipeBag(): RecipeBag {
   try {
     const mods = (
@@ -83,6 +86,12 @@ function recipeBag(): RecipeBag {
 function resolveElementType(ref: number | string): number | null {
   if (typeof ref === "number" && Number.isFinite(ref)) return ref;
   if (typeof ref !== "string" || !ref) return null;
+  try {
+    const type = sandkit.api.elements.getTypeById(ref);
+    if (typeof type === "number" && Number.isFinite(type)) return type;
+  } catch {
+    /* ignore */
+  }
   try {
     const types = sandkit.api.elements.getRegisteredTypes();
     for (const type of types) {
@@ -140,28 +149,32 @@ function addStep(
   for (const out of step.outputs) pushIndex(producedBy, out.elementType, step.id);
 }
 
+function decorateBuiltinStep(step: ChainStep): ChainStep {
+  if (step.kind === "machine") {
+    const machineId = step.id.split(":")[1];
+    if (machineId) return { ...step, iconSrc: machineIconSrc(machineId) ?? undefined };
+  }
+  if (step.kind === "burn") return { ...step, iconSrc: burnIconSrc() };
+  return step;
+}
+
 function addMachineStep(
   steps: Map<string, ChainStep>,
   producedBy: Map<number, string[]>,
   consumedBy: Map<number, string[]>,
   machineId: string,
   label: string,
-  recipe: WeightedRecipe,
+  recipe: RecipeRow,
 ): void {
   if (typeof recipe.input !== "number") return;
-  const outputs = (recipe.outputs ?? []).filter(
-    (out): out is RecipeOutput => typeof out?.elementType === "number",
-  );
+  const outputs = machineOutputsFromRow(recipe);
   addStep(steps, producedBy, consumedBy, {
     id: `machine:${machineId}:${recipe.input}`,
     kind: "machine",
     label,
     iconSrc: machineIconSrc(machineId) ?? undefined,
     inputs: [recipe.input],
-    outputs: outputs.map((out) => ({
-      elementType: out.elementType,
-      chance: out.chance,
-    })),
+    outputs,
   });
 }
 
@@ -188,7 +201,7 @@ export function buildChainIndex(): ChainIndex {
     if (outA != null) outputs.push({ elementType: outA });
     if (outB != null) outputs.push({ elementType: outB });
     addStep(steps, producedBy, consumedBy, {
-      id: `mix:contact:${a}+${b}`,
+      id: contactStepId(a, b),
       kind: "contact-mix",
       label: "Mix",
       inputs: [a, b],
@@ -202,8 +215,13 @@ export function buildChainIndex(): ChainIndex {
     for (const row of rows) {
       if (!row || typeof row.input !== "number") continue;
       recipeRows += 1;
-      addMachineStep(steps, producedBy, consumedBy, machineId, label, row as WeightedRecipe);
+      addMachineStep(steps, producedBy, consumedBy, machineId, label, row);
     }
+  }
+
+  const live = getCachedLiveEngineRecipes() ?? EMPTY_LIVE;
+  for (const step of resolveLiveEngineSteps(live, resolveElementType)) {
+    addStep(steps, producedBy, consumedBy, decorateBuiltinStep(step));
   }
 
   try {
@@ -271,19 +289,14 @@ export function buildChainIndex(): ChainIndex {
 
             if (machineMeta) {
               const bag = machineMeta.bag as keyof RecipeBag;
+              const machineId = MACHINE_ID_BY_BAG[bag] ?? machineMeta.bag;
+              if (steps.has(`machine:${machineId}:${type}`)) continue;
               const rows = recipes[bag];
               const match = Array.isArray(rows)
                 ? rows.find((row) => row && row.input === type)
                 : undefined;
               if (match) {
-                addMachineStep(
-                  steps,
-                  producedBy,
-                  consumedBy,
-                  MACHINE_ID_BY_BAG[bag] ?? machineMeta.bag,
-                  machineMeta.label,
-                  match as WeightedRecipe,
-                );
+                addMachineStep(steps, producedBy, consumedBy, machineId, machineMeta.label, match);
                 continue;
               }
             }

@@ -17,7 +17,30 @@ Recipe shapes: `node_modules/@sandustry-modding/types/sandkit/api/structures.d.t
 
 Live extra (not in official HTML): top-level `sandkit.api.processing` with `registerGrower`, `registerShaker`, `registerKineticPress`. Prefer `structures.recipes.register`.
 
-Engine twin: `engine.api.structures.recipes.getWeightedRecipe`, `selectWeightedOutput`, `register`.
+Engine twin: `engine.api.structures.recipes.getWeightedRecipe`, `selectWeightedOutput`, `register`. `getWeightedRecipe(state, slot, inputType)` only sees **mod** rows in `mods.recipes`. It returns null for vanilla shaker / grower / press inputs.
+
+## Engine builtins (not in `mods.recipes`)
+
+`recipes.shakers`, `growers`, and `kineticPresses` start as `[]`. Vanilla processing is hardcoded in the engine. Mod `registerShaker` stores `{ input, outputsAbove, outputsBelow }`. Mod grower rows store `{ input, output, chance }` (not `outputs[]`).
+
+`getWeightedRecipe` returns null for these vanilla inputs. Live scrape sources (game `js/bundle.js`):
+
+| Source                 | Pattern                                                                                                               |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Contacts               | `[[r.RJ.Water,r.RJ.Sand,r.RJ.WetSand],…]`                                                                             |
+| Residue burn           | `RJ.Residue]:()=>({output:{elementType:r.RJ.BurntResidue,chance:.25}})`                                               |
+| Press / shaker outputs | Locale `structures\|velocitySoaker\|description` / `structures\|shaker\|description` (`{t:elements\|…\|name}` tokens) |
+| Shaker gold chance     | `RefineWetSand?.5:.25` (non-tutorial branch)                                                                          |
+| Grower                 | `RJ.WetSeed&&…RJ.Seedling` (description is harvest copy, not the seedling step)                                       |
+
+| Input         | Engine path                               | Outputs                                                                                    |
+| ------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Wet Sand      | Shaker (`ShakeWetSand`)                   | Residue (nearby empty cell) + Gold below at **0.25** (0.5 during tutorial `RefineWetSand`) |
+| Residue       | `fire.burnElementAt` (no `def.flammable`) | Flame → Burnt Residue at **0.25**                                                          |
+| Burnt Residue | Kinetic Press (`PressBurntResidue`)       | Gold + Seed                                                                                |
+| Wet Seed      | Planter Box (fallback when no grower row) | Seedling                                                                                   |
+
+Flower harvest after Seedling is entity-side (Gold + Amethelis), not a grower recipe row.
 
 ## Custom structure processing
 
@@ -55,18 +78,18 @@ Shakers, presses, growers, and thermo machines call `engine.api.factory.recordPr
 
 Read from element `interactions` (`kind: "structure"`) plus structure i18n:
 
-| Element       | Structure                        | Result                            |
-| ------------- | -------------------------------- | --------------------------------- |
-| Wet Sand      | Shaker                           | Gold (↓) + Residue                |
-| Residue       | (flammable)                      | Burnt Residue (~25%)              |
-| Burnt Residue | Kinetic Press (`velocitySoaker`) | Gold + Seed (drop from height)    |
-| Wet Seed      | Planter Box (`grower`)           | Flower harvest → Gold + Amethelis |
-| Gold          | Collector                        | Credits                           |
-| Liquid Gold   | Collector                        | Credits (collectable value 2)     |
-| Steam         | Steam Turbine                    | Energy                            |
-| Voidbloom     | Flux Emanator (`gloomEmitter`)   | Fluxite terrain                   |
-| Aurixite      | Shaker                           | Auralite                          |
-| Florinol      | Florinol Battery / Synthesizer   | Energy / Aurixite                 |
+| Element       | Structure                        | Result                                |
+| ------------- | -------------------------------- | ------------------------------------- |
+| Wet Sand      | Shaker                           | Gold (↓, 25%) + Residue               |
+| Residue       | Fire (`kind: "flammable"` only)  | Burnt Residue (25%)                   |
+| Burnt Residue | Kinetic Press (`velocitySoaker`) | Gold + Seed (drop from height)        |
+| Wet Seed      | Planter Box (`grower`)           | Seedling (harvest → Gold + Amethelis) |
+| Gold          | Collector                        | Credits                               |
+| Liquid Gold   | Collector                        | Credits (collectable value 2)         |
+| Steam         | Steam Turbine                    | Energy                                |
+| Voidbloom     | Flux Emanator (`gloomEmitter`)   | Fluxite terrain                       |
+| Aurixite      | Shaker                           | Auralite                              |
+| Florinol      | Florinol Battery / Synthesizer   | Energy / Aurixite                     |
 
 ## Related
 

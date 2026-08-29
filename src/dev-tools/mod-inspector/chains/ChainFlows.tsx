@@ -110,7 +110,9 @@ function FlowCard({
         }
       }}
       className={`w-full text-left px-2 py-2 border cursor-pointer ${
-        selected ? "border-[#ffe700] bg-black/60" : "border-slate-600 bg-black/35 hover:border-slate-400"
+        selected
+          ? "border-[#ffe700] bg-black/60"
+          : "border-slate-600 bg-black/35 hover:border-slate-400"
       }`}
       style={{
         borderRadius: 0,
@@ -128,9 +130,7 @@ function FlowCard({
             onFocus={onFocus}
           />
         ))}
-        {step.inputs.length === 0 ? (
-          <span className="text-[11px] text-slate-500">—</span>
-        ) : null}
+        {step.inputs.length === 0 ? <span className="text-[11px] text-slate-500">—</span> : null}
 
         <Arrow />
 

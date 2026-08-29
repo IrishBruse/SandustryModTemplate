@@ -1,25 +1,15 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { elementSourceLabel } from "../mod-source";
 import { ElementPixel } from "../elements/ElementPixel";
 import { contrastText, tileFillCss } from "../elements/element-colors";
 import type { ElementRow } from "../elements/list-elements";
 import { FlowList } from "./ChainFlows";
-import {
-  buildChainIndex,
-  elementStepCount,
-  type ChainIndex,
-  type ChainStep,
-} from "./chain-index";
+import { buildChainIndex, elementStepCount, type ChainIndex, type ChainStep } from "./chain-index";
+import { clearLiveEngineRecipesCache, loadLiveEngineRecipes } from "./live-engine-recipes";
 import { flowBlurb, stepsFor } from "./chain-tree";
 import { KIND_COLOR, KIND_LABEL, type ReactionKind } from "./step-icons";
 
-const ALL_KINDS: ReactionKind[] = [
-  "contact-mix",
-  "element-mix",
-  "machine",
-  "burn",
-  "structure",
-];
+const ALL_KINDS: ReactionKind[] = ["contact-mix", "element-mix", "machine", "burn", "structure"];
 
 type Selection =
   | { kind: "step"; step: ChainStep; elementType: number; path: string }
@@ -126,13 +116,7 @@ function RootHeader({
   );
 }
 
-function SelectionPanel({
-  index,
-  selection,
-}: {
-  index: ChainIndex;
-  selection: Selection;
-}) {
+function SelectionPanel({ index, selection }: { index: ChainIndex; selection: Selection }) {
   if (!selection) {
     return (
       <div className="px-3 py-3">
@@ -141,8 +125,7 @@ function SelectionPanel({
     );
   }
 
-  const elementType =
-    selection.kind === "element" ? selection.elementType : selection.elementType;
+  const elementType = selection.kind === "element" ? selection.elementType : selection.elementType;
   const element = index.elements.get(elementType);
   const step = selection.kind === "step" ? selection.step : null;
 
@@ -182,9 +165,7 @@ function SelectionPanel({
                 </li>
               );
             })}
-            {step.outputs.length === 0 ? (
-              <li className="text-slate-500">— (sink)</li>
-            ) : null}
+            {step.outputs.length === 0 ? <li className="text-slate-500">— (sink)</li> : null}
           </ul>
         </div>
       ) : null}
@@ -229,12 +210,33 @@ function SelectionPanel({
 
 export function ReactionChainsTab() {
   const [index, setIndex] = useState<ChainIndex>(() => buildChainIndex());
+  const [liveReady, setLiveReady] = useState(false);
   const [query, setQuery] = useState("");
   const [rootType, setRootType] = useState<number | null>(null);
   const [crumb, setCrumb] = useState<number[]>([]);
   const [enabled, setEnabled] = useState(() => new Set<ReactionKind>(ALL_KINDS));
   const [maxDepth, setMaxDepth] = useState(1);
   const [selection, setSelection] = useState<Selection>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    void loadLiveEngineRecipes().then(() => {
+      if (cancelled) return;
+      setIndex(buildChainIndex());
+      setLiveReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  async function refreshIndex() {
+    clearLiveEngineRecipesCache();
+    setLiveReady(false);
+    await loadLiveEngineRecipes(true);
+    setIndex(buildChainIndex());
+    setLiveReady(true);
+  }
 
   const elementList = useMemo(() => {
     const rows = [...index.elements.values()];
@@ -257,10 +259,8 @@ export function ReactionChainsTab() {
 
   const doesCount = rootType == null ? 0 : stepsFor(index, rootType, "down", enabled).length;
   const fromCount = rootType == null ? 0 : stepsFor(index, rootType, "up", enabled).length;
-  const doesBlurb =
-    rootType == null ? "" : flowBlurb(index, rootType, "down", enabled);
-  const fromBlurb =
-    rootType == null ? "" : flowBlurb(index, rootType, "up", enabled);
+  const doesBlurb = rootType == null ? "" : flowBlurb(index, rootType, "down", enabled);
+  const fromBlurb = rootType == null ? "" : flowBlurb(index, rootType, "up", enabled);
 
   const rootElement = rootType != null ? index.elements.get(rootType) : undefined;
   const selectedStepId = selection?.kind === "step" ? selection.step.id : null;
@@ -357,10 +357,10 @@ export function ReactionChainsTab() {
           </label>
           <button
             type="button"
-            onClick={() => setIndex(buildChainIndex())}
+            onClick={() => void refreshIndex()}
             className="hover:text-[#ffe700]"
           >
-            Refresh
+            {liveReady ? "Refresh" : "Loading…"}
           </button>
         </div>
       </div>
@@ -417,9 +417,7 @@ export function ReactionChainsTab() {
             >
               <section className="min-h-0 flex flex-col overflow-hidden border-b border-slate-600">
                 <div className="px-3 py-1.5 border-b border-slate-700/60 shrink-0 flex items-center justify-between">
-                  <p className="text-[10px] uppercase tracking-wider text-slate-400">
-                    Does
-                  </p>
+                  <p className="text-[10px] uppercase tracking-wider text-slate-400">Does</p>
                   <span className="text-[10px] text-slate-500">{doesCount}</span>
                 </div>
                 <div className="flex-1 min-h-0 overflow-y-auto">
@@ -445,9 +443,7 @@ export function ReactionChainsTab() {
               </section>
               <section className="min-h-0 flex flex-col overflow-hidden">
                 <div className="px-3 py-1.5 border-b border-slate-700/60 shrink-0 flex items-center justify-between">
-                  <p className="text-[10px] uppercase tracking-wider text-slate-400">
-                    Comes from
-                  </p>
+                  <p className="text-[10px] uppercase tracking-wider text-slate-400">Comes from</p>
                   <span className="text-[10px] text-slate-500">{fromCount}</span>
                 </div>
                 <div className="flex-1 min-h-0 overflow-y-auto">
