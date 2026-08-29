@@ -2,7 +2,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
 import { CdpConnection, type ScreenshotClip } from "./cdp.ts";
-import { installedModMain, tryReadInstalledModMain } from "./paths.ts";
+import { installedModFile, tryReadInstalledModFile, tryReadInstalledModMain } from "./paths.ts";
 import {
   formatRendererReadySnapshot,
   GAME_READY_POLL_MS,
@@ -204,11 +204,19 @@ export class SandustrySession {
     return tryReadInstalledModMain(modId);
   }
 
+  tryReadModFile(modId: string, fileName: string): string | null {
+    return tryReadInstalledModFile(modId, fileName);
+  }
+
   /**
-   * Edit the installed `main.js` for `modId`, then restore the original bytes.
+   * Edit an installed mod file, then restore the original bytes.
    */
-  async withModMain(modId: string, fn: (file: ModMainFile) => Promise<void> | void): Promise<void> {
-    const path = installedModMain(modId);
+  async withModFile(
+    modId: string,
+    fileName: string,
+    fn: (file: ModMainFile) => Promise<void> | void,
+  ): Promise<void> {
+    const path = installedModFile(modId, fileName);
     const original = readFileSync(path, "utf8");
     let current = original;
     const file: ModMainFile = {
@@ -230,6 +238,13 @@ export class SandustrySession {
     } finally {
       writeFileSync(path, original);
     }
+  }
+
+  /**
+   * Edit the installed `main.js` for `modId`, then restore the original bytes.
+   */
+  async withModMain(modId: string, fn: (file: ModMainFile) => Promise<void> | void): Promise<void> {
+    return this.withModFile(modId, "main.js", fn);
   }
 
   private async freezeSim(): Promise<() => Promise<void>> {

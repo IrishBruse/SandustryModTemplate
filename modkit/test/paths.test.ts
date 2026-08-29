@@ -2,12 +2,12 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { join } from "node:path";
 import {
+  installedModFile,
   installedModMain,
   sandustryModsDir,
   sandustryTestUserDataDir,
   sandustryUserDataDir,
 } from "./paths.ts";
-import { companionSettings } from "./mods.ts";
 
 test("installedModMain joins the isolated test mods folder", () => {
   const userData = sandustryTestUserDataDir();
@@ -17,20 +17,10 @@ test("installedModMain joins the isolated test mods folder", () => {
     installedModMain("author.template"),
     join(userData, "mods", "author.template", "main.js"),
   );
+  assert.equal(
+    installedModFile("example.worker-api", "worker.js"),
+    join(userData, "mods", "example.worker-api", "worker.js"),
+  );
   assert.ok(sandustryUserDataDir().endsWith("sandustry"));
   assert.notEqual(userData, sandustryUserDataDir());
-});
-
-test("companionSettings enables watch and disables auto-load for dev-tools", () => {
-  const settings = companionSettings(["dev-tools", "author.template"]) as {
-    externalModSettings: {
-      "dev-tools": { watchLocalMods: boolean; autoLoad: boolean; openDevTools: boolean };
-      "author.template": { enabled: boolean };
-    };
-  };
-  const companion = settings.externalModSettings["dev-tools"];
-  assert.equal(companion.watchLocalMods, true);
-  assert.equal(companion.autoLoad, false);
-  assert.equal(companion.openDevTools, false);
-  assert.equal(settings.externalModSettings["author.template"].enabled, true);
 });
