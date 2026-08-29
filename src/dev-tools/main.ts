@@ -1,10 +1,11 @@
 import { disableSessionAutosave } from "./boot/autosave";
 import { registerDevToolsShortcut, scheduleMainMenuBoot } from "./boot/boot-menu";
+import { syncCrispCanvas } from "./boot/crisp-canvas";
 import { syncFastBootPrefs } from "./boot/fast-boot";
 import { settingOn } from "./boot/settings";
 import { installDebugCompanion } from "./f3/install";
 import { installModInspector } from "./mod-inspector/install";
-import { modinfo } from "./modinfo";
+import modinfo from "./modinfo.json";
 import { installFirstLoadApiWrap } from "./reload/first-load-wrap.ts";
 import { installLocalModReload } from "./reload/install.ts";
 import { isEnabled } from "modkit/utils";
@@ -29,6 +30,10 @@ function syncBootPatches(): void {
   syncFastBootPrefs(api);
 }
 
+function syncCrispCanvasSetting(): void {
+  syncCrispCanvas(settingOn(api, "crispCanvas"));
+}
+
 function main() {
   if (!isEnabled(api)) return;
 
@@ -39,6 +44,7 @@ function main() {
   Object.assign(globalThis, { sandkit, api, enums, react });
 
   syncBootPatches();
+  syncCrispCanvasSetting();
   if (settingOn(api, "f12DevTools")) registerDevToolsShortcut();
   scheduleMainMenuBoot(api);
   if (settingOn(api, "disableAutosave")) disableSessionAutosave();
@@ -47,6 +53,7 @@ function main() {
   syncLocalModReload();
   api.settings.onChange(() => {
     syncBootPatches();
+    syncCrispCanvasSetting();
     syncLocalModReload();
   });
 

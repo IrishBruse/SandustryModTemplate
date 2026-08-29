@@ -1,6 +1,6 @@
 /**
  * Defaults when `api.settings.get` has no boolean yet.
- * Keep in sync with `configSchema` in `../modinfo.ts`.
+ * Keep in sync with `configSchema` in `../modinfo.json`.
  */
 export const SETTING_DEFAULTS: Record<string, boolean> = {
   openDevTools: false,
@@ -10,4 +10,5 @@ export const SETTING_DEFAULTS: Record<string, boolean> = {
   disableAutosave: false,
   watchLocalMods: false,
   fastBoot: false,
+  crispCanvas: false,
 };
