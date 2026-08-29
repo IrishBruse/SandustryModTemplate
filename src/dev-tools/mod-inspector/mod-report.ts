@@ -5,15 +5,10 @@ import {
   modSourceKind,
   workshopFolderFromRecord,
   workshopItemIdFromRecord,
-  type ModSourceKind
+  type ModSourceKind,
 } from "./mod-source";
 
-export type ModLoadStatus =
-  | "loaded"
-  | "failed"
-  | "blocked"
-  | "unknown"
-  | string;
+export type ModLoadStatus = "loaded" | "failed" | "blocked" | "unknown" | string;
 
 export type ModRegistryCount = {
   bag: string;
@@ -75,6 +70,14 @@ function stringField(value: unknown, fallback = ""): string {
   return typeof value === "string" && value.length > 0 ? value : fallback;
 }
 
+/** Match host `compareReadyRecords`: lower `loadOrder` first, then id. Missing → 0. */
+function compareByLoadOrder(a: ModReportEntry, b: ModReportEntry): number {
+  const la = a.loadOrder ?? 0;
+  const lb = b.loadOrder ?? 0;
+  if (la !== lb) return la - lb;
+  return a.id.localeCompare(b.id);
+}
+
 function workshopSource(entry: Record<string, unknown>): {
   source: string | null;
   itemId: string | null;
@@ -114,9 +117,7 @@ function ownershipTokens(modId: string): {
 } {
   const prefixes = [modId, `${modId}:`];
   const fuzzy: string[] = [];
-  const last = modId.includes(".")
-    ? modId.slice(modId.lastIndexOf(".") + 1)
-    : modId;
+  const last = modId.includes(".") ? modId.slice(modId.lastIndexOf(".") + 1) : modId;
   if (last.includes("-")) {
     const camel = kebabToCamel(last);
     if (camel.length >= 10) fuzzy.push(camel.toLowerCase());
@@ -128,12 +129,11 @@ function entryOwnedByMod(
   modId: string,
   key: string,
   entry: { id?: unknown } | null | undefined,
-  tokens: ReturnType<typeof ownershipTokens>
+  tokens: ReturnType<typeof ownershipTokens>,
 ): boolean {
   if (key === modId || key.startsWith(`${modId}:`)) return true;
   for (const prefix of tokens.prefixes) {
-    if (prefix.endsWith(":") ? key.startsWith(prefix) : key === prefix)
-      return true;
+    if (prefix.endsWith(":") ? key.startsWith(prefix) : key === prefix) return true;
   }
   if (tokens.fuzzy.length === 0) return false;
   const id = typeof entry?.id === "string" ? entry.id : "";
@@ -141,16 +141,9 @@ function entryOwnedByMod(
   return tokens.fuzzy.some((token) => hay.includes(token));
 }
 
-function registryLabel(
-  key: string,
-  entry: Record<string, unknown> | null | undefined
-): string {
-  const id =
-    typeof entry?.id === "string" && entry.id.length > 0 ? entry.id : key;
-  const name =
-    typeof entry?.name === "string" && entry.name.length > 0
-      ? entry.name
-      : null;
+function registryLabel(key: string, entry: Record<string, unknown> | null | undefined): string {
+  const id = typeof entry?.id === "string" && entry.id.length > 0 ? entry.id : key;
+  const name = typeof entry?.name === "string" && entry.name.length > 0 ? entry.name : null;
   return name ? `${name} · ${id}` : id;
 }
 
@@ -158,15 +151,14 @@ function pushBag(
   out: Map<string, ModRegistryCount[]>,
   modId: string,
   bag: string,
-  items: string[]
+  items: string[],
 ): void {
   if (items.length === 0) return;
   out.get(modId)!.push({ bag, count: items.length, items });
 }
 
 function formatSettingValue(value: unknown): string {
-  if (typeof value === "boolean" || typeof value === "number")
-    return String(value);
+  if (typeof value === "boolean" || typeof value === "number") return String(value);
   if (typeof value === "string") return value;
   if (value == null) return "null";
   try {
@@ -183,24 +175,19 @@ function byteLength(value: unknown): number | null {
 
 function ownedRegistryCounts(
   modIds: readonly string[],
-  orderedRows: ReadonlyMap<string, Record<string, unknown>>
+  orderedRows: ReadonlyMap<string, Record<string, unknown>>,
 ): Map<string, ModRegistryCount[]> {
   const out = new Map<string, ModRegistryCount[]>();
-  const tokenByMod = new Map(
-    modIds.map((id) => [id, ownershipTokens(id)] as const)
-  );
+  const tokenByMod = new Map(modIds.map((id) => [id, ownershipTokens(id)] as const));
   for (const modId of modIds) out.set(modId, []);
   try {
     const bags = (
-      sandkit.engine?.state as
-        | { sandkit?: { mods?: Record<string, unknown> } }
-        | undefined
+      sandkit.engine?.state as { sandkit?: { mods?: Record<string, unknown> } } | undefined
     )?.sandkit?.mods;
     if (bags && typeof bags === "object") {
       for (const [bag, value] of Object.entries(bags)) {
         if (SKIP_REGISTRY_BAGS.has(bag)) continue;
-        if (!value || typeof value !== "object" || Array.isArray(value))
-          continue;
+        if (!value || typeof value !== "object" || Array.isArray(value)) continue;
         const byMod = new Map<string, string[]>();
         for (const [key, raw] of Object.entries(value as object)) {
           const entry =
@@ -249,9 +236,7 @@ function ownedRegistryCounts(
             ids = [];
             byMod.set(modId, ids);
           }
-          ids.push(
-            id.startsWith(`${modId}:`) ? id.slice(modId.length + 1) : id
-          );
+          ids.push(id.startsWith(`${modId}:`) ? id.slice(modId.length + 1) : id);
         }
       }
       const label = bagName === "global" ? "overlays" : "hotbar";
@@ -280,15 +265,10 @@ function ownedRegistryCounts(
       if (schema && typeof schema === "object") {
         const lines: string[] = [];
         for (const [key, raw] of Object.entries(schema as object)) {
-          const def =
-            raw && typeof raw === "object"
-              ? (raw as Record<string, unknown>)
-              : null;
+          const def = raw && typeof raw === "object" ? (raw as Record<string, unknown>) : null;
           const type = typeof def?.type === "string" ? def.type : "?";
           const label =
-            typeof def?.labelKey === "string" && def.labelKey.length > 0
-              ? def.labelKey
-              : key;
+            typeof def?.labelKey === "string" && def.labelKey.length > 0 ? def.labelKey : key;
           lines.push(`${key} · ${type}${label !== key ? ` · ${label}` : ""}`);
         }
         pushBag(out, modId, "config", lines);
@@ -297,7 +277,7 @@ function ownedRegistryCounts(
       const live = settingsRoot?.[modId];
       if (live && typeof live === "object") {
         const lines = Object.entries(live).map(
-          ([key, value]) => `${key} = ${formatSettingValue(value)}`
+          ([key, value]) => `${key} = ${formatSettingValue(value)}`,
         );
         pushBag(out, modId, "settings", lines);
       }
@@ -322,7 +302,7 @@ function ownedRegistryCounts(
     "overlays",
     "hotbar",
     "config",
-    "settings"
+    "settings",
   ];
   for (const [modId, list] of out) {
     list.sort((a, b) => {
@@ -344,7 +324,7 @@ function parseDiagnostic(entry: unknown): ModDiagnostic | null {
   return {
     code: stringField(row.code, "?"),
     modId: stringField(row.modId) || null,
-    message: stringField(row.message)
+    message: stringField(row.message),
   };
 }
 
@@ -358,8 +338,7 @@ const REPORT_CACHE_MS = 1500;
 
 function buildModReport(): ModReport | null {
   const now = Date.now();
-  if (reportCache && now - reportCache.at < REPORT_CACHE_MS)
-    return reportCache.value;
+  if (reportCache && now - reportCache.at < REPORT_CACHE_MS) return reportCache.value;
   const value = buildModReportUncached();
   reportCache = { at: now, value };
   return value;
@@ -368,22 +347,14 @@ function buildModReport(): ModReport | null {
 function buildModReportUncached(): ModReport | null {
   try {
     const external = (
-      sandkit.engine?.state as
-        | { session?: { externalMods?: ExternalModsSession } }
-        | undefined
+      sandkit.engine?.state as { session?: { externalMods?: ExternalModsSession } } | undefined
     )?.session?.externalMods;
     if (!external) return null;
 
-    const ordered = Array.isArray(external.orderedMods)
-      ? external.orderedMods
-      : [];
+    const ordered = Array.isArray(external.orderedMods) ? external.orderedMods : [];
     const statuses = Array.isArray(external.statuses) ? external.statuses : [];
-    const diagnosticsRaw = Array.isArray(external.diagnostics)
-      ? external.diagnostics
-      : [];
-    const missingRaw = Array.isArray(external.missingSavedMods)
-      ? external.missingSavedMods
-      : [];
+    const diagnosticsRaw = Array.isArray(external.diagnostics) ? external.diagnostics : [];
+    const missingRaw = Array.isArray(external.missingSavedMods) ? external.missingSavedMods : [];
 
     const statusById = new Map<string, { status?: string; error?: string }>();
     for (const entry of statuses) {
@@ -442,9 +413,7 @@ function buildModReportUncached(): ModReport | null {
         status: stringField(statusEntry?.status, "unknown"),
         error: stringField(statusEntry?.error) || null,
         dependencies: Array.isArray(manifest.dependencies)
-          ? manifest.dependencies.filter(
-              (dep): dep is string => typeof dep === "string"
-            )
+          ? manifest.dependencies.filter((dep): dep is string => typeof dep === "string")
           : [],
         hasSettings,
         itemId,
@@ -461,13 +430,17 @@ function buildModReportUncached(): ModReport | null {
         hasEntrySource: hasPayload(row.entrySource),
         entrySourceBytes: byteLength(row.entrySource),
         workerSourceBytes: byteLength(row.workerSource),
-        registry: registryByMod.get(id) ?? []
+        registry: registryByMod.get(id) ?? [],
       });
     }
 
-    const missing = missingRaw.filter(
-      (id): id is string => typeof id === "string"
-    );
+    // Session `orderedMods` is not always sorted by manifest loadOrder.
+    mods.sort(compareByLoadOrder);
+    for (let index = 0; index < mods.length; index++) {
+      mods[index]!.order = index;
+    }
+
+    const missing = missingRaw.filter((id): id is string => typeof id === "string");
     const missingSet = new Set(missing);
 
     const diagnostics = diagnosticsRaw
@@ -476,13 +449,13 @@ function buildModReportUncached(): ModReport | null {
       .filter(
         (entry) =>
           entry.code !== "missing_saved_mod" &&
-          !(entry.modId !== null && missingSet.has(entry.modId))
+          !(entry.modId !== null && missingSet.has(entry.modId)),
       );
 
     const loadedCount = mods.filter((mod) => mod.status === "loaded").length;
     const problemCount =
-      mods.filter((mod) => mod.status === "failed" || mod.status === "blocked")
-        .length + missing.length;
+      mods.filter((mod) => mod.status === "failed" || mod.status === "blocked").length +
+      missing.length;
 
     return { mods, diagnostics, missing, loadedCount, problemCount };
   } catch {
