@@ -1,7 +1,7 @@
 /**
  * esbuild `inject` target. Bare `console.*` in the mod bundle call through here
- * so every line gets a `[modId]` prefix. Debug builds also POST to the watch
- * log server (`scripts/dev/log-server.js`).
+ * so every line gets a `[modId]` prefix in DevTools and is forwarded to the
+ * Electron file logger (`window.electron.log` → `logs/main.log`).
  *
  * Use `globalThis.console` only — never the exported name — or inject recurses.
  *
@@ -10,15 +10,16 @@
  * show `console.ts`).
  */
 declare const __MOD_ID__: string;
-declare const __MOD_DEBUG__: boolean;
 
 const native = globalThis.console;
-const LOG_URL = "http://127.0.0.1:19147/log";
 const MIRROR_LEVELS = new Set(["log", "info", "warn", "error", "debug"]);
 const MOD_PREFIX = `[${__MOD_ID__}]`;
 
+type ConsoleLevel = "log" | "info" | "warn" | "error" | "debug";
+type ElectronLogLevel = "debug" | "info" | "warn" | "error";
+type ElectronLog = (level: ElectronLogLevel, scope: string, message: string) => void;
+
 function formatArgs(args: unknown[]): string {
-  if (args.length === 0) return MOD_PREFIX;
   return args
     .map((value) => {
       if (typeof value === "string") return value;
@@ -32,23 +33,33 @@ function formatArgs(args: unknown[]): string {
     .join(" ");
 }
 
-function mirrorPrefixed(args: unknown[]): void {
-  const body = formatArgs(args);
-  mirror(body.length === 0 ? MOD_PREFIX : `${MOD_PREFIX} ${body}`);
+function toElectronLevel(level: ConsoleLevel): ElectronLogLevel {
+  return level === "log" ? "info" : level;
 }
 
-function mirror(line: string): void {
-  void fetch(LOG_URL, {
-    method: "POST",
-    mode: "cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ modId: __MOD_ID__, line }),
-  }).catch(() => {
-    /* `npm run dev` log server not running */
-  });
+function electronLog(): ElectronLog | undefined {
+  try {
+    const g = globalThis as typeof globalThis & {
+      electron?: { log?: ElectronLog };
+      window?: { electron?: { log?: ElectronLog } };
+    };
+    const log = g.electron?.log ?? g.window?.electron?.log;
+    return typeof log === "function" ? log : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
-type ConsoleLevel = "log" | "info" | "warn" | "error" | "debug";
+/** Fire-and-forget write to `logs/main.log` via the host IPC bridge. */
+function mirrorToFile(level: ConsoleLevel, args: unknown[]): void {
+  const log = electronLog();
+  if (!log) return;
+  try {
+    log(toElectronLevel(level), __MOD_ID__, formatArgs(args));
+  } catch {
+    /* logging must never throw */
+  }
+}
 
 const boundLevels: Partial<Record<ConsoleLevel, (...args: unknown[]) => void>> = {};
 
@@ -56,15 +67,11 @@ function boundLevel(level: ConsoleLevel): (...args: unknown[]) => void {
   let bound = boundLevels[level];
   if (!bound) {
     const nativeFn = native[level] as (...args: unknown[]) => void;
-    if (__MOD_DEBUG__) {
-      const emit = (...args: unknown[]) => {
-        nativeFn.call(native, ...args);
-        mirrorPrefixed(args.slice(1));
-      };
-      bound = emit.bind(native, MOD_PREFIX);
-    } else {
-      bound = nativeFn.bind(native, MOD_PREFIX);
-    }
+    const emit = (...args: unknown[]) => {
+      nativeFn.call(native, ...args);
+      mirrorToFile(level, args.slice(1));
+    };
+    bound = emit.bind(native, MOD_PREFIX);
     boundLevels[level] = bound;
   }
   return bound;

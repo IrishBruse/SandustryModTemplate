@@ -17,20 +17,18 @@ Debug builds emit **inline** source maps on `main.js` (needed for `new Function`
 
 Session debug helpers (DevTools, auto-load last save, disable autosave, F3, watch reload) live on the **dev-tools** companion. Settings are on that mod only. See [Dev Tools](dev-tools/).
 
-`__MOD_DEBUG__` is `true` in dev builds and `false` in release. All builds inject `console.ts` so bare `console.*` calls get a `[modId]` prefix. File logging to `logs/<mod-id>.log` runs in debug builds only.
+`__MOD_DEBUG__` is `true` in dev builds and `false` in release. All builds inject `console.ts` so bare `console.*` calls get a `[modId]` prefix and are written to the game log file.
 
 ## File logging (`console`)
 
-All builds inject [`modkit/internal/esbuild/console.ts`](../modkit/internal/esbuild/console.ts) via esbuild [`inject`](https://esbuild.github.io/api/#inject). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code get a `[modId]` prefix in DevTools. `__MOD_ID__` comes from that mod's `modinfo.ts` at build time. The shim uses bound native methods (not per-call wrappers) so DevTools links console output to your mod source. Debug builds also add `console.ts` to the source map `ignoreList` so breakpoints skip the shim when stepping.
+All builds inject [`modkit/internal/esbuild/console.ts`](../modkit/internal/esbuild/console.ts) via esbuild [`inject`](https://esbuild.github.io/api/#inject). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code get a `[modId]` prefix in DevTools and are forwarded to `window.electron.log` (IPC `log:write`). The host appends them to `logs/main.log` with the mod id as scope (workspace `logs/` → OS sandustry logs: `~/.config/sandustry/logs` or `%APPDATA%/sandustry/logs`). `__MOD_ID__` comes from that mod's `modinfo.ts` at build time. The shim uses bound native methods (not per-call wrappers) so DevTools links console output to your mod source. Debug builds also add `console.ts` to the source map `ignoreList` so breakpoints skip the shim when stepping.
 
-Debug builds also `POST` those lines to `http://127.0.0.1:19147/log` while `npm run dev` is up ([`scripts/dev/log-server.js`](../scripts/dev/log-server.js)). Lines append to `logs/<modinfo.id>.log` (workspace `logs/` → OS sandustry logs: `~/.config/sandustry/logs` or `%APPDATA%/sandustry/logs`). Use `createLogger` from `@modkit/log` when you want a custom bracket tag.
-
-Use `clearLog(modId)` from `@modkit/log` to clear a log file by hand. `clearLog` aborts after 500 ms if F5 / CDP stalls the POST.
+Use `createLogger` from `@modkit/log` when you want a custom scope tag without going through `console`.
 
 ```ts
 console.log("my-feature", payload);
 // DevTools: [author.template] my-feature {…}
-// logs/author.template.log (debug only): [author.template] my-feature {…}
+// logs/main.log: […] [INFO] [author.template] my-feature {…}
 ```
 
 The shim uses `globalThis.console` internally so it does not recurse.
@@ -96,7 +94,7 @@ When `npm run dev` stops (Ctrl+C, terminal close, or process exit), it removes t
 
 `npm run dev` watches every `src/*/modinfo.ts` mod. Use `npm run dev:pick` for a keyboard picker before the watch starts. **All mods** is the first row. Mods are grouped under **src** (including the **dev-tools** companion). Type to filter the list, **Space** toggles mods, **Enter** confirms (All, checked mods, or the highlighted mod). Your last choice is saved under `.tmp/dev-mod-selection.json` and pre-selected next time. Pass `--mod` to skip the picker. Non-TTY `dev:pick` watches all mods.
 
-**F5** (VS Code `Sandustry` launch) stops any running game, launches with `--remote-debugging-port`, waits until CDP `:9222` responds, then attaches the debugger to the **renderer** (where mods run). It does not rebuild the mod — keep `npm run dev` running for the bundle and file logs. **Restart** in the debugger toolbar kills that Electron process and starts a new one, then the renderer attach reconnects — a page reload does not restart workers or re-apply patches. If attach fails or ports linger, press F5 again or run the **sandustry:stop** task.
+**F5** (VS Code `Sandustry` launch) stops any running game, launches with `--remote-debugging-port`, waits until CDP `:9222` responds, then attaches the debugger to the **renderer** (where mods run). It does not rebuild the mod — keep `npm run dev` running for the bundle. **Restart** in the debugger toolbar kills that Electron process and starts a new one, then the renderer attach reconnects — a page reload does not restart workers or re-apply patches. If attach fails or ports linger, press F5 again or run the **sandustry:stop** task.
 
 The watch rebuilds when you save a file in the bundle graph (mod sources and imported `modkit/` files), `modinfo.ts`, or static files under `mod/`. A Tailwind CSS change queues a second rebuild after the current one finishes, so the next save is not dropped. With **Watch local mods** on, the dev-tools companion re-evals renderer `main.js`. Restart the game for `worker.js` and `patches.json`.
 

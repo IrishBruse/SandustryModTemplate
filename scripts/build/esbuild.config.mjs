@@ -32,7 +32,6 @@ import {
   PUBLISH_OUT_ROOT,
 } from "../lib/mods.js";
 import { copyWorkshopInstallFiles, removeWorkshopPublishFiles } from "../lib/workshop-files.js";
-import { startLogServer } from "../dev/log-server.js";
 import { modkitAliasPlugin } from "../lib/modkit-alias.js";
 import { writeJsonIfChanged, writeTextIfChanged } from "../lib/write-if-changed.js";
 
@@ -700,7 +699,6 @@ async function watchOne(mod) {
 }
 
 if (watch) {
-  if (modDebug) startLogServer();
   for (const mod of mods) {
     await watchOne(mod);
   }

@@ -163,12 +163,9 @@ const electron = {
     overlay: { openUrl: async () => undefined },
   },
 
-  log: (level: string, scope: string, message: string) => {
-    const line = `[${scope}] ${message}`;
-    if (level === "error") console.error(line);
-    else if (level === "warn") console.warn(line);
-    else console.log(line);
-  },
+  // Match preload: fire-and-forget IPC. Do not call renderer console — the
+  // mod console inject also calls `electron.log` and would recurse.
+  log: (_level: string, _scope: string, _message: string) => undefined,
 
   customMaps: {
     save: async () => ok(),
