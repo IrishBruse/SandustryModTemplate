@@ -130,14 +130,15 @@ Mods in `src/` that ship with this template:
 
 Every mod under `src/<name>/`, `mods/<name>/`, or `examples/<name>/` needs these files:
 
-| File            | Role                                                                                  |
-| --------------- | ------------------------------------------------------------------------------------- |
-| `modinfo.json`  | JSON manifest with `$schema` for IDE validation. See [Mod manifest](docs/modinfo.md)  |
-| `modinfo.ts`    | TypeScript manifest (`defineModInfo` or `modinfoFromJson`). Optional patch re-exports |
-| `main.ts`       | Mod entry                                                                             |
-| `tsconfig.json` | Isolated TypeScript project. This folder cannot see sibling mods                      |
+| File           | Role                                                                                  |
+| -------------- | ------------------------------------------------------------------------------------- |
+| `modinfo.json` | JSON manifest with `$schema` for IDE validation. See [Mod manifest](docs/modinfo.md)  |
+| `modinfo.ts`   | TypeScript manifest (`defineModInfo` or `modinfoFromJson`). Optional patch re-exports |
+| `main.ts`      | Mod entry                                                                             |
 
-Keep extra TypeScript out of the mod root. Only `modinfo.json` and/or `modinfo.ts`, `main.ts`, optional `worker.ts`, and optional `patches.json` / `patches.ts` may sit next to `tsconfig.json`. Put other source files in feature folders (`ui/`, `health/`, `capture/`, …).
+The repo has one [`tsconfig.json`](tsconfig.json). TypeScript checks `modkit/`, `src/`, `examples/`, and `mods/` together (`moduleDetection` is `force` so script-style `main.ts` files do not clash). The build still blocks imports from another mod folder.
+
+Keep extra TypeScript out of the mod root. Only `modinfo.json` and/or `modinfo.ts`, `main.ts`, optional `worker.ts`, and optional `patches.json` / `patches.ts` may sit at the mod root. Put other source files in feature folders (`ui/`, `health/`, `capture/`, …).
 
 Add these when you need them:
 

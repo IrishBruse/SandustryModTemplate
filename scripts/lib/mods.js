@@ -247,7 +247,6 @@ export function parseModFilter(argv) {
  * @property {string} manifestLabel Repo path used in build errors
  * @property {string} main
  * @property {string | null} worker
- * @property {string} tsconfig
  * @property {any} manifest
  * @property {string} gameId OS mods folder name (`modinfo.id`)
  * @property {string} outDir
@@ -300,7 +299,6 @@ export async function loadMods(argv = process.argv.slice(2)) {
     const label = manifestLabel(repoPath, source);
     const main = join(dir, "main.ts");
     const workerTs = join(dir, "worker.ts");
-    const tsconfig = join(dir, "tsconfig.json");
     if (!existsSync(main)) {
       throw new Error(`${label} needs ${repoPath}/main.ts`);
     }
@@ -332,7 +330,6 @@ export async function loadMods(argv = process.argv.slice(2)) {
       manifestLabel: label,
       main,
       worker,
-      tsconfig,
       manifest,
       gameId,
       outDir: gameModDir(gameId),
