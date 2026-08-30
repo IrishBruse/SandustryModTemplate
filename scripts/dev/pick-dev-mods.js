@@ -58,7 +58,7 @@ export async function pickDevModArgs(argv, options = {}) {
   if (mods.length === 0) {
     const hint =
       modRoots.length === 1 && modRoots[0] === "examples"
-        ? "Add examples/<name>/modinfo.ts"
+        ? "Run npm run examples to clone SandustryExamples, or add examples/<name>/modinfo.json"
         : "Add src/<name>/modinfo.ts";
     throw new Error(`No mods found. ${hint}`);
   }

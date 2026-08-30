@@ -17,7 +17,7 @@ Keep each `find` / `code` string small. Set `expectedMatches`.
 
 Patch `code` runs **outside** the game bundle IIFE. Put shared runtime helpers on `globalThis` when patch code must call them.
 
-Types: `@sandustry-modding/types/configs` (`BundlePatch`), via [`modkit/patches.ts`](../modkit/patches.ts). Manifest: [Mod manifest](modinfo.md). Canonical multi-file example: [`examples/content/collector-element/patches.json`](../examples/content/collector-element/patches.json).
+Types: `@sandustry-modding/types/configs` (`BundlePatch`), via [`modkit/patches.ts`](../modkit/patches.ts). Manifest: [Mod manifest](modinfo.md). Canonical multi-file example: [collector-element/patches.json](https://github.com/sandustry-modding/SandustryExamples/blob/main/content/collector-element/patches.json).
 
 For IDE validation of generated `patches.json`, use schema URL `https://sandustry-modding.github.io/SandustryTypes/schemas/patches.json` (configured in this repo's `.vscode/settings.json`). Runtime output stays a bare JSON array.
 

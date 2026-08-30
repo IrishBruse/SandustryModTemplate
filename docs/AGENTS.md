@@ -26,10 +26,10 @@ A mod with its own repo documents in that repo with `README.md` and `CHANGELOG.m
 
 ## Sample mod READMEs (`examples/*/README.md`)
 
-Short player-facing copy. Builds do not copy these files into the game folder or `build/` staging.
+Those files live in [SandustryExamples](https://github.com/sandustry-modding/SandustryExamples). `npm run examples` clones them into `examples/`. Short player-facing copy. Builds do not copy these files into the game folder or `build/` staging.
 
 - Use lists for steps and controls. Do not use markdown tables.
-- Match the tone and structure of the other `*-example` READMEs.
+- Match the tone and structure of the other sample READMEs.
 
 ## Mod `CHANGELOG.md` and Discord
 

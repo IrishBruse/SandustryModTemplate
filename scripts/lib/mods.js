@@ -263,7 +263,7 @@ export async function loadMods(argv = process.argv.slice(2)) {
   if (discovered.length === 0) {
     const hint =
       modRoots.length === 1 && modRoots[0] === "examples"
-        ? "Add examples/<name>/modinfo.json"
+        ? "Run npm run examples to clone SandustryExamples, or add examples/<name>/modinfo.json"
         : modRoots.every((root) => root === "src" || root === "mods")
           ? "Add src/<name>/modinfo.json or mods/<name>/modinfo.json"
           : "Add src/<name>/modinfo.json, mods/<name>/modinfo.json, or examples/<name>/modinfo.json";

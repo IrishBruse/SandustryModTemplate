@@ -7,10 +7,12 @@ import { spawn } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { styleText } from "../lib/cli-style.js";
+import { ensureExamplesRepo } from "../lib/examples-repo.js";
 import { removeOwnedGameMods } from "../lib/mod-path.js";
 import { pickDevModArgs } from "./pick-dev-mods.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
+ensureExamplesRepo(ROOT);
 const extra = ["--examples", ...process.argv.slice(2)];
 const modArgs = await pickDevModArgs(extra, { skipPicker: true, roots: ["examples"] });
 

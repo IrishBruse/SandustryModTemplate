@@ -8,5 +8,5 @@ Repo paths (from workspace root):
 - `docs/ui/overlay-root.md`
 - `docs/ui/fixed-anchor.md`
 - `docs/ui/options-*.md`
-- `examples/ui/management-button/`
+- `examples/ui/management-button/` (cloned from [SandustryExamples](https://github.com/sandustry-modding/SandustryExamples))
 - `examples/ui/overlay-hotkey` (`@modkit/ui/tailwind.css`)

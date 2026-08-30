@@ -66,7 +66,7 @@ import { ACCENT, hotkeyBadgeStyle } from "@modkit/ui";
 
 The game Tailwind stylesheet is purged. Classes the HUD does not use (for example `w-[28rem]`, `underline`) do nothing until this mod inserts utilities.
 
-Import `@modkit/ui/tailwind.css` and insert the string into a `<style>` tag. The build compiles only class names from files esbuild packed into `main.js`. See [examples/ui/overlay-hotkey/main.ts](../../examples/ui/overlay-hotkey/main.ts).
+Import `@modkit/ui/tailwind.css` and insert the string into a `<style>` tag. The build compiles only class names from files esbuild packed into `main.js`. See [overlay-hotkey/main.ts](https://github.com/sandustry-modding/SandustryExamples/blob/main/ui/overlay-hotkey/main.ts).
 
 Options rows, switches, fields, and buttons use the same Tailwind classes as the in-game Options dialog. Import the components from `@modkit/ui` (not `@modkit/ui/options` — that path is `options.css`). Import `@modkit/ui/options.css` only for `OptionsSlider` / `OptionsSliderRow` (thumb and track). Insert that string into a `<style>` tag the same way.
 

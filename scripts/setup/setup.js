@@ -32,7 +32,7 @@ import {
   sandustryModsDir,
   steamLibraryRoots,
 } from "../lib/paths.js";
-import { discoverMods, MOD_ROOTS } from "../lib/mods.js";
+import { discoverMods } from "../lib/mods.js";
 import { ensureRepoDistLink } from "../lib/mod-path.js";
 import { SANDUSTRY, SANDUSTRY_DIR } from "../lib/sandustry-common.js";
 import {
@@ -114,11 +114,9 @@ function checkRootInstall() {
 }
 
 function checkModPackageInstalls() {
-  for (const root of MOD_ROOTS) {
-    if (!existsSync(join(ROOT, root))) {
-      fail(`${root}/ folder is missing.`);
-      return;
-    }
+  if (!existsSync(join(ROOT, "src"))) {
+    fail("src/ folder is missing.");
+    return;
   }
 
   /** @type {string[]} */

@@ -11,7 +11,7 @@ The game runs `main.js` as a script body (`new Function`). The loader wraps the 
 | `npm run dev:release` | Omitted        | Off        | OS mods folder while watching (same cleanup as `dev`)            |
 | `--game` / `--debug`  | Included       | Inline     | Game mods folder                                                 |
 
-`--no-debug` forces a release-style bundle even when watch or game flags are set (`npm run dev:release` uses this). `--mod <folder>` builds one mod folder (repeat `--mod` for several). Debug builds (`npm run dev`, `--game`, `--debug`) install to the OS mods folder (`dist/` links there). `npm run build` and `npm run dev` discover every `src/*/modinfo.ts`. Use `npm run examples` or `npm run build -- --examples` for `examples/*/modinfo.ts`.
+`--no-debug` forces a release-style bundle even when watch or game flags are set (`npm run dev:release` uses this). `--mod <folder>` builds one mod folder (repeat `--mod` for several). Debug builds (`npm run dev`, `--game`, `--debug`) install to the OS mods folder (`dist/` links there). `npm run build` and `npm run dev` discover every `src/*/modinfo.ts`. Use `npm run examples` or `npm run build -- --examples` for `examples/*/modinfo.ts`. Those commands clone [SandustryExamples](https://github.com/sandustry-modding/SandustryExamples) into `examples/` when that folder is missing.
 
 Debug builds emit **inline** source maps on `main.js` (needed for `new Function` eval). Use `--sourcemap` to force maps on a release build, or `--no-sourcemap` to omit them from a debug build.
 
@@ -37,7 +37,7 @@ The game ships Tailwind **v3.4.19** inside `bundle.js`. That stylesheet is purge
 
 Sandkit loads `main.js` only. There is no CSS file in the mod manifest. The build still has to insert a `<style>` tag. Import shared `@modkit/ui/tailwind.css` from the mod entry. Import `@modkit/ui/options.css` only when you use `OptionsSlider` / `OptionsSliderRow`. The kit re-exports those React components from `modkit/ui/options/index.ts` so esbuild does not pick `options.css` instead. The build inlines CSS as text (no `main.css` in the mod folder). The compiled Tailwind sheet is **only the utilities this bundle uses**: esbuild lists the source files it packed, then Tailwind scans those files. Unused `modkit/ui` components do not add CSS. Mods that never import those files skip the compile.
 
-The insert lives in [examples/ui/overlay-hotkey/main.ts](../examples/ui/overlay-hotkey/main.ts) (`style#<mod-id>-tailwind`). A renderer hot reload re-inserts the sheet when that code runs again. Restart the game if the overlay does not update.
+The insert lives in [overlay-hotkey/main.ts](https://github.com/sandustry-modding/SandustryExamples/blob/main/ui/overlay-hotkey/main.ts) (`style#<mod-id>-tailwind`). A renderer hot reload re-inserts the sheet when that code runs again. Restart the game if the overlay does not update.
 
 Do not enable Tailwind preflight. The game already resets `*, ::before, ::after`. A second preflight can change the HUD.
 
@@ -125,7 +125,7 @@ Steam **change notes** come from that mod's `CHANGELOG.md` (Keep a Changelog). W
 
 ## GitHub Actions
 
-Pushes, pull requests, and manual runs execute `.github/workflows/ci.yml` on **Ubuntu** and **Windows** (Node 24). Each job runs `npm ci`, `npm run build`, and a Tailwind example build (`--examples --mod overlay-hotkey`).
+Pushes, pull requests, and manual runs execute `.github/workflows/ci.yml` on **Ubuntu** and **Windows** (Node 24). Each job runs `npm ci`, `npm run build`, and a Tailwind example build (`--examples --mod overlay-hotkey`). `--examples` clones [SandustryExamples](https://github.com/sandustry-modding/SandustryExamples) into `examples/`.
 
 On **Windows**, CI also builds a fake Sandustry install under `.tmp/ci-sandustry/` (`scripts/setup/prepare-ci-game.js`), sets `SANDUSTRY`, and runs `npm run setup`. That checks Node, links, asar extract, and junctions without Steam.
 

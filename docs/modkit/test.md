@@ -23,7 +23,7 @@ test("void world", async () => {
 
 `npm run test:integration`:
 
-1. Builds `src/` and `examples/` with `--debug` into `dist/`.
+1. Builds `src/` with `--debug` into `dist/`. Builds `examples/` too when that folder is present (or when you pass `--examples`, which clones [SandustryExamples](https://github.com/sandustry-modding/SandustryExamples)).
 2. Boots `sandustry/<version>-<branch>/dist` in headless Chromium (CDP **:9224**).
 3. Waits for boot to finish (`game:ready`, `#loading` removed, Game scene).
 4. Runs every `*.integration.test.ts` with `--test-concurrency=1` (async spawn so

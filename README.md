@@ -7,7 +7,7 @@ TypeScript template for [Sandustry](https://store.steampowered.com/app/2764460/S
 
 ## Features
 
-- **Multi-mod** — One repo, many mods. Each `src/<name>/` or `examples/<name>/` with a `modinfo.ts` builds to its own game folder.
+- **Multi-mod** — One repo, many mods. Each `src/<name>/` or cloned `examples/<name>/` with a `modinfo.ts` builds to its own game folder.
 - **[TypeScript](https://sandustry-modding.github.io/SandustryTypes/#/)** — Sandkit API types (`@sandustry-modding/types`)
 - **[React HUD](docs/modkit/react.md)** — JSX via `sandkit.react`, plus the [UI kit gallery](docs/ui/README.md)
 - **[Watch rebuild](docs/builds.md)** — `npm run dev` writes `main.js` to the game mods folder
@@ -25,7 +25,7 @@ npm run setup
 npm run dev
 ```
 
-Then **F5** in VS Code (or `npm run sandustry`). In game, look for **Template loaded**. **Alt+E** opens the overlay sample (`examples/overlay-hotkey`).
+Then **F5** in VS Code (or `npm run sandustry`). In game, look for **Template loaded**. **Alt+E** opens the overlay sample after `npm run examples` (`examples/overlay-hotkey`).
 
 Windows: the same commands work in PowerShell. If setup cannot find the game:
 
@@ -59,7 +59,7 @@ Do not import files from another mod folder. Shared code goes in `modkit/`.
 - **`npm run dev`** — Watch all `src/` mods; remove owned mods when the watch stops
 - **`npm run dev:release`** — Same watch as `dev`, without `debugPatches` or sourcemaps. Use to test mods before upload to workshop.
 - **`npm run dev:pick`** — Same as `dev`, with a TTY picker first
-- **`npm run examples`** — Watch `examples/` mods (optional `--mod <name>`)
+- **`npm run examples`** — Clone [SandustryExamples](https://github.com/sandustry-modding/SandustryExamples) into `examples/` if that folder is missing, then watch those mods (optional `--mod <name>`)
 
 ### Release
 
@@ -70,7 +70,7 @@ Do not import files from another mod folder. Shared code goes in `modkit/`.
 
 - **`npm run typecheck`** — TypeScript check
 - **`npm run test`** — Unit tests only (`*.test.ts`). No Chromium.
-- **`npm run test:integration`** — Build mods, boot extracted dist in headless Chromium (CDP `:9224`), run `*.integration.test.ts`. Optional mod folder (`nr test:integration template`) or `--examples`. Use **`npm run test:integration:view`** for a visible window (`nr test:integration:view collector-element`).
+- **`npm run test:integration`** — Build mods, boot extracted dist in headless Chromium (CDP `:9224`), run `*.integration.test.ts`. Optional mod folder (`nr test:integration template`) or `--examples` (clones sample mods when `examples/` is missing). Use **`npm run test:integration:view`** for a visible window (`nr test:integration:view collector-element`).
 - **`npm run lint`** — Typecheck, oxlint, and format check
 - **`npm run lint:fix`** — oxlint `--fix` and oxfmt
 
@@ -92,13 +92,13 @@ Do not import files from another mod folder.
 | --------------------- | -------------------------------------------- |
 | `src/<name>/`         | Your mod (`modinfo.json` + `main.ts`)        |
 | `mods/<name>/`        | Optional private mods (gitignored)           |
-| `examples/<name>/`    | Sample mods to copy into `src/`              |
+| `examples/<name>/`    | Sample mods (cloned, gitignored)              |
 | `modkit/`             | Shared kit. Import as `@modkit/*`            |
 | `dist/`               | Link to the Sandustry mods folder on disk    |
 | `build/<modinfo.id>/` | Workshop staging (copied on `npm run build`) |
 | `logs/`               | Link to Sandustry log files                  |
 
-`mods/` is optional and gitignored, with the same `modinfo` rules as `src/`. `npm run build`, `npm run dev`, and `npm run publish` include it. This repo also ignores `src/irishbruse.*/`; those mods keep their own repos (`README.md` and `CHANGELOG.md` in that repo).
+`mods/` is optional and gitignored, with the same `modinfo` rules as `src/`. `npm run build`, `npm run dev`, and `npm run publish` include it. `examples/` is gitignored. `npm run examples` clones [SandustryExamples](https://github.com/sandustry-modding/SandustryExamples) into that folder when it is missing. This repo also ignores `src/irishbruse.*/`; those mods keep their own repos (`README.md` and `CHANGELOG.md` in that repo).
 
 The game folder and Workshop staging use the `id` field in `modinfo.json`, not the repo folder name or display `name`.
 `dist/` points at the OS mods folder. Each built mod lives at `dist/<modinfo.id>/`. Release staging is `build/<modinfo.id>/`.
@@ -114,11 +114,7 @@ You do not copy files into the game folder by hand. `npm run dev` and `npm run b
 
 ### Sample mods
 
-Start from [`src/template/`](src/template/). Copy a folder from [`examples/`](examples/) into `src/<your-mod>/` when you want that sample.
-
-On **0.5.5+**, prefer Sandkit hooks and `configOverrides` over bundle patches; [`collector-patches`](examples/api/collector-patches/) is the remaining patch-rewrite sample.
-
-Full example list: [`examples/README.md`](examples/README.md).
+Start from [`src/template/`](src/template/). Sample mods live in [SandustryExamples](https://github.com/sandustry-modding/SandustryExamples). Run `npm run examples` to clone them into `examples/`, then copy a folder into `src/<your-mod>/`.
 
 Mods in `src/` that ship with this template:
 
