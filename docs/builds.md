@@ -41,7 +41,7 @@ The insert lives in [overlay-hotkey/main.ts](https://github.com/sandustry-moddin
 
 Do not enable Tailwind preflight. The game already resets `*, ::before, ::after`. A second preflight can change the HUD.
 
-Docs canvases use the same compiler. `npm run ui:css` writes [docs/ui/canvas/_preview/utilities.css](ui/canvas/_preview/utilities.css). Live `preview.html` pages and PNGs live under [docs/ui/canvas](ui/canvas/) (not in `modkit/ui`).
+Live `preview.html` pages and PNGs live under [docs/ui/canvas](ui/canvas/) (not in `modkit/ui`). Preview utilities are in [docs/ui/canvas/_preview/utilities.css](ui/canvas/_preview/utilities.css).
 
 ### Verify
 
@@ -82,8 +82,6 @@ npm run test:integration:view  # visible window (Linux needs DISPLAY)
 nr test:integration:view overlay-hotkey  # one folder + its tests (visible)
 nr test:integration overlay-hotkey  # one folder + its tests (headless)
 npm run sandustry        # stop + launch (no build; keep npm run dev for the bundle)
-npm run ui:css           # compile docs/ui/canvas preview Tailwind
-npm run ui:previews      # compile preview CSS, then screenshot preview.html
 ```
 
 When `npm run dev` stops (Ctrl+C, terminal close, or process exit), it removes the OS mod folders this template built in that watch session. The `dist/` link stays. Use `npm run build` when you want mods to stay installed.

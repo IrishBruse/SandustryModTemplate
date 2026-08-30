@@ -22,9 +22,6 @@ export function readModkitOptionsCss() {
   return readFileSync(MODKIT_OPTIONS_CSS, "utf8");
 }
 
-/** Docs canvas source — not a mod file, so mods stay isolated. */
-export const PREVIEW_TAILWIND_CSS = join(ROOT, "docs/ui/canvas/_preview/tailwind.css");
-
 /** Windows drive path or UNC, even when this process runs on POSIX (unit tests). */
 function isWindowsAbsolute(p) {
   return /^[A-Za-z]:[\\/]/.test(p) || p.startsWith("\\\\");

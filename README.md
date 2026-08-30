@@ -74,11 +74,9 @@ Do not import files from another mod folder. Shared code goes in `modkit/`.
 - **`npm run lint`** — Typecheck, oxlint, and format check
 - **`npm run lint:fix`** — oxlint `--fix` and oxfmt
 
-### Docs and UI
+### Docs
 
 - **`npm run docs`** — Serve Docsify on `docs/`
-- **`npm run ui:css`** — Compile Tailwind for UI preview canvases
-- **`npm run ui:previews`** — Generate UI preview PNGs
 
 Build flags, Workshop upload, and Tailwind details: [Builds](docs/builds.md).
 

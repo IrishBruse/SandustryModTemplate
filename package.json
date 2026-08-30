@@ -16,8 +16,6 @@
     "lint": "npm run typecheck && oxlint && oxfmt --check",
     "lint:fix": "oxlint --fix && oxfmt",
     "docs": "docsify serve docs",
-    "ui:css": "node scripts/ui/compile-preview-css.mjs",
-    "ui:previews": "node scripts/ui/generate-previews.mjs",
     "sandustry": "node scripts/sandustry/launch-sandustry.js",
     "publish": "node scripts/publish/publish-workshop.js"
   },
