@@ -243,7 +243,7 @@ function toSourceMapFileUrl(source, outDir) {
 }
 
 /**
- * Mark the console inject shim (and dev-tools poller files) as ignore-listed.
+ * Mark the console inject shim as ignore-listed.
  * Debuggers and DevTools then skip those frames on console output.
  * @param {{ sources?: string[]; ignoreList?: number[] }} map
  */
