@@ -1,6 +1,6 @@
 # Extracted `sandustry/`
 
-Setup writes versioned folders under `sandustry/<version>-<branch>/` (for example `sandustry/0.5.2-mods/`). Older extracts stay on disk when you switch game version or Steam branch.
+Setup writes versioned folders under `sandustry/<version>-<branch>/` (for example `sandustry/0.5.2-mods/`). Older extracts stay on disk when you switch game version or Steam branch. `npm run setup` also links `sandustry/saves/` to the OS save folder and `sandustry/workshop/` to Steam Workshop content for app **2764460**.
 
 Latest [mods] extract (`sandustry/0.5.5-mods/`): `package.json` version **0.5.5**. Entry `main.js`. Steamworks via `steamworks.js`. Older extracts (for example `0.5.2-mods/`) may still be present.
 

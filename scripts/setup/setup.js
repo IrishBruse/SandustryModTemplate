@@ -9,30 +9,26 @@
  *   sandustry/<version>-<branch>/  app.asar files except node_modules (e.g. 0.5.5-mods)
  *   dist/        symlink (Linux) / junction (Windows) to sandustry mods folder
  *   logs/        symlink (Linux) / junction (Windows) to sandustry logs
+ *   sandustry/saves/      link to OS saves
+ *   sandustry/workshop/   link to Steam Workshop content
  *                Linux: ~/.config/sandustry/logs
  *                Windows: %APPDATA%/sandustry/logs
  */
 import { extractFile, listPackage } from "@electron/asar";
-import {
-  existsSync,
-  lstatSync,
-  mkdirSync,
-  readFileSync,
-  readlinkSync,
-  rmSync,
-  writeFileSync,
-} from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { asarExtractPath, asarRelPath } from "../lib/asar-path.js";
 import {
-  linkDirectory,
-  samePath,
+  ensureDirectoryLink,
   sandustryLogsDir,
   sandustryModsDir,
+  sandustrySavesDir,
+  sandustryWorkshopDir,
   steamLibraryRoots,
 } from "../lib/paths.js";
-import { discoverMods } from "../lib/mods.js";
+import { ensureAllModDebugSaves } from "../lib/debug-save.js";
+import { DEFAULT_MOD_ROOTS, discoverMods, loadMods } from "../lib/mods.js";
 import { syncLaunchDebugModPicker } from "../lib/sync-debug-mod-picker.js";
 import { ensureRepoDistLink } from "../lib/mod-path.js";
 import { SANDUSTRY, SANDUSTRY_DIR } from "../lib/sandustry-common.js";
@@ -53,6 +49,9 @@ const EXTRACT_ROOT = sandustryExtractRoot(ROOT);
 const LOGS_SRC = sandustryLogsDir();
 const LOGS_DEST = join(ROOT, "logs");
 const MODS_DIR = sandustryModsDir();
+const SAVES_SRC = sandustrySavesDir();
+const SAVES_DEST = join(EXTRACT_ROOT, "saves");
+const WORKSHOP_DEST = join(EXTRACT_ROOT, "workshop");
 const SANDUSTRY_APP_ID = "2764460";
 /** Previous references/ folder (source extract, logs link, workshop copies). */
 const LEGACY_REFERENCES = join(ROOT, "references");
@@ -285,8 +284,10 @@ function checkSandkitInBundle(bundleRel, sourceDest, folderName) {
 function ensureUserDataDirs() {
   mkdirSync(MODS_DIR, { recursive: true });
   mkdirSync(LOGS_SRC, { recursive: true });
+  mkdirSync(SAVES_SRC, { recursive: true });
   ok(`Game mods folder: ${MODS_DIR}`);
   ok(`Game logs folder: ${LOGS_SRC}`);
+  ok(`Game saves folder: ${SAVES_SRC}`);
 }
 
 function syncDist() {
@@ -306,27 +307,42 @@ function syncDist() {
   }
 }
 
-function syncLogs() {
-  try {
-    const stat = lstatSync(LOGS_DEST);
-    if (stat.isSymbolicLink()) {
-      const current = resolve(dirname(LOGS_DEST), readlinkSync(LOGS_DEST));
-      if (samePath(current, LOGS_SRC)) {
-        ok(`Link logs -> ${LOGS_SRC} (already linked)`);
-        return;
-      }
-    }
-    rmSync(LOGS_DEST, { recursive: true, force: true });
-  } catch (err) {
-    if (err.code !== "ENOENT") throw err;
-  }
-
-  linkDirectory(LOGS_SRC, LOGS_DEST);
-  if (!existsSync(LOGS_DEST)) {
-    fail(`Could not link logs/ to ${LOGS_SRC}`);
+/** @param {string} label @param {"already" | "linked"} status @param {string} target */
+function reportDirLink(label, status, target) {
+  if (status === "already") {
+    ok(`Link ${label} -> ${target} (already linked)`);
     return;
   }
-  ok(`Linked logs -> ${LOGS_SRC}`);
+  ok(`Linked ${label} -> ${target}`);
+}
+
+function syncLogs() {
+  try {
+    reportDirLink("logs/", ensureDirectoryLink(LOGS_SRC, LOGS_DEST), LOGS_SRC);
+  } catch (err) {
+    fail(`Could not link logs/ to ${LOGS_SRC}: ${err instanceof Error ? err.message : err}`);
+  }
+}
+
+function syncSaves() {
+  try {
+    reportDirLink("sandustry/saves/", ensureDirectoryLink(SAVES_SRC, SAVES_DEST), SAVES_SRC);
+  } catch (err) {
+    fail(
+      `Could not link sandustry/saves/ to ${SAVES_SRC}: ${err instanceof Error ? err.message : err}`,
+    );
+  }
+}
+
+function syncWorkshop() {
+  try {
+    const target = sandustryWorkshopDir(SANDUSTRY);
+    reportDirLink("sandustry/workshop/", ensureDirectoryLink(target, WORKSHOP_DEST), target);
+  } catch (err) {
+    fail(
+      `Could not link sandustry/workshop/ to Steam Workshop content: ${err instanceof Error ? err.message : err}`,
+    );
+  }
 }
 
 console.log("Sandustry mod template setup");
@@ -356,12 +372,24 @@ if (haveAsar) {
 ensureUserDataDirs();
 syncDist();
 syncLogs();
+syncSaves();
+syncWorkshop();
 try {
   const folders = syncLaunchDebugModPicker();
   ok(`F5 mod picker (${folders.length} mod${folders.length === 1 ? "" : "s"})`);
 } catch (error) {
   const message = error instanceof Error ? error.message : String(error);
   warn(`F5 mod picker: ${message}`);
+}
+try {
+  const mods = await loadMods([]);
+  const srcMods = mods.filter((mod) => DEFAULT_MOD_ROOTS.includes(mod.root));
+  const results = ensureAllModDebugSaves(srcMods);
+  const created = results.filter((row) => row.created).length;
+  ok(`Debug saves (${created} new, ${results.length} mod${results.length === 1 ? "" : "s"})`);
+} catch (error) {
+  const message = error instanceof Error ? error.message : String(error);
+  warn(`Debug saves: ${message}`);
 }
 
 console.log("");

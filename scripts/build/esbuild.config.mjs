@@ -119,6 +119,7 @@ async function syncModFiles(mod) {
   if (existsSync(staticDir)) {
     for (const name of readdirSync(staticDir)) {
       if (name === "patches.json" || name === "modinfo.json") continue;
+      if (name.endsWith(".save")) continue;
       cpSync(join(staticDir, name), join(mod.outDir, name), {
         recursive: true,
         force: true,

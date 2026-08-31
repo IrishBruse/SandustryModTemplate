@@ -8,6 +8,8 @@ import { asarExtractPath, asarRelPath } from "./asar-path.js";
 
 export const SANDUSTRY_EXTRACT_DIRNAME = "sandustry";
 export const LEGACY_CURRENT_LINK = "current";
+/** OS directory links at the extract root (not version folders). */
+export const EXTRACT_ROOT_OS_LINKS = ["saves", "workshop"];
 export const BUNDLE_RELS = ["dist/js/bundle.js", "js/bundle.js"];
 const VERSIONED_FOLDER = /^\d+\.\d+\.\d+-[\w-]+$/;
 
@@ -110,6 +112,7 @@ export function isVersionedExtractFolder(name) {
 /** @param {string} extractRoot @param {string} name */
 function shouldKeepExtractRootEntry(extractRoot, name) {
   if (isVersionedExtractFolder(name)) return true;
+  if (EXTRACT_ROOT_OS_LINKS.includes(name)) return true;
   if (name === LEGACY_CURRENT_LINK) {
     rmSync(join(extractRoot, name), { recursive: true, force: true });
     return true;

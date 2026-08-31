@@ -25,7 +25,7 @@ npm run setup
 npm run dev
 ```
 
-Then **F5** in VS Code (or `npm run sandustry`). **Sandustry** shows a Quick Pick of one mod. If that mod has a `.save` in its installed folder (or `mod/`), F5 loads it. If not, the game Continues. **Sandustry (all mods)** starts every selected mod and Continues. In game, look for **Template loaded**. **Alt+E** opens the overlay sample after `npm run examples` (`examples/overlay-hotkey`).
+Then **F5** in VS Code (or `npm run sandustry`). **Sandustry** shows a Quick Pick of one mod, then opens the **newest save** in that mod’s test world (`modinfo.id`, 1024×1024). `npm run dev` watches that one folder. Other OS mods stay installed. Load Game lists that id on the left (**WORLDS**). In-game Save, quicksave, and autosave for that session appear on the right under that world. Continue for your campaign stays on last-played. F5 does not change last-played. `npm run setup` creates the test world when it is missing and does not overwrite it. **Sandustry (all mods)** starts every selected mod and Continues. In game, look for **Template loaded**. **Alt+E** opens the overlay sample after `npm run examples` (`examples/overlay-hotkey`).
 
 Windows: the same commands work in PowerShell. If setup cannot find the game:
 
@@ -51,12 +51,12 @@ Do not import files from another mod folder. Shared code goes in `modkit/`.
 
 ### Setup and game
 
-- **`npm run setup`** — Check install, extract `app.asar` (except `node_modules/`) to `sandustry/<version>-<branch>/`, link `dist/` and `logs/`
+- **`npm run setup`** — Check install, extract `app.asar` (except `node_modules/`) to `sandustry/<version>-<branch>/`, link `dist/`, `logs/`, `sandustry/saves/`, and `sandustry/workshop/`
 - **`npm run sandustry`** — Stop and launch the game (no build)
 
 ### Development
 
-- **`npm run dev`** — Watch the last F5 / `dev:pick` mod set; remove owned mods when the watch stops. Restarts when F5 changes the selection.
+- **`npm run dev`** — Watch the last F5 / `dev:pick` mod set; remove owned mods when the watch stops. F5 **Sandustry** writes that one folder and does not uninstall other OS mods.
 - **`npm run dev:release`** — Same watch as `dev`, without `debugPatches` or sourcemaps. Use to test mods before upload to workshop.
 - **`npm run dev:pick`** — Same as `dev`, with a TTY picker first
 - **`npm run examples`** — Clone [SandustryExamples](https://github.com/sandustry-modding/SandustryExamples) into `examples/` if that folder is missing, then watch those mods (optional `--mod <name>`)
@@ -90,11 +90,13 @@ Do not import files from another mod folder.
 | --------------------- | -------------------------------------------- |
 | `src/<name>/`         | Your mod (`modinfo.json` + `main.ts`)        |
 | `mods/<name>/`        | Optional private mods (gitignored)           |
-| `examples/<name>/`    | Sample mods (cloned, gitignored)              |
+| `examples/<name>/`    | Sample mods (cloned, gitignored)             |
 | `modkit/`             | Shared kit. Import as `@modkit/*`            |
 | `dist/`               | Link to the Sandustry mods folder on disk    |
 | `build/<modinfo.id>/` | Workshop staging (copied on `npm run build`) |
 | `logs/`               | Link to Sandustry log files                  |
+| `sandustry/saves/`    | Link to OS save files                        |
+| `sandustry/workshop/` | Link to Steam Workshop content               |
 
 `mods/` is optional and gitignored, with the same `modinfo` rules as `src/`. `npm run build`, `npm run dev`, and `npm run publish` include it. `examples/` is gitignored. `npm run examples` clones [SandustryExamples](https://github.com/sandustry-modding/SandustryExamples) into that folder when it is missing. This repo also ignores `src/irishbruse.*/`; those mods keep their own repos (`README.md` and `CHANGELOG.md` in that repo).
 
@@ -105,10 +107,12 @@ You do not copy files into the game folder by hand. `npm run dev` and `npm run b
 
 ### Game folders on disk
 
-| OS      | Mods                                    | Logs                       |
-| ------- | --------------------------------------- | -------------------------- |
-| Linux   | `~/.config/sandustry/mods/<modinfo.id>` | `~/.config/sandustry/logs` |
-| Windows | `%APPDATA%\sandustry\mods\<modinfo.id>` | `%APPDATA%\sandustry\logs` |
+| OS      | Mods                                    | Saves                       | Logs                       |
+| ------- | --------------------------------------- | --------------------------- | -------------------------- |
+| Linux   | `~/.config/sandustry/mods/<modinfo.id>` | `~/.config/sandustry/saves` | `~/.config/sandustry/logs` |
+| Windows | `%APPDATA%\sandustry\mods\<modinfo.id>` | `%APPDATA%\sandustry\saves` | `%APPDATA%\sandustry\logs` |
+
+Workshop items: `steamapps/workshop/content/2764460` in the Steam library that holds the game. `sandustry/workshop/` links there.
 
 ### Sample mods
 
@@ -132,18 +136,19 @@ Every mod under `src/<name>/`, `mods/<name>/`, or `examples/<name>/` needs these
 
 The repo has one [`tsconfig.json`](tsconfig.json). TypeScript checks `modkit/`, `src/`, `examples/`, and `mods/` together (`moduleDetection` is `force` so script-style `main.ts` files do not clash). The build still blocks imports from another mod folder.
 
-Keep extra TypeScript out of the mod root. Only `modinfo.json` and/or `modinfo.ts`, `main.ts`, optional `worker.ts`, and optional `patches.json` / `patches.ts` may sit at the mod root. Put other source files in feature folders (`ui/`, `health/`, `capture/`, …).
+Keep extra TypeScript out of the mod root. Only `modinfo.json` and/or `modinfo.ts`, `main.ts`, optional `worker.ts`, optional `patches.json` / `patches.ts`, and the F5 `.save` seed may sit at the mod root. Put other source files in feature folders (`ui/`, `health/`, `capture/`, …).
 
 Add these when you need them:
 
 | File                         | Role                                                                                      |
 | ---------------------------- | ----------------------------------------------------------------------------------------- |
 | `worker.ts`                  | Worker entry at the mod root. The build writes `worker.js`                                |
+| `<modinfo.id>.save`          | F5 Void seed. Setup creates it when missing. The build does not copy it.                  |
 | `patches.json`               | Optional patch list (JSON array). See [Patches](docs/patches.md).                         |
 | `patches.ts`                 | Optional patch list (`definePatches`). See [Patches](docs/patches.md).                    |
 | `ui/`                        | React overlays                                                                            |
 | Feature folders              | Other source files (`health/`, `capture/`, …). Keep tests next to the file they test      |
-| `mod/`                       | Static files copied into the output folder                                                |
+| `mod/`                       | Static files copied into the output folder.                                               |
 | `package.json`               | Optional. npm packages for this mod only. Run `npm install` in that folder yourself       |
 | `README.md` / `CHANGELOG.md` | Player docs and Steam notes. Publish reads `CHANGELOG.md`; builds do not copy these files |
 | `workshop/`                  | Workshop assets (`workshop.json`, previews, `workshop.md`, `screenshots/`)                |
@@ -200,7 +205,7 @@ Default probe includes `%ProgramFiles(x86)%\Steam` and `%ProgramFiles%\Steam`, p
 
 **Duplicate mods in the console** — After a rename, old folders can stay in the OS mods directory. The game loads every folder there, so you get two copies of each sample. The watch build removes leftover game folders this template used to own. Stopping `npm run dev` also removes those owned folders. Restart the game after a rename or after you stop the watch.
 
-**VS Code breakpoints do not bind** — Run `npm run dev`, then select **Sandustry** or **Sandustry (all mods)** and press F5. For **Sandustry**, pick a mod in the Quick Pick. That launches the game, waits for CDP `:9222`, then attaches **Renderer** (mods). Set breakpoints in `src/<name>/` TypeScript files, not in `dist/` or `main.js`. Do not press **F12** while the IDE debugger is attached — Electron DevTools steals the CDP session. Keep **Open DevTools on load** off under F5.
+**VS Code breakpoints do not bind** — Run `npm run dev`, then select **Sandustry** or **Sandustry (all mods)** and press F5. For **Sandustry**, pick a mod in the Quick Pick. That launches the game, waits for CDP `:9222`, loads that mod’s Void save, then attaches **Renderer** (mods). Set breakpoints in `src/<name>/` TypeScript files, not in `dist/` or `main.js`. Do not press **F12** while the IDE debugger is attached — Electron DevTools steals the CDP session. Keep **Open DevTools on load** off under F5.
 
 **F5 attach fails or the game will not stop** — Press F5 again (preLaunch runs stop first), or run the **sandustry:stop** task / `node scripts/sandustry/sandustry-stop.js`.
 

@@ -12,7 +12,7 @@ const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 export const F5_MOD_SELECTION_FILE = join(ROOT, ".tmp/f5-debug-mod.json");
 
 /**
- * @typedef {{ folder: string; gameId: string; dir: string }} DebugModChoice
+ * @typedef {{ folder: string; gameId: string; dir: string; name: string }} DebugModChoice
  */
 
 /** @returns {DebugModChoice | null} */
@@ -24,6 +24,7 @@ export function readLastDebugMod() {
         folder: data.folder,
         gameId: data.gameId,
         dir: typeof data.dir === "string" ? data.dir : "",
+        name: typeof data.name === "string" && data.name ? data.name : data.gameId,
       };
     }
   } catch {
@@ -39,7 +40,8 @@ export function writeLastDebugMod(choice) {
 }
 
 function choiceFromMod(mod) {
-  return { folder: mod.folder, gameId: mod.gameId, dir: mod.dir };
+  const name = typeof mod.manifest?.name === "string" ? mod.manifest.name : mod.gameId;
+  return { folder: mod.folder, gameId: mod.gameId, dir: mod.dir, name };
 }
 
 /**

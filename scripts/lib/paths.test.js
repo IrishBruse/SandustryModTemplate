@@ -4,7 +4,7 @@ import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { linkDirectory, samePath, sandustryUserDataDir } from "./paths.js";
+import { ensureDirectoryLink, linkDirectory, samePath, sandustryUserDataDir } from "./paths.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 
@@ -35,6 +35,22 @@ test("linkDirectory writes a directory that can be read through the link", () =>
     mkdirSync(target);
     writeFileSync(join(target, "probe.txt"), "ok");
     linkDirectory(target, link);
+    assert.equal(readFileSync(join(link, "probe.txt"), "utf8"), "ok");
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("ensureDirectoryLink is a no-op when the link already matches", () => {
+  mkdirSync(join(ROOT, ".tmp"), { recursive: true });
+  const root = mkdtempSync(join(ROOT, ".tmp", "paths-ensure-link-"));
+  try {
+    const target = join(root, "target");
+    const link = join(root, "link");
+    mkdirSync(target);
+    writeFileSync(join(target, "probe.txt"), "ok");
+    assert.equal(ensureDirectoryLink(target, link), "linked");
+    assert.equal(ensureDirectoryLink(target, link), "already");
     assert.equal(readFileSync(join(link, "probe.txt"), "utf8"), "ok");
   } finally {
     rmSync(root, { recursive: true, force: true });

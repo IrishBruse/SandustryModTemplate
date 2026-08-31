@@ -11,11 +11,14 @@
  * attach configs can connect without killing the wmctrl poll via process.exit
  * too early.
  *
- * F5 **Sandustry** loads a `.save` from the installed mod folder, or Continues.
+ * F5 **Sandustry** opens the newest save in that mod’s test world
+ * (`worldId` = `<modinfo.id>`). Creates the world when it is missing.
+ * Does not overwrite. Does not uninstall other local mods.
+ * Does not change last-played (Continue stays on your campaign).
  * **Sandustry (all mods)** Continues.
  */
 import { cdpNavigateDbLoad } from "../lib/cdp-db-load.js";
-import { installModSaveToSteam } from "../lib/debug-save.js";
+import { ensureModDebugSaves, latestSteamSaveForWorld } from "../lib/debug-save.js";
 import {
   DEFAULT_RENDERER_DEBUG_PORT,
   sandustryDebugArgs,
@@ -44,13 +47,15 @@ if (argv.includes("--all")) {
 } else {
   const choice = await pickDebugMod(argv);
   writeLastSelection([choice.folder]);
-  const save = installModSaveToSteam(choice);
-  if (save) {
-    saveId = save.id;
-    console.log(`Loading ${save.sourcePath}`);
-  } else {
-    console.log("No .save in the mod folder — Continue.");
+  const save = ensureModDebugSaves(choice);
+  const latest = latestSteamSaveForWorld(save.id);
+  saveId = latest?.id ?? save.id;
+  if (save.created) {
+    console.log(`Created Void save ${save.id} (${save.filePath}).`);
   }
+  console.log(
+    saveId === save.id ? `Loading save ${saveId}.` : `Loading save ${saveId} (world ${save.id}).`,
+  );
 }
 
 sandustryRequireBinary();

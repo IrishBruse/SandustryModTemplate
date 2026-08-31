@@ -11,9 +11,17 @@
  *   2. Default Steam roots
  *   3. libraryfolders.vdf libraries
  */
-import { existsSync, readFileSync, symlinkSync } from "node:fs";
+import {
+  existsSync,
+  lstatSync,
+  mkdirSync,
+  readFileSync,
+  readlinkSync,
+  symlinkSync,
+  unlinkSync,
+} from "node:fs";
 import { homedir } from "node:os";
-import { basename, dirname, join } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 
 const IS_WIN = process.platform === "win32";
 
@@ -32,6 +40,30 @@ export function sandustryModsDir() {
 
 export function sandustryLogsDir() {
   return join(sandustryUserDataDir(), "logs");
+}
+
+export function sandustrySavesDir() {
+  return join(sandustryUserDataDir(), "saves");
+}
+
+export const SANDUSTRY_STEAM_APP_ID = "2764460";
+
+/**
+ * Steam Workshop content for Sandustry (`steamapps/workshop/content/2764460`).
+ * Prefers the library that holds the game binary.
+ * @param {string} [binaryPath]
+ */
+export function sandustryWorkshopDir(binaryPath) {
+  const binary = binaryPath ?? resolveSandustryBinary();
+  const fromGame = resolve(
+    join(sandustryInstallDir(binary), "..", "..", "workshop", "content", SANDUSTRY_STEAM_APP_ID),
+  );
+  if (existsSync(fromGame)) return fromGame;
+  for (const root of steamLibraryRoots()) {
+    const dir = join(root, "steamapps", "workshop", "content", SANDUSTRY_STEAM_APP_ID);
+    if (existsSync(dir)) return dir;
+  }
+  return fromGame;
 }
 
 /** @returns {string[]} Absolute paths that may contain steamapps/. */
@@ -168,4 +200,36 @@ export function linkDirectory(target, linkPath) {
   } else {
     symlinkSync(target, linkPath);
   }
+}
+
+/**
+ * Create or repair a directory link. Does not delete a real folder at `linkPath`.
+ * @param {string} target
+ * @param {string} linkPath
+ * @returns {"already" | "linked"}
+ */
+export function ensureDirectoryLink(target, linkPath) {
+  const absTarget = resolve(target);
+  mkdirSync(absTarget, { recursive: true });
+  mkdirSync(dirname(linkPath), { recursive: true });
+
+  try {
+    const stat = lstatSync(linkPath);
+    if (stat.isSymbolicLink()) {
+      const current = resolve(dirname(linkPath), readlinkSync(linkPath));
+      if (samePath(current, absTarget)) return "already";
+      unlinkSync(linkPath);
+    } else {
+      throw new Error(`${linkPath} exists and is not a link`);
+    }
+  } catch (error) {
+    const code = /** @type {NodeJS.ErrnoException} */ (error).code;
+    if (code !== "ENOENT") throw error;
+  }
+
+  linkDirectory(absTarget, linkPath);
+  if (!existsSync(linkPath)) {
+    throw new Error(`Could not link ${linkPath} to ${absTarget}`);
+  }
+  return "linked";
 }

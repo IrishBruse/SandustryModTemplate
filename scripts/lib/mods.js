@@ -340,14 +340,10 @@ export async function loadMods(argv = process.argv.slice(2)) {
 
 /**
  * Link `dist/` to the OS mods folder and create each game mod folder.
- * Keep folders match the mods in this build so `--mod` removes other owned OS folders.
+ * Other owned OS folders stay installed.
  * @param {string} repoRoot
  * @param {LoadedMod[]} mods
  */
 export function prepareModOutputs(repoRoot, mods) {
-  syncModGameFolders(
-    repoRoot,
-    mods,
-    mods.map((mod) => mod.folder),
-  );
+  syncModGameFolders(repoRoot, mods);
 }

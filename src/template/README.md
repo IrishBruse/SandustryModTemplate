@@ -5,7 +5,7 @@ Starter mod in `src/`. Shows a toast when the mod loads.
 ## Use
 
 1. Enable the mod.
-2. Load a save (or continue).
+2. Load the **Template** Void save (F5 **Sandustry** opens the newest save in that world).
 3. Look for the toast: **Template loaded**.
 
 ## Edit this mod
