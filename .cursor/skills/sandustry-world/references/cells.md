@@ -39,7 +39,7 @@ Artifact (1), GlyphKey (2), **Stratacore (3)**, Orb (4). Deprecated enum alias: 
 | 7     | Wisp     |
 | 8     | Powder   |
 
-Resolve through `elements.getMatterTypeAtCell` or definition `matterType`. Engine-only `matters.register` / `getMatterTypeFromId`: **sandustry-internals** `references/engine.md`.
+Resolve through `elements.getMatterTypeAtCell` or definition `matterType`. Workshop mods may use values outside 1–8 via `engine.api.matters.register`. Engine-only `matters.register` / `getMatterTypeFromId`: **sandustry-internals** `references/engine.md`.
 
 ## Resolved vs raw type
 

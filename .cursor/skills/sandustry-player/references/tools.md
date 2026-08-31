@@ -13,6 +13,8 @@ Grabber is the main documented tool namespace. Other tools (Shovel, Demolisher, 
 
 Path: `sandkit.api.tools.grabber` (not top-level `api.grabber`).
 
+Element opt-in: definition `isGrabbable` — **sandustry-world** `references/elements.md`. Grab skips when `isGrabbable === false`.
+
 ## Engine twin
 
 `sandkit.engine.api.tools`: `getGrabberSize(state)`, `setGrabberSize(state, n)`, `isGrabberActive(state)`, `isGrabberLoaded(state)`, `blockSwitchIfGrabberLoaded(state)`.
