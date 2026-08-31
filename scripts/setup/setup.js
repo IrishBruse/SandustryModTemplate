@@ -33,6 +33,7 @@ import {
   steamLibraryRoots,
 } from "../lib/paths.js";
 import { discoverMods } from "../lib/mods.js";
+import { syncLaunchDebugModPicker } from "../lib/sync-debug-mod-picker.js";
 import { ensureRepoDistLink } from "../lib/mod-path.js";
 import { SANDUSTRY, SANDUSTRY_DIR } from "../lib/sandustry-common.js";
 import {
@@ -355,6 +356,13 @@ if (haveAsar) {
 ensureUserDataDirs();
 syncDist();
 syncLogs();
+try {
+  const folders = syncLaunchDebugModPicker();
+  ok(`F5 mod picker (${folders.length} mod${folders.length === 1 ? "" : "s"})`);
+} catch (error) {
+  const message = error instanceof Error ? error.message : String(error);
+  warn(`F5 mod picker: ${message}`);
+}
 
 console.log("");
 if (failCount > 0) {

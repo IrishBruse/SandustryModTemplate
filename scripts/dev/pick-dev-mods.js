@@ -9,7 +9,7 @@ import { discoverMods, parseModFilters, resolveModRoots } from "../lib/mods.js";
 import { isCliTty, tuiModCombobox } from "../lib/tui.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
-const SELECTION_FILE = join(ROOT, ".tmp/dev-mod-selection.json");
+export const SELECTION_FILE = join(ROOT, ".tmp/dev-mod-selection.json");
 
 /**
  * @typedef {{ all: true } | { all: false, folders: string[] }} DevModSelection
@@ -19,7 +19,7 @@ const SELECTION_FILE = join(ROOT, ".tmp/dev-mod-selection.json");
  * @param {Set<string>} validFolders
  * @returns {DevModSelection | null}
  */
-function readLastSelection(validFolders) {
+export function readLastSelection(validFolders) {
   try {
     const data = JSON.parse(readFileSync(SELECTION_FILE, "utf8"));
     if (data?.all === true) return { all: true };
@@ -33,8 +33,8 @@ function readLastSelection(validFolders) {
   return null;
 }
 
-/** @param {string[] | null} picked */
-function writeLastSelection(picked) {
+/** @param {string[] | null} picked `null` = all mods. */
+export function writeLastSelection(picked) {
   mkdirSync(dirname(SELECTION_FILE), { recursive: true });
   if (picked == null) {
     writeFileSync(SELECTION_FILE, `${JSON.stringify({ all: true }, null, 2)}\n`);
@@ -44,15 +44,21 @@ function writeLastSelection(picked) {
 }
 
 /**
+ * @param {DevModSelection | null} selection
+ * @returns {string[]} `--mod` pairs, or `[]` for every mod in scope.
+ */
+export function selectionToModArgs(selection) {
+  if (!selection || selection.all) return [];
+  return selection.folders.flatMap((folder) => ["--mod", folder]);
+}
+
+/**
  * @param {string[]} argv
  * @param {{ skipPicker?: boolean, roots?: string[] }} [options]
  * @returns {Promise<string[]>} Extra args to pass to esbuild (`[]` = all mods in scope).
  */
 export async function pickDevModArgs(argv, options = {}) {
-  if (options.skipPicker || parseModFilters(argv).length > 0) return [];
-
-  if (!isCliTty()) return [];
-
+  const filters = parseModFilters(argv);
   const modRoots = options.roots ?? resolveModRoots(argv);
   const mods = discoverMods({ roots: modRoots });
   if (mods.length === 0) {
@@ -62,13 +68,29 @@ export async function pickDevModArgs(argv, options = {}) {
         : "Add src/<name>/modinfo.ts";
     throw new Error(`No mods found. ${hint}`);
   }
-  if (mods.length === 1) {
-    console.log(styleText("dim", `Watching ${mods[0].folder}`));
-    return ["--mod", mods[0].folder];
+  const validFolders = new Set(mods.map((mod) => mod.folder));
+
+  if (filters.length > 0) {
+    writeLastSelection(filters);
+    return [];
   }
 
-  const validFolders = new Set(mods.map((mod) => mod.folder));
-  const last = readLastSelection(validFolders);
+  if (options.skipPicker) {
+    const last = readLastSelection(validFolders);
+    const args = selectionToModArgs(last);
+    if (last && !last.all) {
+      console.log(styleText("dim", `Watching ${last.folders.join(", ")}`));
+    }
+    return args;
+  }
+
+  if (!isCliTty()) return selectionToModArgs(readLastSelection(validFolders));
+
+  if (mods.length === 1) {
+    console.log(styleText("dim", `Watching ${mods[0].folder}`));
+    writeLastSelection([mods[0].folder]);
+    return ["--mod", mods[0].folder];
+  }
 
   try {
     const byRoot = (root) =>
@@ -89,6 +111,7 @@ export async function pickDevModArgs(argv, options = {}) {
       }
     }
 
+    const last = readLastSelection(validFolders);
     const picked = await tuiModCombobox({
       title: "Watch which mods?",
       groups,

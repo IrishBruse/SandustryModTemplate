@@ -267,10 +267,11 @@ export function removeStaleSameIdGameDirs(mods) {
 
 /**
  * Ensure `dist/` links to the OS mods folder and sync template-owned game folders.
- * Stale game folders are removed only when a src folder is gone, not when `--mod` filters the build.
+ * When `--mod` filters the build, other template-owned game folders are removed
+ * so the OS mods folder matches the watch set.
  * @param {string} repoRoot
  * @param {{ folder: string; gameId: string; manifest?: { id?: string } }[]} mods
- * @param {string[]} keepFolders Src folders that should stay tracked (all discovered mods).
+ * @param {string[]} keepFolders Src folders that stay tracked (the current build set).
  */
 export function syncModGameFolders(repoRoot, mods, keepFolders) {
   ensureRepoDistLink(repoRoot, { quiet: true });

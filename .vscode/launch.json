@@ -7,10 +7,16 @@
       "request": "launch",
       "program": "${workspaceFolder}/scripts/sandustry/sandustry-vscode-launch.js",
       "cwd": "${workspaceFolder}",
+      "args": [
+        "--mod",
+        "${input:debugMod}"
+      ],
       "console": "internalConsole",
       "internalConsoleOptions": "neverOpen",
       "autoAttachChildProcesses": false,
-      "skipFiles": ["<node_internals>/**"],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
       "killBehavior": "forceful",
       "serverReadyAction": {
         "pattern": "Launched Sandustry with debug ports",
@@ -20,6 +26,33 @@
       },
       "presentation": {
         "order": 1,
+        "group": "sandustry"
+      }
+    },
+    {
+      "name": "Sandustry (all mods)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/sandustry/sandustry-vscode-launch.js",
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "--all"
+      ],
+      "console": "internalConsole",
+      "internalConsoleOptions": "neverOpen",
+      "autoAttachChildProcesses": false,
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "killBehavior": "forceful",
+      "serverReadyAction": {
+        "pattern": "Launched Sandustry with debug ports",
+        "action": "startDebugging",
+        "name": "Sandustry Renderer",
+        "killOnServerStop": true
+      },
+      "presentation": {
+        "order": 2,
         "group": "sandustry"
       }
     },
@@ -49,11 +82,27 @@
         "${env:APPDATA}/sandustry/mods/**/*.js"
       ],
       "timeout": 120000,
+      "internalConsoleOptions": "neverOpen",
       "presentation": {
         "hidden": true,
         "group": "sandustry",
-        "order": 2
+        "order": 99
       }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "debugMod",
+      "type": "pickString",
+      "description": "Debug which mod?",
+      "options": [
+        "irishbruse.dev-tools",
+        "irishbruse.selection-capture",
+        "irishbruse.survival-mode",
+        "irishbruse.trees",
+        "template"
+      ],
+      "default": "irishbruse.trees"
     }
   ]
 }

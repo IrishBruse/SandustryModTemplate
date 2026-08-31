@@ -25,7 +25,7 @@ npm run setup
 npm run dev
 ```
 
-Then **F5** in VS Code (or `npm run sandustry`). In game, look for **Template loaded**. **Alt+E** opens the overlay sample after `npm run examples` (`examples/overlay-hotkey`).
+Then **F5** in VS Code (or `npm run sandustry`). **Sandustry** shows a Quick Pick of one mod. If that mod has a `.save` in its installed folder (or `mod/`), F5 loads it. If not, the game Continues. **Sandustry (all mods)** starts every selected mod and Continues. In game, look for **Template loaded**. **Alt+E** opens the overlay sample after `npm run examples` (`examples/overlay-hotkey`).
 
 Windows: the same commands work in PowerShell. If setup cannot find the game:
 
@@ -56,7 +56,7 @@ Do not import files from another mod folder. Shared code goes in `modkit/`.
 
 ### Development
 
-- **`npm run dev`** — Watch all `src/` mods; remove owned mods when the watch stops
+- **`npm run dev`** — Watch the last F5 / `dev:pick` mod set; remove owned mods when the watch stops. Restarts when F5 changes the selection.
 - **`npm run dev:release`** — Same watch as `dev`, without `debugPatches` or sourcemaps. Use to test mods before upload to workshop.
 - **`npm run dev:pick`** — Same as `dev`, with a TTY picker first
 - **`npm run examples`** — Clone [SandustryExamples](https://github.com/sandustry-modding/SandustryExamples) into `examples/` if that folder is missing, then watch those mods (optional `--mod <name>`)
@@ -200,7 +200,7 @@ Default probe includes `%ProgramFiles(x86)%\Steam` and `%ProgramFiles%\Steam`, p
 
 **Duplicate mods in the console** — After a rename, old folders can stay in the OS mods directory. The game loads every folder there, so you get two copies of each sample. The watch build removes leftover game folders this template used to own. Stopping `npm run dev` also removes those owned folders. Restart the game after a rename or after you stop the watch.
 
-**VS Code breakpoints do not bind** — Run `npm run dev`, then select **Sandustry** and press F5. That launches the game, waits for CDP `:9222`, then attaches **Renderer** (mods). Set breakpoints in `src/<name>/` TypeScript files, not in `dist/` or `main.js`. Do not press **F12** while the IDE debugger is attached — Electron DevTools steals the CDP session. Keep **Open DevTools on load** off under F5.
+**VS Code breakpoints do not bind** — Run `npm run dev`, then select **Sandustry** or **Sandustry (all mods)** and press F5. For **Sandustry**, pick a mod in the Quick Pick. That launches the game, waits for CDP `:9222`, then attaches **Renderer** (mods). Set breakpoints in `src/<name>/` TypeScript files, not in `dist/` or `main.js`. Do not press **F12** while the IDE debugger is attached — Electron DevTools steals the CDP session. Keep **Open DevTools on load** off under F5.
 
 **F5 attach fails or the game will not stop** — Press F5 again (preLaunch runs stop first), or run the **sandustry:stop** task / `node scripts/sandustry/sandustry-stop.js`.
 
