@@ -8,9 +8,25 @@ import { buildPatchedDistSources, collectTestHostPatches } from "./patched-dist.
 
 const BUILT_MODS = join(repoRoot(), "dist");
 
-test("collectTestHostPatches reads dev-tools stash patch from built mods", () => {
-  const patches = collectTestHostPatches(BUILT_MODS);
-  assert.ok(patches.length > 0);
+test("collectTestHostPatches reads patches from built mods", () => {
+  const root = mkdtempSync(join(tmpdir(), "sandustry-patches-"));
+  const dir = join(root, "author.template");
+  mkdirSync(dir);
+  writeFileSync(join(dir, "modinfo.json"), JSON.stringify({ id: "author.template" }));
+  writeFileSync(
+    join(dir, "patches.json"),
+    JSON.stringify([
+      {
+        id: "stash-sandkit-by-mod",
+        file: "js/external-mod-runtime.js",
+        find: "FIND",
+        operation: "replace",
+        code: "CODE",
+        expectedMatches: 1,
+      },
+    ]),
+  );
+  const patches = collectTestHostPatches(root);
   assert.ok(
     patches.some(
       (patch) =>
@@ -54,8 +70,25 @@ test("buildPatchedDistSources applies stash-sandkit-by-mod to external-mod-runti
     t.skip("No extracted sandustry dist. Run npm run setup.");
     return;
   }
-  const patches = collectTestHostPatches(BUILT_MODS);
-  const patched = buildPatchedDistSources(distDir, { modsDir: BUILT_MODS, patches });
+  const modsDir = mkdtempSync(join(tmpdir(), "sandustry-stash-patch-"));
+  const modDir = join(modsDir, "author.template");
+  mkdirSync(modDir);
+  writeFileSync(join(modDir, "modinfo.json"), JSON.stringify({ id: "author.template" }));
+  writeFileSync(
+    join(modDir, "patches.json"),
+    JSON.stringify([
+      {
+        id: "stash-sandkit-by-mod",
+        file: "js/external-mod-runtime.js",
+        find: "const t=we(e,{manifest:o,discovered:r});e.store.integrity.modsUsed=!0,await c(t)",
+        operation: "replace",
+        code: "const t=we(e,{manifest:o,discovered:r});(globalThis.__sandkitByMod||(globalThis.__sandkitByMod={}))[o.id]=t;e.store.integrity.modsUsed=!0,await c((typeof globalThis.__devToolsWrapSandkit==='function'?globalThis.__devToolsWrapSandkit(o.id,t):t))",
+        expectedMatches: 1,
+      },
+    ]),
+  );
+  const patches = collectTestHostPatches(modsDir);
+  const patched = buildPatchedDistSources(distDir, { modsDir, patches });
   const runtime = patched.get("js/external-mod-runtime.js");
   assert.ok(runtime?.includes("__sandkitByMod"), "stash patch missing from served runtime");
 });

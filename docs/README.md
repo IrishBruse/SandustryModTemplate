@@ -3,58 +3,20 @@
 > [!WARNING]
 > **Unofficial** community docs. Not affiliated with Lantto Games, Hooded Horse, or the [official Sandustry wiki](https://wiki.hoodedhorse.com/Sandustry/Sandustry_Official_Wiki). See the [official Sandkit docs](https://sandustry.com/sandkit.html).
 
-TypeScript template for [Sandustry](https://store.steampowered.com/app/2764460/Sandustry/) mods (Steam **[mods]** beta). Browse mods on the [Workshop](https://steamcommunity.com/app/2764460/workshop/).
+The install guide, folder layout, commands, and troubleshooting live in the [repository README](https://github.com/IrishBruse/SandustryModTemplate#sandustry-mod-template).
 
-## Features
+This site holds kit and reference pages:
 
-- **[Multi-mod](layout.md)** — One repo, many mods. Each `src/<name>/` or `examples/<name>/` with a `modinfo.ts` builds to its own game folder.
-- **[TypeScript](https://sandustry-modding.github.io/SandustryTypes/#/)** — Sandkit API types (`@sandustry-modding/types`)
-- **[React HUD](modkit/react.md)** — JSX via `sandkit.react`, plus the [UI kit gallery](ui/README.md).
-- **[Watch rebuild](builds.md)** — `npm run dev` writes `main.js`. The dev-tools companion re-evals the renderer bundle.
-- **[Dev Tools](dev-tools/)** — companion mod: F12 DevTools, auto-load last save, F3, in-game `main.js` reload.
-- **[Typed `modinfo.ts`](modinfo.md)** — Manifest fields. Optional [patches](patches.md) from the same folder.
+| Topic              | Page                                 |
+| ------------------ | ------------------------------------ |
+| Builds and publish | [builds.md](builds.md)               |
+| Mod manifest       | [modinfo.md](modinfo.md)             |
+| `configSchema`     | [config-schema.md](config-schema.md) |
+| Bundle patches     | [patches.md](patches.md)             |
+| Modkit             | [modkit/README.md](modkit/README.md) |
+| React              | [modkit/react.md](modkit/react.md)   |
+| Utils              | [modkit/utils.md](modkit/utils.md)   |
+| Integration tests  | [modkit/test.md](modkit/test.md)     |
+| UI kit             | [ui/README.md](ui/README.md)         |
 
-## Get started
-
-1. Clone, then `npm install` and `npm run setup`.
-2. Run `npm run dev`, then **F5** (or `npm run sandustry`).
-3. Look for **Template loaded**, or press **Alt+E**.
-
-**Windows:** if setup cannot find the game, set `SANDUSTRY` (see [Troubleshooting](troubleshooting.md)).
-
-Full steps: **[Quick start](quick-start.md)**.
-
-## Commands
-
-### Setup and game
-
-- **`npm run setup`** — Check install, extract `app.asar` (except `node_modules/`) to `sandustry/<version>-<branch>/`, link `dist/` and `logs/`
-- **`npm run sandustry`** — Stop and launch the game (no build)
-
-### Development
-
-- **`npm run dev`** — Watch all `src/` mods; remove owned mods when the watch stops
-- **`npm run dev:release`** — Same watch as `dev`, without debug helpers, sourcemaps, or `dev-tools`
-- **`npm run dev:pick`** — Same as `dev`, with a TTY picker first
-- **`npm run examples`** — Watch `examples/` mods (optional `--mod <name>`)
-
-### Release
-
-- **`npm run build`** — Release all `src/` mods to `build/<modinfo.id>/` (Workshop staging)
-- **`npm run publish`** — Runs `npm run build`, then SteamCMD upload (dedicated OS cache)
-
-### Quality
-
-- **`npm run typecheck`** — TypeScript check
-- **`npm run test`** — Unit tests only (`*.test.ts`). No Chromium.
-- **`npm run test:integration`** — Build mods, boot extracted dist in headless Chromium (CDP `:9224`), run `*.integration.test.ts`. Optional mod folder (`nr test:integration template`) or `--examples`. Use **`npm run test:integration:view`** for a visible window (`nr test:integration:view collector-element`).
-- **`npm run lint`** — Typecheck, oxlint, and format check
-- **`npm run lint:fix`** — oxlint `--fix` and oxfmt
-
-### Docs and UI
-
-- **`npm run docs`** — Serve Docsify on `docs/`
-- **`npm run ui:css`** — Compile Tailwind for UI preview canvases
-- **`npm run ui:previews`** — Generate UI preview PNGs
-
-Stuck? See [Troubleshooting](troubleshooting.md).
+Sandkit types: [SandustryTypes](https://sandustry-modding.github.io/SandustryTypes/#/).

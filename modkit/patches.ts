@@ -62,5 +62,5 @@ export function definePatches<const T extends readonly BundlePatch[]>(patches: T
   return patches;
 }
 
-/** Shared framework patches. Empty — auto-load last save lives on dev-tools. */
+/** Shared framework patches. Empty by default. */
 export const modkitDebugPatches = definePatches([]);

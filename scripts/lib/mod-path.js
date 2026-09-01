@@ -267,21 +267,15 @@ export function removeStaleSameIdGameDirs(mods) {
 
 /**
  * Ensure `dist/` links to the OS mods folder and sync template-owned game folders.
- * Stale game folders are removed only when a src folder is gone, not when `--mod` filters the build.
+ * `--mod` rebuilds that set only. Other owned OS folders stay installed so
+ * other local mods (and Workshop items that do not share those ids) keep loading.
  * @param {string} repoRoot
  * @param {{ folder: string; gameId: string; manifest?: { id?: string } }[]} mods
- * @param {string[]} keepFolders Src folders that should stay tracked (all discovered mods).
  */
-export function syncModGameFolders(repoRoot, mods, keepFolders) {
+export function syncModGameFolders(repoRoot, mods) {
   ensureRepoDistLink(repoRoot, { quiet: true });
 
   const previousByFolder = readTemplateByFolder(repoRoot);
-  const wanted = new Set(keepFolders);
-  for (const [folder, gameDir] of Object.entries(previousByFolder)) {
-    if (wanted.has(folder)) continue;
-    removeOwnedGameDir(gameModDir(gameDir));
-    delete previousByFolder[folder];
-  }
 
   removeStaleSameIdGameDirs(mods);
 
@@ -295,8 +289,7 @@ export function syncModGameFolders(repoRoot, mods, keepFolders) {
   }
 
   writeTemplateByFolder(repoRoot, previousByFolder);
-  writeDevOwnedMods(
-    repoRoot,
-    mods.map((mod) => mod.gameId),
-  );
+  writeDevOwnedMods(repoRoot, [
+    ...new Set([...Object.values(previousByFolder), ...mods.map((mod) => mod.gameId)]),
+  ]);
 }

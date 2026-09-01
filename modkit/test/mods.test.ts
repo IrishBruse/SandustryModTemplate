@@ -7,7 +7,6 @@ test("companionSettings only enables listed mods", () => {
     externalModSettings: Record<string, { enabled?: boolean; watchLocalMods?: boolean }>;
   };
   assert.equal(settings.externalModSettings["author.template"]?.enabled, true);
-  assert.equal(settings.externalModSettings["dev-tools"], undefined);
 });
 
 test("companionSettings leaves hooks-intercept off", () => {

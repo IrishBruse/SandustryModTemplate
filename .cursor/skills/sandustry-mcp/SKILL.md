@@ -19,7 +19,7 @@ Chrome DevTools MCP on the Sandustry Electron renderer. Official Sandkit API: `.
 | `:9222` | Player / Steam / F5 debug renderer                                                 |
 | `:9224` | Extracted-game Chromium (`npm run test:integration`, `.tmp/sandustry-test-chrome`) |
 
-Never kill Sandustry. Ask the user for a hard reload when code or mods changed.
+Never kill Sandustry. Ask the user for a hard reload when code or mods changed. Restart the game (F5) after `worker.js` or `patches.json` changes. Do not use save reload as a substitute on Steam.
 
 ## Probe
 

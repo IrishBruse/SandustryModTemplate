@@ -27,7 +27,7 @@ Open **one** file that matches the branch.
 | Branch                                                     | File                                               |
 | ---------------------------------------------------------- | -------------------------------------------------- |
 | Safe probe rules                                           | [references/probe.md](references/probe.md)         |
-| `store.player`, `sandkit.api.player`                       | [references/player.md](references/player.md)       |
+| `store.player`, `sandkit.api.player`, Pixi body tint       | [references/player.md](references/player.md)       |
 | Hotbar, inventory, `sandkit.api.items`                     | [references/items.md](references/items.md)         |
 | Grabber, `sandkit.api.tools.grabber`                       | [references/tools.md](references/tools.md)         |
 | Placement mode, `session.building`, `session.construction` | [references/building.md](references/building.md)   |

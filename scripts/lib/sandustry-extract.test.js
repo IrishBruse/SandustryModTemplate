@@ -15,6 +15,7 @@ import { join } from "node:path";
 import test from "node:test";
 import { createPackage } from "@electron/asar";
 import {
+  EXTRACT_ROOT_OS_LINKS,
   LEGACY_CURRENT_LINK,
   bundleHasSandkit,
   cleanupOrphanedFlatExtract,
@@ -107,6 +108,24 @@ test("cleanupOrphanedFlatExtract removes flat leftovers without main.js", () => 
 
     cleanupOrphanedFlatExtract(root);
     assert.equal(readdirSync(root).sort().join(","), "0.5.2-mods");
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("cleanupOrphanedFlatExtract keeps saves and workshop links", () => {
+  const root = mkdtempSync(join(tmpdir(), "sandustry-keep-links-"));
+  try {
+    mkdirSync(join(root, "0.5.2-mods"), { recursive: true });
+    mkdirSync(join(root, "saves"), { recursive: true });
+    mkdirSync(join(root, "workshop"), { recursive: true });
+    writeFileSync(join(root, "package.json"), JSON.stringify({ version: "0.5.2" }));
+    writeFileSync(join(root, "orphan.txt"), "gone");
+
+    cleanupOrphanedFlatExtract(root);
+    const names = readdirSync(root).sort();
+    assert.deepEqual(names, ["0.5.2-mods", "saves", "workshop"]);
+    assert.deepEqual(EXTRACT_ROOT_OS_LINKS, ["saves", "workshop"]);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }

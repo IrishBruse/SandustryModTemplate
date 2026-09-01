@@ -9,7 +9,7 @@ Set **`gameVersion`** in the manifest to declare compatibility ([Mod manifest](m
 - **Patch-only mods** (bundle rewrites tied to old minified text): set **`maximum: "0.5.2"`**, or use Steam Workshop **Link to Game Version** with the same cap.
 - **New API mods** (hooks, `configOverrides`, 0.5.5 Sandkit): set **`minimum: "0.5.5"`**.
 
-Patches are exact (or regex) rewrites of Sandustry JavaScript under `js/`. The loader applies `patches.json` at **mod load**. Renderer hot reload does **not** re-apply them. Restart the game after you change a patch.
+Patches are exact (or regex) rewrites of Sandustry JavaScript under `js/`. The loader applies `patches.json` at **mod load** (Steam: once per process). Renderer hot reload does **not** re-apply them. Stop and start the game (F5). Save reload is not enough.
 
 Use a patch only when the public API cannot do the job.
 
@@ -17,7 +17,7 @@ Keep each `find` / `code` string small. Set `expectedMatches`.
 
 Patch `code` runs **outside** the game bundle IIFE. Put shared runtime helpers on `globalThis` when patch code must call them.
 
-Types: `@sandustry-modding/types/configs` (`BundlePatch`), via [`modkit/patches.ts`](../modkit/patches.ts). Manifest: [Mod manifest](modinfo.md). Canonical multi-file example: [`examples/content/collector-element/patches.json`](../examples/content/collector-element/patches.json).
+Types: `@sandustry-modding/types/configs` (`BundlePatch`), via [`modkit/patches.ts`](../modkit/patches.ts). Manifest: [Mod manifest](modinfo.md). Canonical multi-file example: [collector-element/patches.json](https://github.com/sandustry-modding/SandustryExamples/blob/main/content/collector-element/patches.json).
 
 For IDE validation of generated `patches.json`, use schema URL `https://sandustry-modding.github.io/SandustryTypes/schemas/patches.json` (configured in this repo's `.vscode/settings.json`). Runtime output stays a bare JSON array.
 
@@ -56,8 +56,6 @@ You can also re-export from `modinfo.ts` when you use a TypeScript manifest.
 | `debugPatches` | Dev / `--debug` only. Merged **after** `patches`. |
 
 Release (`npm run build`, `npm run dev:release`) omits `debugPatches`. Dev (`npm run dev`) includes both.
-
-The dev-tools companion ships **`debugPatches`**. **Fast dev boot** (`localStorage["dev-tools.fastBoot"]` is `"true"`) skips `foliage.generate`. Raster fill, shadow rebuild, and shader compile stay vanilla. Auto-load last save is a runtime helper on that companion, not a file patch.
 
 The browser bundle stubs `@modkit/patches` so patch payloads stay out of `main.js`.
 

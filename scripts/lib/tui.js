@@ -27,6 +27,7 @@ function lineCount(text) {
  * @param {object} opts
  * @param {string} opts.title
  * @param {{ label: string, hint?: string, hintTone?: "dim" | "green", disabled?: boolean, value: T }[]} opts.items
+ * @param {T} [opts.initialValue] Highlight this value when it is in the list.
  * @returns {Promise<T>}
  */
 export function tuiSelect(opts) {
@@ -39,6 +40,12 @@ export function tuiSelect(opts) {
 
   return new Promise((resolve, reject) => {
     let cursor = enabled[0].index;
+    if (opts.initialValue !== undefined) {
+      const match = opts.items.findIndex(
+        (item) => !item.disabled && item.value === opts.initialValue,
+      );
+      if (match >= 0) cursor = match;
+    }
     let drawn = 0;
 
     readline.emitKeypressEvents(process.stdin);

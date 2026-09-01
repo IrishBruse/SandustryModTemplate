@@ -1,15 +1,6 @@
 /** esbuild `inject` console shim. */
 export const CONSOLE_INJECT_SOURCE_SUFFIX = "modkit/internal/esbuild/console.ts";
 
-/**
- * Poller frames on mod `console.*` after a hot eval. Ignore-list these in the
- * companion bundle so DevTools does not show `hotEvalMain` / `tick`.
- */
-export const HOT_RELOAD_POLLER_SOURCE_SUFFIXES = [
-  "src/dev-tools/reload/hot-eval.ts",
-  "src/dev-tools/reload/install.ts",
-];
-
 function posixPath(source) {
   return source.replace(/\\/g, "/");
 }
@@ -20,7 +11,7 @@ function matchesSuffix(source, suffix) {
 }
 
 /**
- * Mark known shim / poller sources as ignore-listed.
+ * Mark known shim sources as ignore-listed.
  * @param {{ sources?: string[]; ignoreList?: number[] }} map
  * @param {string[]} suffixes
  */
@@ -42,5 +33,5 @@ export function markDebugSourcesIgnored(map, suffixes) {
 }
 
 export function debugIgnoreSourceSuffixes() {
-  return [CONSOLE_INJECT_SOURCE_SUFFIX, ...HOT_RELOAD_POLLER_SOURCE_SUFFIXES];
+  return [CONSOLE_INJECT_SOURCE_SUFFIX];
 }

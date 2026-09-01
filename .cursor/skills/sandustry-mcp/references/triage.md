@@ -15,7 +15,7 @@
 | `hasSandkit: false`, `hasDebug: true` | Use `__debug.state` paths from **sandustry-world** / **sandustry-internals**.                      |
 | `sandkit is not defined`              | Mod scope symbol missing - open a save in **Game** scene first, see attach script in `scripts.md`. |
 | `scene` not Game                      | Main menu or loading - load a save, or wait for auto-load (`modkit/test/session.ts` retries).      |
-| `gameReady` false or `#loading` shown | Boot still running (shader warmup can take ~30s after scene Game). `setupGame()` waits for both.     |
+| `gameReady` false or `#loading` shown | Boot still running (shader warmup can take ~30s after scene Game). `setupGame()` waits for both.   |
 | Exception in evaluate                 | Wrap risky calls in try/catch inside the function, return `{ error: String(e) }`.                  |
 | Huge inline response                  | Re-run with `filePath: ".tmp/..."`.                                                                |
 
@@ -31,7 +31,7 @@
 
 1. `list_console_messages` with `types: ["error","warn"]`.
 2. For poll/debug: `list_network_requests` with `resourceTypes: ["fetch","xhr"]`.
-3. Ask the user for hard reload if behavior still matches old code.
+3. Ask the user for hard reload if behavior still matches old code. `worker.js` or `patches.json` changes need a process restart — stop and start, do not only reload the save.
 
 ## Player stuck / `handleAction` crash
 

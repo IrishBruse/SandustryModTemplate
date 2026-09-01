@@ -10,10 +10,12 @@ export { SANDUSTRY_CDP_PORT, isSandustryAvailable } from "./cdp.ts";
 export { startSandustryTestHost, stopSandustryTestHost } from "./host.ts";
 export type { HostStartResult, HostWindowMode } from "./host.ts";
 export {
+  installedModFile,
   installedModMain,
   sandustryModsDir,
   sandustryTestUserDataDir,
   sandustryUserDataDir,
+  tryReadInstalledModFile,
   tryReadInstalledModMain,
   SANDUSTRY_TEST_CDP_PORT,
   SANDUSTRY_TEST_HTTP_PORT,

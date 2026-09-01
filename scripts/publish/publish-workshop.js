@@ -10,7 +10,7 @@ import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, basename, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { DEBUG_MOD_FOLDER, loadMods, parseModFilter, publishStagingDir } from "../lib/mods.js";
+import { loadMods, parseModFilter, publishStagingDir } from "../lib/mods.js";
 import { steamLibraryRoots } from "../lib/paths.js";
 import {
   ensureDedicatedSteamCmd,
@@ -439,9 +439,7 @@ try {
 }
 
 const account = steamAccountName();
-const allMods = (await loadMods([], { includeDebugKit: false })).filter(
-  (mod) => (mod.root === "src" || mod.root === "mods") && mod.folder !== DEBUG_MOD_FOLDER,
-);
+const allMods = (await loadMods([])).filter((mod) => mod.root === "src" || mod.root === "mods");
 const selected = await pickMod(allMods);
 
 const publishState = workshopState(selected);

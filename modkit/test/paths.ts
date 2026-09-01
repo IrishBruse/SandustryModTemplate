@@ -60,16 +60,24 @@ export function sandustryModsDir(): string {
   return sandustryTestModsDir();
 }
 
-export function installedModMain(modId: string): string {
-  return join(sandustryTestModsDir(), modId, "main.js");
+export function installedModFile(modId: string, fileName: string): string {
+  return join(sandustryTestModsDir(), modId, fileName);
 }
 
-export function tryReadInstalledModMain(modId: string): string | null {
+export function installedModMain(modId: string): string {
+  return installedModFile(modId, "main.js");
+}
+
+export function tryReadInstalledModFile(modId: string, fileName: string): string | null {
   try {
-    return readFileSync(installedModMain(modId), "utf8");
+    return readFileSync(installedModFile(modId, fileName), "utf8");
   } catch {
     return null;
   }
+}
+
+export function tryReadInstalledModMain(modId: string): string | null {
+  return tryReadInstalledModFile(modId, "main.js");
 }
 
 /** Newest `sandustry/<version>-<branch>/dist` that has `index.html`. */

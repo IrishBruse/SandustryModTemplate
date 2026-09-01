@@ -1,13 +1,7 @@
 - [Home](/)
 - [Official Sandkit API](https://sandustry.com/sandkit.html)
 - [Sandkit types](https://sandustry-modding.github.io/SandustryTypes/#/)
-
-- Guide
-  - [Quick start](quick-start.md)
-  - [Folder layout](layout.md)
-  - [Builds](builds.md)
-  - [Troubleshooting](troubleshooting.md)
-  - [Dev Tools](dev-tools/)
+- [Repository README](https://github.com/IrishBruse/SandustryModTemplate#sandustry-mod-template)
 
 - Modkit
   - [Overview](modkit/README.md)
@@ -17,6 +11,7 @@
   - [Integration tests](modkit/test.md)
 
 - Reference
-- [modinfo.json](modinfo.md)
+  - [Builds](builds.md)
+  - [modinfo.json](modinfo.md)
   - [configSchema](config-schema.md)
   - [patches.md](patches.md)

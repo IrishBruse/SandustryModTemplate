@@ -27,10 +27,9 @@ import {
   modIsolationPlugin,
   prepareModOutputs,
   publishStagingDir,
-  parseModFilters,
-  DEBUG_MOD_FOLDER,
   PUBLISH_OUT_ROOT,
 } from "../lib/mods.js";
+import { ensureExamplesRepo } from "../lib/examples-repo.js";
 import { copyWorkshopInstallFiles, removeWorkshopPublishFiles } from "../lib/workshop-files.js";
 import { modkitAliasPlugin } from "../lib/modkit-alias.js";
 import { stripJsonSchema } from "../lib/json-schemas.js";
@@ -42,6 +41,7 @@ const MODKIT_DIR = join(ROOT, "modkit");
 const INTERNAL_ESBUILD = join(MODKIT_DIR, "internal/esbuild");
 const CONSOLE_INJECT = join(INTERNAL_ESBUILD, "console.ts");
 const args = process.argv.slice(2);
+if (args.includes("--examples")) ensureExamplesRepo(ROOT);
 const watch = args.includes("--watch");
 const game = args.includes("--game");
 const debugFlag = args.includes("--debug");
@@ -50,21 +50,12 @@ const sourcemapFlag = args.includes("--sourcemap");
 const noSourcemapFlag = args.includes("--no-sourcemap");
 
 /** @returns {boolean} */
-function resolveIncludeDebugKit() {
-  if (noDebugFlag) return false;
-  if (debugFlag) return true;
-  if (parseModFilters(args).includes(DEBUG_MOD_FOLDER)) return true;
-  return watch || game;
-}
-
-/** @returns {boolean} */
 function resolveModDebug() {
   if (noDebugFlag) return false;
   if (debugFlag) return true;
   return watch || game;
 }
 
-const includeDebugKit = resolveIncludeDebugKit();
 const modDebug = resolveModDebug();
 /** Release `npm run build` — write to `build/<modinfo.id>/` only; no OS mods folder or `dist/` links. */
 const releaseBuild = !watch && !modDebug;
@@ -82,12 +73,7 @@ function resolveSourcemap() {
 
 const sourcemap = resolveSourcemap();
 
-// Release staging still builds discovered `dev-tools` under `build/`.
-// OS installs only get it when the debug kit is on (`npm run dev`).
-const mods = await loadMods(args, {
-  includeDebugKit,
-  stageDebugCompanion: releaseBuild,
-});
+const mods = await loadMods(args);
 if (releaseBuild) {
   for (const mod of mods) {
     mod.outDir = publishStagingDir(mod.gameId);
@@ -101,7 +87,7 @@ if (releaseBuild) {
     }
   }
 } else {
-  prepareModOutputs(ROOT, mods, { includeDebugKit });
+  prepareModOutputs(ROOT, mods);
 }
 
 console.log(
@@ -133,6 +119,7 @@ async function syncModFiles(mod) {
   if (existsSync(staticDir)) {
     for (const name of readdirSync(staticDir)) {
       if (name === "patches.json" || name === "modinfo.json") continue;
+      if (name.endsWith(".save")) continue;
       cpSync(join(staticDir, name), join(mod.outDir, name), {
         recursive: true,
         force: true,
@@ -259,7 +246,7 @@ function toSourceMapFileUrl(source, outDir) {
 }
 
 /**
- * Mark the console inject shim (and dev-tools poller files) as ignore-listed.
+ * Mark the console inject shim as ignore-listed.
  * Debuggers and DevTools then skip those frames on console output.
  * @param {{ sources?: string[]; ignoreList?: number[] }} map
  */
@@ -466,6 +453,7 @@ function basePlugins(mod) {
     modkitAliasPluginForBuild(),
     mainEntryBootstrapPlugin(mod),
     gifWorkerAsTextPlugin(),
+    workerTextPlugin(),
   ];
 }
 
@@ -482,6 +470,45 @@ function gifWorkerAsTextPlugin() {
         loader: "js",
         watchFiles: [args.path],
       }));
+    },
+  };
+}
+
+/**
+ * `import source from "./foo.ts?worker-text"` inlines a bundled IIFE worker as a string.
+ */
+function workerTextPlugin() {
+  return {
+    name: "worker-text",
+    setup(build) {
+      build.onResolve({ filter: /\?worker-text$/ }, async (args) => {
+        const bare = args.path.replace(/\?worker-text$/, "");
+        const resolved = await build.resolve(bare, {
+          kind: "import-statement",
+          importer: args.importer,
+          resolveDir: args.resolveDir,
+        });
+        if (resolved.errors.length > 0) return { errors: resolved.errors };
+        return { path: resolved.path, namespace: "worker-text" };
+      });
+      build.onLoad({ filter: /.*/, namespace: "worker-text" }, async (args) => {
+        const result = await esbuild.build({
+          absWorkingDir: ROOT,
+          bundle: true,
+          entryPoints: [args.path],
+          format: "iife",
+          logLevel: "silent",
+          platform: "browser",
+          target: "es2020",
+          write: false,
+        });
+        const text = result.outputFiles?.[0]?.text ?? "";
+        return {
+          contents: `export default ${JSON.stringify(text)};`,
+          loader: "js",
+          watchFiles: [args.path],
+        };
+      });
     },
   };
 }

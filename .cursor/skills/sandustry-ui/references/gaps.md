@@ -8,4 +8,3 @@ Screen walks still open (HUD chip, pause footer, and ComponentId 31 keys are in 
 - Lexicon / Codex (Debug -> Game -> Codex)
 - Vanilla workshop Mods screen (pause Mods was the template inspector)
 - Tech tree node names (a11y tree is checkmarks only)
-- Screenshot and GIF Recorder panel (Record F8, structure pick with **C**)

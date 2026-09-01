@@ -23,7 +23,7 @@ test("void world", async () => {
 
 `npm run test:integration`:
 
-1. Builds `src/` and `examples/` with `--debug` into `dist/`.
+1. Builds `src/` with `--debug` into `dist/`. Builds `examples/` too when that folder is present (or when you pass `--examples`, which clones [SandustryExamples](https://github.com/sandustry-modding/SandustryExamples)).
 2. Boots `sandustry/<version>-<branch>/dist` in headless Chromium (CDP **:9224**).
 3. Waits for boot to finish (`game:ready`, `#loading` removed, Game scene).
 4. Runs every `*.integration.test.ts` with `--test-concurrency=1` (async spawn so
@@ -36,12 +36,12 @@ That script passes `--view` to the runner. On Linux it needs `DISPLAY`.
 
 The host is heavy: it boots the full game in Chromium with sim workers and WebGL. To reduce lag on your machine (and on Steam Sandustry):
 
-| Goal | Command |
-| ---- | ------- |
-| Run one mod only | `nr test:integration template` |
-| Run one mod with a window | `nr test:integration:view collector-element` |
-| Run example samples only | `nr test:integration --examples` |
-| Skip the full example build | pass a mod folder (or `--mod`) |
+| Goal                        | Command                                      |
+| --------------------------- | -------------------------------------------- |
+| Run one mod only            | `nr test:integration template`               |
+| Run one mod with a window   | `nr test:integration:view collector-element` |
+| Run example samples only    | `nr test:integration --examples`             |
+| Skip the full example build | pass a mod folder (or `--mod`)               |
 
 Local runs:
 
@@ -69,14 +69,14 @@ When the tests finish, the host stops. Do not open Chrome DevTools on that windo
 
 This host does not attach to Steam or F5, and it does not stop them.
 
-| Item           | Path / value                                          |
-| -------------- | ----------------------------------------------------- |
-| Game files     | `sandustry/<version>-<branch>/dist` (`npm run setup`) |
-| Chrome profile | `.tmp/sandustry-test-chrome/`                         |
-| Test mods copy | `.tmp/sandustry-test/mods/`                           |
-| CDP            | **9224** (Steam / F5 stay on **9222**)                |
-| HTTP           | `http://127.0.0.1:4173` with COOP/COEP                |
-| Window         | Headless by default; `npm run test:integration:view` for a visible window |
+| Item           | Path / value                                                                                   |
+| -------------- | ---------------------------------------------------------------------------------------------- |
+| Game files     | `sandustry/<version>-<branch>/dist` (`npm run setup`)                                          |
+| Chrome profile | `.tmp/sandustry-test-chrome/`                                                                  |
+| Test mods copy | `.tmp/sandustry-test/mods/`                                                                    |
+| CDP            | **9224** (Steam / F5 stay on **9222**)                                                         |
+| HTTP           | `http://127.0.0.1:4173` with COOP/COEP                                                         |
+| Window         | Headless by default; `npm run test:integration:view` for a visible window                      |
 | Viewport       | Locked once at host boot (1280×720). `:view` does not re-apply Emulation metrics per test file |
 
 It copies every built mod from `dist/` (then fills gaps from the OS mods folder) and enables them. `--mod` copies only those mods. It loads the tracked Void save `modkit/test/fixtures/Empty.save` with `?db_load=<meta.id>` (vanilla file name is `{id}.save`). A harness mod sets `globalThis.sandkit`. Dev-tools can fetch `main.js` from `/mods/<id>/`. Vanilla HUD textures stay at `/mods/<file>.png` from extracted `dist/mods/`. The host rewrites the served `js/bundle.js` so `assets.getUrl` / map blueprints accept HTTP `rootUrl` (vanilla join allows `file:` only). `sessionStorage.splashShown` is set; `?db_load=` still runs vanilla shader wait.
@@ -95,12 +95,12 @@ Tests that write the same world (for example player position) must run in order.
 | ------------------------------------ | --------------------------------------------------------------------------------------------- |
 | `game.evaluate(fn, ...args)`         | Run `fn` in the renderer. Arguments must be JSON values. Closures do not capture Node locals. |
 | `game.waitFor(read, match, options)` | Poll `read` in the page until `match` is true in Node.                                        |
-| `game.buildStructures(placements)`   | Build several structures in one renderer turn and wait for every anchor.                    |
-| `game.buildLayout(layout)`            | Expand a visual fixture diagram into phased structure placements.                            |
-| `game.setSimulationPaused(paused)`   | Pause or resume the simulation without opening the in-game pause menu.                       |
-| `game.pauseSimulation()`              | Pause the simulation.                                                                         |
-| `game.resumeSimulation()`             | Resume the simulation.                                                                        |
-| `game.runSimulation(durationMs)`      | Run live simulation for a wall-clock duration, then restore the prior pause state.            |
+| `game.buildStructures(placements)`   | Build several structures in one renderer turn and wait for every anchor.                      |
+| `game.buildLayout(layout)`           | Expand a visual fixture diagram into phased structure placements.                             |
+| `game.setSimulationPaused(paused)`   | Pause or resume the simulation without opening the in-game pause menu.                        |
+| `game.pauseSimulation()`             | Pause the simulation.                                                                         |
+| `game.resumeSimulation()`            | Resume the simulation.                                                                        |
+| `game.runSimulation(durationMs)`     | Run live simulation for a wall-clock duration, then restore the prior pause state.            |
 | `game.orderedModIds()`               | Return live `manifest.id` values from the ordered mod list.                                   |
 | `game.screenshot(options)`           | Capture a PNG of the compositor (WebGL plus DOM). Returns a `Buffer`.                         |
 | `game.withModMain(id, fn)`           | Edit the test-host `main.js`, then restore the original bytes.                                |
@@ -208,4 +208,4 @@ Game rules:
   stop the page frame loop and hang CDP).
 - Prefer `selector` or `mask` for HUD clocks and other live UI.
 
-Kit smoke: `modkit/test/game.integration.test.ts`. Template: `src/template/template.integration.test.ts`. Samples: every `examples/**/*.integration.test.ts`. Dev-tools: `src/dev-tools/reload/integration.test.ts`.
+Kit smoke: `modkit/test/game.integration.test.ts`. Template: `src/template/template.integration.test.ts`. Samples: every `examples/**/*.integration.test.ts`.

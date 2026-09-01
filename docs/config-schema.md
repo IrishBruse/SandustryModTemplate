@@ -4,7 +4,7 @@
 
 Read values with `sandkit.api.settings.get(key)`. Subscribe with `settings.onChange`. Put feature switches here instead of hard-coded flags.
 
-Canonical showcase: [`examples/api/settings/`](../examples/api/settings/).
+Canonical showcase: [settings](https://github.com/sandustry-modding/SandustryExamples/tree/main/api/settings/).
 
 Game validation lives in `sandustry/<version>-<branch>/workshop-mods.js` (`validateConfigSchema`). The Options UI renders the same three types.
 

@@ -32,9 +32,6 @@ export function resolveModRoots(argv) {
   return DEFAULT_MOD_ROOTS;
 }
 
-/** Companion mod folder. Debug builds install it to the OS mods folder; release still stages it under `build/`. */
-export const DEBUG_MOD_FOLDER = "dev-tools";
-
 /** Workshop staging root (`npm run build` / `npm run publish`). */
 export const PUBLISH_OUT_ROOT = join(ROOT, "build");
 
@@ -250,7 +247,6 @@ export function parseModFilter(argv) {
  * @property {string} manifestLabel Repo path used in build errors
  * @property {string} main
  * @property {string | null} worker
- * @property {string} tsconfig
  * @property {any} manifest
  * @property {string} gameId OS mods folder name (`modinfo.id`)
  * @property {string} outDir
@@ -258,19 +254,16 @@ export function parseModFilter(argv) {
 
 /**
  * @param {string[]} [argv]
- * @param {{ includeDebugKit?: boolean; stageDebugCompanion?: boolean }} [options]
  * @returns {Promise<LoadedMod[]>}
  */
-export async function loadMods(argv = process.argv.slice(2), options = {}) {
-  const includeDebugKit = options.includeDebugKit === true;
-  const stageDebugCompanion = options.stageDebugCompanion === true;
+export async function loadMods(argv = process.argv.slice(2)) {
   const modRoots = resolveModRoots(argv);
   const discovered = discoverMods({ roots: modRoots });
   const allDiscovered = modRoots.length === MOD_ROOTS.length ? discovered : discoverMods();
   if (discovered.length === 0) {
     const hint =
       modRoots.length === 1 && modRoots[0] === "examples"
-        ? "Add examples/<name>/modinfo.json"
+        ? "Run npm run examples to clone SandustryExamples, or add examples/<name>/modinfo.json"
         : modRoots.every((root) => root === "src" || root === "mods")
           ? "Add src/<name>/modinfo.json or mods/<name>/modinfo.json"
           : "Add src/<name>/modinfo.json, mods/<name>/modinfo.json, or examples/<name>/modinfo.json";
@@ -294,17 +287,6 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
     }
   }
 
-  if (includeDebugKit) {
-    const debugMod = allDiscovered.find((mod) => mod.folder === DEBUG_MOD_FOLDER);
-    if (debugMod && !selected.some((mod) => mod.folder === DEBUG_MOD_FOLDER)) {
-      selected = [...selected, debugMod];
-    }
-  } else if (!stageDebugCompanion && !filters.includes(DEBUG_MOD_FOLDER)) {
-    // OS install without debug kit (e.g. `npm run dev:release`): omit companion
-    // unless `--mod dev-tools`. Release staging keeps it when discovered under src/.
-    selected = selected.filter((mod) => mod.folder !== DEBUG_MOD_FOLDER);
-  }
-
   /** @type {LoadedMod[]} */
   const mods = [];
   for (const entry of selected) {
@@ -317,7 +299,6 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
     const label = manifestLabel(repoPath, source);
     const main = join(dir, "main.ts");
     const workerTs = join(dir, "worker.ts");
-    const tsconfig = join(dir, "tsconfig.json");
     if (!existsSync(main)) {
       throw new Error(`${label} needs ${repoPath}/main.ts`);
     }
@@ -349,7 +330,6 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
       manifestLabel: label,
       main,
       worker,
-      tsconfig,
       manifest,
       gameId,
       outDir: gameModDir(gameId),
@@ -360,16 +340,10 @@ export async function loadMods(argv = process.argv.slice(2), options = {}) {
 
 /**
  * Link `dist/` to the OS mods folder and create each game mod folder.
- * Stale game folders are removed only when a src folder is gone, not when `--mod` filters the build.
- * Non-debug installs omit `src/dev-tools` from keepFolders so leftover companion folders are removed.
+ * Other owned OS folders stay installed.
  * @param {string} repoRoot
  * @param {LoadedMod[]} mods
- * @param {{ includeDebugKit?: boolean }} [options]
  */
-export function prepareModOutputs(repoRoot, mods, options = {}) {
-  const includeDebugKit = options.includeDebugKit === true;
-  const keepFolders = discoverModFolders().filter(
-    (folder) => folder !== DEBUG_MOD_FOLDER || includeDebugKit,
-  );
-  syncModGameFolders(repoRoot, mods, keepFolders);
+export function prepareModOutputs(repoRoot, mods) {
+  syncModGameFolders(repoRoot, mods);
 }

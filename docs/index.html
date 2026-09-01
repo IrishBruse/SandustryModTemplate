@@ -36,7 +36,6 @@
         auto2top: true,
         alias: {
           "/docs/(.*)": "/$1",
-          "/dev-tools/": "/dev-tools/README.md",
           "/modkit/": "/modkit/README.md",
           "/api/.*/_sidebar.md": "/api/_sidebar.md",
           "/ui/gallery": "/ui/",
@@ -44,7 +43,7 @@
         },
         search: {
           paths: Array.isArray(window.SMT_SEARCH_PATHS) ? window.SMT_SEARCH_PATHS : "auto",
-          placeholder: "Search docs (e.g. patches, dev-tools)",
+          placeholder: "Search docs (e.g. patches, modinfo)",
           noData: "No results",
           depth: 4,
           namespace: "smt-docs-api-v3",
