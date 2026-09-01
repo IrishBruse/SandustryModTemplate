@@ -453,6 +453,7 @@ function basePlugins(mod) {
     modkitAliasPluginForBuild(),
     mainEntryBootstrapPlugin(mod),
     gifWorkerAsTextPlugin(),
+    workerTextPlugin(),
   ];
 }
 
@@ -469,6 +470,45 @@ function gifWorkerAsTextPlugin() {
         loader: "js",
         watchFiles: [args.path],
       }));
+    },
+  };
+}
+
+/**
+ * `import source from "./foo.ts?worker-text"` inlines a bundled IIFE worker as a string.
+ */
+function workerTextPlugin() {
+  return {
+    name: "worker-text",
+    setup(build) {
+      build.onResolve({ filter: /\?worker-text$/ }, async (args) => {
+        const bare = args.path.replace(/\?worker-text$/, "");
+        const resolved = await build.resolve(bare, {
+          kind: "import-statement",
+          importer: args.importer,
+          resolveDir: args.resolveDir,
+        });
+        if (resolved.errors.length > 0) return { errors: resolved.errors };
+        return { path: resolved.path, namespace: "worker-text" };
+      });
+      build.onLoad({ filter: /.*/, namespace: "worker-text" }, async (args) => {
+        const result = await esbuild.build({
+          absWorkingDir: ROOT,
+          bundle: true,
+          entryPoints: [args.path],
+          format: "iife",
+          logLevel: "silent",
+          platform: "browser",
+          target: "es2020",
+          write: false,
+        });
+        const text = result.outputFiles?.[0]?.text ?? "";
+        return {
+          contents: `export default ${JSON.stringify(text)};`,
+          loader: "js",
+          watchFiles: [args.path],
+        };
+      });
     },
   };
 }
