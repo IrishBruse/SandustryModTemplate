@@ -103,14 +103,14 @@ Match with exact `find` when the text is stable. Use `regex` only when a literal
 
 Insert `code` immediately before each match.
 
-```ts
+```json
 {
-  id: "bundle-log-prefix",
-  file: "js/bundle.js",
-  find: "initializing workers",
-  operation: "insertBefore",
-  code: "[patched]",
-  expectedMatches: 1,
+  "id": "bundle-log-prefix",
+  "file": "js/bundle.js",
+  "find": "initializing workers",
+  "operation": "insertBefore",
+  "code": "[patched]",
+  "expectedMatches": 1,
 }
 ```
 
@@ -118,15 +118,15 @@ Insert `code` immediately before each match.
 
 Replace each match with `code`. The collector sample replaces a Gold / liquidGold type check with a collector-value check on **three** files, one `atomicGroup`:
 
-```ts
+```json
 {
-  id: "collector-admission-value-map-main",
-  file: "js/bundle.js",
-  find: 'const n=(e=>(null===l&&(l=i.FH.elements.getElementTypeFromId(e,"liquidGold")),l))(e);return t.type===o.RJ.Gold||t.type===n?d:f}',
-  operation: "replace",
-  code: "return i.FH.collector.getValueFromElementType(e,t.type)>0?d:f}",
-  expectedMatches: 1,
-  atomicGroup: "collector-admission-value-map",
+  "id": "collector-admission-value-map-main",
+  "file": "js/bundle.js",
+  "find": "const n=(e=>(null===l&&(l=i.FH.elements.getElementTypeFromId(e,\"liquidGold\")),l))(e);return t.type===o.RJ.Gold||t.type===n?d:f}",
+  "operation": "replace",
+  "code": "return i.FH.collector.getValueFromElementType(e,t.type)>0?d:f}",
+  "expectedMatches": 1,
+  "atomicGroup": "collector-admission-value-map",
 }
 ```
 
@@ -136,15 +136,15 @@ Copy `find` from the extracted bundle in `sandustry/<version>-<branch>/`. Do not
 
 Wrap each match as `before` + match + `after`. Use this when you must keep the original text and add a prefix and suffix.
 
-```ts
+```json
 {
-  id: "wrap-example",
-  file: "js/bundle.js",
-  find: "/* stable marker */",
-  operation: "wrap",
-  before: "/* patched-before */",
-  after: "/* patched-after */",
-  expectedMatches: 1,
+  "id": "wrap-example",
+  "file": "js/bundle.js",
+  "find": "/* stable marker */",
+  "operation": "wrap",
+  "before": "/* patched-before */",
+  "after": "/* patched-after */",
+  "expectedMatches": 1,
 }
 ```
 
