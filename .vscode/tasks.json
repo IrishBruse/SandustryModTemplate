@@ -22,7 +22,7 @@
       "options": {
         "cwd": "${workspaceFolder}",
         "env": {
-          "SANDUSTRY_DEBUG_DETACHED": "1"
+          "SANDUSTRY_DEBUG_DETACHED": "true"
         }
       },
       "presentation": {

@@ -6,7 +6,7 @@
  * Default (F5 Node launch): stay in the foreground so debugger Restart
  * kills this process tree (Electron included) and starts a new one.
  *
- * Set SANDUSTRY_DEBUG_DETACHED=1 for the background preLaunchTask: spawn the
+ * Set SANDUSTRY_DEBUG_DETACHED=true for the background preLaunchTask: spawn the
  * game, wait for CDP, print the ready line, wait for maximize, then exit so
  * attach configs can connect without killing the wmctrl poll via process.exit
  * too early.
@@ -20,6 +20,7 @@
  */
 import { cdpNavigateDbLoad } from "../lib/cdp-db-load.js";
 import { ensureModDebugSaves, latestSteamSaveForWorld } from "../lib/debug-save.js";
+import { envFlag, envString } from "../lib/env.js";
 import {
   DEFAULT_RENDERER_DEBUG_PORT,
   sandustryDebugArgs,
@@ -35,8 +36,8 @@ import {
 import { pickDebugMod } from "./pick-debug-mod.js";
 import { writeLastSelection } from "../dev/pick-dev-mods.js";
 
-const rendererPort = process.env.SANDUSTRY_RENDERER_DEBUG_PORT ?? DEFAULT_RENDERER_DEBUG_PORT;
-const detached = process.env.SANDUSTRY_DEBUG_DETACHED === "1";
+const rendererPort = envString("SANDUSTRY_RENDERER_DEBUG_PORT", DEFAULT_RENDERER_DEBUG_PORT);
+const detached = envFlag("SANDUSTRY_DEBUG_DETACHED", false);
 const argv = process.argv.slice(2);
 const extraArgs = electronExtraArgs(argv);
 /** @type {string | null} */

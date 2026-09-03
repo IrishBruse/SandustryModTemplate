@@ -6,6 +6,7 @@
 import { spawnSync } from "node:child_process";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { envFlag, envString } from "../lib/env.js";
 import {
   DEFAULT_RENDERER_DEBUG_PORT,
   sandustryBuildMod,
@@ -22,7 +23,7 @@ import {
 } from "../lib/sandustry-common.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
-const rendererPort = process.env.SANDUSTRY_RENDERER_DEBUG_PORT ?? DEFAULT_RENDERER_DEBUG_PORT;
+const rendererPort = envString("SANDUSTRY_RENDERER_DEBUG_PORT", DEFAULT_RENDERER_DEBUG_PORT);
 
 sandustryRequireBinary();
 sandustryBuildMod(ROOT, { sourcemap: true, extraArgs: process.argv.slice(2) });
@@ -31,7 +32,7 @@ sandustryStopRunning();
 const mon = sandustryLeftMonitor();
 const args = sandustryDebugArgs(rendererPort, mon);
 
-if (process.env.SANDUSTRY_DEBUG_FOREGROUND === "1") {
+if (envFlag("SANDUSTRY_DEBUG_FOREGROUND", false)) {
   console.log(`Sandustry debug (foreground) — renderer ${rendererPort}`);
   const result = spawnSync(SANDUSTRY, args, {
     stdio: "inherit",

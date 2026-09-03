@@ -7,10 +7,11 @@
  *   Windows: %APPDATA%/sandustry  (AppData\Roaming\sandustry)
  *
  * Binary (Sandustry.exe on Windows, sandustry on Linux):
- *   1. SANDUSTRY env
+ *   1. SANDUSTRY env / `.env`
  *   2. Default Steam roots
  *   3. libraryfolders.vdf libraries
  */
+import "./env.js";
 import {
   existsSync,
   lstatSync,
