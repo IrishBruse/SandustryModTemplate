@@ -6,6 +6,21 @@ export type StructurePlacement = {
   data?: Record<string, unknown>;
 };
 
+/**
+ * Structures present beside the Empty.save spawn in the shared test world.
+ * Coordinates are native cells; max values are exclusive and include the
+ * complete 4x4 footprint of the placed structures.
+ */
+export const TEST_WORLD_RESERVED_BOXES = [
+  {
+    name: "spawn fixture",
+    minX: 2040,
+    minY: 1552,
+    maxXExclusive: 2092,
+    maxYExclusive: 1572,
+  },
+] as const;
+
 export type StructureLayoutSymbol = Omit<StructurePlacement, "x" | "y">;
 
 export type StructureLayoutPhase = {
@@ -48,6 +63,22 @@ export async function buildStructures(
   placements: readonly StructurePlacement[],
 ): Promise<void> {
   if (placements.length === 0) return;
+  for (const placement of placements) {
+    const overlaps = TEST_WORLD_RESERVED_BOXES.find(
+      (box) =>
+        placement.x < box.maxXExclusive &&
+        placement.x + 4 > box.minX &&
+        placement.y < box.maxYExclusive &&
+        placement.y + 4 > box.minY,
+    );
+    if (overlaps) {
+      throw new Error(
+        `Cannot build ${String(placement.type)} at ${placement.x},${placement.y}: ` +
+          `overlaps the reserved ${overlaps.name} box ` +
+          `${overlaps.minX},${overlaps.minY}..${overlaps.maxXExclusive},${overlaps.maxYExclusive}`,
+      );
+    }
+  }
   const priorPaused = await session.evaluate(() => {
     const state = (
       globalThis as typeof globalThis & {

@@ -53,6 +53,9 @@ export function sandustryUserDataDir(): string {
     const appData = process.env.APPDATA || join(homedir(), "AppData", "Roaming");
     return join(appData, "sandustry");
   }
+  if (process.platform === "darwin") {
+    return join(homedir(), "Library", "Application Support", "sandustry");
+  }
   return join(homedir(), ".config", "sandustry");
 }
 
