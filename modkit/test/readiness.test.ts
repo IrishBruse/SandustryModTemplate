@@ -36,7 +36,9 @@ test("isRendererReady needs Game scene, gameReady, and no loading overlay", () =
 
 test("formatRendererReadySnapshot is JSON", () => {
   assert.equal(
-    formatRendererReadySnapshot(snap({ api: true, scene: 3, game: 3, gameReady: true, loading: false })),
+    formatRendererReadySnapshot(
+      snap({ api: true, scene: 3, game: 3, gameReady: true, loading: false }),
+    ),
     '{"api":true,"scene":3,"game":3,"gameReady":true,"loading":false}',
   );
 });

@@ -91,10 +91,6 @@ export function createLogger(modId: string, options?: CreateLoggerOptions): ModL
  * Append one line to `logs/main.log` under the given scope. Prefer
  * {@link createLogger} at call sites.
  */
-export function appendLog(
-  modId: string,
-  message: string,
-  options?: { console?: boolean },
-): void {
+export function appendLog(modId: string, message: string, options?: { console?: boolean }): void {
   writeLog("info", modId, message, options);
 }

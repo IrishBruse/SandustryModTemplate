@@ -12,7 +12,7 @@ test("Game scene exposes sandkit.api", async () => {
     const api = sandkit.api;
     return {
       hasApi: Boolean(api),
-      gameScene: sandkit.enums.Scene.Game
+      gameScene: sandkit.enums.Scene.Game,
     };
   });
   assert.equal(state.hasApi, true);
@@ -20,9 +20,7 @@ test("Game scene exposes sandkit.api", async () => {
 });
 
 test("player position is finite", async () => {
-  const pos = await game.evaluate(() =>
-    sandkit.api.player.getPositionAtWorld()
-  );
+  const pos = await game.evaluate(() => sandkit.api.player.getPositionAtWorld());
   assert.equal(typeof pos.x, "number");
   assert.equal(typeof pos.y, "number");
   assert.ok(Number.isFinite(pos.x));

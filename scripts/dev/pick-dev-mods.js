@@ -170,7 +170,9 @@ function logWatchSet(args, setting, selected) {
   if (setting.alwaysFolders.length > 0) {
     const always = setting.alwaysFolders.join(", ");
     const base = selected?.length ? selected.join(", ") : "(none)";
-    console.log(styleText("dim", `Watching ${folders.join(", ")} (selection ${base} + always ${always})`));
+    console.log(
+      styleText("dim", `Watching ${folders.join(", ")} (selection ${base} + always ${always})`),
+    );
     return;
   }
   console.log(styleText("dim", `Watching ${folders.join(", ")}`));

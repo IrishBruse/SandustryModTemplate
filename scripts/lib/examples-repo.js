@@ -32,8 +32,7 @@ export function ensureExamplesRepo(repoRoot, deps = {}) {
 
   console.log(styleText(["bold", "cyan"], "Cloning SandustryExamples into examples/"));
   const clone =
-    deps.clone ??
-    ((args) => spawnSync("git", args, { cwd: repoRoot, stdio: "inherit" }));
+    deps.clone ?? ((args) => spawnSync("git", args, { cwd: repoRoot, stdio: "inherit" }));
   const result = clone(["clone", EXAMPLES_REMOTE, "examples"]);
   if (cloneStatus(result) !== 0) {
     throw new Error(`Failed to clone ${EXAMPLES_REMOTE} into examples/.`);

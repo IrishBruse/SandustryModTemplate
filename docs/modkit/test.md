@@ -71,7 +71,7 @@ This host does not attach to Steam or F5, and it does not stop them.
 
 | Item           | Path / value                                                                                   |
 | -------------- | ---------------------------------------------------------------------------------------------- |
-| Game files     | `sandustry/source/dist` (`npm run setup`)                                          |
+| Game files     | `sandustry/source/dist` (`npm run setup`)                                                      |
 | Chrome profile | `.tmp/sandustry-test-chrome/`                                                                  |
 | Test mods copy | `.tmp/sandustry-test/mods/`                                                                    |
 | CDP            | **9224** (Steam / F5 stay on **9222**)                                                         |

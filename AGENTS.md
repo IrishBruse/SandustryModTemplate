@@ -19,6 +19,7 @@ Do not kill Sandustry.
 Ask the user for a hard reload.
 
 `sandustry/` is gitignored; `npm run setup` creates it.
+
 - `source/` — asar extract (refreshed each setup)
 - `logs/` / `saves/` / `workshop/` — links to OS / Steam folders
-Full layout: root `README.md` → Folder layout → `sandustry/`.
+  Full layout: root `README.md` → Folder layout → `sandustry/`.

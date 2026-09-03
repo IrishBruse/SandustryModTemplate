@@ -326,7 +326,9 @@ function syncLogs() {
   try {
     reportDirLink("sandustry/logs/", ensureDirectoryLink(LOGS_SRC, LOGS_DEST), LOGS_SRC);
   } catch (err) {
-    fail(`Could not link sandustry/logs/ to ${LOGS_SRC}: ${err instanceof Error ? err.message : err}`);
+    fail(
+      `Could not link sandustry/logs/ to ${LOGS_SRC}: ${err instanceof Error ? err.message : err}`,
+    );
   }
 }
 

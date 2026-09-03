@@ -77,7 +77,10 @@ test("ensureModDebugSaves writes Steam save only, without overwrite", () => {
   rmSync(src, { recursive: true, force: true });
   rmSync(userData, { recursive: true, force: true });
   mkdirSync(src, { recursive: true });
-  const first = ensureModDebugSaves({ gameId: "unit.debug", dir: src, name: "Debug Unit" }, userData);
+  const first = ensureModDebugSaves(
+    { gameId: "unit.debug", dir: src, name: "Debug Unit" },
+    userData,
+  );
   assert.equal(first.created, true);
   assert.equal(first.id, "unit.debug");
   assert.equal(first.filePath, join(userData, "saves", "unit.debug.save"));
@@ -89,7 +92,10 @@ test("ensureModDebugSaves writes Steam save only, without overwrite", () => {
 
   const edited = Buffer.from("steam-edit");
   writeFileSync(first.filePath, edited);
-  const again = ensureModDebugSaves({ gameId: "unit.debug", dir: src, name: "Debug Unit" }, userData);
+  const again = ensureModDebugSaves(
+    { gameId: "unit.debug", dir: src, name: "Debug Unit" },
+    userData,
+  );
   assert.equal(again.created, false);
   assert.equal(readFileSync(first.filePath).equals(edited), true);
   assert.equal(existsSync(join(src, "unit.debug.save")), false);

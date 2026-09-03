@@ -7,6 +7,4 @@ const argv = normalizeIntegrationArgv(process.argv.slice(2));
 const visible = argv.includes("--view");
 const buildArgv = argv.filter((arg) => arg !== "--view");
 const { gameIds } = await buildModsForIntegration(buildArgv);
-process.exit(
-  await runNodeTests({ integration: true, modIds: gameIds, visible, argv: buildArgv }),
-);
+process.exit(await runNodeTests({ integration: true, modIds: gameIds, visible, argv: buildArgv }));

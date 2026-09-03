@@ -35,7 +35,10 @@ EMPTY=
 
 test("resolveDevModsSetting modes", () => {
   assert.deepEqual(resolveDevModsSetting("all", ""), { mode: "all", alwaysFolders: [] });
-  assert.deepEqual(resolveDevModsSetting("selection", ""), { mode: "selection", alwaysFolders: [] });
+  assert.deepEqual(resolveDevModsSetting("selection", ""), {
+    mode: "selection",
+    alwaysFolders: [],
+  });
   assert.deepEqual(resolveDevModsSetting("selection", "template, trees"), {
     mode: "selection",
     alwaysFolders: ["template", "trees"],
@@ -52,10 +55,10 @@ test("watchModFolders merges always folders with selection", () => {
     mode: /** @type {const} */ ("selection"),
     alwaysFolders: ["irishbruse.pick-block", "missing"],
   };
-  assert.deepEqual(
-    watchModFolders({ all: false, folders: ["template"] }, setting, valid),
-    ["irishbruse.pick-block", "template"],
-  );
+  assert.deepEqual(watchModFolders({ all: false, folders: ["template"] }, setting, valid), [
+    "irishbruse.pick-block",
+    "template",
+  ]);
 });
 
 test("watchModFolders selection-only ignores empty always list", () => {
@@ -76,7 +79,10 @@ test("resolveWatchModArgs merges for DEV_ALWAYS_MODS list", () => {
   process.env.DEV_ALWAYS_MODS = "irishbruse.pick-block";
   try {
     assert.deepEqual(
-      resolveWatchModArgs({ all: false, folders: ["template"] }, new Set(["template", "irishbruse.pick-block"])),
+      resolveWatchModArgs(
+        { all: false, folders: ["template"] },
+        new Set(["template", "irishbruse.pick-block"]),
+      ),
       ["--mod", "irishbruse.pick-block", "--mod", "template"],
     );
   } finally {

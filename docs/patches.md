@@ -40,9 +40,9 @@ Use **`patches.json`** at the mod root (bare array). IDE validation uses `.vscod
 
 `patches.ts` (`definePatches`) still works when you need typed helpers or `debugPatches`. When both patch files exist, **`patches.ts` wins**. Manifest `modinfo.ts` patch exports also win over `patches.json`.
 
-| Export         | When it is written                                |
-| -------------- | ------------------------------------------------- |
-| `patches`      | Always (`patches.json`)                           |
+| Export         | When it is written                                                                       |
+| -------------- | ---------------------------------------------------------------------------------------- |
+| `patches`      | Always (`patches.json`)                                                                  |
 | `debugPatches` | Dev / `--debug` only. From `patches.ts` / `modinfo.ts` only. Merged **after** `patches`. |
 
 Release (`npm run build`, `npm run dev:release`) omits `debugPatches`. Dev (`npm run dev`) includes both.
@@ -100,7 +100,7 @@ Insert `code` immediately before each match.
   "find": "initializing workers",
   "operation": "insertBefore",
   "code": "[patched]",
-  "expectedMatches": 1,
+  "expectedMatches": 1
 }
 ```
 
@@ -116,7 +116,7 @@ Replace each match with `code`. The collector sample replaces a Gold / liquidGol
   "operation": "replace",
   "code": "return i.FH.collector.getValueFromElementType(e,t.type)>0?d:f}",
   "expectedMatches": 1,
-  "atomicGroup": "collector-admission-value-map",
+  "atomicGroup": "collector-admission-value-map"
 }
 ```
 
@@ -134,7 +134,7 @@ Wrap each match as `before` + match + `after`. Use this when you must keep the o
   "operation": "wrap",
   "before": "/* patched-before */",
   "after": "/* patched-after */",
-  "expectedMatches": 1,
+  "expectedMatches": 1
 }
 ```
 

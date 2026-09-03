@@ -86,14 +86,14 @@ Each `src/<name>/`, `mods/<name>/`, or `examples/<name>/` folder with a `modinfo
 Put shared code in `modkit/`.
 Do not import files from another mod folder.
 
-| Path                  | What it is                                   |
-| --------------------- | -------------------------------------------- |
-| `src/<name>/`         | Your mod (`modinfo.json` + `main.ts`)        |
-| `mods/<name>/`        | Optional private mods (gitignored)           |
-| `examples/<name>/`    | Sample mods (cloned, gitignored)             |
-| `modkit/`             | Shared kit. Import as `@modkit/*`            |
-| `dist/`               | Link to the Sandustry mods folder on disk    |
-| `build/<modinfo.id>/` | Workshop staging (copied on `npm run build`) |
+| Path                  | What it is                                                     |
+| --------------------- | -------------------------------------------------------------- |
+| `src/<name>/`         | Your mod (`modinfo.json` + `main.ts`)                          |
+| `mods/<name>/`        | Optional private mods (gitignored)                             |
+| `examples/<name>/`    | Sample mods (cloned, gitignored)                               |
+| `modkit/`             | Shared kit. Import as `@modkit/*`                              |
+| `dist/`               | Link to the Sandustry mods folder on disk                      |
+| `build/<modinfo.id>/` | Workshop staging (copied on `npm run build`)                   |
 | `sandustry/`          | Local game extract and OS folder links (gitignored; see below) |
 
 `mods/` is optional and gitignored, with the same `modinfo` rules as `src/`. `npm run build`, `npm run dev`, and `npm run publish` include it. `examples/` is gitignored. `npm run examples` clones [SandustryExamples](https://github.com/sandustry-modding/SandustryExamples) into that folder when it is missing. This repo also ignores `src/irishbruse.*/`; those mods keep their own repos (`README.md` and `CHANGELOG.md` in that repo).
@@ -107,12 +107,12 @@ You do not copy files into the game folder by hand. `npm run dev` and `npm run b
 
 `npm run setup` creates this folder. It is gitignored. Do not edit it by hand; run setup again after a game update.
 
-| Path | What it is |
-| --- | --- |
-| `sandustry/source/` | Extract of `app.asar` (except `node_modules/`). Refreshed on every setup. Read `package.json` for the game version. Use `dist/js/bundle.js` (or `.formatted-source/bundle.js` when present) for [patch](docs/patches.md) `find` strings. Integration tests boot `source/dist`. |
-| `sandustry/logs/` | Link to OS Sandustry logs (`main.log`, …) |
-| `sandustry/saves/` | Link to OS save files |
-| `sandustry/workshop/` | Link to Steam Workshop content for app **2764460** |
+| Path                  | What it is                                                                                                                                                                                                                                                                     |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `sandustry/source/`   | Extract of `app.asar` (except `node_modules/`). Refreshed on every setup. Read `package.json` for the game version. Use `dist/js/bundle.js` (or `.formatted-source/bundle.js` when present) for [patch](docs/patches.md) `find` strings. Integration tests boot `source/dist`. |
+| `sandustry/logs/`     | Link to OS Sandustry logs (`main.log`, …)                                                                                                                                                                                                                                      |
+| `sandustry/saves/`    | Link to OS save files                                                                                                                                                                                                                                                          |
+| `sandustry/workshop/` | Link to Steam Workshop content for app **2764460**                                                                                                                                                                                                                             |
 
 Older `sandustry/<version>-<branch>/` folders from prior template versions are removed on the next setup.
 
