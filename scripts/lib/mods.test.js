@@ -110,3 +110,39 @@ test("loadModManifestExports reads patches.ts when modinfo.json is the manifest"
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test("loadModManifestExports reads patches.json when modinfo.ts has no patch exports", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "mod-manifest-"));
+  try {
+    writeFileSync(
+      join(dir, "modinfo.ts"),
+      `export const modinfo = {
+        manifestVersion: 1,
+        id: "author.test",
+        name: "Test",
+        version: "0.0.1",
+        apiVersion: 1,
+        entry: "main.js",
+      };`,
+    );
+    writeFileSync(
+      join(dir, "patches.json"),
+      JSON.stringify([
+        {
+          id: "demo",
+          file: "js/bundle.js",
+          find: "x",
+          operation: "replace",
+          code: "y",
+          expectedMatches: 1,
+        },
+      ]),
+    );
+    const loaded = await loadModManifestExports(dir, "test-mod-ts-json", "test/modinfo.ts");
+    assert.equal(loaded.modinfo.id, "author.test");
+    assert.equal(loaded.patches?.length, 1);
+    assert.equal(loaded.patches[0].id, "demo");
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});

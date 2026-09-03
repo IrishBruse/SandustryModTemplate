@@ -92,7 +92,7 @@ The build fails if `id` or `name` is missing or blank.
 
 ## Patches
 
-See [Patches](patches.md). Patch lists can live in `patches.json` or `patches.ts`.
+See [Patches](patches.md). Prefer `patches.json` at the mod root. `patches.ts` still works for typed helpers or `debugPatches`.
 
 ## Minimal example
 

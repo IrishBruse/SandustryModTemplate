@@ -7,13 +7,17 @@
  * do the job. Keep replacements small, set `expectedMatches`, and put runtime
  * helpers on `globalThis` (patch code runs outside the bundle IIFE).
  *
+ * Prefer `patches.json`. Use `patches.ts` only for typed helpers or `debugPatches`.
+ *
  * Author either:
  *
  * - `patches.json` — bare array; IDE validation via `.vscode/settings.json` schema map
  * - `patches.ts` — `export const patches = definePatches([...])`
  *
  * When both patch files exist, the build loads **`patches.ts` first**.
- * `debugPatches` are supported from `patches.ts` (or `modinfo.ts` re-exports) only.
+ * If `modinfo.ts` has no patch exports, the build falls back to `patches.ts` /
+ * `patches.json`. `debugPatches` are supported from `patches.ts` (or `modinfo.ts`
+ * re-exports) only.
  *
  * ```ts
  * import { definePatches } from "@modkit/patches";

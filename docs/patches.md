@@ -23,9 +23,7 @@ For IDE validation of generated `patches.json`, use schema URL `https://sandustr
 
 ## Layout
 
-Use **either** JSON or TypeScript. When both patch files exist, **`patches.ts` wins**.
-
-**JSON** — bare array at the mod root (IDE validation via `.vscode/settings.json` and `PATCHES_JSON_SCHEMA`):
+Use **`patches.json`** at the mod root (bare array). IDE validation uses `.vscode/settings.json` and `PATCHES_JSON_SCHEMA`.
 
 ```json
 [
@@ -40,20 +38,12 @@ Use **either** JSON or TypeScript. When both patch files exist, **`patches.ts` w
 ]
 ```
 
-**TypeScript** — `patches.ts` with `definePatches`:
-
-```ts
-import { definePatches } from "@modkit/patches";
-
-export const patches = definePatches([ ... ]);
-```
-
-You can also re-export from `modinfo.ts` when you use a TypeScript manifest.
+`patches.ts` (`definePatches`) still works when you need typed helpers or `debugPatches`. When both patch files exist, **`patches.ts` wins**. Manifest `modinfo.ts` patch exports also win over `patches.json`.
 
 | Export         | When it is written                                |
 | -------------- | ------------------------------------------------- |
 | `patches`      | Always (`patches.json`)                           |
-| `debugPatches` | Dev / `--debug` only. Merged **after** `patches`. |
+| `debugPatches` | Dev / `--debug` only. From `patches.ts` / `modinfo.ts` only. Merged **after** `patches`. |
 
 Release (`npm run build`, `npm run dev:release`) omits `debugPatches`. Dev (`npm run dev`) includes both.
 
@@ -130,7 +120,7 @@ Replace each match with `code`. The collector sample replaces a Gold / liquidGol
 }
 ```
 
-Copy `find` from the extracted bundle in `sandustry/<version>-<branch>/`. Do not reuse old minified snippets after a game update.
+Copy `find` from the extracted bundle in `sandustry/source/`. Do not reuse old minified snippets after a game update.
 
 ### `wrap`
 

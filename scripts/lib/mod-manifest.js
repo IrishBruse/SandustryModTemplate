@@ -64,7 +64,8 @@ export function readModinfoJsonManifest(dir) {
  * Load `modinfo` and optional patch exports for one mod folder.
  *
  * Manifest: `modinfo.ts` wins when both `modinfo.ts` and `modinfo.json` exist.
- * Patches: from `modinfo.ts` exports, else `patches.ts`, else `patches.json`.
+ * Patches: `modinfo.ts` / `patches.ts` exports win when present; otherwise
+ * `patches.json`.
  *
  * @param {string} dir
  * @param {string} cachePrefix
@@ -72,22 +73,36 @@ export function readModinfoJsonManifest(dir) {
  */
 export async function loadModManifestExports(dir, cachePrefix, label) {
   const modTs = join(dir, "modinfo.ts");
-  if (existsSync(modTs)) {
-    return bundleAndImport(modTs, `${cachePrefix}-modinfo.mjs`);
-  }
-
-  const modinfo = readModinfoJsonManifest(dir);
-  /** @type {{ modinfo: unknown, patches?: unknown, debugPatches?: unknown }} */
-  const loaded = { modinfo };
-
   const patchesTs = join(dir, "patches.ts");
   const patchesJson = join(dir, "patches.json");
-  if (existsSync(patchesTs)) {
-    const patchModule = await bundleAndImport(patchesTs, `${cachePrefix}-patches.mjs`);
-    if (patchModule.patches != null) loaded.patches = patchModule.patches;
-    if (patchModule.debugPatches != null) loaded.debugPatches = patchModule.debugPatches;
-  } else if (existsSync(patchesJson)) {
-    loaded.patches = readPatchesJsonManifest(patchesJson);
+
+  /** @type {{ modinfo: unknown, patches?: unknown, debugPatches?: unknown }} */
+  let loaded;
+  if (existsSync(modTs)) {
+    const modModule = await bundleAndImport(modTs, `${cachePrefix}-modinfo.mjs`);
+    loaded = {
+      modinfo: modModule.modinfo,
+      patches: modModule.patches,
+      debugPatches: modModule.debugPatches,
+    };
+  } else {
+    loaded = { modinfo: readModinfoJsonManifest(dir) };
+  }
+
+  if (loaded.patches == null && loaded.debugPatches == null) {
+    if (existsSync(patchesTs)) {
+      const patchModule = await bundleAndImport(patchesTs, `${cachePrefix}-patches.mjs`);
+      loaded = {
+        ...loaded,
+        patches: patchModule.patches ?? loaded.patches,
+        debugPatches: patchModule.debugPatches ?? loaded.debugPatches,
+      };
+    } else if (existsSync(patchesJson)) {
+      loaded = {
+        ...loaded,
+        patches: readPatchesJsonManifest(patchesJson),
+      };
+    }
   }
 
   if (loaded.patches != null && !Array.isArray(loaded.patches)) {
