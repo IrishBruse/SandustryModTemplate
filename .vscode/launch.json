@@ -97,12 +97,13 @@
       "description": "Debug which mod?",
       "options": [
         "irishbruse.dev-tools",
+        "irishbruse.pick-block",
         "irishbruse.selection-capture",
         "irishbruse.survival-mode",
         "irishbruse.trees",
         "template"
       ],
-      "default": "irishbruse.selection-capture"
+      "default": "template"
     }
   ]
 }
