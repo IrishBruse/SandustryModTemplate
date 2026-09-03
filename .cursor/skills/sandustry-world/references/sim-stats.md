@@ -1,6 +1,7 @@
 # Sim stats buffers
 
-Read-only layout for `shared.sim.idStats`, `shared.sim.overflowPool`, and `shared.waterPresenceZones`. Confirmed on live **0.5.5** (3840 x 3840 grid, `elementCapacity` 1000000).
+Read-only layout for `shared.sim.idStats`, `shared.sim.overflowPool`, and `shared.waterPresenceZones`.
+Confirmed on live **0.5.5** (3840 x 3840 grid, `elementCapacity` 1000000).
 
 ## `shared.sim.idStats`
 
@@ -13,7 +14,8 @@ Read-only layout for `shared.sim.idStats`, `shared.sim.overflowPool`, and `share
 
 ### Slab header (indices `0 … Nl-1`)
 
-One uint32 per 10000 element-capacity slab. Live sample: mostly `14` at idle, also `0`, terrain/element ids, and `4294967295` (`UINT32_MAX`) for unused slots.
+One uint32 per 10000 element-capacity slab.
+Live sample: mostly `14` at idle, also `0`, terrain/element ids, and `4294967295` (`UINT32_MAX`) for unused slots.
 
 ### Per-worker block (indices `Nl + workerIndex * 5`)
 
@@ -38,7 +40,8 @@ Probe one block only: `idStats[Nl + workerIndex * 5 + off]` for `workerIndex` 0-
 | `0`   | Atomic stack pointer (number of pooled ids)   |
 | `1…`  | Pooled element ids popped when slabs are full |
 
-Live idle save: index `0` is `0`; tail slots are `0`. Do not mutate, workers use `Atomics.load` / `compareExchange`.
+Live idle save: index `0` is `0`; tail slots are `0`.
+Do not mutate, workers use `Atomics.load` / `compareExchange`.
 
 ## `shared.waterPresenceZones`
 
@@ -55,7 +58,8 @@ Zone size in cells: `floor(worldWidth / zoneWidth)` -> **32** cells/edge on 3840
 Zone index: `zoneY * waterPresenceZonesWidth + zoneX` where  
 `zoneX = floor(cellX / 32)`, `zoneY = floor(cellY / 32)`.
 
-Writers set `Atomics.store(zones, index, 1)` on water activity (~1% sample rate in bundle). Readers scan a radius around the player for nearest wet zone.
+Writers set `Atomics.store(zones, index, 1)` on water activity (~1% sample rate in bundle).
+Readers scan a radius around the player for nearest wet zone.
 
 MCP note: indexed access may appear as numeric keys on the typed array, prefer `zones[index]` or `Atomics.load`, not `Object.keys` dumps.
 

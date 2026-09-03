@@ -47,4 +47,5 @@ Used by structure definitions for drag shape - not stored on `session.building` 
 
 ## Cheat
 
-`session.cheat.bypassCosts` - when `true`, placement ignores resource costs (Debug). Read-only unless user asks.
+`session.cheat.bypassCosts` - when `true`, placement ignores resource costs (Debug).
+Read-only unless user asks.

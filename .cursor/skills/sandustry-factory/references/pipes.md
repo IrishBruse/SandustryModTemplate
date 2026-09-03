@@ -13,7 +13,8 @@ Fluid transport structures are split from the main structure list.
 
 Live on structure cell with no pipe: `isAtCell` / `isEnabledAtCell` -> `false`, `getConnectedVentsAtCell` -> `[]`.
 
-Pumps and liquid vents still appear in `store.structures` via `structures.getAtCell`. Pipe segments live in `store.pipes`.
+Pumps and liquid vents still appear in `store.structures` via `structures.getAtCell`.
+Pipe segments live in `store.pipes`.
 
 ## Store
 
@@ -23,7 +24,8 @@ Pumps and liquid vents still appear in `store.structures` via `structures.getAtC
 | `store.pumpsCache[]`  | Pump structures (`type` 24) for fast fluid graph updates         |
 | `session.cache.pipes` | Spatial block index (same pattern as `session.cache.structures`) |
 
-This save: `pipes` length 0, `pumpsCache` length 0. Pipes still render from defs when placed.
+This save: `pipes` length 0, `pumpsCache` length 0.
+Pipes still render from defs when placed.
 
 ## Pipe instance
 

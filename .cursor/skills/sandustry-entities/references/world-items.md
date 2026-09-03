@@ -51,9 +51,11 @@ Grid map (`Fn`) populated at map load from prefab metadata:
 
 - `worldItemOffset` cells -> Artifact or GlyphKey with translated name and optional light preset.
 - `worldItems[]` and `artifact` blocks -> Artifact entries.
-- Skips prefab name `"Void"`. Glyph Room prefabs use GlyphKey type.
+- Skips prefab name `"Void"`.
+  Glyph Room prefabs use GlyphKey type.
 
-When fog reveals a cell, cache entry spawns a real `store.worldItems` item and deletes the cache key. Probe: `session.prefabWorldItemCache` constructor name `Fn`; may have no numeric `size`.
+When fog reveals a cell, cache entry spawns a real `store.worldItems` item and deletes the cache key.
+Probe: `session.prefabWorldItemCache` constructor name `Fn`; may have no numeric `size`.
 
 ## Sensors
 

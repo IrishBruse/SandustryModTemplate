@@ -1,6 +1,8 @@
 # Tutorial
 
-Early guided steps. No public `sandkit.api.tutorial`. Read `store.tutorial`.
+Early guided steps.
+No public `sandkit.api.tutorial`.
+Read `store.tutorial`.
 
 ## Store
 
@@ -43,8 +45,11 @@ Completed tutorial: `active: false`, `currentStep` may remain at last value, `da
 
 ## Engine build helpers
 
-`sandkit.engine.api.tutorialBuild` exposes target cells and placement rules for constrained steps. State-first internal API. See `node_modules/@sandustry-modding/types/src/sandkit/engine/api/tutorialBuild.d.ts`.
+`sandkit.engine.api.tutorialBuild` exposes target cells and placement rules for constrained steps.
+State-first internal API.
+See `node_modules/@sandustry-modding/types/src/sandkit/engine/api/tutorialBuild.d.ts`.
 
 ## Tech gate during tutorial
 
-Shaker may be researched during tutorial. Conveyors allowed when `currentStep >= UnlockLogistics` (13). Other tech may be blocked by UI and `isTechAllowedDuringTutorial`.
+Shaker may be researched during tutorial. Conveyors allowed when `currentStep >= UnlockLogistics` (13).
+Other tech may be blocked by UI and `isTechAllowedDuringTutorial`.

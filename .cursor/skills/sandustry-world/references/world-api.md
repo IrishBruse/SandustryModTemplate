@@ -1,8 +1,10 @@
 # `api.grid`, `api.world`, and `api.pickups`
 
-Official signatures: [sandkit.html - api.grid](https://sandustry.com/sandkit.html), [api.pickups](https://sandustry.com/sandkit.html). Types: `@sandustry-modding/types` `src/sandkit/api/grid.d.ts`, `src/sandkit/api/pickups.d.ts`.
+Official signatures: [sandkit.html - api.grid](https://sandustry.com/sandkit.html), [api.pickups](https://sandustry.com/sandkit.html).
+Types: `@sandustry-modding/types` `src/sandkit/api/grid.d.ts`, `src/sandkit/api/pickups.d.ts`.
 
-**Main** entry grid mutations are deferred, reads see the old grid until they apply. **Worker** entry mutations are immediate. For state-dependent writes, use `api.grid.mutate`.
+**Main** entry grid mutations are deferred, reads see the old grid until they apply. **Worker** entry mutations are immediate.
+For state-dependent writes, use `api.grid.mutate`.
 
 ## `api.grid` (canonical)
 
@@ -33,13 +35,16 @@ Deprecated alias: `forEachCellInRect` -> `forEachCellInRectangle`.
 
 `mutate(writer => …)` writer exposes `writer.elements` and `writer.terrains` with `createAtCell`, `replaceAtCell`, `removeAtCell`.
 
-Bare `api.elements.*` and `api.terrains.*` on main are also deferred. Main-thread mutators have deprecated `*WhenIdle` aliases (same functions).
+Bare `api.elements.*` and `api.terrains.*` on main are also deferred.
+Main-thread mutators have deprecated `*WhenIdle` aliases (same functions).
 
 Fog terrain ids: `CellType.Fog` (4), `FogJetpackBlock` (5), `FogWater` (6), `FogLava` (13).
 
 ## `api.world` (deprecated alias)
 
-Live on renderer 0.5.5. Official docs mark `api.world` as a deprecated alias of `api.grid` for dims, mutate, and cell queries. Live object also exposes:
+Live on renderer 0.5.5.
+Official docs mark `api.world` as a deprecated alias of `api.grid` for dims, mutate, and cell queries.
+Live object also exposes:
 
 | Key                                                  | Canonical                             |
 | ---------------------------------------------------- | ------------------------------------- |
@@ -71,7 +76,9 @@ Used with `elements.setPhysicsAtCell(cellX, cellY, physicsState)`:
 
 Deprecated alias: `destroy(pickup)` -> `remove(pickup)`.
 
-`WorldItem`: `{ id, x, y, type, data }`. Built-in `PickupType`: Artifact (1), GlyphKey (2), Stratacore (3), Orb (4). Deprecated enum alias: `WorldItemType`.
+`WorldItem`: `{ id, x, y, type, data }`.
+Built-in `PickupType`: Artifact (1), GlyphKey (2), Stratacore (3), Orb (4).
+Deprecated enum alias: `WorldItemType`.
 
 ## MCP decode without API
 

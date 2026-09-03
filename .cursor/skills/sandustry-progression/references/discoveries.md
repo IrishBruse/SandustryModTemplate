@@ -16,12 +16,15 @@ store.discoveries: {
 }
 ```
 
-New saves seed starter lists (sand, gold, stone, ...). Live probe on a mid-game save: 65 elements, 5 terrains.
+New saves seed starter lists (sand, gold, stone, ...).
+Live probe on a mid-game save: 65 elements, 5 terrains.
 
 Research unlock and world events also call internal `discoveries.addElement` / `addTerrain`.
 
 ## UI session
 
-`session.ui.discoveryPopups` is an array of pending popup payloads. Length 0 when idle.
+`session.ui.discoveryPopups` is an array of pending popup payloads.
+Length 0 when idle.
 
-Discovery log screen is under Research in **sandustry-ui**. Lexicon overlaps discovery content, see `lexicon.md`.
+Discovery log screen is under Research in **sandustry-ui**.
+Lexicon overlaps discovery content, see `lexicon.md`.

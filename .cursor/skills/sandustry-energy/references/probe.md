@@ -1,8 +1,10 @@
 # Probe
 
-Read-only inspection via `sandustry-mcp` `evaluate_script`. Return JSON-serializable data only.
+Read-only inspection via `sandustry-mcp` `evaluate_script`.
+Return JSON-serializable data only.
 
-`sandkit` is ambient in MCP `evaluate_script`. Check `typeof window.sandkit`. `__debug.state === sandkit.state`.
+`sandkit` is ambient in MCP `evaluate_script`.
+Check `typeof window.sandkit`. `__debug.state === sandkit.state`.
 
 ## Safe
 

@@ -1,6 +1,8 @@
 # Pause
 
-**Menu [Esc]** or **Escape**. Dimmer `z-[10010]`. HUD stays behind.
+**Menu [Esc]** or **Escape**.
+Dimmer `z-[10010]`.
+HUD stays behind.
 
 Rows are `w-64 cursor-pointer` (not buttons), except **Dev Tools**.
 

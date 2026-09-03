@@ -5,14 +5,20 @@ description: "Use when working with vanilla energy networks, signals, collector,
 
 # Sandustry energy and signals
 
-Live **power and signal map** for Early Access **0.5.5**. Mod calls use `sandkit.api.*`. Host-only runtime uses `sandkit.engine.api` - see **sandustry-internals**.
+Live **power and signal map** for Early Access **0.5.5**.
+Mod calls use `sandkit.api.*`.
+Host-only runtime uses `sandkit.engine.api` - see **sandustry-internals**.
 
-Official API: `.tmp/Sandkit - Sandustry Modding API.html` (`api.energy`, `api.signals`, `api.resources`, `api.collector`). Types: `node_modules/@sandustry-modding/types/src/sandkit/api/energy.d.ts`, `node_modules/@sandustry-modding/types/src/sandkit/api/signals.d.ts`. Heat transfer is **sandustry-world**; only touch it when energy mechanics tie in.
+Official API: `.tmp/Sandkit - Sandustry Modding API.html` (`api.energy`, `api.signals`, `api.resources`, `api.collector`).
+Types: `node_modules/@sandustry-modding/types/src/sandkit/api/energy.d.ts`, `node_modules/@sandustry-modding/types/src/sandkit/api/signals.d.ts`.
+Heat transfer is **sandustry-world**; only touch it when energy mechanics tie in.
 
 ## Probe
 
 1. `list_pages` - title **Sandustry**.
-2. `evaluate_script` with `waitForStableDom: false`. Read `sandkit.api` getters and `__debug.state`. Check `typeof window.sandkit`.
+2. `evaluate_script` with `waitForStableDom: false`.
+  Read `sandkit.api` getters and `__debug.state`.
+  Check `typeof window.sandkit`.
 3. Done when live keys match the branch file, or the named SAB lengths match.
 
 Do not call `sandkit.api.energy.addAtCell`, `consume`, `signals.setOutputAtCell`, signal `link` / `set`, or clipboard `set` / `activate` unless the user asked.

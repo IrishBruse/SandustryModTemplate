@@ -1,6 +1,8 @@
 # HUD
 
-Version chip **v0.5.5**. This save: **MAX LEVEL**, viability bar. ComponentIds: **HudTopLeft** (resources column), **HudTopRight** (menu, viability, objectives).
+Version chip **v0.5.5**.
+This save: **MAX LEVEL**, viability bar.
+ComponentIds: **HudTopLeft** (resources column), **HudTopRight** (menu, viability, objectives).
 
 ## Top left
 
@@ -17,7 +19,8 @@ Collapse chevron, then rows:
 
 Extra rows: `registerManagementMenuButton` (`kit.md`).
 
-**Debug** (`debug.md`). Hidden while DEBUG is open.
+**Debug** (`debug.md`).
+Hidden while DEBUG is open.
 
 **Stats** expand/collapse: Elem, Dmg (Next, Free), % IDs free, Lights static/fx, Structures, Particles, Mouse World/Cell, Heap, SAB (sim/other), Calc, Measured.
 
@@ -27,15 +30,19 @@ Extra rows: `registerManagementMenuButton` (`kit.md`).
 
 ## Bottom center - hotbar
 
-Bank up / n / down. Slots 1-9 and 0. Two empty buttons after 0.
+Bank up / n / down.
+Slots 1-9 and 0.
+Two empty buttons after 0.
 
 This session: Grabber, Gun, Flamethrower, Signal Button, Conveyor, Launcher, Flare Gun, Filter, Light, Velocity.
 
-Banks: `options.md` **Hotbars**. Keys: `bindings.md` HOTBAR.
+Banks: `options.md` **Hotbars**.
+Keys: `bindings.md` HOTBAR.
 
 ## Bottom left - shortcuts
 
-**Hide Shortcuts**. Default chips: Ctrl+Z Undo, Space Hover, E Radial, C Select, X Delete, Middle Click Picker, V Ruler.
+**Hide Shortcuts**.
+Default chips: Ctrl+Z Undo, Space Hover, E Radial, C Select, X Delete, Middle Click Picker, V Ruler.
 
 ## Chrome outside `#ui`
 

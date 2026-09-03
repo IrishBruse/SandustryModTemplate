@@ -5,14 +5,19 @@ description: "Use when working with vanilla structures, pipes, recipes, factory 
 
 # Sandustry factory
 
-Live **simulation map** for structures, machines, pipes, conveyors, factory tiers, and build authorization. Early Access **0.5.5**.
+Live **simulation map** for structures, machines, pipes, conveyors, factory tiers, and build authorization.
+Early Access **0.5.5**.
 
-Public mod calls: official HTML `.tmp/Sandkit - Sandustry Modding API.html` (structures, pipes, factory, blueprints, structureBehaviors, authorization, building, processing/recipes). Types: `node_modules/@sandustry-modding/types/src/sandkit/api/`. Screen structure lists: **sandustry-ui** `references/building.md`. Placement session flags: **sandustry-player** `references/building.md`.
+Public mod calls: official HTML `.tmp/Sandkit - Sandustry Modding API.html` (structures, pipes, factory, blueprints, structureBehaviors, authorization, building, processing/recipes).
+Types: `node_modules/@sandustry-modding/types/src/sandkit/api/`.
+Screen structure lists: **sandustry-ui** `references/building.md`.
+Placement session flags: **sandustry-player** `references/building.md`.
 
 ## Probe
 
 1. `list_pages` - title **Sandustry**.
-2. `evaluate_script` with `waitForStableDom: false`. `sandkit` is ambient in script scope. Check `typeof window.sandkit` (may be `"object"` or `"undefined"`). `__debug.state === sandkit.state`.
+2. `evaluate_script` with `waitForStableDom: false`. `sandkit` is ambient in script scope.
+  Check `typeof window.sandkit` (may be `"object"` or `"undefined"`). `__debug.state === sandkit.state`.
 3. Done when API key lists and store samples match the branch file.
 
 Do not call: `structures.buildAtCell`, `removeAtCell` / `removeBetweenCells` / `removeAtCells`, `structures.processing.setEnabledAtCell`, `pipes.setEnabledAtCell`, `building.selectStructure` / `cancelPlacement`, `engine.api.factory.unlockNextTier` / `addViabilityGold` / `recordProcess`, `engine.api.queue.process`, `engine.api.conveyors.registerType`, `__debug.ensureQueuedStructuresAreBuilt`.

@@ -2,7 +2,8 @@
 
 ## Store model
 
-`store.drones` is a flat array. Each drone:
+`store.drones` is a flat array.
+Each drone:
 
 | Field    | Type             | Notes                                                            |
 | -------- | ---------------- | ---------------------------------------------------------------- |
@@ -20,11 +21,15 @@
 
 ### Hauler `data` (from bundle)
 
-`movingToTarget`, `currentSpeed`, `pauseTimer`, `inventory` (grabber-style cell grid). Sprite toggles `hauler` / `haulerClosed` when `inventory.amount > 0`.
+`movingToTarget`, `currentSpeed`, `pauseTimer`, `inventory` (grabber-style cell grid).
+Sprite toggles `hauler` / `haulerClosed` when `inventory.amount > 0`.
 
 ### Sweeper (mod)
 
-Item id `sweeperDroneLauncher`. Drone `type` is a mod string (not `DroneType`). `data` holds origin, drop-off positions, inventory with `hasItem`. Uses `sandkit.config("sweeperDrone", …)` for limits. UI: hotbar overlay hints (`mods|sweeperDrone|*` keys).
+Item id `sweeperDroneLauncher`.
+Drone `type` is a mod string (not `DroneType`). `data` holds origin, drop-off positions, inventory with `hasItem`.
+Uses `sandkit.config("sweeperDrone", …)` for limits.
+UI: hotbar overlay hints (`mods|sweeperDrone|*` keys).
 
 ## Engine API
 
@@ -39,8 +44,10 @@ Item id `sweeperDroneLauncher`. Drone `type` is a mod string (not `DroneType`). 
 
 ## UI
 
-`ComponentId.DroneAdminList` (18) - management screen for haulers. See **sandustry-ui** overlay table.
+`ComponentId.DroneAdminList` (18) - management screen for haulers.
+See **sandustry-ui** overlay table.
 
 ## Update loop
 
-Each frame: `onDroneUpdate` mod hook, else hauler sim. Sprite position = `drone.x/y - camera`.
+Each frame: `onDroneUpdate` mod hook, else hauler sim.
+Sprite position = `drone.x/y - camera`.

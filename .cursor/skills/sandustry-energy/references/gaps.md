@@ -10,4 +10,5 @@ Still open:
 - Per-structure engine `onCharge` / `onConsume` args
 - On-disk encoding for `store.mods.signals.links`
 
-Heat coupling: **sandustry-world**. Signal tool clicks: **sandustry-ui**.
+Heat coupling: **sandustry-world**.
+Signal tool clicks: **sandustry-ui**.

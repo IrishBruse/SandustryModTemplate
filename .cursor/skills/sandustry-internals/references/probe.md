@@ -1,6 +1,7 @@
 # Probe
 
-Read-only inspection of live host objects. Return JSON-serializable data only.
+Read-only inspection of live host objects.
+Return JSON-serializable data only.
 
 ## Safe
 

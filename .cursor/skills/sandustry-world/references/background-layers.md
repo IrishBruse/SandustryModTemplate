@@ -1,6 +1,8 @@
 # Background layers
 
-Visual background is **not** only `shared.sim.cellIds`. Void-world wipes must clear these too. Scripts: **sandustry-mcp** `references/void-world.md`.
+Visual background is **not** only `shared.sim.cellIds`.
+Void-world wipes must clear these too.
+Scripts: **sandustry-mcp** `references/void-world.md`.
 
 ## Simulation buffers (3840 x 3840)
 
@@ -11,7 +13,8 @@ Visual background is **not** only `shared.sim.cellIds`. Void-world wipes must cl
 | Terrain shadow     | `shared.shadowMap.data` | 1              | Shadow overlay        |
 | Map raster         | `shared.mapData.data`   | 4 (RGBA)       | Procgen map imagery   |
 
-Clear per row batch (see void-world phase 2). Do not dump full arrays in probe responses.
+Clear per row batch (see void-world phase 2).
+Do not dump full arrays in probe responses.
 
 ## World metadata
 
@@ -37,7 +40,8 @@ Clear per row batch (see void-world phase 2). Do not dump full arrays in probe r
 | Foliage clusters           | `engine.api.foliage.getClusters(state)`    |
 | Foliage Pixi container     | `engine.api.foliage.getContainer(state)`   |
 
-Clear **all** placement arrays, `placedFoliage`, and `removeChildren()` on foliage container. Prefab arrays can be empty while `placedFoliage` still holds live sprite records (Void save: **2015** entries, same count as Pixi children).
+Clear **all** placement arrays, `placedFoliage`, and `removeChildren()` on foliage container.
+Prefab arrays can be empty while `placedFoliage` still holds live sprite records (Void save: **2015** entries, same count as Pixi children).
 
 ## Pixi (`session.rendering.pixi`)
 

@@ -20,6 +20,8 @@ Typical `#ui` children in **Game**:
 | 6     | top right                         | Menu, Viability, Objectives                 |
 | 7     | bottom left                       | Shortcut helper                             |
 
-Management overlay: `z-[10004]`. Pause dimmer: `z-[10010]`.
+Management overlay: `z-[10004]`.
+Pause dimmer: `z-[10010]`.
 
-`sandkit.enums.Scene`: MainMenu 1, Intro 2, Deploy 3, Game 4. This capture is **Game** after hot-reload auto-load.
+`sandkit.enums.Scene`: MainMenu 1, Intro 2, Deploy 3, Game 4.
+This capture is **Game** after hot-reload auto-load.

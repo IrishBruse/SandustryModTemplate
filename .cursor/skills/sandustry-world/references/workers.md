@@ -22,7 +22,8 @@ Each `threads[i].meta`:
 | `ports`         | 14 MessagePorts      |
 | `managerPort`   | Manager port         |
 
-Thread `meta.startingIndex` is the worker id **0..13**, not a Y-band start. Row/chunk ownership formula is still unknown (`gaps.md`).
+Thread `meta.startingIndex` is the worker id **0..13**, not a Y-band start.
+Row/chunk ownership formula is still unknown (`gaps.md`).
 
 ## Shared scheduling fields
 
@@ -46,7 +47,8 @@ Value **1** = chunk marked for update (live sample at map center chunk).
 
 ## Performance bags
 
-`shared.workerPerformance` (len 56), `workerDetailPerformance`, `workerCompletion`, `workQueue`, `managerPerformance` - timing and queues. Do not dump.
+`shared.workerPerformance` (len 56), `workerDetailPerformance`, `workerCompletion`, `workQueue`, `managerPerformance` - timing and queues.
+Do not dump.
 
 ## Public mod API
 

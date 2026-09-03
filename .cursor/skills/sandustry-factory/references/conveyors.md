@@ -1,6 +1,7 @@
 # Conveyors and launchers
 
-Element transport on structures. Registration is engine-first, mods also use public `structureBehaviors`.
+Element transport on structures.
+Registration is engine-first, mods also use public `structureBehaviors`.
 
 ## `sandkit.api.structureBehaviors` (live)
 
@@ -32,7 +33,8 @@ engine.api.conveyors.registerType(state, id, {
 
 ## Launchers
 
-No public `sandkit.api.launchers`. Use `structureBehaviors.registerLauncherType` or `engine.api.launchers.registerType`.
+No public `sandkit.api.launchers`.
+Use `structureBehaviors.registerLauncherType` or `engine.api.launchers.registerType`.
 
 Live `state.sandkit.registeredLauncherTypes`:
 

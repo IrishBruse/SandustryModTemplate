@@ -2,7 +2,8 @@
 
 ## Store model
 
-`store.projectiles` - active shots. Common fields (live 0.5.5):
+`store.projectiles` - active shots.
+Common fields (live 0.5.5):
 
 | Field                | Type                  | Notes                                                              |
 | -------------------- | --------------------- | ------------------------------------------------------------------ |
@@ -20,7 +21,8 @@
 | `attributes`         | object                | Per-type data (napalm, digger hp, trajectory origin, mod payload). |
 | `mods`               | object?               | When `type === Mod`, keyed by mod projectile id.                   |
 
-Sprite key: `session.rendering.pixi.sprites.projectiles[id]`. Built-in texture map: Bullet -> `"bullet"`, Rocket -> `"rocket"`, Digger -> `"digger"`.
+Sprite key: `session.rendering.pixi.sprites.projectiles[id]`.
+Built-in texture map: Bullet -> `"bullet"`, Rocket -> `"rocket"`, Digger -> `"digger"`.
 
 ## Public API
 
@@ -38,10 +40,12 @@ Sprite key: `session.rendering.pixi.sprites.projectiles[id]`. Built-in texture m
 
 Deprecated alias: `createBlueprintFromId(projectileId)` -> use `createBlueprintById`.
 
-Engine overlap exposes `createBlueprint` and `spawn` with state-first signatures. Prefer public names above.
+Engine overlap exposes `createBlueprint` and `spawn` with state-first signatures.
+Prefer public names above.
 
 Reference: https://sandustry.com/sandkit.html (`api.projectiles`).
 
 ## Engine-only
 
-No `sandkit.engine.api.projectiles` namespace. Projectile sim lives in the main store push/filter helpers.
+No `sandkit.engine.api.projectiles` namespace.
+Projectile sim lives in the main store push/filter helpers.

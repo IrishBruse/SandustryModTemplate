@@ -4,7 +4,8 @@ Capture critters, swarm particles, and mod-registered entity types.
 
 ## Public API (mods)
 
-`sandkit.api.entities` - **main entry only** (not in Worker reference). Official signatures have **no state-first arg**.
+`sandkit.api.entities` - **main entry only** (not in Worker reference).
+Official signatures have **no state-first arg**.
 
 | Method                                       | Role                                       |
 | -------------------------------------------- | ------------------------------------------ |
@@ -16,13 +17,15 @@ Capture critters, swarm particles, and mod-registered entity types.
 | `startCapture(entityId)`                     | Begin corraller capture (unsafe).          |
 | `collect(entityId)`                          | Force conservatory collect (unsafe).       |
 
-There is **no** public `getAll()`. For read-only probes, use `getAllByType` per known `typeId`, or `engine.api.entities.getAll(state)` below.
+There is **no** public `getAll()`.
+For read-only probes, use `getAllByType` per known `typeId`, or `engine.api.entities.getAll(state)` below.
 
 Reference: https://sandustry.com/sandkit.html (`api.entities`).
 
 ## Engine API (internal)
 
-`sandkit.engine.api.entities` - same domain, **state-first** on most calls. Still live on 0.5.5.
+`sandkit.engine.api.entities` - same domain, **state-first** on most calls.
+Still live on 0.5.5.
 
 | Method                                                                    | Role                                  |
 | ------------------------------------------------------------------------- | ------------------------------------- |
@@ -39,7 +42,8 @@ Reference: https://sandustry.com/sandkit.html (`api.entities`).
 | `registerType` / `registerSpawner`                                        | Mod registration (unsafe).            |
 | `createLight`                                                             | Attach point light to entity.         |
 
-Prefer public names for mod code. Map ids: public `remove`/`collect`/`launch` take `entityId`; engine often takes `state` first.
+Prefer public names for mod code.
+Map ids: public `remove`/`collect`/`launch` take `entityId`; engine often takes `state` first.
 
 ## Built-in creature `typeId` values (0.5.5)
 
@@ -51,7 +55,9 @@ Prefer public names for mod code. Map ids: public `remove`/`collect`/`launch` ta
 | `eyes`        | 4         | Small swarm critter.                         |
 | `voidgrazer`  | 5         | Large flying critter.                        |
 
-Debug F3 lists "Redweaver" and "Voltblub" as creature buttons. Live `typeId` keys use the table above. `resinWeaver` may match the old "Redweaver" label. No live `voltblub` typeId found.
+Debug F3 lists "Redweaver" and "Voltblub" as creature buttons.
+Live `typeId` keys use the table above. `resinWeaver` may match the old "Redweaver" label.
+No live `voltblub` typeId found.
 
 ## Instance fields (common)
 
@@ -70,7 +76,9 @@ Per-type fields include `targetX`/`targetY`, `phase`, `grazeFlash`, `playerRelea
 ## `store.creatures` vs live entities
 
 - **Live world:** `api.entities.getAllByType(typeId)` or `engine.api.entities.getAll(state)` - instances you can see and capture.
-- **Inventory:** `store.creatures[typeId] = { available, found }` - conservatory counts. Updated on `entity:collected`. First find grants conservatory tickets.
+- **Inventory:** `store.creatures[typeId] = { available, found }` - conservatory counts.
+  Updated on `entity:collected`.
+  First find grants conservatory tickets.
 
 ## Capture flow (read-only observation)
 
@@ -80,4 +88,5 @@ Per-type fields include `targetX`/`targetY`, `phase`, `grazeFlash`, `playerRelea
 
 ## Spawners
 
-`registerSpawner` and prefab `entitySpawns` place prop entities at map load. Prop list cached in `storage.ensure(state, "entities")`.
+`registerSpawner` and prefab `entitySpawns` place prop entities at map load.
+Prop list cached in `storage.ensure(state, "entities")`.

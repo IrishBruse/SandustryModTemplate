@@ -1,6 +1,7 @@
 # Clipboard
 
-Blueprint copy/paste buffer on `sandkit.engine.api.clipboard`. Binds to `KeyBinding.Copy` / `Paste` (live: `Control+KeyC` / `Control+KeyV`).
+Blueprint copy/paste buffer on `sandkit.engine.api.clipboard`.
+Binds to `KeyBinding.Copy` / `Paste` (live: `Control+KeyC` / `Control+KeyV`).
 
 ## Methods
 

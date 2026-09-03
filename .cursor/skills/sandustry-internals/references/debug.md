@@ -20,7 +20,9 @@
 
 ## `__debug.config` (historical 0.5.2 probe)
 
-Current game extract: read `sandustry/source/package.json` after `npm run setup`. Probe `__debug.config.version` in a live session. Do not assume the table below on 0.5.5+.
+Current game extract: read `sandustry/source/package.json` after `npm run setup`.
+Probe `__debug.config.version` in a live session.
+Do not assume the table below on 0.5.5+.
 
 | Field                       | Value (0.5.2 session)       |
 | --------------------------- | --------------------------- |
@@ -44,4 +46,5 @@ Current game extract: read `sandustry/source/package.json` after `npm run setup`
 
 `config.debug` flags (keys only): active, badDisplays, brushShape, brushSize, brushThrottle, cellInspector, controls, countEvents, defaultBaseHue, doNotDrawStructures, drawChunkFade, drawChunks, drawRulers, flashlight, gameOfLife, highlightBrush, i18nDebug, lightSize, overrideLightSize, overrideTerrainShadow, preventDuplicateCells, selectedLightIndex, showAuthorizationZones, showFilters, showLights, showProximityFade, showProximityFadeSelectedOnly, showThreadLoad, showUnderlyingCellsInStructures, stopOnDebugCellUpdate, strictSafeguards, terrainShadowValue.
 
-F3 **panel chrome** is sandustry-ui `references/debug.md`. Engine overlay register: `sandkit.engine.api.debug.register`.
+F3 **panel chrome** is sandustry-ui `references/debug.md`.
+Engine overlay register: `sandkit.engine.api.debug.register`.

@@ -1,6 +1,8 @@
 # Mod manifest (`modinfo.json` / `modinfo.ts`)
 
-Manifest for one mod. Use **either** JSON or TypeScript. The build supports both.
+Manifest for one mod.
+Use **either** JSON or TypeScript.
+The build supports both.
 
 When both `modinfo.json` and `modinfo.ts` exist in the same folder, **`modinfo.ts` wins**.
 
@@ -54,11 +56,16 @@ export const modinfo = modinfoFromJson(manifest);
 
 Patch exports can live on `modinfo.ts` (`export { patches } from "./patches"`).
 
-The build writes `modinfo.json` into `dist/<modinfo.id>/` (and `build/<modinfo.id>/` on `npm run build`) **without** `$schema`. The game folder name is **`id`**, not the repo folder and not **`name`**.
+The build writes `modinfo.json` into `dist/<modinfo.id>/` (and `build/<modinfo.id>/` on `npm run build`) **without** `$schema`.
+The game folder name is **`id`**, not the repo folder and not **`name`**.
 
-Shapes: `@sandustry-modding/types/configs` (`ModInfo`), via [`modkit/modinfo.ts`](../modkit/modinfo.ts). Settings UI: [configSchema](config-schema.md). Bundle rewrites: [Patches](patches.md). Layout: [repository README](https://github.com/IrishBruse/SandustryModTemplate#folder-layout).
+Shapes: `@sandustry-modding/types/configs` (`ModInfo`), via [`modkit/modinfo.ts`](../modkit/modinfo.ts).
+Settings UI: [configSchema](config-schema.md).
+Bundle rewrites: [Patches](patches.md).
+Layout: [repository README](https://github.com/IrishBruse/SandustryModTemplate#folder-layout).
 
-Canonical starter: [`src/template/modinfo.json`](../src/template/modinfo.json). Settings showcase: [settings](https://github.com/sandustry-modding/SandustryExamples/tree/main/api/settings/).
+Canonical starter: [`src/template/modinfo.json`](../src/template/modinfo.json).
+Settings showcase: [settings](https://github.com/sandustry-modding/SandustryExamples/tree/main/api/settings/).
 
 ## Required fields
 
@@ -92,14 +99,18 @@ The build fails if `id` or `name` is missing or blank.
 
 ## Patches
 
-See [Patches](patches.md). Prefer `patches.json` at the mod root. `patches.ts` still works for typed helpers or `debugPatches`.
+See [Patches](patches.md).
+Prefer `patches.json` at the mod root. `patches.ts` still works for typed helpers or `debugPatches`.
 
 ## Minimal example
 
 [`src/template/modinfo.json`](../src/template/modinfo.json) is the starter JSON manifest.
 
-Use the `id` field in code when you need the mod id. Do not hard-code a second copy of the id string.
+Use the `id` field in code when you need the mod id.
+Do not hard-code a second copy of the id string.
 
 ## Workshop
 
-`workshop/workshop.json` is not part of the manifest. It uses `schemaVersion: 1` and `publishedFileId`. See [Builds](builds.md).
+`workshop/workshop.json` is not part of the manifest.
+It uses `schemaVersion: 1` and `publishedFileId`.
+See [Builds](builds.md).

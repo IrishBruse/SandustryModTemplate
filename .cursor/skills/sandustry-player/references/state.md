@@ -1,6 +1,7 @@
 # Session state (player branch)
 
-Subset of `sandkit.state.session` used for player, tools, and building probes. Full bag list: **sandustry-internals** `state.md`.
+Subset of `sandkit.state.session` used for player, tools, and building probes.
+Full bag list: **sandustry-internals** `state.md`.
 
 ## Player-related `session` keys
 

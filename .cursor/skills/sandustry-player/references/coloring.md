@@ -1,6 +1,7 @@
 # Coloring
 
-Engine-only namespaces on `sandkit.engine.api`. No public `sandkit.api` twin.
+Engine-only namespaces on `sandkit.engine.api`.
+No public `sandkit.api` twin.
 
 ## `coloringTool`
 

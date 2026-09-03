@@ -1,6 +1,7 @@
 # Conservatory
 
-Side branch of Research (tickets, creatures, rewards). UI: **sandustry-ui** `../../sandustry-ui/references/research.md`.
+Side branch of Research (tickets, creatures, rewards).
+UI: **sandustry-ui** `../../sandustry-ui/references/research.md`.
 
 ## Public API (0.5.5)
 
@@ -10,7 +11,8 @@ Side branch of Research (tickets, creatures, rewards). UI: **sandustry-ui** `../
 - `unlocks.structures` (optional): structure id strings.
 - `unlocks.items` (optional): item id strings.
 
-Write - do not call during read-only probes. Purchased state is still `store.player.tech[id]`.
+Write - do not call during read-only probes.
+Purchased state is still `store.player.tech[id]`.
 
 ## Store
 
@@ -21,14 +23,16 @@ store.creatures: {
 }
 ```
 
-- **Tickets**: spent on conservatory reward tech. First unique creature capture grants `2^n` tickets where `n` is count of species with `found > 0`.
+- **Tickets**: spent on conservatory reward tech.
+  First unique creature capture grants `2^n` tickets where `n` is count of species with `found > 0`.
 - **Creatures**: `found` is lifetime captures; `available` is spendable count for mechanics that consume critters.
 
 Creature type ids (examples): `lumling`, `shinelet`, `resinWeaver`, `eyes`, `voidgrazer`, `redweaver`, `voltblub`.
 
 ## Reward tech ids
 
-Conservatory rewards are tech entries with `currencyType: "ticket"`. Purchased state is still `store.player.tech[id]`.
+Conservatory rewards are tech entries with `currencyType: "ticket"`.
+Purchased state is still `store.player.tech[id]`.
 
 | Id (enum or string)    | Ticket cost | Notes                     |
 | ---------------------- | ----------- | ------------------------- |

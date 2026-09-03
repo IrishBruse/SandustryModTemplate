@@ -1,6 +1,7 @@
 # Probe
 
-Read-only inspection of progression state. Return JSON-serializable data only.
+Read-only inspection of progression state.
+Return JSON-serializable data only.
 
 ## Safe
 
@@ -9,7 +10,8 @@ Read-only inspection of progression state. Return JSON-serializable data only.
 - `sandkit.api.tech.isLockedById(id)` (read).
 - `sandkit.api.tech.isResearchedById(id)` (read).
 - `sandkit.api.upgrades.getLevelById(itemId, upgradeId)` and `getAvailableLevelById`.
-- `sandkit.api.factory.getLevel()` (read). Process counts/rates: **sandustry-factory** `references/factory.md`.
+- `sandkit.api.factory.getLevel()` (read).
+  Process counts/rates: **sandustry-factory** `references/factory.md`.
 - Read `sandkit.state.store`: `lockedTechs`, `player.tech`, `upgrades`, `discoveries`, `viability`, `conservatory`, `creatures`, `tutorial`, `progression`, `objectives`, `productionPoints`, `hints`, `factoryLevelCap`.
 - Read `sandkit.state.shared.productionPoints[0]` (worker sync mirror).
 - Read `sandkit.state.session.lexicon`, `session.ui.discoveryPopups`, `session.windows`.

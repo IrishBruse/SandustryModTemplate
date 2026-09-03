@@ -1,6 +1,7 @@
 # Probe
 
-Read-only inspection of the live world sim. Return JSON-serializable data only.
+Read-only inspection of the live world sim.
+Return JSON-serializable data only.
 
 ## Entry points
 
@@ -10,7 +11,9 @@ Read-only inspection of the live world sim. Return JSON-serializable data only.
 | `__debug.config`              | `cellSize`, `chunkSize`, gravity, multithreading flag. |
 | `__debug.getSchedulingMode()` | Sync read of scheduling mode (0-2).                    |
 
-Ambient `sandkit` (and `sandkit.api`) is available in the renderer when the game is loaded; `window.sandkit` is often missing. For vanilla buffer reads, `__debug.state` is enough (`__debug.state === sandkit.state`). Use `sandkit.api` for live key/signature checks, do not call mutators in probes.
+Ambient `sandkit` (and `sandkit.api`) is available in the renderer when the game is loaded; `window.sandkit` is often missing.
+For vanilla buffer reads, `__debug.state` is enough (`__debug.state === sandkit.state`).
+Use `sandkit.api` for live key/signature checks, do not call mutators in probes.
 
 Cross-links: **sandustry-internals** `references/probe.md`, **sandustry-ui** for F3 overlays.
 

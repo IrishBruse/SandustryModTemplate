@@ -1,6 +1,8 @@
 # Engine signals runtime
 
-Public surface: `api-signals.md` (`targets`, `interactables`, `registerSenderType`, `setOutputAtCell`). Full runtime is engine-internal (`Jd.Q` in bundle). Persisted slice: `store.mods.signals`.
+Public surface: `api-signals.md` (`targets`, `interactables`, `registerSenderType`, `setOutputAtCell`).
+Full runtime is engine-internal (`Jd.Q` in bundle).
+Persisted slice: `store.mods.signals`.
 
 ## Persisted (`store.mods.signals`)
 
@@ -11,9 +13,11 @@ Public surface: `api-signals.md` (`targets`, `interactables`, `registerSenderTyp
 
 ## Session (`state.session.mods.signals`)
 
-Built at init. Live counts on this save (0.5.5): **17** sender types, **12** receiver types, **5** interactable handlers, **6** link buckets.
+Built at init.
+Live counts on this save (0.5.5): **17** sender types, **12** receiver types, **5** interactable handlers, **6** link buckets.
 
-**Probe note:** `senderTypes` and `receiverTypes` are **`Set`** instances. Use `.size`, not `Object.keys()` (returns `[]` on Sets).
+**Probe note:** `senderTypes` and `receiverTypes` are **`Set`** instances.
+Use `.size`, not `Object.keys()` (returns `[]` on Sets).
 
 | Field                                                                  | Role                                                              |
 | ---------------------------------------------------------------------- | ----------------------------------------------------------------- |
@@ -35,6 +39,7 @@ Built at init. Live counts on this save (0.5.5): **17** sender types, **12** rec
 
 `registerSenderType`, `registerInteractable`, and `set` output are exposed on `sandkit.api.signals` as `registerSenderType`, `interactables.register`, and `setOutputAtCell`.
 
-Event: `signals:userChanged` (undo history). Combinational loop toast when `dirtyReceivers` does not drain.
+Event: `signals:userChanged` (undo history).
+Combinational loop toast when `dirtyReceivers` does not drain.
 
 Vanilla signal structure ids include `signalToggle`, `signalSwitch`, `signalRepeater`, `signalGate`, `signalBuffer` - sprite / gate logic uses `getCombinedAt`.

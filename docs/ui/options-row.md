@@ -1,6 +1,7 @@
 # OptionsRow
 
-Label on the left, control on the right. Optional description under the label.
+Label on the left, control on the right.
+Optional description under the label.
 
 **Preview:**
 

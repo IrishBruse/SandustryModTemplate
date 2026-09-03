@@ -1,6 +1,7 @@
 # OptionsSelect
 
-Listbox dropdown for language and choice settings. Keyboard: Arrow keys, Enter, Escape.
+Listbox dropdown for language and choice settings.
+Keyboard: Arrow keys, Enter, Escape.
 
 **Preview:**
 

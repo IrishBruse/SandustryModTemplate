@@ -1,6 +1,8 @@
 # React runtime
 
-Sandustry exposes React on `sandkit.react`. The template does not bundle a separate React copy. TypeScript and esbuild resolve `react` imports to thin shims in `modkit/internal/esbuild/`.
+Sandustry exposes React on `sandkit.react`.
+The template does not bundle a separate React copy.
+TypeScript and esbuild resolve `react` imports to thin shims in `modkit/internal/esbuild/`.
 
 ## Runtime source
 
@@ -50,13 +52,16 @@ jsxImportSource: "react",
 
 ### `modkit/internal/esbuild/jsx-runtime.ts`
 
-Automatic JSX runtime backed by `sandkit.react`. Exports `Fragment`, `jsx`, and `jsxs`.
+Automatic JSX runtime backed by `sandkit.react`.
+Exports `Fragment`, `jsx`, and `jsxs`.
 
-When `runtime.jsx` / `runtime.jsxs` exist on `sandkit.react`, those are used. Otherwise the shim falls back to `createElement`.
+When `runtime.jsx` / `runtime.jsxs` exist on `sandkit.react`, those are used.
+Otherwise the shim falls back to `createElement`.
 
 ### `modkit/internal/esbuild/jsx-dev-runtime.ts`
 
-Dev runtime exports `jsxDEV`. When `sandkit.react.jsxDEV` is missing, it falls back to production `jsx` from `jsx-runtime.ts`.
+Dev runtime exports `jsxDEV`.
+When `sandkit.react.jsxDEV` is missing, it falls back to production `jsx` from `jsx-runtime.ts`.
 
 ## Bundle format
 
@@ -80,11 +85,13 @@ The build banner states:
 - No `import` / `export` in the output
 - `sandkit` is already in scope
 
-Do not rely on ES modules at runtime. All dependencies must be bundled into `main.js`.
+Do not rely on ES modules at runtime.
+All dependencies must be bundled into `main.js`.
 
 ## `@modkit/*` alias
 
-esbuild resolves `@modkit/...` to files under `modkit/` (same as TypeScript `paths`). Example:
+esbuild resolves `@modkit/...` to files under `modkit/` (same as TypeScript `paths`).
+Example:
 
 ```ts
 import { safe } from "@modkit/utils";
@@ -92,6 +99,8 @@ import { safe } from "@modkit/utils";
 
 ## UI overlays
 
-Put mod UI under `src/<name>/ui/`. Import components from `@modkit/ui` or local files. Register overlays with `api.ui.inject` from `src/<name>/main.ts`.
+Put mod UI under `src/<name>/ui/`.
+Import components from `@modkit/ui` or local files.
+Register overlays with `api.ui.inject` from `src/<name>/main.ts`.
 
 See [../ui/README.md](../ui/README.md) for shared UI components.

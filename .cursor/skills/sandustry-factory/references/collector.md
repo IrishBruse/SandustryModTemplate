@@ -2,7 +2,8 @@
 
 ## Public API (read-only)
 
-Official `sandkit.api.collector`: `getValueFromCellId`, `getValueByType`, `isCellIdCollectable`, `isCellIdCollectableForSprite`, `notifyPickupAtCell`. No admission or prepare hook in the Sandkit HTML.
+Official `sandkit.api.collector`: `getValueFromCellId`, `getValueByType`, `isCellIdCollectable`, `isCellIdCollectableForSprite`, `notifyPickupAtCell`.
+No admission or prepare hook in the Sandkit HTML.
 
 ## Value map vs tile admission
 
@@ -18,9 +19,11 @@ Object.values(e.sandkit.mods.elements).forEach((e) => {
 return t;
 ```
 
-Public `getValueByType` / `isCellIdCollectable` read that map. The bundle helper is `getValueFromElementType`.
+Public `getValueByType` / `isCellIdCollectable` read that map.
+The bundle helper is `getValueFromElementType`.
 
-**Tile admission** (whether an element may enter a Collector footprint) is separate. In `js/bundle.js`, `js/simulation-worker.js`, and `js/utility-worker.js` the check is still:
+**Tile admission** (whether an element may enter a Collector footprint) is separate.
+In `js/bundle.js`, `js/simulation-worker.js`, and `js/utility-worker.js` the check is still:
 
 ```js
 // when block type is Collector (c)
@@ -28,7 +31,8 @@ const liquidGoldType = /* cached getElementTypeFromId(e, "liquidGold") */;
 return t.type === Gold || t.type === liquidGoldType ? allow : deny;
 ```
 
-Only **Gold** and **liquidGold** pass by default. Other element types with `collectable.value` stay on the value map for payout queries, but they do not enter Collector tiles.
+Only **Gold** and **liquidGold** pass by default.
+Other element types with `collectable.value` stay on the value map for payout queries, but they do not enter Collector tiles.
 
 ## Related
 

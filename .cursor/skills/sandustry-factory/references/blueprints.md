@@ -1,6 +1,7 @@
 # Blueprints (structures)
 
-Public structure blueprint helpers for copy/paste and localization. Official HTML: `api.blueprints`.
+Public structure blueprint helpers for copy/paste and localization.
+Official HTML: `api.blueprints`.
 
 ## `sandkit.api.blueprints` (public, 0.5.5)
 
@@ -9,7 +10,8 @@ Public structure blueprint helpers for copy/paste and localization. Official HTM
 | `serializeStructures(structures)` | Structure array -> portable blueprint payload     |
 | `localizeStructures(structures)`  | Blueprint payload -> localized display structures |
 
-Both are read-only on existing `store.structures` entries. Do not use them to place or remove structures.
+Both are read-only on existing `store.structures` entries.
+Do not use them to place or remove structures.
 
 ## Live shape (probe)
 

@@ -2,7 +2,8 @@
 
 ## `swarmConsole`
 
-`sandkit.engine.api.swarmConsole` - retro swarm convergence minigame. State-first.
+`sandkit.engine.api.swarmConsole` - retro swarm convergence minigame.
+State-first.
 
 | Method                                 | Read? | Role                                               |
 | -------------------------------------- | ----- | -------------------------------------------------- |
@@ -19,7 +20,8 @@
 | `decrementConvergenceBuffer`           | no    | Step convergence.                                  |
 | `registerEntityType`                   | no    | Register swarm particle visuals.                   |
 
-Event: `swarmConsole:crystalMinedChanged` on shared counter update. Swarm entities use the same `entities` system with types registered here.
+Event: `swarmConsole:crystalMinedChanged` on shared counter update.
+Swarm entities use the same `entities` system with types registered here.
 
 Live example (maxed save): `crystalMined: 10000`, `radiusPx: 320`, `diskRadiusCells: 61`, `placedConsoles: 0`.
 
@@ -31,4 +33,7 @@ Live example (maxed save): `crystalMined: 10000`, `radiusPx: 320`, `diskRadiusCe
 | ------------------------ | ----- | -------------------------------------- |
 | `cancelSelection(state)` | no    | Cancel active drop-off selection mode. |
 
-Sweeper **drones** are normal `store.drones` entries from the sweeper launcher item. See `drones.md`. Config namespace: `sandkit.config("sweeperDrone")`. No separate store key.
+Sweeper **drones** are normal `store.drones` entries from the sweeper launcher item.
+See `drones.md`.
+Config namespace: `sandkit.config("sweeperDrone")`.
+No separate store key.

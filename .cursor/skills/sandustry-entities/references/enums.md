@@ -1,6 +1,7 @@
 # Enums
 
-Live on `sandkit.enums` (0.5.5). Reference: https://sandustry.com/sandkit.html and `node_modules/@sandustry-modding/types/src/sandkit/enums/index.d.ts`.
+Live on `sandkit.enums` (0.5.5).
+Reference: https://sandustry.com/sandkit.html and `node_modules/@sandustry-modding/types/src/sandkit/enums/index.d.ts`.
 
 ## DroneType
 
@@ -41,4 +42,5 @@ Mod projectiles set `type: Mod` and carry `mods` payload keyed by registered str
 
 ## Creature typeIds (not enums)
 
-String keys in `entities` and `store.creatures`: `lumling`, `shinelet`, `resinWeaver`, `eyes`, `voidgrazer`. See `entities.md`.
+String keys in `entities` and `store.creatures`: `lumling`, `shinelet`, `resinWeaver`, `eyes`, `voidgrazer`.
+See `entities.md`.

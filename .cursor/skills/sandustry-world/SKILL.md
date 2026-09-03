@@ -5,13 +5,18 @@ description: "Use when working with vanilla grid, elements, terrains, maps, fog,
 
 # Sandustry world
 
-Live **world map** of Early Access **0.5.5**. Public API: [sandkit.html](https://sandustry.com/sandkit.html) (source of truth for signatures). Types: `@sandustry-modding/types` 0.4.x. Screen clicks stay in **sandustry-ui**. Host IPC and `__debug` stay in **sandustry-internals**.
+Live **world map** of Early Access **0.5.5**.
+Public API: [sandkit.html](https://sandustry.com/sandkit.html) (source of truth for signatures).
+Types: `@sandustry-modding/types` 0.4.x.
+Screen clicks stay in **sandustry-ui**.
+Host IPC and `__debug` stay in **sandustry-internals**.
 
 ## Probe
 
 1. **sandustry-mcp** attach, then `evaluate_script` with `waitForStableDom: false`.
 2. `sandkit.api` is ambient in the renderer when the game is loaded; `__debug.state` is the vanilla read bag (`__debug.state === sandkit.state`).
-3. Read **one cell** or a **coarse stride** sample. Do not dump `cellIds`, `wallData.data`, or `shadowMap.data`.
+3. Read **one cell** or a **coarse stride** sample.
+  Do not dump `cellIds`, `wallData.data`, or `shadowMap.data`.
 4. Done when live keys match the reference for that branch (or the gap is logged in `references/gaps.md`).
 
 Do not invoke: `engine.api.game.*`, `__debug.admin.run`, `setWallDataAt`, save/load IPC, spawn/kill, `grid.excavateAtCell`, `grid.mutate`, `revealFogAtCell`, `reportActivityAtCell`, `redrawAroundCell`, element/terrain `createAtCell` / `replaceAtCell` / `removeAtCell`, `pickups.spawnAtWorld`.

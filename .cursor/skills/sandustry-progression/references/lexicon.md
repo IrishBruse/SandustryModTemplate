@@ -1,6 +1,8 @@
 # Lexicon
 
-In-game encyclopedia (elements, terrains, tech, items, upgrades, mods). No public `sandkit.api.lexicon`. Read `session.lexicon`.
+In-game encyclopedia (elements, terrains, tech, items, upgrades, mods).
+No public `sandkit.api.lexicon`.
+Read `session.lexicon`.
 
 ## Session
 
@@ -23,7 +25,8 @@ session.windows.lexicon: { open: boolean }
 
 ## Compile timing
 
-`compiled` is `false` until the lexicon builder runs (first open or lazy init). On loaded end-game saves it may already be **`compiled: true`** with a full `entries[]` before you open the window (live probe: thousands of entries, elements/tech/items/upgrades).
+`compiled` is `false` until the lexicon builder runs (first open or lazy init).
+On loaded end-game saves it may already be **`compiled: true`** with a full `entries[]` before you open the window (live probe: thousands of entries, elements/tech/items/upgrades).
 
 Before first compile: `compiled: false`, `entries.length: 0`.
 

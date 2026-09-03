@@ -30,7 +30,8 @@ Key **binding ids** and live key codes - not the full Options Controls table (**
 | `isCtrlHeld()`                          | 0     | Modifier                                                             |
 | `isAltHeld()`                           | 0     | Modifier                                                             |
 
-`getBoundKeys` uses settings strings like `"Control+KeyC"`. `session.input.keys` uses `KeyboardEvent.code`. Modifier aliases (`Shift`, `Control`, ...) expand to `ShiftLeft` / `ShiftRight`, etc.
+`getBoundKeys` uses settings strings like `"Control+KeyC"`. `session.input.keys` uses `KeyboardEvent.code`.
+Modifier aliases (`Shift`, `Control`, ...) expand to `ShiftLeft` / `ShiftRight`, etc.
 
 ## Live `KeyBinding` -> keys (this session)
 
@@ -60,4 +61,5 @@ Probe: `api.input.getBoundKeys(sandkit.enums.KeyBinding.<Name>)`.
 | ToggleGameHud                  | F4                                         |
 | PauseCamera                    | KeyN                                       |
 
-Mod and per-save rebinding can change these. Re-probe before simulating keys.
+Mod and per-save rebinding can change these.
+Re-probe before simulating keys.

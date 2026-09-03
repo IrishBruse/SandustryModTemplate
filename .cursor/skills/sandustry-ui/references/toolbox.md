@@ -1,12 +1,14 @@
 # Toolbox
 
-Chrome: `management.md`. Sub-tabs **Items**, **Stratacores**.
+Chrome: `management.md`.
+Sub-tabs **Items**, **Stratacores**.
 
 ## Items
 
 Filters: All, Excavation, Utility, Tools, Drones, Construction, Transportation, Misc.
 
-Tiers repeat the same name. Unique:
+Tiers repeat the same name.
+Unique:
 
 - **Excavation:** Shovel, Gun, Mega Shotgun, Rocket Launcher, Shotgun, Drill (energy), Laser (energy), Void Gun (Voidjuice), Propulsion Trowel
 - **Utility:** Grabber, Cryoblaster, Flamethrower, Grappling Hook, Vacuum, Flare Gun, Flashlight, Volcanizer, Recall Shard, Locator, Corraller

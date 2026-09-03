@@ -1,6 +1,8 @@
 # Upgrades
 
-Public API: `sandkit.api.upgrades`. Types: `node_modules/@sandustry-modding/types/src/sandkit/api/upgrades.d.ts`. UI map: **sandustry-ui** `../../sandustry-ui/references/upgrades.md`.
+Public API: `sandkit.api.upgrades`.
+Types: `node_modules/@sandustry-modding/types/src/sandkit/api/upgrades.d.ts`.
+UI map: **sandustry-ui** `../../sandustry-ui/references/upgrades.md`.
 
 ## API
 
@@ -34,6 +36,7 @@ Example `grabber` upgrades: `scanner`, `waterGrab`, `maxSize`.
 
 ## Unlock flag
 
-`store.progression.upgradesUnlocked` is `false` on a new save. When `true`, the Upgrades overlay is available and `availableLevel` may rise above 0.
+`store.progression.upgradesUnlocked` is `false` on a new save.
+When `true`, the Upgrades overlay is available and `availableLevel` may rise above 0.
 
 Mod definitions live under `sandkit.state.sandkit.mods.upgrading` and `upgradeCategories`.

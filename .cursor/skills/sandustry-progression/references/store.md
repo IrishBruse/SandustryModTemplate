@@ -1,6 +1,7 @@
 # Store
 
-Progression-related keys on `sandkit.state.store`. Full bag list: **sandustry-internals** `../../sandustry-internals/references/state.md`.
+Progression-related keys on `sandkit.state.store`.
+Full bag list: **sandustry-internals** `../../sandustry-internals/references/state.md`.
 
 ## Progression cluster
 

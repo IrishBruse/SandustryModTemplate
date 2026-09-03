@@ -5,9 +5,14 @@ description: "Use when a Sandustry mod or live fact needs grid, elements, terrai
 
 # Sandustry facts
 
-Vanilla game facts only (no mod-only behavior). Official signatures: `.tmp/Sandkit - Sandustry Modding API.html` or https://sandustry.com/sandkit.html. Types package is secondary. Live session: **sandustry-mcp**.
+Vanilla game facts only (no mod-only behavior).
+Official signatures: `.tmp/Sandkit - Sandustry Modding API.html` or https://sandustry.com/sandkit.html.
+Types package is secondary.
+Live session: **sandustry-mcp**.
 
-This skill does not load the domain files. After the branch is known, **Read** that path. Humans can also type `/sandustry-world` (and the other names).
+This skill does not load the domain files.
+After the branch is known, **Read** that path.
+Humans can also type `/sandustry-world` (and the other names).
 
 ## Pick
 

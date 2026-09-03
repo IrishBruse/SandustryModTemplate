@@ -1,6 +1,9 @@
 # UI kit
 
-Live canvases for every `modkit/ui` component. Open a name to see props and usage. Isolated preview pages use `?embed=Name`. See [overview](overview.md) for imports, the component index, and shared styles.
+Live canvases for every `modkit/ui` component.
+Open a name to see props and usage.
+Isolated preview pages use `?embed=Name`.
+See [overview](overview.md) for imports, the component index, and shared styles.
 
 <section class="ui-gallery">
 

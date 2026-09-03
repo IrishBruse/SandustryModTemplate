@@ -1,6 +1,7 @@
 # Player
 
-`store.player` is the live physics snapshot. `sandkit.api.player` is the public write/read API. Types: `node_modules/@sandustry-modding/types/src/shared/player.d.ts`, https://sandustry-modding.github.io/SandustryTypes/#/.
+`store.player` is the live physics snapshot. `sandkit.api.player` is the public write/read API.
+Types: `node_modules/@sandustry-modding/types/src/shared/player.d.ts`, https://sandustry-modding.github.io/SandustryTypes/#/.
 
 ## `store.player` (live keys)
 
@@ -23,7 +24,8 @@
 
 ## `sandkit.api.player`
 
-Canonical names from official HTML. Deprecated aliases remain on the live object (same function reference where noted).
+Canonical names from official HTML.
+Deprecated aliases remain on the live object (same function reference where noted).
 
 | Method                               | Arity | Notes                                                                                                                                                                                                          |
 | ------------------------------------ | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -59,13 +61,15 @@ Live 0.5.5: `start` and `check` are separate functions (not same reference). `st
 
 ## Player sprite tint
 
-There is no public Sandkit API to tint the vanilla player body. Mods can reach the Pixi sprites on the main thread while the game scene is active:
+There is no public Sandkit API to tint the vanilla player body.
+Mods can reach the Pixi sprites on the main thread while the game scene is active:
 
 ```text
 sandkit.state.session.rendering.pixi.sprites.player
 ```
 
-Useful display objects: `body`, `weapon`, `forearm`, `container`. Each part exposes Pixi `tint` as a packed RGB integer (`0xffffff` is the default white).
+Useful display objects: `body`, `weapon`, `forearm`, `container`.
+Each part exposes Pixi `tint` as a packed RGB integer (`0xffffff` is the default white).
 
 ```ts
 const playerSprites = (
@@ -79,4 +83,6 @@ if (playerSprites?.body && typeof playerSprites.body.tint === "number") {
 }
 ```
 
-Reset tint to `0xffffff` when the effect ends so later frames do not keep the colour. This is **main-thread only**. Prefer `sandkit.api.sprites` helpers when you attach **mod-owned** sprites to the player.
+Reset tint to `0xffffff` when the effect ends so later frames do not keep the colour.
+This is **main-thread only**.
+Prefer `sandkit.api.sprites` helpers when you attach **mod-owned** sprites to the player.

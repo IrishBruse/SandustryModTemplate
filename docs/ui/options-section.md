@@ -1,6 +1,7 @@
 # OptionsSection
 
-Uppercase yellow section heading for options tabs. Optional intro line under the heading.
+Uppercase yellow section heading for options tabs.
+Optional intro line under the heading.
 
 **Preview:**
 

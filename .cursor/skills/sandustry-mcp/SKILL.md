@@ -5,13 +5,16 @@ description: "Use when attaching to live Sandustry: evaluate_script, list_pages,
 
 # Sandustry MCP
 
-Chrome DevTools MCP on the Sandustry Electron renderer. Official Sandkit API: `.tmp/Sandkit - Sandustry Modding API.html`. After attach, vanilla facts: Read `.cursor/skills/sandustry/SKILL.md`, then **one** domain `SKILL.md`.
+Chrome DevTools MCP on the Sandustry Electron renderer.
+Official Sandkit API: `.tmp/Sandkit - Sandustry Modding API.html`.
+After attach, vanilla facts: Read `.cursor/skills/sandustry/SKILL.md`, then **one** domain `SKILL.md`.
 
 ## Attach
 
 1. `GetDynamicTools` once for the tool you need (skip repeat discovery on the same tool).
 2. `list_pages` - pick title **Sandustry**, URL `file://.../dist/index.html`.
-3. Remember `pageId`; it changes after reload, reconnect, or a new tab. Re-run `list_pages` when a call fails or the game restarted.
+3. Remember `pageId`; it changes after reload, reconnect, or a new tab.
+  Re-run `list_pages` when a call fails or the game restarted.
 4. Done when the next MCP call succeeds on that `pageId`.
 
 | Port    | Instance                                                                           |
@@ -19,7 +22,10 @@ Chrome DevTools MCP on the Sandustry Electron renderer. Official Sandkit API: `.
 | `:9222` | Player / Steam / F5 debug renderer                                                 |
 | `:9224` | Extracted-game Chromium (`npm run test:integration`, `.tmp/sandustry-test-chrome`) |
 
-Never kill Sandustry. Ask the user for a hard reload when code or mods changed. Restart the game (F5) after `worker.js` or `patches.json` changes. Do not use save reload as a substitute on Steam.
+Never kill Sandustry.
+Ask the user for a hard reload when code or mods changed.
+Restart the game (F5) after `worker.js` or `patches.json` changes.
+Do not use save reload as a substitute on Steam.
 
 ## Probe
 
@@ -45,7 +51,9 @@ Read live state with `evaluate_script`:
 };
 ```
 
-Ambient `sandkit` works in `evaluate_script` on 0.5.5 (`hasSandkit: true` when `sandkit.api` exists). **`window.sandkit` may still be missing** - check `typeof window.sandkit`; fall back to `__debug.state` for vanilla reads when needed. Do not call mutators (`api.game.start`, saves, grid writes) unless the user asks. Mutator bans live in each domain skill's probe reference.
+Ambient `sandkit` works in `evaluate_script` on 0.5.5 (`hasSandkit: true` when `sandkit.api` exists). **`window.sandkit` may still be missing** - check `typeof window.sandkit`; fall back to `__debug.state` for vanilla reads when needed.
+Do not call mutators (`api.game.start`, saves, grid writes) unless the user asks.
+Mutator bans live in each domain skill's probe reference.
 
 Done when the returned shape answers the question (or triage explains why not).
 
@@ -54,8 +62,10 @@ Done when the returned shape answers the question (or triage explains why not).
 Screen work -> **sandustry-ui** for labels and panel maps.
 
 1. `take_snapshot` (prefer over screenshot).
-2. Click `uid` from the **latest** snapshot. Uids die after DOM changes - snapshot again before the next click.
-3. `press_key` when focus matters, use `includeSnapshot: true` to confirm. If keys are swallowed, dispatch `keydown` via `evaluate_script` or click **Menu [Esc]**.
+2. Click `uid` from the **latest** snapshot.
+  Uids die after DOM changes - snapshot again before the next click.
+3. `press_key` when focus matters, use `includeSnapshot: true` to confirm.
+  If keys are swallowed, dispatch `keydown` via `evaluate_script` or click **Menu [Esc]**.
 4. `fill_form` beats many `fill`/`click` pairs on the same form.
 5. Done when the target label or state flag appears in the latest snapshot or script result.
 

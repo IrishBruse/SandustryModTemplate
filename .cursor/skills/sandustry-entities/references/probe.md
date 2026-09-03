@@ -1,6 +1,7 @@
 # Probe
 
-Read-only inspection via `sandustry-mcp` `evaluate_script`. Return JSON only.
+Read-only inspection via `sandustry-mcp` `evaluate_script`.
+Return JSON only.
 
 ## Safe
 
@@ -13,7 +14,8 @@ Read-only inspection via `sandustry-mcp` `evaluate_script`. Return JSON only.
 - `sandkit.api.projectiles.getAll()`, `getById`, `pickups.getAll()`, `getById`.
 - `sandkit.enums.DroneType`, `ProjectileType`, `PickupType`.
 - `store.stratacores`, `store.gloom.emitterPositions`.
-- `Object.keys` on API bags. Round positions with `Math.round`.
+- `Object.keys` on API bags.
+  Round positions with `Math.round`.
 
 ## Unsafe (needs user ask)
 

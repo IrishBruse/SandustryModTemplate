@@ -13,4 +13,5 @@ Still open:
 
 Deprecated aliases: official HTML. `api.factory.getProcessCount()` without an id throws - `factory.md` / **sandustry-factory**.
 
-This Steam session: `typeof window.sandkit === "object"` and ambient `sandkit` both work. Still verify after reload.
+This Steam session: `typeof window.sandkit === "object"` and ambient `sandkit` both work.
+Still verify after reload.

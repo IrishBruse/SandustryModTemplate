@@ -1,6 +1,7 @@
 # Store
 
-`sandkit.state.store` holds live runtime arrays. Types: `node_modules/@sandustry-modding/types/src/sandkit/engine/state.d.ts` (thin stubs).
+`sandkit.state.store` holds live runtime arrays.
+Types: `node_modules/@sandustry-modding/types/src/sandkit/engine/state.d.ts` (thin stubs).
 
 ## Entity-related keys
 
@@ -30,7 +31,8 @@
 
 Critters and swarm particles live in `sandkit.api.entities.getAllByType(typeId)` or `sandkit.engine.api.entities.getAll(state)`.
 
-Live 0.5.5 backing list: `store.mods.entities.list` (array of `{ id, type, x, y, ... }`). Clear with `.length = 0` for void-world wipes. `engine.api.entities.kill` is **not** on the live API - use list clear, public `remove(entityId)`, or re-probe after updates.
+Live 0.5.5 backing list: `store.mods.entities.list` (array of `{ id, type, x, y, ... }`).
+Clear with `.length = 0` for void-world wipes. `engine.api.entities.kill` is **not** on the live API - use list clear, public `remove(entityId)`, or re-probe after updates.
 
 Types doc path `storage.ensure(state, "entities").list` may differ from live mod bag layout.
 

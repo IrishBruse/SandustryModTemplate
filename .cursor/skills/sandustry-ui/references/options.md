@@ -1,8 +1,10 @@
 # Options
 
-Tabs: **General**, **Video**, **Audio**, **Controls**, **Mods**. Footer: **Reset**, **Cancel**, **Save**.
+Tabs: **General**, **Video**, **Audio**, **Controls**, **Mods**.
+Footer: **Reset**, **Cancel**, **Save**.
 
-Kit twins: `kit.md`. Controls list: `bindings.md`.
+Kit twins: `kit.md`.
+Controls list: `bindings.md`.
 
 ## General
 
@@ -26,7 +28,9 @@ Master Volume, Music Volume, SFX Volume - 0-100%.
 
 ## Mods tab
 
-Per-mod `configSchema` headings. Types: boolean, number, choice. Schema: `docs/config-schema.md`.
+Per-mod `configSchema` headings.
+Types: boolean, number, choice.
+Schema: `docs/config-schema.md`.
 
 This session:
 

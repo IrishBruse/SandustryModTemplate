@@ -2,7 +2,8 @@
 
 Terrain uses numeric **cell types** (same id space as `CellType` and damaged-ground transitions).
 
-Official: [sandkit.html - api.terrains](https://sandustry.com/sandkit.html). Types: `@sandustry-modding/types` `src/shared/api/terrains.d.ts`, `src/sandkit/api/terrains.d.ts`.
+Official: [sandkit.html - api.terrains](https://sandustry.com/sandkit.html).
+Types: `@sandustry-modding/types` `src/shared/api/terrains.d.ts`, `src/sandkit/api/terrains.d.ts`.
 
 ## Shared queries and mutations
 
@@ -19,9 +20,11 @@ Official: [sandkit.html - api.terrains](https://sandustry.com/sandkit.html). Typ
 
 Deprecated aliases: `getTypeFromId` -> `getTypeById`; `setHpAtCell` / `setHpAtCellWhenIdle` -> `setHitPointsAtCell`; main-thread `*WhenIdle` on create/replace/remove.
 
-`getDataAtCell` returns `{ cellType, hitPoints, hp }`. Prefer **`hitPoints`**; `hp` is a deprecated alias (live 0.5.5 returns both keys).
+`getDataAtCell` returns `{ cellType, hitPoints, hp }`.
+Prefer **`hitPoints`**; `hp` is a deprecated alias (live 0.5.5 returns both keys).
 
-On the main thread, terrain mutations are deferred like element writes. Worker entry applies them immediately.
+On the main thread, terrain mutations are deferred like element writes.
+Worker entry applies them immediately.
 
 `TerrainMutationOptions`: `{ skipShadow?: boolean }`.
 
@@ -40,4 +43,5 @@ On the main thread, terrain mutations are deferred like element writes. Worker e
 
 ## Shadows
 
-Terrain create/remove can trigger shadow updates unless `skipShadow: true`. Engine refresh: `wall-heat-foliage.md`.
+Terrain create/remove can trigger shadow updates unless `skipShadow: true`.
+Engine refresh: `wall-heat-foliage.md`.

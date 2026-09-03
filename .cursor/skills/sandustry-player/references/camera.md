@@ -29,4 +29,5 @@ Related session fields (read-only probes):
 
 ## Do not use in probes
 
-`__debug.moveCamera` - mutates view. Needs explicit user ask (see **sandustry-internals** `probe.md`).
+`__debug.moveCamera` - mutates view.
+Needs explicit user ask (see **sandustry-internals** `probe.md`).

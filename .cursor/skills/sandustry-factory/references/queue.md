@@ -4,7 +4,8 @@ Two related queues: deferred tick jobs and structures waiting to finish placemen
 
 ## `store.queue[]` - tick queue
 
-`engine.api.queue` manages this array. Live save: length `0`.
+`engine.api.queue` manages this array.
+Live save: length `0`.
 
 Item shape (engine):
 
@@ -16,13 +17,15 @@ Item shape (engine):
 | `key`           | Optional dedupe key                          |
 | `notBeforeTick` | Optional minimum `store.meta.tick`           |
 
-Methods (state first): `enqueue`, `enqueueInTicks`, `enqueueSkipTick`, `process`, `registerHandler`, `removeByKey`. Do not call `process` without user ask.
+Methods (state first): `enqueue`, `enqueueInTicks`, `enqueueSkipTick`, `process`, `registerHandler`, `removeByKey`.
+Do not call `process` without user ask.
 
 `store.meta`: `time` and `tick` drive scheduling.
 
 ## `structure.queued` - placement backlog
 
-When placement clearance is `PartiallyBlocked` or `CanBeReplaced` with blocking terrain, the structure is pushed with `queued: true`. It builds when clearance clears.
+When placement clearance is `PartiallyBlocked` or `CanBeReplaced` with blocking terrain, the structure is pushed with `queued: true`.
+It builds when clearance clears.
 
 Live (0.5.5 probe save): 0 queued structures.
 
@@ -39,7 +42,8 @@ Main-thread placement and removal are deferred:
 
 Deprecated aliases: `buildAtCellWhenIdle`, `removeAtCellWhenIdle`, `removeBetweenCellsWhenIdle`, `removeAtCellsWhenIdle` (official HTML).
 
-These are writes. Do not call without user ask.
+These are writes.
+Do not call without user ask.
 
 ## Related
 

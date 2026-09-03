@@ -7,7 +7,8 @@ TypeScript template for Sandustry mods on Steam **[mods]** beta (game **0.5.5**)
 
 ## Quick start
 
-Node 24. See the repository README for the full guide.
+Node 24.
+See the repository README for the full guide.
 
 ```
 git clone https://github.com/sandustry-modding/SandustryModTemplate.git <project-name>
@@ -28,8 +29,10 @@ npm run dev
 
 **Tailwind:** Build injects only the utility classes your bundle uses.
 
-**Hot reload:** `npm run dev` rebuilds `main.js` on save. Restart the game for workers and patches.
+**Hot reload:** `npm run dev` rebuilds `main.js` on save.
+Restart the game for workers and patches.
 
 **Typed `modinfo.ts`:** Manifest and patches in one file per mod folder.
 
-**VS Code:** **F5** launches the game (Linux/Windows). Keep `npm run dev` running.
+**VS Code:** **F5** launches the game (Linux/Windows).
+Keep `npm run dev` running.

@@ -1,8 +1,10 @@
 # `api.elements`
 
-Official: [sandkit.html - api.elements](https://sandustry.com/sandkit.html). Types: `@sandustry-modding/types` `src/sandkit/api/elements.d.ts`, `src/shared/api/elements.d.ts`.
+Official: [sandkit.html - api.elements](https://sandustry.com/sandkit.html).
+Types: `@sandustry-modding/types` `src/sandkit/api/elements.d.ts`, `src/shared/api/elements.d.ts`.
 
-Main entry: registration and deferred cell mutations. Worker entry: immediate mutations plus extra move/swap helpers (see **Worker-only** below).
+Main entry: registration and deferred cell mutations.
+Worker entry: immediate mutations plus extra move/swap helpers (see **Worker-only** below).
 
 ## Shared reads (main and worker)
 
@@ -33,7 +35,8 @@ Deprecated alias: `getTypeFromId` -> `getTypeById`.
 
 ## Main-thread mutations (need user ask)
 
-Deferred on main. Reads see the old grid until mutations apply.
+Deferred on main.
+Reads see the old grid until mutations apply.
 
 `createAtCell`, `replaceAtCell`, `removeAtCell`, `teleportBetweenCells`, `setVelocityAtCell`, `addParticleVelocityAtCell`, `convertToParticleAtCell`, `convertFromParticleAtCell`, `setDataFieldAtCell`, `refreshColorAtCell`, `setPhysicsAtCell`, `setDurationAtCell`.
 
@@ -55,7 +58,8 @@ Worker `createAtCell` / `replaceAtCell` / etc. apply immediately (no `*WhenIdle`
 
 ## `ElementDefinition` (register / `getDefinitionByType`)
 
-Public TypeScript (`@sandustry-modding/types` shared `elements.d.ts`). Pass to `register` / `updateDefinition`. `getDefinitionByType` returns the live snapshot (may include extra keys below).
+Public TypeScript (`@sandustry-modding/types` shared `elements.d.ts`).
+Pass to `register` / `updateDefinition`. `getDefinitionByType` returns the live snapshot (may include extra keys below).
 
 | Field                | Role                                                                                                                                                                   |
 | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -85,11 +89,15 @@ Public TypeScript (`@sandustry-modding/types` shared `elements.d.ts`). Pass to `
 | `invert`      | **`true`**           | Flip position inside the range before picking a variant                               |
 | `useGradient` | falsy                | When true, lerp between adjacent variants; when false, discrete index into `variants` |
 
-Live samples: Coolant `{ rangeMin:0, rangeMax:100, invert:false, useGradient:true }`; Water Pressure `{ rangeMin:1, rangeMax:700, invert:true, useGradient:true }`. Live color scheme also exists under `session.colors.scheme.element[type]` (may diverge from the definition object). Engine-only `variantFromVelocity` is **not** on the public type.
+Live samples: Coolant `{ rangeMin:0, rangeMax:100, invert:false, useGradient:true }`; Water Pressure `{ rangeMin:1, rangeMax:700, invert:true, useGradient:true }`.
+Live color scheme also exists under `session.colors.scheme.element[type]` (may diverge from the definition object).
+Engine-only `variantFromVelocity` is **not** on the public type.
 
 ### `getExtraProps`
 
-Optional `() => ({ data: Record<…> })`. On create, the engine merges the return value into the spawn bag. Builtin `data` keys that write `dataField*`:
+Optional `() => ({ data: Record<…> })`.
+On create, the engine merges the return value into the spawn bag.
+Builtin `data` keys that write `dataField*`:
 
 | Element  | `data` keys                    | Maps to                |
 | -------- | ------------------------------ | ---------------------- |
@@ -114,7 +122,9 @@ Matter-type `getExtraProps` on the physics table (Liquid axis counters, Particle
 | `mixes`                          | Contact mix `{ elementType, result }`                                                                                                                               |
 | `interactions`                   | Tooltip kinds (`flammable`, `freezable`, ...). Residue is `kind: "flammable"` only; engine fire writes Burnt Residue at 25% (**sandustry-world** `sim-crafting.md`) |
 
-Built-in enum: `sandkit.enums.ElementType` - Sand (1) ... Basalt (20), **Gloom (8)**. String id for mods is `definition.id`; for builtins parse `nameKey` (`elements|sand|name`).
+Built-in enum: `sandkit.enums.ElementType` - Sand (1) ...
+Basalt (20), **Gloom (8)**.
+String id for mods is `definition.id`; for builtins parse `nameKey` (`elements|sand|name`).
 
 Live: `state.sandkit.mods.elements` - **32** registered ids this session (sample: `caulk`, `florin`, `liquidGold`, `irishbruse.trees:pineCone`).
 

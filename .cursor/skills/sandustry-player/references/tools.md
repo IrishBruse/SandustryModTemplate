@@ -1,6 +1,7 @@
 # Tools and grabber
 
-Grabber is the main documented tool namespace. Other tools (Shovel, Demolisher, Copier, ...) are hotbar `ItemId` entries with abilities - see `enums.md`.
+Grabber is the main documented tool namespace.
+Other tools (Shovel, Demolisher, Copier, ...) are hotbar `ItemId` entries with abilities - see `enums.md`.
 
 ## `sandkit.api.tools.grabber`
 
@@ -13,7 +14,8 @@ Grabber is the main documented tool namespace. Other tools (Shovel, Demolisher, 
 
 Path: `sandkit.api.tools.grabber` (not top-level `api.grabber`).
 
-Element opt-in: definition `isGrabbable` — **sandustry-world** `references/elements.md`. Grab skips when `isGrabbable === false`.
+Element opt-in: definition `isGrabbable` — **sandustry-world** `references/elements.md`.
+Grab skips when `isGrabbable === false`.
 
 ## Engine twin
 

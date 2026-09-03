@@ -1,29 +1,42 @@
 # Patch definitions
 
-On **0.5.5+**, prefer the public [Sandkit API](https://sandustry.com/sandkit.html) ([local copy](../.tmp/Sandkit%20-%20Sandustry%20Modding%20API.html)). Use **`api.hooks`**, **`configOverrides`**, and **`register`** APIs before you rewrite game bundles.
+On **0.5.5+**, prefer the public [Sandkit API](https://sandustry.com/sandkit.html) ([local copy](../.tmp/Sandkit%20-%20Sandustry%20Modding%20API.html)).
+Use **`api.hooks`**, **`configOverrides`**, and **`register`** APIs before you rewrite game bundles.
 
-`patches.json` breaks when the game updates. Minified `find` strings move. Re-test every patch after a game update.
+`patches.json` breaks when the game updates.
+Minified `find` strings move.
+Re-test every patch after a game update.
 
 Set **`gameVersion`** in the manifest to declare compatibility ([Mod manifest](modinfo.md)):
 
 - **Patch-only mods** (bundle rewrites tied to old minified text): set **`maximum: "0.5.2"`**, or use Steam Workshop **Link to Game Version** with the same cap.
 - **New API mods** (hooks, `configOverrides`, 0.5.5 Sandkit): set **`minimum: "0.5.5"`**.
 
-Patches are exact (or regex) rewrites of Sandustry JavaScript under `js/`. The loader applies `patches.json` at **mod load** (Steam: once per process). Renderer hot reload does **not** re-apply them. Stop and start the game (F5). Save reload is not enough.
+Patches are exact (or regex) rewrites of Sandustry JavaScript under `js/`.
+The loader applies `patches.json` at **mod load** (Steam: once per process).
+Renderer hot reload does **not** re-apply them.
+Stop and start the game (F5).
+Save reload is not enough.
 
 Use a patch only when the public API cannot do the job.
 
-Keep each `find` / `code` string small. Set `expectedMatches`.
+Keep each `find` / `code` string small.
+Set `expectedMatches`.
 
-Patch `code` runs **outside** the game bundle IIFE. Put shared runtime helpers on `globalThis` when patch code must call them.
+Patch `code` runs **outside** the game bundle IIFE.
+Put shared runtime helpers on `globalThis` when patch code must call them.
 
-Types: `@sandustry-modding/types/configs` (`BundlePatch`), via [`modkit/patches.ts`](../modkit/patches.ts). Manifest: [Mod manifest](modinfo.md). Canonical multi-file example: [collector-element/patches.json](https://github.com/sandustry-modding/SandustryExamples/blob/main/content/collector-element/patches.json).
+Types: `@sandustry-modding/types/configs` (`BundlePatch`), via [`modkit/patches.ts`](../modkit/patches.ts).
+Manifest: [Mod manifest](modinfo.md).
+Canonical multi-file example: [collector-element/patches.json](https://github.com/sandustry-modding/SandustryExamples/blob/main/content/collector-element/patches.json).
 
-For IDE validation of generated `patches.json`, use schema URL `https://sandustry-modding.github.io/SandustryTypes/schemas/patches.json` (configured in this repo's `.vscode/settings.json`). Runtime output stays a bare JSON array.
+For IDE validation of generated `patches.json`, use schema URL `https://sandustry-modding.github.io/SandustryTypes/schemas/patches.json` (configured in this repo's `.vscode/settings.json`).
+Runtime output stays a bare JSON array.
 
 ## Layout
 
-Use **`patches.json`** at the mod root (bare array). IDE validation uses `.vscode/settings.json` and `PATCHES_JSON_SCHEMA`.
+Use **`patches.json`** at the mod root (bare array).
+IDE validation uses `.vscode/settings.json` and `PATCHES_JSON_SCHEMA`.
 
 ```json
 [
@@ -38,14 +51,17 @@ Use **`patches.json`** at the mod root (bare array). IDE validation uses `.vscod
 ]
 ```
 
-`patches.ts` (`definePatches`) still works when you need typed helpers or `debugPatches`. When both patch files exist, **`patches.ts` wins**. Manifest `modinfo.ts` patch exports also win over `patches.json`.
+`patches.ts` (`definePatches`) still works when you need typed helpers or `debugPatches`.
+When both patch files exist, **`patches.ts` wins**.
+Manifest `modinfo.ts` patch exports also win over `patches.json`.
 
 | Export         | When it is written                                                                       |
 | -------------- | ---------------------------------------------------------------------------------------- |
 | `patches`      | Always (`patches.json`)                                                                  |
 | `debugPatches` | Dev / `--debug` only. From `patches.ts` / `modinfo.ts` only. Merged **after** `patches`. |
 
-Release (`npm run build`, `npm run dev:release`) omits `debugPatches`. Dev (`npm run dev`) includes both.
+Release (`npm run build`, `npm run dev:release`) omits `debugPatches`.
+Dev (`npm run dev`) includes both.
 
 The browser bundle stubs `@modkit/patches` so patch payloads stay out of `main.js`.
 
@@ -63,7 +79,8 @@ The browser bundle stubs `@modkit/patches` so patch payloads stay out of `main.j
 
 The game loader also fails the mod if the live match count is not `expectedMatches`.
 
-Do not edit `dist/<modinfo.id>/patches.json` by hand. Change the export and rebuild.
+Do not edit `dist/<modinfo.id>/patches.json` by hand.
+Change the export and rebuild.
 
 ```bash
 npm run build          # release — no debugPatches
@@ -85,7 +102,8 @@ npm run dev:release    # watch release — no debugPatches
 | `before` / `after` | Required for `wrap`                                                                                       |
 | `atomicGroup`      | Optional name. Every patch in the group must apply, or none do                                            |
 
-Match with exact `find` when the text is stable. Use `regex` only when a literal match is not stable.
+Match with exact `find` when the text is stable.
+Use `regex` only when a literal match is not stable.
 
 ## Operations
 
@@ -106,7 +124,8 @@ Insert `code` immediately before each match.
 
 ### `replace`
 
-Replace each match with `code`. The collector sample replaces a Gold / liquidGold type check with a collector-value check on **three** files, one `atomicGroup`:
+Replace each match with `code`.
+The collector sample replaces a Gold / liquidGold type check with a collector-value check on **three** files, one `atomicGroup`:
 
 ```json
 {
@@ -120,11 +139,13 @@ Replace each match with `code`. The collector sample replaces a Gold / liquidGol
 }
 ```
 
-Copy `find` from the extracted bundle in `sandustry/source/`. Do not reuse old minified snippets after a game update.
+Copy `find` from the extracted bundle in `sandustry/source/`.
+Do not reuse old minified snippets after a game update.
 
 ### `wrap`
 
-Wrap each match as `before` + match + `after`. Use this when you must keep the original text and add a prefix and suffix.
+Wrap each match as `before` + match + `after`.
+Use this when you must keep the original text and add a prefix and suffix.
 
 ```json
 {

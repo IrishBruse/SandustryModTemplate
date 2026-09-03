@@ -5,14 +5,19 @@ description: "Use when working with vanilla drones, entities, projectiles, picku
 
 # Sandustry entities
 
-Live **entity map** of Early Access **0.5.5**. Public mod calls: https://sandustry.com/sandkit.html (`api.entities`, `api.projectiles`, `api.pickups`). Screen clicks stay in **sandustry-ui**. Host bridge stays in **sandustry-internals**.
+Live **entity map** of Early Access **0.5.5**.
+Public mod calls: https://sandustry.com/sandkit.html (`api.entities`, `api.projectiles`, `api.pickups`).
+Screen clicks stay in **sandustry-ui**.
+Host bridge stays in **sandustry-internals**.
 
-Public `sandkit.api.entities` first, then engine and store models. Debug F3 spawn UI: **sandustry-ui** `references/debug.md`.
+Public `sandkit.api.entities` first, then engine and store models.
+Debug F3 spawn UI: **sandustry-ui** `references/debug.md`.
 
 ## Probe (read-only)
 
 1. `list_pages` - title **Sandustry**, `file://.../dist/index.html`.
-2. `evaluate_script` on the game page. Use `waitForStableDom: false`.
+2. `evaluate_script` on the game page.
+  Use `waitForStableDom: false`.
 3. State: `const s = sandkit.state` (same as `sandkit.engine.state`, `__debug.state`).
 4. Done when counts and sample keys match the branch file.
 

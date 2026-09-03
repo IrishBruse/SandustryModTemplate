@@ -1,8 +1,11 @@
 # Factory viability
 
-Factory tier progression (HUD **Viability**). Prefer public `sandkit.api.factory` for reads. Writers and tier math remain `engine.api.factory` (internal).
+Factory tier progression (HUD **Viability**).
+Prefer public `sandkit.api.factory` for reads.
+Writers and tier math remain `engine.api.factory` (internal).
 
-Brief store summary also in **sandustry-progression** `references/viability.md`. This file has tier math and process ids.
+Brief store summary also in **sandustry-progression** `references/viability.md`.
+This file has tier math and process ids.
 
 ## Store
 
@@ -42,7 +45,8 @@ Live rates on maxed save: all four ids return `0`.
 
 ## `engine.api.factory` (internal)
 
-Pass `sandkit.state` as first arg. Use when public getters are not enough.
+Pass `sandkit.state` as first arg.
+Use when public getters are not enough.
 
 | Method                           | Live sample (maxed save)      |
 | -------------------------------- | ----------------------------- |
@@ -75,13 +79,16 @@ Between tiers the game checks requirements in order:
 | `peakEnergy`        | energy  | 100000          | Gold Battery           |
 | `saturateAura`      | aura    | swarm threshold | swarmConsole           |
 
-Gold spent thresholds per tier band: `0`, `30000`, `150000`, `400000`, `1500000`. Tier spacing array: `[2, 5, 8, 11, 16, 23, 29]`.
+Gold spent thresholds per tier band: `0`, `30000`, `150000`, `400000`, `1500000`.
+Tier spacing array: `[2, 5, 8, 11, 16, 23, 29]`.
 
 Later tiers may also gate on auralite produced, prismite/prismaline available, and swarm crystal mined (engine checks).
 
 ## Stratacores
 
-`store.stratacores` lists unlocked stratacore type ids. World pickups use `PickupType.Stratacore` - **sandustry-entities** `references/world-items.md`. Toolbox UI: **sandustry-ui** `references/toolbox.md`.
+`store.stratacores` lists unlocked stratacore type ids.
+World pickups use `PickupType.Stratacore` - **sandustry-entities** `references/world-items.md`.
+Toolbox UI: **sandustry-ui** `references/toolbox.md`.
 
 ## HUD
 

@@ -13,17 +13,24 @@ Official HTML documents machine recipes as `api.structures.recipes.register(id, 
 | `kineticPress`                                                   | Press velocity threshold + outputs  |
 | `condenser`, `steamDryer`, `synthesizer`, `snowmaker`, `smelter` | Weighted refinery outputs           |
 
-Recipe shapes: `node_modules/@sandustry-modding/types/src/sandkit/api/structures.d.ts` (`recipes.register` overloads). Weighted outputs use `{ elementType, chance }`.
+Recipe shapes: `node_modules/@sandustry-modding/types/src/sandkit/api/structures.d.ts` (`recipes.register` overloads).
+Weighted outputs use `{ elementType, chance }`.
 
-Live extra (not in official HTML): top-level `sandkit.api.processing` with `registerGrower`, `registerShaker`, `registerKineticPress`. Prefer `structures.recipes.register`.
+Live extra (not in official HTML): top-level `sandkit.api.processing` with `registerGrower`, `registerShaker`, `registerKineticPress`.
+Prefer `structures.recipes.register`.
 
-Engine twin: `engine.api.structures.recipes.getWeightedRecipe`, `selectWeightedOutput`, `register`. `getWeightedRecipe(state, slot, inputType)` only sees **mod** rows in `mods.recipes`. It returns null for vanilla shaker / grower / press inputs.
+Engine twin: `engine.api.structures.recipes.getWeightedRecipe`, `selectWeightedOutput`, `register`. `getWeightedRecipe(state, slot, inputType)` only sees **mod** rows in `mods.recipes`.
+It returns null for vanilla shaker / grower / press inputs.
 
 ## Engine builtins (not in `mods.recipes`)
 
-`recipes.shakers`, `growers`, and `kineticPresses` start as `[]`. Vanilla processing is hardcoded in the engine. Mod `registerShaker` stores `{ input, outputsAbove, outputsBelow }`. Mod grower rows store `{ input, output, chance }` (not `outputs[]`).
+`recipes.shakers`, `growers`, and `kineticPresses` start as `[]`.
+Vanilla processing is hardcoded in the engine.
+Mod `registerShaker` stores `{ input, outputsAbove, outputsBelow }`.
+Mod grower rows store `{ input, output, chance }` (not `outputs[]`).
 
-`getWeightedRecipe` returns null for these vanilla inputs. Live scrape sources (game `js/bundle.js`):
+`getWeightedRecipe` returns null for these vanilla inputs.
+Live scrape sources (game `js/bundle.js`):
 
 | Source                 | Pattern                                                                                                               |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------- |
@@ -68,11 +75,13 @@ api.structures.processing.register(id, {
 });
 ```
 
-Processing uses the triggers scheduler under the hood. Main thread only for `setEnabledAtCell`.
+Processing uses the triggers scheduler under the hood.
+Main thread only for `setEnabledAtCell`.
 
 ## Factory process events
 
-Shakers, presses, growers, and thermo machines call `engine.api.factory.recordProcess(state, processIndex)` when they complete work. Public read ids: `shakeWetSand`, `pressBurntResidue`, `growFlowers`, `condenseFlorin` - see `factory.md`.
+Shakers, presses, growers, and thermo machines call `engine.api.factory.recordProcess(state, processIndex)` when they complete work.
+Public read ids: `shakeWetSand`, `pressBurntResidue`, `growFlowers`, `condenseFlorin` - see `factory.md`.
 
 ## Vanilla element → structure sinks (0.5.5)
 

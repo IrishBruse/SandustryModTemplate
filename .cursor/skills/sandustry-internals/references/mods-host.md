@@ -1,6 +1,7 @@
 # Host mod loader
 
-`sandustry/source/workshop-mods.js` (game process). Template docs: `docs/patches.md`, `docs/modinfo.md`, `docs/config-schema.md`.
+`sandustry/source/workshop-mods.js` (game process).
+Template docs: `docs/patches.md`, `docs/modinfo.md`, `docs/config-schema.md`.
 
 ## Constants (0.5.5 extract)
 
@@ -55,4 +56,5 @@ Inspector labels:
 - `root-scan` with `workshop.itemId` -> **Workshop** (e.g. Laser Overcharge)
 - `root-scan` only, no item id -> **Core mod**
 
-Elements from shipped mod content (not owned by a loaded external mod id) are also labeled **Core mod** in the Elements tab. Built-in enum types stay **Core**.
+Elements from shipped mod content (not owned by a loaded external mod id) are also labeled **Core mod** in the Elements tab.
+Built-in enum types stay **Core**.

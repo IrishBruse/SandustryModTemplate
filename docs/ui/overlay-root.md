@@ -1,6 +1,7 @@
 # OverlayRoot
 
-Full-screen fixed overlay root that matches `#ui` fixed layers. Pointer events pass through by default.
+Full-screen fixed overlay root that matches `#ui` fixed layers.
+Pointer events pass through by default.
 
 **Preview:**
 

@@ -1,6 +1,7 @@
 # Shared state (energy-adjacent)
 
-`__debug.state.shared` - worker-safe SABs. Do not dump full tile arrays (length **921600** on this map).
+`__debug.state.shared` - worker-safe SABs.
+Do not dump full tile arrays (length **921600** on this map).
 
 ## Global pool
 

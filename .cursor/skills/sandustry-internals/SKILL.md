@@ -5,11 +5,15 @@ description: "Use when working with host electron IPC, sandkit.engine, __debug, 
 
 # Sandustry internals
 
-Live **host map** of Early Access **0.5.5**. Public mod calls: repo `.tmp/Sandkit - Sandustry Modding API.html` (`apiVersion` **1**); types at [SandustryTypes](https://sandustry-modding.github.io/SandustryTypes/#/). Screen clicks stay in **sandustry-ui**.
+Live **host map** of Early Access **0.5.5**.
+Public mod calls: repo `.tmp/Sandkit - Sandustry Modding API.html` (`apiVersion` **1**); types at [SandustryTypes](https://sandustry-modding.github.io/SandustryTypes/#/).
+Screen clicks stay in **sandustry-ui**.
 
-Extracted tree: `sandustry/source/` (`npm run setup`). Do not treat the published type reference as complete; confirm on the live object.
+Extracted tree: `sandustry/source/` (`npm run setup`).
+Do not treat the published type reference as complete; confirm on the live object.
 
-**0.5.5 notes:** `sandkit` keys - `api`, `apiVersion`, `engine`, `enums`, `react`, `state`. Official HTML documents `api.grid`; live **`api.world`** is a **deprecated alias** (same `mutate`, plus `pickups`, `runWhenSimulationIdle`, `redrawAroundCellWhenIdle`). **`api.game.start({ skipIntro? })`** is official but a mutator - document only in probes. `store.gloom.emitterPositions`, `store.createdVersion`, `store.machineryEngine.runLaunchers`.
+**0.5.5 notes:** `sandkit` keys - `api`, `apiVersion`, `engine`, `enums`, `react`, `state`.
+Official HTML documents `api.grid`; live **`api.world`** is a **deprecated alias** (same `mutate`, plus `pickups`, `runWhenSimulationIdle`, `redrawAroundCellWhenIdle`). **`api.game.start({ skipIntro? })`** is official but a mutator - document only in probes. `store.gloom.emitterPositions`, `store.createdVersion`, `store.machineryEngine.runLaunchers`.
 
 ## Probe
 

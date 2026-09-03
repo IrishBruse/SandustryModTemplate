@@ -1,6 +1,7 @@
 # OptionsPanel
 
-Column wrapper for options tabs. Uses the same Tailwind classes as the in-game Options dialog (`max-w-lg mx-auto px-1`).
+Column wrapper for options tabs.
+Uses the same Tailwind classes as the in-game Options dialog (`max-w-lg mx-auto px-1`).
 
 **Preview:**
 

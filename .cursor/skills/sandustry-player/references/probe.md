@@ -1,6 +1,7 @@
 # Probe
 
-Read-only inspection of live player objects. Return JSON-serializable data only.
+Read-only inspection of live player objects.
+Return JSON-serializable data only.
 
 ## Access
 
@@ -11,7 +12,8 @@ const state = sk.state ?? sk.engine?.state ?? globalThis.__debug?.state;
 const eng = sk.engine.api;
 ```
 
-`sandkit` is ambient in MCP `evaluate_script` scope during play (not always `window.sandkit`). Mod bundles may also see `sandkit` as a host free variable.
+`sandkit` is ambient in MCP `evaluate_script` scope during play (not always `window.sandkit`).
+Mod bundles may also see `sandkit` as a host free variable.
 
 ## Safe reads
 

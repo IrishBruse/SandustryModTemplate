@@ -5,23 +5,31 @@ description: "Use when working with vanilla HUD, pause, Options, management over
 
 # Sandustry UI
 
-Live **screen map** of the Electron renderer (Early Access **0.5.5**, English). Kit _components_ are not this skill: read [`docs/ui/overview.md`](../../../docs/ui/overview.md).
+Live **screen map** of the Electron renderer (Early Access **0.5.5**, English).
+Kit _components_ are not this skill: read [`docs/ui/overview.md`](../../../docs/ui/overview.md).
 
-Official API (overlays, `api.ui`): `.tmp/Sandkit - Sandustry Modding API.html` or https://sandustry.com/sandkit.html. Types (secondary): `node_modules/@sandustry-modding/types/src/sandkit/api/ui.d.ts`.
+Official API (overlays, `api.ui`): `.tmp/Sandkit - Sandustry Modding API.html` or https://sandustry.com/sandkit.html.
+Types (secondary): `node_modules/@sandustry-modding/types/src/sandkit/api/ui.d.ts`.
 
-Capture: **sandustry-mcp** (attach + click rules). Labels drift, re-snapshot before click. Uids die after each DOM change.
+Capture: **sandustry-mcp** (attach + click rules).
+Labels drift, re-snapshot before click.
+Uids die after each DOM change.
 
 ## MCP
 
-Screen map and panel labels below. Attach, probe, and triage: **sandustry-mcp**.
+Screen map and panel labels below.
+Attach, probe, and triage: **sandustry-mcp**.
 
-Pause **Continue / Save / Load / Options / Exit** are `div.cursor-pointer` - click the row whose `innerText` matches. If `press_key` is swallowed, `keydown` on `window` (`Tab`, `KeyQ`, `KeyT`, `KeyU`, `KeyM`, `Escape`) or click **Menu [Esc]**. Click **Load**, **Delete**, **Submit**, **MAX EVERYTHING**, **Unstuck**, or **Exit** only when the user asked.
+Pause **Continue / Save / Load / Options / Exit** are `div.cursor-pointer` - click the row whose `innerText` matches.
+If `press_key` is swallowed, `keydown` on `window` (`Tab`, `KeyQ`, `KeyT`, `KeyU`, `KeyM`, `Escape`) or click **Menu [Esc]**.
+Click **Load**, **Delete**, **Submit**, **MAX EVERYTHING**, **Unstuck**, or **Exit** only when the user asked.
 
 Done when the target label is in the latest snapshot (or the script dump of that panel).
 
 ## Read
 
-Open **one** file that matches the branch. Do not load the rest.
+Open **one** file that matches the branch.
+Do not load the rest.
 
 | Branch                                                               | File                                                   |
 | -------------------------------------------------------------------- | ------------------------------------------------------ |

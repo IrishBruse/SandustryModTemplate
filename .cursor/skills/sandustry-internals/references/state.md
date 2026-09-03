@@ -1,6 +1,7 @@
 # State
 
-`sandkit.state` keys: `environment`, `sandkit`, `session`, `shared`, `store`. Stubs in `node_modules/@sandustry-modding/types/src/sandkit/engine/state.d.ts` are thinner than live.
+`sandkit.state` keys: `environment`, `sandkit`, `session`, `shared`, `store`.
+Stubs in `node_modules/@sandustry-modding/types/src/sandkit/engine/state.d.ts` are thinner than live.
 
 ## `session` (live)
 
@@ -18,7 +19,8 @@ Notable 0.5.5 fields: `version` (game build, e.g. **0.5.5**), `createdVersion` (
 
 actionState, authorization, collectorGoldCount, conveyorBeltsAnimationIndex, debug, energy, energyBatteryDirty, energyChange, gold, goldChange, hybridScheduling, listenerPos, managerPerformance, mapData, mods, mouse, mutationSync, naturalAmbience, playerPos, productionPoints, reservoir, schedulingMode, shadowMap, sim, wallData, waterPresenceZones (+ Height/Width), workQueue, workerCompletion, workerDetailEnabled, workerDetailPerformance, workerPerformance.
 
-`schedulingMode` and `hybridScheduling` are `Uint8Array` length **1** (JSON prints `{ "0": 1 }`). Layout: **sandustry-world** `workers.md`.
+`schedulingMode` and `hybridScheduling` are `Uint8Array` length **1** (JSON prints `{ "0": 1 }`).
+Layout: **sandustry-world** `workers.md`.
 
 ## `sandkit` (under state)
 

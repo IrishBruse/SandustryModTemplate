@@ -1,6 +1,7 @@
 # Items and hotbar
 
-Hotbar UI clicks: **sandustry-ui** (`references/hud.md`, `references/bindings.md`). This file covers **state shape** and `sandkit.api.items`.
+Hotbar UI clicks: **sandustry-ui** (`references/hud.md`, `references/bindings.md`).
+This file covers **state shape** and `sandkit.api.items`.
 
 ## `store.player.hotbar`
 
@@ -17,11 +18,17 @@ Each hotbar slot is `{ id, type }`:
 
 Empty slots are `null`.
 
-**MCP cleanup pitfalls (0.5.5):** Debug/max saves may inflate `inventory.length` (e.g. **410** filled slots with duplicates). Deduplicate to one entry per `id:itemType`. Keep **120** slots with `null` empties, or a dense array of unlocked items only. After bulk story completion, set `store.mods.storyProgression.currentStep` to the last `completedSteps` id - **`null` breaks cold load** from the save menu. Rewrite via `electron.save` / `game.save` after fixes; `.save.backup` beside the id holds the pre-write copy.
+**MCP cleanup pitfalls (0.5.5):** Debug/max saves may inflate `inventory.length` (e.g. **410** filled slots with duplicates).
+Deduplicate to one entry per `id:itemType`.
+Keep **120** slots with `null` empties, or a dense array of unlocked items only.
+After bulk story completion, set `store.mods.storyProgression.currentStep` to the last `completedSteps` id - **`null` breaks cold load** from the save menu.
+Rewrite via `electron.save` / `game.save` after fixes; `.save.backup` beside the id holds the pre-write copy.
 
 ## `store.player.inventory`
 
-Toolbox rows. Vanilla entries use numeric `id` (`ItemId`), `itemType`, `abilities[]`, i18n keys (`nameKey`, `descriptionKey`, `categoryKey`). Example shovel: `id: 1`, `itemType: 1`, ability `type: 1` (Dig).
+Toolbox rows.
+Vanilla entries use numeric `id` (`ItemId`), `itemType`, `abilities[]`, i18n keys (`nameKey`, `descriptionKey`, `categoryKey`).
+Example shovel: `id: 1`, `itemType: 1`, ability `type: 1` (Dig).
 
 ## `sandkit.api.items`
 
@@ -45,8 +52,11 @@ When the active slot is a structure, `action.getActive()` has the structure id a
 
 ## Hotbar guard (new game / void MCP)
 
-Fresh worlds can spawn with `activeSlotIndex: null`. Always set bank `0` and a non-null slot before bulk MCP mutations.
+Fresh worlds can spawn with `activeSlotIndex: null`.
+Always set bank `0` and a non-null slot before bulk MCP mutations.
 
-Mod belt items (`type: 4`) may lack `handleAction` on the definition object - selecting them crashes the input loop. Prefer weapon (`type: 1`) or tool (`type: 3`) slots for testing void saves.
+Mod belt items (`type: 4`) may lack `handleAction` on the definition object - selecting them crashes the input loop.
+Prefer weapon (`type: 1`) or tool (`type: 3`) slots for testing void saves.
 
-Entities live in `store.mods.entities.list` (not `store.creatures`). Clear with `.length = 0` when wiping worlds.
+Entities live in `store.mods.entities.list` (not `store.creatures`).
+Clear with `.length = 0` when wiping worlds.

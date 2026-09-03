@@ -39,7 +39,8 @@ From extracted bundle constants, confirmed by decoding live `cellIds`:
 | `1001`-`1 000 000`      | Damaged ground (hp in `sim.damagedGround`)         |
 | `1 000 001`-`2 000 000` | Element slot (`elementIndex = cellId - 1 000 001`) |
 
-Index: `i = cellY * width + cellX`. Read `cellIds[i]` only, never log the full array.
+Index: `i = cellY * width + cellX`.
+Read `cellIds[i]` only, never log the full array.
 
 ## Damaged ground
 
@@ -61,4 +62,5 @@ Live sample: cellId 1001935 -> index 1934, element `type` 18 (Petalium).
 | `shared.shadowMap.data` | `Uint8Array` | Terrain shadow value per cell |
 | `shared.mapData.data`   | (typed)      | Map metadata raster           |
 
-Do not dump these arrays. Sample one index or coarse stride only.
+Do not dump these arrays.
+Sample one index or coarse stride only.

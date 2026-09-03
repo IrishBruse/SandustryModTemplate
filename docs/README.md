@@ -1,7 +1,9 @@
 # Sandustry Mod Template
 
 > [!WARNING]
-> **Unofficial** community docs. Not affiliated with Lantto Games, Hooded Horse, or the [official Sandustry wiki](https://wiki.hoodedhorse.com/Sandustry/Sandustry_Official_Wiki). See the [official Sandkit docs](https://sandustry.com/sandkit.html).
+> **Unofficial** community docs.
+> Not affiliated with Lantto Games, Hooded Horse, or the [official Sandustry wiki](https://wiki.hoodedhorse.com/Sandustry/Sandustry_Official_Wiki).
+> See the [official Sandkit docs](https://sandustry.com/sandkit.html).
 
 The install guide, folder layout, commands, and troubleshooting live in the [repository README](https://github.com/IrishBruse/SandustryModTemplate#sandustry-mod-template).
 

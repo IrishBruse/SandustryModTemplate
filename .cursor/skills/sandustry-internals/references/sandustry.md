@@ -1,6 +1,8 @@
 # Workspace `sandustry/`
 
-Gitignored. Created by `npm run setup`. Do not edit by hand; re-run setup after a game update.
+Gitignored.
+Created by `npm run setup`.
+Do not edit by hand; re-run setup after a game update.
 
 | Path                                | Role                                                                    |
 | ----------------------------------- | ----------------------------------------------------------------------- |
@@ -13,8 +15,12 @@ Gitignored. Created by `npm run setup`. Do not edit by hand; re-run setup after 
 | `sandustry/saves/`                  | Link to OS saves                                                        |
 | `sandustry/workshop/`               | Link to Steam Workshop `content/2764460`                                |
 
-Current extract: read `sandustry/source/package.json` `version` after setup. Entry `main.js`. Steamworks via `steamworks.js`.
+Current extract: read `sandustry/source/package.json` `version` after setup.
+Entry `main.js`.
+Steamworks via `steamworks.js`.
 
 Legacy `sandustry/<version>-<branch>/` folders are removed on the next `npm run setup`.
 
-Pretty bundle for patch `find` strings: `sandustry/source/.formatted-source/bundle.js` when present. Copy finds from `sandustry/source/dist/js/bundle.js` after a game update (`docs/patches.md`). Author-facing layout: root `README.md` → **Folder layout** → **`sandustry/`**.
+Pretty bundle for patch `find` strings: `sandustry/source/.formatted-source/bundle.js` when present.
+Copy finds from `sandustry/source/dist/js/bundle.js` after a game update (`docs/patches.md`).
+Author-facing layout: root `README.md` → **Folder layout** → **`sandustry/`**.

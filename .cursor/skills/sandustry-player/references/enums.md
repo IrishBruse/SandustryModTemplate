@@ -1,6 +1,7 @@
 # Enums
 
-Live on `sandkit.enums.*`. Generated docs: https://sandustry-modding.github.io/SandustryTypes/#/.
+Live on `sandkit.enums.*`.
+Generated docs: https://sandustry-modding.github.io/SandustryTypes/#/.
 
 ## `BuildMode`
 
@@ -69,6 +70,7 @@ Hotbar structure slots use **string** ids (e.g. `"conveyor"`) with `type: 4` (`M
 
 ## `KeyBinding`
 
-String ids for `sandkit.api.input.getBoundKeys`. Members include: `OpenBuildMenu`, `OpenInventory`, `OpenTechTree`, `OpenUpgrades`, `GrapplingHook`, `Escape`, `Pause`, `Left`, `Right`, `Boost`, `Descend`, `Hover`, `SprintBoost`, `Marquee`, `Demolish`, `BuildMode`, `ReverseBuildDirection`, `OverrideReplaceStructures`, `Ruler`, `Copy`, `Paste`, `Flip`, `Delete`, `QuickSave`, `QuickLoad`, `ToggleGameHud`, `PauseCamera`.
+String ids for `sandkit.api.input.getBoundKeys`.
+Members include: `OpenBuildMenu`, `OpenInventory`, `OpenTechTree`, `OpenUpgrades`, `GrapplingHook`, `Escape`, `Pause`, `Left`, `Right`, `Boost`, `Descend`, `Hover`, `SprintBoost`, `Marquee`, `Demolish`, `BuildMode`, `ReverseBuildDirection`, `OverrideReplaceStructures`, `Ruler`, `Copy`, `Paste`, `Flip`, `Delete`, `QuickSave`, `QuickLoad`, `ToggleGameHud`, `PauseCamera`.
 
 Live key map: `input.md`.

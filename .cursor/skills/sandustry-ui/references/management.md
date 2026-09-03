@@ -1,6 +1,7 @@
 # Management overlay
 
-Full-screen `z-[10004]`. HUD column stays visible.
+Full-screen `z-[10004]`.
+HUD column stays visible.
 
 | Tab      | Key | Detail        |
 | -------- | --- | ------------- |

@@ -1,8 +1,10 @@
 # Probe
 
-Read-only inspection via `sandustry-mcp` `evaluate_script`. Return JSON-serializable data only.
+Read-only inspection via `sandustry-mcp` `evaluate_script`.
+Return JSON-serializable data only.
 
-`sandkit` is ambient in the evaluate scope. Check `typeof window.sandkit`. `__debug.state === sandkit.state`.
+`sandkit` is ambient in the evaluate scope.
+Check `typeof window.sandkit`. `__debug.state === sandkit.state`.
 
 ## Safe
 
@@ -17,7 +19,8 @@ Read-only inspection via `sandustry-mcp` `evaluate_script`. Return JSON-serializ
 - Store counts and first-item key lists: `store.structures`, `store.pipes`, `store.pumpsCache`, `store.queue`, `store.viability`, `store.stratacores`, `store.factoryLevelCap`.
 - `session.building`, `session.construction`, `session.factoryProcessRates`, `session.cache.structures`, `session.cache.pipes`.
 - `state.sandkit.mods.structures` keys (definition objects). `state.sandkit.registeredLauncherTypes`.
-- `shared.authorization` - report `{ width, height }` and sparse zone samples. Do not dump `data`.
+- `shared.authorization` - report `{ width, height }` and sparse zone samples.
+  Do not dump `data`.
 - `sandkit.enums.StructureType`, `BuildingClearance`, `AuthorizationType`.
 
 ## Unsafe (needs user ask)

@@ -1,10 +1,12 @@
 # Worker entry (official)
 
-Public worker `sandkit.api` is the **Worker entry** section of `.tmp/Sandkit - Sandustry Modding API.html`. The Steam renderer MCP session only sees the **main** object.
+Public worker `sandkit.api` is the **Worker entry** section of `.tmp/Sandkit - Sandustry Modding API.html`.
+The Steam renderer MCP session only sees the **main** object.
 
 Official worker namespaces: `constants`, `collector`, `effects`, `elements` (includes `swapBetweenCells`, `moveBetweenCells`, `markMovementBlockedByIndex`), `events`, `hooks`, `fire`, `patterns`, `player` (read helpers), `random`, `terrains`, `ui.toast`, `utils`, `lights.temporary`, `main.emitEvent`, `maps.getActive`, `worker.getIndex` / `getCount`, `shared.buffers.require`, `structures` (no `register` / `buildAtCell`), `structures.processing.isEnabledAtCell`, `grid` (no `mutate` / `forEachCellIn*`).
 
-Live worker attach (simulation / manager / utility) is still open. Do not assume main-thread aliases (`api.world`, `api.processing`, `WhenIdle`) exist on workers.
+Live worker attach (simulation / manager / utility) is still open.
+Do not assume main-thread aliases (`api.world`, `api.processing`, `WhenIdle`) exist on workers.
 
 ## Engine vs public arity (live main, 0.5.5)
 

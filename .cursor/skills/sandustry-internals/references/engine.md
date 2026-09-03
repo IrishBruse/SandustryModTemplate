@@ -1,6 +1,10 @@
 # Engine API
 
-`sandkit.engine.api` is the **state-first** twin of public `sandkit.api`. Prefer public methods. Engine calls take **game state as `args[0]`**. Types: `node_modules/@sandustry-modding/types/src/sandkit/engine/`. Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
+`sandkit.engine.api` is the **state-first** twin of public `sandkit.api`.
+Prefer public methods.
+Engine calls take **game state as `args[0]`**.
+Types: `node_modules/@sandustry-modding/types/src/sandkit/engine/`.
+Reference: https://sandustry-modding.github.io/SandustryTypes/#/.
 
 Live counts (0.5.5): public **60** namespaces, engine **88**. `sandkit.engine.state === sandkit.state`.
 
@@ -8,13 +12,16 @@ Live counts (0.5.5): public **60** namespaces, engine **88**. `sandkit.engine.st
 
 `assets`, `gameConfig`, `mods`, `pickups`, `settings`, `shared`, `structureBehaviors`, `time`.
 
-Public `workers` is only `setPostUpdateEnabled`. Public `mods` is only `getProviders`.
+Public `workers` is only `setPostUpdateEnabled`.
+Public `mods` is only `getProviders`.
 
 ## Newly public on `sandkit.api` (0.5.5)
 
-Also on engine with state-first signatures: `blueprints` (serialize/localize structures), `entities` (getById, getAllByType, spawnAtWorld, remove, launch, startCapture, collect), `factory` (getLevel, getProcessCount, getProcessRate), `pipes`, `processing`, `game` (**`start({ skipIntro? })`** - mutator, probes must not call it). Official HTML omits top-level `api.processing` and deprecated **`api.world`**; prefer **`api.grid`**.
+Also on engine with state-first signatures: `blueprints` (serialize/localize structures), `entities` (getById, getAllByType, spawnAtWorld, remove, launch, startCapture, collect), `factory` (getLevel, getProcessCount, getProcessRate), `pipes`, `processing`, `game` (**`start({ skipIntro? })`** - mutator, probes must not call it).
+Official HTML omits top-level `api.processing` and deprecated **`api.world`**; prefer **`api.grid`**.
 
-Public `api.entities` coexists with `engine.api.entities` (engine has extra register/spawn helpers). Arity table: `worker-api.md`.
+Public `api.entities` coexists with `engine.api.entities` (engine has extra register/spawn helpers).
+Arity table: `worker-api.md`.
 
 ## Engine-only namespaces (live keys)
 
@@ -59,4 +66,5 @@ Public `api.entities` coexists with `engine.api.entities` (engine has extra regi
 | `wall`                    | getPaletteData, getWallDataAt, getWallDataSize, setWallDataAt                                                                                                                                                                               |
 | `workerLocal`             | clear, get, getOrInit, set                                                                                                                                                                                                                  |
 
-Overlap namespaces (action, building, camera, ...) exist on **both** bags with different signatures. Use `sandkit.api` in mods unless you already hold state.
+Overlap namespaces (action, building, camera, ...) exist on **both** bags with different signatures.
+Use `sandkit.api` in mods unless you already hold state.

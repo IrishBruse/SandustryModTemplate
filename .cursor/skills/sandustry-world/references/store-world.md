@@ -1,6 +1,7 @@
 # `store.world`
 
-Session-owned world metadata on `__debug.state.store.world`. Not the same object as `shared.sim` buffers.
+Session-owned world metadata on `__debug.state.store.world`.
+Not the same object as `shared.sim` buffers.
 
 ## Keys (live)
 

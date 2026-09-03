@@ -1,6 +1,7 @@
 # Template
 
-Starter mod in `src/`. Shows a toast when the mod loads.
+Starter mod in `src/`.
+Shows a toast when the mod loads.
 
 ## Use
 
@@ -10,7 +11,8 @@ Starter mod in `src/`. Shows a toast when the mod loads.
 
 ## Edit this mod
 
-Set `id`, `name`, `author`, and `description` in `modinfo.json`. Edit `main.ts`.
+Set `id`, `name`, `author`, and `description` in `modinfo.json`.
+Edit `main.ts`.
 
 Copy `src/template/` to `src/<your-mod>/` when you want a second mod.
 

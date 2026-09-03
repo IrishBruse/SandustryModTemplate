@@ -1,6 +1,7 @@
 # FixedAnchor
 
-A fixed-position HUD anchor with `pointer-events-none` shell. Use `Interactive` inside for clickable children.
+A fixed-position HUD anchor with `pointer-events-none` shell.
+Use `Interactive` inside for clickable children.
 
 **Preview:**
 

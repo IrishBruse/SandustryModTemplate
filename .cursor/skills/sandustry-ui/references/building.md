@@ -1,6 +1,7 @@
 # Building
 
-Chrome: `management.md`. Sub-tabs **Structures**, **Blueprints**.
+Chrome: `management.md`.
+Sub-tabs **Structures**, **Blueprints**.
 
 ## Structures
 
@@ -20,4 +21,5 @@ Filters: All, Logistics, Production, Blocks, Economy, Lighting, Fluids, Special,
 
 ## Blueprints
 
-**Saved Blueprints:** IMPORT, EXPORT ALL. Empty: **No saved blueprints.** **Clipboard History:** **No copies yet.**
+**Saved Blueprints:** IMPORT, EXPORT ALL.
+Empty: **No saved blueprints.** **Clipboard History:** **No copies yet.**

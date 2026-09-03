@@ -1,8 +1,11 @@
 # Management menu row
 
-Add a vanilla-style row under Upgrades (same look as Toolbox / Building / Research / Upgrades). The row mounts in the management column and follows expand / collapse.
+Add a vanilla-style row under Upgrades (same look as Toolbox / Building / Research / Upgrades).
+The row mounts in the management column and follows expand / collapse.
 
-Prefer `registerManagementMenuButton` from `src/<name>/main.ts`. Live demo: [management-button](https://github.com/sandustry-modding/SandustryExamples/tree/main/ui/management-button/). Use the React `ManagementMenuButton` only when the icon must be a React node or `active` must update every render.
+Prefer `registerManagementMenuButton` from `src/<name>/main.ts`.
+Live demo: [management-button](https://github.com/sandustry-modding/SandustryExamples/tree/main/ui/management-button/).
+Use the React `ManagementMenuButton` only when the icon must be a React node or `active` must update every render.
 
 Hover plays `blip`; click plays `click` when those sounds exist. `hotkey` is badge text only — it does not bind a key.
 
@@ -32,9 +35,12 @@ registerManagementMenuButton({
 | `onClick` | `() => void` | —       | Click handler.                                                       |
 | `active`  | `boolean`    | `true`  | When false, the row is removed.                                      |
 
-Returns a dispose function. Call it to remove the row by hand.
+Returns a dispose function.
+Call it to remove the row by hand.
 
-Rows stack under Upgrades in registration order. Each row root is placed as a **direct sibling** of the vanilla column rows (same as Toolbox / Building). The first register injects a host overlay; the last dispose removes it.
+Rows stack under Upgrades in registration order.
+Each row root is placed as a **direct sibling** of the vanilla column rows (same as Toolbox / Building).
+The first register injects a host overlay; the last dispose removes it.
 
 ## `ManagementMenuButton` (React)
 

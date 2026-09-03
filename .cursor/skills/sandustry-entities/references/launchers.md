@@ -1,6 +1,7 @@
 # Launchers
 
-Structure launchers (Up / Left / Right) fling elements from conveyors. Not the same as `entities.launch` (critter toss).
+Structure launchers (Up / Left / Right) fling elements from conveyors.
+Not the same as `entities.launch` (critter toss).
 
 ## Registration
 
@@ -34,4 +35,5 @@ Registered types also appear in `state.sandkit.registeredLauncherTypes[]` (mirro
 - Conveyor behavior: `sandkit.api.structureBehaviors` and `engine.api.conveyors.registerType`.
 - Worker trigger `launchersMk2` fires on interval to stamp run tick into shared buffer.
 
-No public `sandkit.api.launchers`. Engine-only registration.
+No public `sandkit.api.launchers`.
+Engine-only registration.

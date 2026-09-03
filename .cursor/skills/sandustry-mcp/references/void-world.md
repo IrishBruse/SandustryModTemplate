@@ -2,11 +2,14 @@
 
 Turn a live save into an empty void world via `evaluate_script`. **User must ask** - these are mutators, not probe scripts.
 
-Grid: **3840 x 3840** cells (`api.grid.getDimensions()` / `shared.sim.width` / `height` - confirmed 0.5.5). Full-grid work must be **batched** or MCP times out and the renderer freezes.
+Grid: **3840 x 3840** cells (`api.grid.getDimensions()` / `shared.sim.width` / `height` - confirmed 0.5.5).
+Full-grid work must be **batched** or MCP times out and the renderer freezes.
 
-Pass `waitForStableDom: false` on every call. Re-run `list_pages` after reload; `pageId` changes.
+Pass `waitForStableDom: false` on every call.
+Re-run `list_pages` after reload; `pageId` changes.
 
-Prefer public **`api.grid.revealFogAtCell`** for in-world fog (official HTML). Engine `eng.world.revealFogAtCell(st, x, y)` is the state-first twin - same effect, keep for scripts that already hold `st`.
+Prefer public **`api.grid.revealFogAtCell`** for in-world fog (official HTML).
+Engine `eng.world.revealFogAtCell(st, x, y)` is the state-first twin - same effect, keep for scripts that already hold `st`.
 
 ## Batch sizes (live 0.5.5)
 
@@ -34,11 +37,13 @@ Use engine save (queues `session.saving`, writes via main process):
 };
 ```
 
-First save returns a new id string. Pass that id on later saves to overwrite the same slot.
+First save returns a new id string.
+Pass that id on later saves to overwrite the same slot.
 
 ## Phase 1 - structures, entities, hotbar guard
 
-Run once before grid batches. Fixes `activeSlotIndex: null` on fresh worlds (prevents later input crashes).
+Run once before grid batches.
+Fixes `activeSlotIndex: null` on fresh worlds (prevents later input crashes).
 
 ```javascript
 () => {
@@ -71,7 +76,8 @@ Run once before grid batches. Fixes `activeSlotIndex: null` on fresh worlds (pre
 
 ## Phase 2 - grid buffer clear (repeat per row range)
 
-Replace `startY` / `endY` each call. Example: `0→256`, `256→512`, ... `3584→3840` (15 calls).
+Replace `startY` / `endY` each call.
+Example: `0→256`, `256→512`, ... `3584→3840` (15 calls).
 
 ```javascript
 () => {
@@ -110,7 +116,8 @@ Optional save after every fourth batch:
 
 ## Phase 3 - background and parallax
 
-Clears procgen decor and hides Pixi background layers. See **sandustry-world** `references/background-layers.md`.
+Clears procgen decor and hides Pixi background layers.
+See **sandustry-world** `references/background-layers.md`.
 
 ```javascript
 () => {
@@ -192,11 +199,14 @@ The **map screen** uses a separate buffer from world `revealFogAtCell`:
 };
 ```
 
-Close and reopen the map (**M**) after save. World-cell `revealFogAtCell` batches do **not** fill this UI buffer.
+Close and reopen the map (**M**) after save.
+World-cell `revealFogAtCell` batches do **not** fill this UI buffer.
 
 ## Phase 4b - world fog uncover (optional, batched)
 
-Even after buffer clear, run `revealFogAtCell` in batches if in-world fog cells remain. Use **512-row** chunks with saves. Public path (preferred):
+Even after buffer clear, run `revealFogAtCell` in batches if in-world fog cells remain.
+Use **512-row** chunks with saves.
+Public path (preferred):
 
 ```javascript
 () => {
@@ -222,7 +232,9 @@ Fog terrain ids: `4`, `5`, `6`, `13` (**sandustry-world** `references/cells.md`)
 
 ## Phase 5 - player platform and movement
 
-Void worlds have no ground. Place **Block** terrain (`cellId` **15**) and reset movement. Pick a **weapon or tool** hotbar slot - not a mod item or structure belt slot.
+Void worlds have no ground.
+Place **Block** terrain (`cellId` **15**) and reset movement.
+Pick a **weapon or tool** hotbar slot - not a mod item or structure belt slot.
 
 ```javascript
 () => {

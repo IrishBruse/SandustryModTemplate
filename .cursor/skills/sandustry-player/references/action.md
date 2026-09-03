@@ -45,7 +45,8 @@ Returns `{ id, type }` where `type` is `ItemType` (structure slots use `Mod`=4 f
 
 ## MCP triage: `handleAction` crash
 
-Input loop calls `definition.handleAction(state, action)`. If the **definition lookup** is `undefined`, the renderer throws and movement stops.
+Input loop calls `definition.handleAction(state, action)`.
+If the **definition lookup** is `undefined`, the renderer throws and movement stops.
 
 | Trigger                                                        | Fix                                                                             |
 | -------------------------------------------------------------- | ------------------------------------------------------------------------------- |

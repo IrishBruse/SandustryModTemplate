@@ -1,6 +1,8 @@
 # Viability
 
-Factory tier progression (HUD **Viability** bar). No dedicated `sandkit.api.viability` namespace. Read store fields and factory APIs.
+Factory tier progression (HUD **Viability** bar).
+No dedicated `sandkit.api.viability` namespace.
+Read store fields and factory APIs.
 
 ## Store
 
@@ -18,7 +20,8 @@ store.viability: {
 
 ## Factory reads
 
-Use **sandustry-factory** `references/factory.md` for `sandkit.api.factory` (`getLevel`, `getProcessCount`, `getProcessRate`) and internal `engine.api.factory` tier math. Do not duplicate process ids or tier gates here.
+Use **sandustry-factory** `references/factory.md` for `sandkit.api.factory` (`getLevel`, `getProcessCount`, `getProcessRate`) and internal `engine.api.factory` tier math.
+Do not duplicate process ids or tier gates here.
 
 Live 0.5.5 sample: `api.factory.getLevel()` = `7`, matches `store.viability.level`.
 

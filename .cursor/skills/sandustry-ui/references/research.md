@@ -1,10 +1,15 @@
 # Research
 
-Chrome: `management.md`. Sub-tabs **Tech Tree**, **Conservatory**.
+Chrome: `management.md`.
+Sub-tabs **Tech Tree**, **Conservatory**.
 
 ## Tech Tree
 
-Graph. Unlocked checkmarks. Some **AUTHORIZED**. Costs as numbers. A11y snapshot does not name nodes - hover in game or Debug **Copy API Markdown**.
+Graph.
+Unlocked checkmarks.
+Some **AUTHORIZED**.
+Costs as numbers.
+A11y snapshot does not name nodes - hover in game or Debug **Copy API Markdown**.
 
 ## Conservatory
 

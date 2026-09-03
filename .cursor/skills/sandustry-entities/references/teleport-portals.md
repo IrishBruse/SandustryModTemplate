@@ -15,7 +15,8 @@
 | `bidirectional`             | boolean | Spawns linked reverse zone.                     |
 | `linkedZoneId`              | string? | Paired zone id.                                 |
 
-**Cache:** `session.teleportZoneCache` - `get(cellX, cellY)` returns zone for any cell inside entry rect. Rebuilt on add/remove.
+**Cache:** `session.teleportZoneCache` - `get(cellX, cellY)` returns zone for any cell inside entry rect.
+Rebuilt on add/remove.
 
 ## Engine API
 
@@ -36,6 +37,9 @@ Prefab loader calls `add` for each `teleportZones` block in prefab data (offsets
 
 `sandkit.engine.api.portals.getMarkers(state)` - read-only list for map UI.
 
-Returns `{ name, x, y }[]` in world pixels (`cell * cellSize`). Empty when portal feature disabled or all portals used. Names come from i18n `nameKey` on static portal table.
+Returns `{ name, x, y }[]` in world pixels (`cell * cellSize`).
+Empty when portal feature disabled or all portals used.
+Names come from i18n `nameKey` on static portal table.
 
-**Not the same as teleport zones.** Teleport zones are grid rects with entry/exit. Portal markers are map waypoints.
+**Not the same as teleport zones.** Teleport zones are grid rects with entry/exit.
+Portal markers are map waypoints.
