@@ -1,10 +1,12 @@
 /**
  * Interactive mod picker for `npm run dev:pick` when stdin is a TTY and no `--mod` is passed.
+ * `DEV_MODS` in `.env`: `all`, `selection`, or always-folders merged with selection.
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { styleText } from "../lib/cli-style.js";
+import { resolveDevModsSetting, watchModFolders } from "../lib/env.js";
 import { discoverMods, parseModFilters, resolveModRoots } from "../lib/mods.js";
 import { isCliTty, tuiModCombobox } from "../lib/tui.js";
 
@@ -52,6 +54,23 @@ export function selectionToModArgs(selection) {
   return selection.folders.flatMap((folder) => ["--mod", folder]);
 }
 
+/** @param {string[]} folders */
+export function foldersToModArgs(folders) {
+  if (folders.length === 0) return [];
+  return folders.flatMap((folder) => ["--mod", folder]);
+}
+
+/**
+ * Effective `--mod` args from selection + `DEV_MODS`.
+ * @param {DevModSelection | null} selection
+ * @param {Set<string>} [validFolders]
+ * @returns {string[]}
+ */
+export function resolveWatchModArgs(selection, validFolders) {
+  const setting = resolveDevModsSetting();
+  return foldersToModArgs(watchModFolders(selection, setting, validFolders));
+}
+
 /**
  * @param {string[]} argv
  * @param {{ skipPicker?: boolean, roots?: string[] }} [options]
@@ -69,27 +88,30 @@ export async function pickDevModArgs(argv, options = {}) {
     throw new Error(`No mods found. ${hint}`);
   }
   const validFolders = new Set(mods.map((mod) => mod.folder));
+  const setting = resolveDevModsSetting();
 
   if (filters.length > 0) {
     writeLastSelection(filters);
-    return [];
+    const args = resolveWatchModArgs({ all: false, folders: filters }, validFolders);
+    logWatchSet(args, setting, filters);
+    return args;
   }
 
   if (options.skipPicker) {
     const last = readLastSelection(validFolders);
-    const args = selectionToModArgs(last);
-    if (last && !last.all) {
-      console.log(styleText("dim", `Watching ${last.folders.join(", ")}`));
-    }
+    const args = resolveWatchModArgs(last, validFolders);
+    logWatchSet(args, setting, last?.all ? null : last?.folders);
     return args;
   }
 
-  if (!isCliTty()) return selectionToModArgs(readLastSelection(validFolders));
+  if (!isCliTty()) {
+    return resolveWatchModArgs(readLastSelection(validFolders), validFolders);
+  }
 
   if (mods.length === 1) {
     console.log(styleText("dim", `Watching ${mods[0].folder}`));
     writeLastSelection([mods[0].folder]);
-    return ["--mod", mods[0].folder];
+    return resolveWatchModArgs({ all: false, folders: [mods[0].folder] }, validFolders);
   }
 
   try {
@@ -119,8 +141,8 @@ export async function pickDevModArgs(argv, options = {}) {
       initialFocus: last?.all ? "all" : last?.folders?.[0],
     });
     writeLastSelection(picked);
-    if (picked == null) return [];
-    return picked.flatMap((folder) => ["--mod", folder]);
+    if (picked == null) return resolveWatchModArgs({ all: true }, validFolders);
+    return resolveWatchModArgs({ all: false, folders: picked }, validFolders);
   } catch (error) {
     if (error && typeof error === "object" && "cancelled" in error && error.cancelled) {
       console.log("Cancelled.");
@@ -128,4 +150,27 @@ export async function pickDevModArgs(argv, options = {}) {
     }
     throw error;
   }
+}
+
+/**
+ * @param {string[]} args
+ * @param {{ mode: string, alwaysFolders: string[] }} setting
+ * @param {string[] | null | undefined} selected
+ */
+function logWatchSet(args, setting, selected) {
+  if (args.length === 0) {
+    console.log(styleText("dim", "Watching all mods"));
+    return;
+  }
+  const folders = [];
+  for (let i = 0; i < args.length; i += 2) {
+    if (args[i] === "--mod" && args[i + 1]) folders.push(args[i + 1]);
+  }
+  if (setting.mode === "always" && setting.alwaysFolders.length > 0) {
+    const always = setting.alwaysFolders.join(", ");
+    const base = selected?.length ? selected.join(", ") : "(none)";
+    console.log(styleText("dim", `Watching ${folders.join(", ")} (selection ${base} + always ${always})`));
+    return;
+  }
+  console.log(styleText("dim", `Watching ${folders.join(", ")}`));
 }

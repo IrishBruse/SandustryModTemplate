@@ -8,6 +8,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { styleText } from "../lib/cli-style.js";
 import { ensureExamplesRepo } from "../lib/examples-repo.js";
+import { resolveDevCleanup } from "../lib/env.js";
 import { removeOwnedGameMods } from "../lib/mod-path.js";
 import { pickDevModArgs } from "./pick-dev-mods.js";
 
@@ -34,6 +35,7 @@ let cleaned = false;
 function cleanup() {
   if (cleaned) return;
   cleaned = true;
+  if (!resolveDevCleanup()) return;
   try {
     removeOwnedGameMods(ROOT);
   } catch (err) {

@@ -3,27 +3,28 @@
  * Watch src/<name>/ and build each mod into the game mods folder
  * (Linux: ~/.config/sandustry/mods/<modinfo.id>;
  *  Windows: %APPDATA%/sandustry/mods/<modinfo.id>).
- * On stop (Ctrl+C, terminal close, or child exit), remove those owned mods.
+ * On stop, remove those owned mods only when DEV_CLEANUP=true.
  * Usage: npm run dev [-- --mod template]
  *        npm run dev:release  — watch without debug / sourcemaps
  *        npm run dev:pick  — TTY mod picker (last choice pre-selected)
  *
- * F5 writes `.tmp/dev-mod-selection.json`. This watch follows that file and
- * restarts the bundle when the selection changes.
+ * F5 writes `.tmp/dev-mod-selection.json`. `DEV_MODS` controls the watch set:
+ * all | selection | always-folders merged with selection (see `.env.example`).
  */
 import { spawn } from "node:child_process";
 import { mkdirSync, watch } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { styleText } from "../lib/cli-style.js";
-import { DEFAULT_MOD_ROOTS, discoverMods } from "../lib/mods.js";
+import { resolveDevCleanup, resolveDevModsSetting } from "../lib/env.js";
+import { DEFAULT_MOD_ROOTS, discoverMods, parseModFilters } from "../lib/mods.js";
 import { syncLaunchDebugModPicker } from "../lib/sync-debug-mod-picker.js";
 import { removeOwnedGameMods } from "../lib/mod-path.js";
 import {
   pickDevModArgs,
   readLastSelection,
+  resolveWatchModArgs,
   SELECTION_FILE,
-  selectionToModArgs,
 } from "./pick-dev-mods.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
@@ -36,6 +37,9 @@ const raw = process.argv.slice(2);
 const pick = raw.includes("--pick");
 const release = raw.includes("--no-debug");
 const extra = stripModFilterArgs(raw.filter((arg) => arg !== "--pick"));
+const setting = resolveDevModsSetting();
+/** Restart watch when F5 / picker selection changes (not needed for DEV_MODS=all). */
+const followSelection = setting.mode !== "all";
 await pickDevModArgs(
   raw.filter((arg) => arg !== "--pick"),
   {
@@ -56,7 +60,11 @@ const esbuildScript = join(ROOT, "scripts/build/esbuild.config.mjs");
 /** @returns {string[]} */
 function currentModArgs() {
   const validFolders = new Set(discoverMods({ roots: DEFAULT_MOD_ROOTS }).map((mod) => mod.folder));
-  return selectionToModArgs(readLastSelection(validFolders));
+  const filters = parseModFilters(raw);
+  if (filters.length > 0) {
+    return resolveWatchModArgs({ all: false, folders: filters }, validFolders);
+  }
+  return resolveWatchModArgs(readLastSelection(validFolders), validFolders);
 }
 
 function spawnWatch() {
@@ -78,6 +86,7 @@ let restartTimer;
 function cleanup() {
   if (cleaned) return;
   cleaned = true;
+  if (!resolveDevCleanup()) return;
   try {
     removeOwnedGameMods(ROOT);
   } catch (err) {
@@ -102,7 +111,7 @@ function attachChild(proc) {
 attachChild(child);
 
 function scheduleRestart() {
-  if (stopping) return;
+  if (stopping || !followSelection) return;
   clearTimeout(restartTimer);
   restartTimer = setTimeout(() => {
     if (spawnArgsMatch(child, currentModArgs())) return;
@@ -120,11 +129,13 @@ function spawnArgsMatch(proc, modArgs) {
   return args.every((arg, i) => arg === expected[i]);
 }
 
-mkdirSync(dirname(SELECTION_FILE), { recursive: true });
-watch(dirname(SELECTION_FILE), (_event, filename) => {
-  if (String(filename ?? "") !== "dev-mod-selection.json") return;
-  scheduleRestart();
-});
+if (followSelection) {
+  mkdirSync(dirname(SELECTION_FILE), { recursive: true });
+  watch(dirname(SELECTION_FILE), (_event, filename) => {
+    if (String(filename ?? "") !== "dev-mod-selection.json") return;
+    scheduleRestart();
+  });
+}
 
 /** @param {NodeJS.Signals} signal */
 function stop(signal) {
