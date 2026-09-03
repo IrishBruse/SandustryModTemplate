@@ -3,13 +3,8 @@
  * VS Code F5 launcher — same window placement as launch-sandustry.js,
  * with Chrome remote-debugging-port for the Sandustry Renderer attach.
  *
- * Default (F5 Node launch): stay in the foreground so debugger Restart
- * kills this process tree (Electron included) and starts a new one.
- *
- * Set SANDUSTRY_DEBUG_DETACHED=true for the background preLaunchTask: spawn the
- * game, wait for CDP, print the ready line, wait for maximize, then exit so
- * attach configs can connect without killing the wmctrl poll via process.exit
- * too early.
+ * Stays in the foreground so debugger Restart kills this process tree
+ * (Electron included) and starts a new one.
  *
  * F5 **Sandustry** opens the newest save in that mod’s Steam test world
  * (`worldId` = `<modinfo.id>`). Creates the Steam world when it is missing.
@@ -20,7 +15,7 @@
  */
 import { cdpNavigateDbLoad } from "../lib/cdp-db-load.js";
 import { ensureModDebugSaves, latestSteamSaveForWorld } from "../lib/debug-save.js";
-import { envFlag, envString } from "../lib/env.js";
+import { envString } from "../lib/env.js";
 import {
   DEFAULT_RENDERER_DEBUG_PORT,
   sandustryDebugArgs,
@@ -37,7 +32,6 @@ import { pickDebugMod } from "./pick-debug-mod.js";
 import { writeLastSelection } from "../dev/pick-dev-mods.js";
 
 const rendererPort = envString("SANDUSTRY_RENDERER_DEBUG_PORT", DEFAULT_RENDERER_DEBUG_PORT);
-const detached = envFlag("SANDUSTRY_DEBUG_DETACHED", false);
 const argv = process.argv.slice(2);
 const extraArgs = electronExtraArgs(argv);
 /** @type {string | null} */
@@ -69,7 +63,7 @@ const mon = sandustryLeftMonitor();
 const args = [...sandustryDebugArgs(rendererPort, mon), ...extraArgs];
 const child = spawnSandustry(args, {
   cwd: SANDUSTRY_DIR,
-  detached,
+  detached: false,
   stdio: "ignore",
 });
 
@@ -94,12 +88,6 @@ if (saveId) {
 }
 
 console.log(`Launched Sandustry with debug ports (pid ${child.pid ?? "?"}).`);
-
-if (detached) {
-  // Must finish maximize before exit — process.exit aborts the wmctrl poll.
-  await sandustryMaximizeOnLeftMonitor(mon.x, mon.y);
-  process.exit(0);
-}
 
 void sandustryMaximizeOnLeftMonitor(mon.x, mon.y);
 

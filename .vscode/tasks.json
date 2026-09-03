@@ -2,82 +2,10 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "sandustry:prepare-debug",
-      "dependsOn": ["sandustry:stop"],
-      "problemMatcher": [],
-      "detail": "Stops the game before F5. Expect npm run dev for the mod bundle."
-    },
-    {
       "label": "sandustry:stop",
       "type": "shell",
       "command": "node scripts/sandustry/sandustry-stop.js",
       "problemMatcher": []
-    },
-    {
-      "label": "sandustry:launch-debug",
-      "dependsOn": ["sandustry:stop"],
-      "dependsOrder": "sequence",
-      "type": "shell",
-      "command": "node scripts/sandustry/sandustry-vscode-launch.js",
-      "options": {
-        "cwd": "${workspaceFolder}",
-        "env": {
-          "SANDUSTRY_DEBUG_DETACHED": "true"
-        }
-      },
-      "presentation": {
-        "echo": true,
-        "reveal": "never",
-        "focus": false,
-        "panel": "dedicated",
-        "showReuseMessage": true,
-        "clear": false
-      },
-      "isBackground": true,
-      "problemMatcher": {
-        "pattern": {
-          "regexp": ".",
-          "file": 1,
-          "location": 2,
-          "message": 3
-        },
-        "background": {
-          "activeOnStart": true,
-          "beginsPattern": "Sandustry debug",
-          "endsPattern": "Launched Sandustry with debug ports"
-        }
-      },
-      "detail": "Stops any game, then launches with --remote-debugging-port for renderer attach."
-    },
-    {
-      "label": "sandustry:vscode-background",
-      "type": "shell",
-      "command": "node scripts/sandustry/launch-sandustry-vscode.js",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "isBackground": true,
-      "presentation": {
-        "echo": true,
-        "reveal": "never",
-        "focus": false,
-        "panel": "dedicated",
-        "showReuseMessage": true,
-        "clear": false
-      },
-      "problemMatcher": {
-        "pattern": {
-          "regexp": ".",
-          "file": 1,
-          "location": 2,
-          "message": 3
-        },
-        "background": {
-          "activeOnStart": true,
-          "beginsPattern": "Sandustry debug",
-          "endsPattern": "Launched Sandustry with debug ports"
-        }
-      }
     }
   ]
 }
