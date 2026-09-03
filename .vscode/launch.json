@@ -103,7 +103,7 @@
         "irishbruse.trees",
         "template"
       ],
-      "default": "template"
+      "default": "irishbruse.pick-block"
     }
   ]
 }

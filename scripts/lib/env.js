@@ -84,33 +84,42 @@ export function envFlag(key, fallback = false) {
 }
 
 /**
- * @typedef {"all" | "selection" | "always"} DevModsMode
+ * @typedef {"all" | "selection"} DevModsMode
  */
 
 /**
- * Resolve `DEV_MODS` into a watch/build policy.
- * - `all` — every mod under the active roots
- * - `selection` — `.tmp/dev-mod-selection.json` from F5 / `dev:pick` only
- * - comma list — those folders **always**, merged with the current selection
- * @param {string} [raw]
- * @returns {{ mode: DevModsMode, alwaysFolders: string[] }}
+ * Parse a comma-separated folder list (empty pieces dropped).
+ * @param {string} raw
+ * @returns {string[]}
  */
-export function resolveDevModsSetting(raw = envString("DEV_MODS", "selection")) {
-  const value = raw.trim();
-  if (!value || value.toLowerCase() === "selection") {
-    return { mode: "selection", alwaysFolders: [] };
-  }
-  if (value.toLowerCase() === "all") return { mode: "all", alwaysFolders: [] };
-  const alwaysFolders = value
+export function parseFolderList(raw) {
+  return raw
     .split(",")
     .map((part) => part.trim())
     .filter(Boolean);
-  if (alwaysFolders.length === 0) return { mode: "selection", alwaysFolders: [] };
-  return { mode: "always", alwaysFolders };
 }
 
 /**
- * Merge F5 / picker selection with `DEV_MODS` always-folders.
+ * Resolve `DEV_MODS` + `DEV_ALWAYS_MODS` into a watch/build policy.
+ * - `DEV_MODS=all` — every mod under the active roots
+ * - `DEV_MODS=selection` (default) — F5 / `dev:pick` set, plus `DEV_ALWAYS_MODS`
+ * - `DEV_ALWAYS_MODS` — comma folders always compiled with the F5 selection
+ * @param {string} [devModsRaw]
+ * @param {string} [alwaysRaw]
+ * @returns {{ mode: DevModsMode, alwaysFolders: string[] }}
+ */
+export function resolveDevModsSetting(
+  devModsRaw = envString("DEV_MODS", "selection"),
+  alwaysRaw = envString("DEV_ALWAYS_MODS", ""),
+) {
+  const value = devModsRaw.trim();
+  const alwaysFolders = parseFolderList(alwaysRaw);
+  if (value.toLowerCase() === "all") return { mode: "all", alwaysFolders: [] };
+  return { mode: "selection", alwaysFolders };
+}
+
+/**
+ * Merge F5 / picker selection with `DEV_ALWAYS_MODS`.
  * `[]` means compile every mod in scope.
  * @param {DevModSelectionLike | null} selection
  * @param {{ mode: DevModsMode, alwaysFolders: string[] }} setting
@@ -126,13 +135,9 @@ export function watchModFolders(selection, setting, validFolders) {
   const keep = (folders) =>
     validFolders ? folders.filter((folder) => validFolders.has(folder)) : folders.slice();
 
-  if (setting.mode === "selection") {
-    if (!selection || selection.all) return [];
-    return keep(selection.folders);
-  }
-
-  // always: union(selection, alwaysFolders). Selection "all" still means every mod.
+  // Selection "all" still means every mod.
   if (!selection || selection.all) return [];
+  if (setting.alwaysFolders.length === 0) return keep(selection.folders);
   const merged = new Set([...keep(selection.folders), ...keep(setting.alwaysFolders)]);
   return [...merged].sort((a, b) => a.localeCompare(b));
 }

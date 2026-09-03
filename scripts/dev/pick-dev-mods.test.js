@@ -20,30 +20,36 @@ test("selectionToModArgs expands folders", () => {
 test("parseEnvText keeps inline option comments out of values", () => {
   const parsed = parseEnvText(`
 # comment
-DEV_MODS=all # all | selection | a,b
+DEV_MODS=all # selection | all
+DEV_ALWAYS_MODS=a,b # companions
 DEV_CLEANUP=false # false keep | true remove
 SANDUSTRY="/path/with # hash"
 EMPTY=
 `);
   assert.equal(parsed.DEV_MODS, "all");
+  assert.equal(parsed.DEV_ALWAYS_MODS, "a,b");
   assert.equal(parsed.DEV_CLEANUP, "false");
   assert.equal(parsed.SANDUSTRY, "/path/with # hash");
   assert.equal(parsed.EMPTY, "");
 });
 
 test("resolveDevModsSetting modes", () => {
-  assert.deepEqual(resolveDevModsSetting("all"), { mode: "all", alwaysFolders: [] });
-  assert.deepEqual(resolveDevModsSetting("selection"), { mode: "selection", alwaysFolders: [] });
-  assert.deepEqual(resolveDevModsSetting("template, trees"), {
-    mode: "always",
+  assert.deepEqual(resolveDevModsSetting("all", ""), { mode: "all", alwaysFolders: [] });
+  assert.deepEqual(resolveDevModsSetting("selection", ""), { mode: "selection", alwaysFolders: [] });
+  assert.deepEqual(resolveDevModsSetting("selection", "template, trees"), {
+    mode: "selection",
     alwaysFolders: ["template", "trees"],
+  });
+  assert.deepEqual(resolveDevModsSetting("all", "template"), {
+    mode: "all",
+    alwaysFolders: [],
   });
 });
 
 test("watchModFolders merges always folders with selection", () => {
   const valid = new Set(["template", "trees", "irishbruse.pick-block"]);
   const setting = {
-    mode: /** @type {const} */ ("always"),
+    mode: /** @type {const} */ ("selection"),
     alwaysFolders: ["irishbruse.pick-block", "missing"],
   };
   assert.deepEqual(
@@ -52,7 +58,7 @@ test("watchModFolders merges always folders with selection", () => {
   );
 });
 
-test("watchModFolders selection-only ignores always list", () => {
+test("watchModFolders selection-only ignores empty always list", () => {
   assert.deepEqual(
     watchModFolders(
       { all: false, folders: ["template"] },
@@ -63,16 +69,20 @@ test("watchModFolders selection-only ignores always list", () => {
   );
 });
 
-test("resolveWatchModArgs merges for DEV_MODS list", () => {
-  const prev = process.env.DEV_MODS;
-  process.env.DEV_MODS = "irishbruse.pick-block";
+test("resolveWatchModArgs merges for DEV_ALWAYS_MODS list", () => {
+  const prevMods = process.env.DEV_MODS;
+  const prevAlways = process.env.DEV_ALWAYS_MODS;
+  process.env.DEV_MODS = "selection";
+  process.env.DEV_ALWAYS_MODS = "irishbruse.pick-block";
   try {
     assert.deepEqual(
       resolveWatchModArgs({ all: false, folders: ["template"] }, new Set(["template", "irishbruse.pick-block"])),
       ["--mod", "irishbruse.pick-block", "--mod", "template"],
     );
   } finally {
-    if (prev === undefined) delete process.env.DEV_MODS;
-    else process.env.DEV_MODS = prev;
+    if (prevMods === undefined) delete process.env.DEV_MODS;
+    else process.env.DEV_MODS = prevMods;
+    if (prevAlways === undefined) delete process.env.DEV_ALWAYS_MODS;
+    else process.env.DEV_ALWAYS_MODS = prevAlways;
   }
 });

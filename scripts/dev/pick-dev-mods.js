@@ -1,6 +1,7 @@
 /**
  * Interactive mod picker for `npm run dev:pick` when stdin is a TTY and no `--mod` is passed.
- * `DEV_MODS` in `.env`: `all`, `selection`, or always-folders merged with selection.
+ * F5 / picker picks the main set. `DEV_ALWAYS_MODS` adds companion folders.
+ * `DEV_MODS=all` watches every mod; `selection` (default) follows F5.
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -61,7 +62,7 @@ export function foldersToModArgs(folders) {
 }
 
 /**
- * Effective `--mod` args from selection + `DEV_MODS`.
+ * Effective `--mod` args from F5 selection + `DEV_ALWAYS_MODS`.
  * @param {DevModSelection | null} selection
  * @param {Set<string>} [validFolders]
  * @returns {string[]}
@@ -166,7 +167,7 @@ function logWatchSet(args, setting, selected) {
   for (let i = 0; i < args.length; i += 2) {
     if (args[i] === "--mod" && args[i + 1]) folders.push(args[i + 1]);
   }
-  if (setting.mode === "always" && setting.alwaysFolders.length > 0) {
+  if (setting.alwaysFolders.length > 0) {
     const always = setting.alwaysFolders.join(", ");
     const base = selected?.length ? selected.join(", ") : "(none)";
     console.log(styleText("dim", `Watching ${folders.join(", ")} (selection ${base} + always ${always})`));

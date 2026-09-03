@@ -8,8 +8,8 @@
  *        npm run dev:release  — watch without debug / sourcemaps
  *        npm run dev:pick  — TTY mod picker (last choice pre-selected)
  *
- * F5 writes `.tmp/dev-mod-selection.json`. `DEV_MODS` controls the watch set:
- * all | selection | always-folders merged with selection (see `.env.example`).
+ * F5 writes `.tmp/dev-mod-selection.json`. `DEV_MODS` is all | selection.
+ * `DEV_ALWAYS_MODS` adds companion folders on top of the F5 set (see `.env.example`).
  */
 import { spawn } from "node:child_process";
 import { mkdirSync, watch } from "node:fs";

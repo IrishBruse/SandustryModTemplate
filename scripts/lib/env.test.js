@@ -31,7 +31,7 @@ test("resolveDevCleanup defaults off", () => {
 });
 
 test("resolveDevModsSetting empty is selection", () => {
-  assert.deepEqual(resolveDevModsSetting(""), { mode: "selection", alwaysFolders: [] });
+  assert.deepEqual(resolveDevModsSetting("", ""), { mode: "selection", alwaysFolders: [] });
 });
 
 test("watchModFolders all mode returns empty filter", async () => {

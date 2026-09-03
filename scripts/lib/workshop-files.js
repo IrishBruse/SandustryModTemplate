@@ -1,6 +1,7 @@
 /**
  * Files under `src/<name>/workshop/` (Steam listing assets).
- * The build copies `workshop.json` and previews to the installed mod root.
+ * The build copies `workshop.json` to the installed mod root.
+ * Preview images stay in `workshop/` for SteamCMD `previewfile` only — not in content.
  * `workshop.md` is converted to Steam BBCode when you publish.
  * `README.md`, `CHANGELOG.md`, and `workshop/screenshots/` stay in the repo only.
  */
@@ -364,6 +365,7 @@ export function readChangelogChangeNote(modDir, version) {
 
 /**
  * Copy listing files the game expects at the installed mod root.
+ * Preview images are not copied: SteamCMD reads them from `workshop/` as `previewfile`.
  * @param {string} modDir
  * @param {string} outDir
  */
@@ -372,21 +374,19 @@ export function copyWorkshopInstallFiles(modDir, outDir) {
   if (existsSync(json)) {
     cpSync(json, join(outDir, "workshop.json"), { force: true });
   }
-  for (const name of WORKSHOP_PREVIEW_NAMES) {
-    const from = join(workshopDir(modDir), name);
-    if (!existsSync(from)) continue;
-    cpSync(from, join(outDir, name), { force: true });
-  }
 }
 
 const PUBLISH_DOC_NAMES = ["README.md", "CHANGELOG.md"];
 
 /**
- * Drop leftover docs/screenshots from a prior staging or game-folder build.
+ * Drop leftover docs/screenshots/previews from a prior staging or game-folder build.
  * @param {string} outDir
  */
 export function removeWorkshopPublishFiles(outDir) {
   for (const name of PUBLISH_DOC_NAMES) {
+    rmSync(join(outDir, name), { force: true });
+  }
+  for (const name of WORKSHOP_PREVIEW_NAMES) {
     rmSync(join(outDir, name), { force: true });
   }
   rmSync(join(outDir, "screenshots"), { recursive: true, force: true });
