@@ -206,7 +206,7 @@ function checkSteamModsBeta() {
     );
     return;
   }
-  warn(`Steam beta is "${beta}", not [mods] (${acf}). Switch Betas to mods.`);
+  ok(`Steam beta "${beta}" (${acf})`);
 }
 
 function removeLegacyReferencesDir() {
