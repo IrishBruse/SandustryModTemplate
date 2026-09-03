@@ -9,4 +9,5 @@ logs
 /mods/
 /examples/
 .tmp/
+.env
 *.tsbuildinfo
