@@ -28,4 +28,4 @@ This skill does not load the domain files. After the branch is known, **Read** t
 | drones, entities, projectiles, pickups, portals, swarm                | `.cursor/skills/sandustry-entities/SKILL.md`    |
 | `sandkit.engine`, `__debug`, electron IPC, extract tree, worker entry | `.cursor/skills/sandustry-internals/SKILL.md`   |
 
-Extracted game: `sandustry/<version>-mods/` after `npm run setup`.
+Extracted game: `sandustry/source/` after `npm run setup`.

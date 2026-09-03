@@ -18,4 +18,4 @@ Live session: **sandustry-mcp**.
 Do not kill Sandustry.
 Ask the user for a hard reload.
 
-Extracted game: `sandustry/<version>-mods/` (`npm run setup`). OS saves: `sandustry/saves/`. Workshop items: `sandustry/workshop/`.
+Extracted game: `sandustry/source/` (`npm run setup`). OS saves: `sandustry/saves/`. Workshop items: `sandustry/workshop/`. Logs: `sandustry/logs/`.

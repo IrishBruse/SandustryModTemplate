@@ -24,7 +24,7 @@ test("void world", async () => {
 `npm run test:integration`:
 
 1. Builds `src/` with `--debug` into `dist/`. Builds `examples/` too when that folder is present (or when you pass `--examples`, which clones [SandustryExamples](https://github.com/sandustry-modding/SandustryExamples)).
-2. Boots `sandustry/<version>-<branch>/dist` in headless Chromium (CDP **:9224**).
+2. Boots `sandustry/source/dist` in headless Chromium (CDP **:9224**).
 3. Waits for boot to finish (`game:ready`, `#loading` removed, Game scene).
 4. Runs every `*.integration.test.ts` with `--test-concurrency=1` (async spawn so
    the host HTTP server keeps serving `/mods/...` during the run).
@@ -71,7 +71,7 @@ This host does not attach to Steam or F5, and it does not stop them.
 
 | Item           | Path / value                                                                                   |
 | -------------- | ---------------------------------------------------------------------------------------------- |
-| Game files     | `sandustry/<version>-<branch>/dist` (`npm run setup`)                                          |
+| Game files     | `sandustry/source/dist` (`npm run setup`)                                          |
 | Chrome profile | `.tmp/sandustry-test-chrome/`                                                                  |
 | Test mods copy | `.tmp/sandustry-test/mods/`                                                                    |
 | CDP            | **9224** (Steam / F5 stay on **9222**)                                                         |

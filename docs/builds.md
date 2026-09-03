@@ -7,11 +7,11 @@ The game runs `main.js` as a script body (`new Function`). The loader wraps the 
 | Command               | `debugPatches` | Sourcemaps | Output                                                           |
 | --------------------- | -------------- | ---------- | ---------------------------------------------------------------- |
 | `npm run build`       | Omitted        | Off        | `build/<modinfo.id>/` only (no OS mods folder, no `dist/` links) |
-| `npm run dev`         | Included       | Inline     | OS mods folder while watching; removed when the watch stops      |
+| `npm run dev`         | Included       | Inline     | OS mods folder while watching; kept unless `DEV_CLEANUP=true`    |
 | `npm run dev:release` | Omitted        | Off        | OS mods folder while watching (same cleanup as `dev`)            |
 | `--game` / `--debug`  | Included       | Inline     | Game mods folder                                                 |
 
-`--no-debug` forces a release-style bundle even when watch or game flags are set (`npm run dev:release` uses this). `--mod <folder>` builds one mod folder (repeat `--mod` for several). `npm run dev` also follows `.tmp/dev-mod-selection.json` from F5 / `dev:pick`. Debug builds (`npm run dev`, `--game`, `--debug`) install to the OS mods folder (`dist/` links there). `npm run build` discovers every `src/*/modinfo.ts`. Use `npm run examples` or `npm run build -- --examples` for `examples/*/modinfo.ts`. Those commands clone [SandustryExamples](https://github.com/sandustry-modding/SandustryExamples) into `examples/` when that folder is missing.
+`--no-debug` forces a release-style bundle even when watch or game flags are set (`npm run dev:release` uses this). `--mod <folder>` builds one mod folder (repeat `--mod` for several). `npm run dev` follows `.tmp/dev-mod-selection.json` from F5 / `dev:pick`, and merges any always-folders from `.env` `DEV_MODS` (see `.env.example`). Debug builds (`npm run dev`, `--game`, `--debug`) install to the OS mods folder (`dist/` links there). `npm run build` discovers every `src/*/modinfo.ts`. Use `npm run examples` or `npm run build -- --examples` for `examples/*/modinfo.ts`. Those commands clone [SandustryExamples](https://github.com/sandustry-modding/SandustryExamples) into `examples/` when that folder is missing.
 
 Debug builds emit **inline** source maps on `main.js` (needed for `new Function` eval). Use `--sourcemap` to force maps on a release build, or `--no-sourcemap` to omit them from a debug build.
 
@@ -19,7 +19,7 @@ Debug builds emit **inline** source maps on `main.js` (needed for `new Function`
 
 ## File logging (`console`)
 
-All builds inject [`modkit/internal/esbuild/console.ts`](../modkit/internal/esbuild/console.ts) via esbuild [`inject`](https://esbuild.github.io/api/#inject). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code get a plain `[modId]` prefix in DevTools and are forwarded to `window.electron.log` (IPC `log:write`). The host appends them to `logs/main.log` with the mod id as scope (workspace `logs/` → OS sandustry logs: `~/.config/sandustry/logs` or `%APPDATA%/sandustry/logs`). `__MOD_ID__` comes from that mod's `modinfo.ts` at build time. The shim uses bound native methods (not per-call wrappers) so DevTools links console output to your mod source. Debug builds also add `console.ts` to the source map `ignoreList` so breakpoints skip the shim when stepping.
+All builds inject [`modkit/internal/esbuild/console.ts`](../modkit/internal/esbuild/console.ts) via esbuild [`inject`](https://esbuild.github.io/api/#inject). Bare `console.log` / `info` / `warn` / `error` / `debug` in mod code get a plain `[modId]` prefix in DevTools and are forwarded to `window.electron.log` (IPC `log:write`). The host appends them to `logs/main.log` with the mod id as scope (`sandustry/logs/` → OS sandustry logs: `~/.config/sandustry/logs` or `%APPDATA%/sandustry/logs`). `__MOD_ID__` comes from that mod's `modinfo.ts` at build time. The shim uses bound native methods (not per-call wrappers) so DevTools links console output to your mod source. Debug builds also add `console.ts` to the source map `ignoreList` so breakpoints skip the shim when stepping.
 
 Use `createLogger` from `@modkit/log` when you want a custom scope tag without going through `console`.
 
@@ -45,7 +45,7 @@ Live `preview.html` pages and PNGs live under [docs/ui/canvas](ui/canvas/) (not 
 
 ### Verify
 
-Static check against an extracted `sandustry/0.5.5-mods/dist/js/bundle.js` (`npm run setup`):
+Static check against an extracted `sandustry/source/dist/js/bundle.js` (`npm run setup`):
 
 | Selector           | In the game CSS |
 | ------------------ | --------------- |
@@ -64,7 +64,7 @@ In game:
 ## Commands
 
 ```bash
-npm run setup            # check install, extract sandustry/<version>-<branch>/, link dist/, logs/, sandustry/saves/, sandustry/workshop/ (one time)
+npm run setup            # check install, extract sandustry/source/, link dist/, sandustry/logs/, sandustry/saves/, sandustry/workshop/ (one time)
 npm run dev              # watch all src/ mods (debug + sourcemaps)
 npm run dev:release      # watch without debugPatches or sourcemaps
 npm run dev:pick         # TTY picker; last choice pre-selected
@@ -84,9 +84,9 @@ nr test:integration overlay-hotkey  # one folder + its tests (headless)
 npm run sandustry        # stop + launch (no build; keep npm run dev for the bundle)
 ```
 
-When `npm run dev` stops (Ctrl+C, terminal close, or process exit), it removes the OS mod folders this template built in that watch session. The `dist/` link stays. Use `npm run build` when you want mods to stay installed.
+When `npm run dev` stops (Ctrl+C, terminal close, or process exit), it removes the OS mod folders this template built in that watch session **only if** `.env` has `DEV_CLEANUP=true` (default `false` keeps them). The `dist/` link stays. Use `npm run build` when you want release staging under `build/`.
 
-`npm run dev` watches the same set as the last F5 / `dev:pick` choice (`.tmp/dev-mod-selection.json`). **Sandustry** writes one folder. **Sandustry (all mods)** writes all. If `npm run dev` is already running, it restarts the bundle when that file changes. It does not uninstall other owned OS folders (Workshop items and other local mods stay). Use `npm run dev:pick` for a keyboard picker before the watch starts. **All mods** is the first row. Mods are grouped under **src** and **mods**. Type to filter the list, **Space** toggles mods, **Enter** confirms (All, checked mods, or the highlighted mod). Pass `--mod` to skip the picker and pin that set. Non-TTY `dev:pick` uses the last selection, or all mods when none is stored.
+`npm run dev` watches the F5 / `dev:pick` choice (`.tmp/dev-mod-selection.json`) plus any always-folders from `DEV_MODS` in `.env` / `.env.example`. Copy `.env.example` to `.env` (or run `npm run setup`). **Sandustry** writes one folder. **Sandustry (all mods)** writes all. If `npm run dev` is already running, it restarts the bundle when that file changes (unless `DEV_MODS=all`). It does not uninstall other owned OS folders (Workshop items and other local mods stay). Use `npm run dev:pick` for a keyboard picker before the watch starts. **All mods** is the first row. Mods are grouped under **src** and **mods**. Type to filter the list, **Space** toggles mods, **Enter** confirms (All, checked mods, or the highlighted mod). Pass `--mod` to skip the picker and pin that set. Non-TTY `dev:pick` uses the last selection, or all mods when none is stored.
 
 **F5** (VS Code) has two launches. **Sandustry** shows a **Quick Pick** of one mod and writes that folder to the shared watch selection. It opens that mod’s Steam test world (`worldId` = `modinfo.id`). Other owned OS folders stay installed. Load Game groups by `worldId`. Each test world uses `modinfo.id` as **worldId** and **world name**, so the left **WORLDS** list has one row per mod. In-game Save and Autosave for that session use that same `worldId` (`<id>-autosave-N.save`). F5 loads the **newest** save in that world (`meta.timestamp`), not only `<id>.save`. F5 does **not** change last-played: Continue for your campaign stays on last-played. F5 does **not** uninstall other owned OS folders. `npm run setup` and the first F5 create the Steam `<id>.save` from `Empty.save` when it is missing and shrink it to 1024×1024. They do **not** write a `.save` into the mod source folder. If the Steam test world already exists, F5 does not overwrite it. After CDP `:9222` responds, F5 navigates `?db_load=<latestSaveId>`. **Sandustry (all mods)** writes “all mods” and Continues. Keep `npm run dev` running: it follows the same selection. Both wait until CDP `:9222` responds, then attach the debugger to the **renderer**. They do not rebuild the mod themselves. **Restart** in the debugger toolbar kills that Electron process and starts a new one, then the renderer attach reconnects — a page reload does not restart workers or re-apply patches. If attach fails or ports linger, press F5 again or run the **sandustry:stop** task.
 

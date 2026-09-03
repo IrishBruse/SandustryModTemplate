@@ -1,6 +1,6 @@
 # Host mod loader
 
-`sandustry/0.5.5-mods/workshop-mods.js` (game process). Template docs: `docs/patches.md`, `docs/modinfo.md`, `docs/config-schema.md`.
+`sandustry/source/workshop-mods.js` (game process). Template docs: `docs/patches.md`, `docs/modinfo.md`, `docs/config-schema.md`.
 
 ## Constants (0.5.5 extract)
 

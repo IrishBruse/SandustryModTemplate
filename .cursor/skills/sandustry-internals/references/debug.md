@@ -20,7 +20,7 @@
 
 ## `__debug.config` (historical 0.5.2 probe)
 
-Current game extract: **0.5.5** (`sandustry/0.5.5-mods/`). Probe `__debug.config.version` in a live session. Do not assume the table below on 0.5.5+.
+Current game extract: read `sandustry/source/package.json` after `npm run setup`. Probe `__debug.config.version` in a live session. Do not assume the table below on 0.5.5+.
 
 | Field                       | Value (0.5.2 session)       |
 | --------------------------- | --------------------------- |

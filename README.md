@@ -51,12 +51,12 @@ Do not import files from another mod folder. Shared code goes in `modkit/`.
 
 ### Setup and game
 
-- **`npm run setup`** — Check install, extract `app.asar` (except `node_modules/`) to `sandustry/<version>-<branch>/`, link `dist/`, `logs/`, `sandustry/saves/`, and `sandustry/workshop/`
+- **`npm run setup`** — Check install, extract `app.asar` (except `node_modules/`) to `sandustry/source/`, link `dist/`, `sandustry/logs/`, `sandustry/saves/`, and `sandustry/workshop/`
 - **`npm run sandustry`** — Stop and launch the game (no build)
 
 ### Development
 
-- **`npm run dev`** — Watch the last F5 / `dev:pick` mod set; remove owned mods when the watch stops. F5 **Sandustry** writes that one folder and does not uninstall other OS mods.
+- **`npm run dev`** — Watch the F5 / `dev:pick` set (plus any always-folders from `.env` `DEV_MODS`). Mods stay in `dist/` unless `DEV_CLEANUP=true`. F5 **Sandustry** writes that one folder and does not uninstall other OS mods.
 - **`npm run dev:release`** — Same watch as `dev`, without `debugPatches` or sourcemaps. Use to test mods before upload to workshop.
 - **`npm run dev:pick`** — Same as `dev`, with a TTY picker first
 - **`npm run examples`** — Clone [SandustryExamples](https://github.com/sandustry-modding/SandustryExamples) into `examples/` if that folder is missing, then watch those mods (optional `--mod <name>`)
@@ -94,7 +94,7 @@ Do not import files from another mod folder.
 | `modkit/`             | Shared kit. Import as `@modkit/*`            |
 | `dist/`               | Link to the Sandustry mods folder on disk    |
 | `build/<modinfo.id>/` | Workshop staging (copied on `npm run build`) |
-| `logs/`               | Link to Sandustry log files                  |
+| `sandustry/logs/`     | Link to OS log files                           |
 | `sandustry/saves/`    | Link to OS save files                        |
 | `sandustry/workshop/` | Link to Steam Workshop content               |
 
