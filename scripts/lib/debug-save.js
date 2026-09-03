@@ -11,14 +11,11 @@ import {
   readdirSync,
   readFileSync,
   readSync,
-  renameSync,
   statSync,
-  unlinkSync,
   writeFileSync,
 } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { gameModDir } from "./mod-path.js";
 import { sandustryUserDataDir } from "./paths.js";
 
 const REPO_ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
@@ -418,50 +415,6 @@ export function ensureNamedVoidSave(destDir, saveId) {
   return { id, created: true, filePath };
 }
 
-/**
- * Prefer `{gameId}.save`, else the first `*.save` in the directory.
- * @param {string} dir
- * @param {string} gameId
- * @returns {string | null}
- */
-export function pickSaveInDir(dir, gameId) {
-  if (!existsSync(dir)) return null;
-  const named = join(dir, `${sanitizeSaveId(gameId)}.save`);
-  try {
-    if (statSync(named).isFile()) return named;
-  } catch {
-    /* missing */
-  }
-  /** @type {string[]} */
-  const found = [];
-  for (const name of readdirSync(dir)) {
-    if (!name.endsWith(".save")) continue;
-    const filePath = join(dir, name);
-    try {
-      if (statSync(filePath).isFile()) found.push(filePath);
-    } catch {
-      /* skip */
-    }
-  }
-  found.sort();
-  return found[0] ?? null;
-}
-
-/**
- * Source folder first, then leftover `mod/`, then the installed OS mods folder.
- * @param {string} gameId
- * @param {string} sourceDir
- * @param {string} [installedDir]
- * @returns {string | null}
- */
-export function findModSaveFile(gameId, sourceDir, installedDir = gameModDir(gameId)) {
-  return (
-    pickSaveInDir(sourceDir, gameId) ??
-    pickSaveInDir(join(sourceDir, "mod"), gameId) ??
-    pickSaveInDir(installedDir, gameId)
-  );
-}
-
 /** @param {string} saveId */
 export function writeSteamLastPlayed(saveId, userData = sandustryUserDataDir()) {
   const id = sanitizeSaveId(saveId);
@@ -471,104 +424,63 @@ export function writeSteamLastPlayed(saveId, userData = sandustryUserDataDir()) 
 }
 
 /**
- * Empty Void seed in `src/<folder>/<modinfo.id>.save`. Does not overwrite.
- * Moves a leftover `mod/<id>.save` up when the new path is missing.
+ * Steam `{modinfo.id}.save`. Create a 1024 Void when missing.
+ * Does not overwrite an existing Steam file. Does not change last-played.
+ * Does not write into the mod source folder.
  *
- * @param {{ gameId: string; dir: string; name?: string }} mod
+ * @param {{ gameId: string; dir?: string; name?: string }} mod
+ * @param {string} [userData]
  * @returns {{ id: string; created: boolean; filePath: string }}
  */
-export function ensureModSeedSave(mod) {
-  const { id } = debugSaveIdentity(mod);
-  const dest = join(mod.dir, `${id}.save`);
-  const legacy = join(mod.dir, "mod", `${id}.save`);
-  if (existsSync(legacy)) {
-    if (!existsSync(dest)) renameSync(legacy, dest);
-    else unlinkSync(legacy);
-  }
-  return ensureNamedVoidSave(mod.dir, id);
-}
-
-/**
- * Steam `{modinfo.id}.save`. Create from the mod seed or Empty.save when missing.
- * Does not overwrite an existing Steam file. Does not change last-played.
- *
- * @param {{ gameId: string; dir: string; name?: string }} mod
- * @param {string} [userData]
- * @param {string} [installedDir]
- * @returns {{ id: string; created: boolean; sourcePath: string; filePath: string }}
- */
-export function ensureModSteamSave(mod, userData = sandustryUserDataDir(), installedDir) {
+export function ensureModSteamSave(mod, userData = sandustryUserDataDir()) {
   const { id, name } = debugSaveIdentity(mod);
   const destDir = steamSavesDir(userData);
   mkdirSync(destDir, { recursive: true });
   const filePath = join(destDir, `${id}.save`);
   if (existsSync(filePath)) {
-    return { id, created: false, sourcePath: filePath, filePath };
+    return { id, created: false, filePath };
   }
-
-  const sourcePath = findModSaveFile(id, mod.dir, installedDir);
-  if (sourcePath) {
-    const parsed = parseSaveFile(sourcePath);
-    applySaveIdentity(parsed, id, name);
-    writeFileSync(filePath, serializeSaveFile(parsed));
-    return { id, created: true, sourcePath, filePath };
-  }
-
   writeNamedVoidSave(filePath, id, name);
-  return { id, created: true, sourcePath: filePath, filePath };
+  return { id, created: true, filePath };
 }
 
 /**
- * Seed the mod folder then Steam. F5 and setup both use this.
+ * Ensure the Steam debug Void for this mod. F5 and setup both use this.
  *
- * @param {{ gameId: string; dir: string; name?: string }} mod
+ * @param {{ gameId: string; dir?: string; name?: string }} mod
  * @param {string} [userData]
- * @param {string} [installedDir]
  */
-export function ensureModDebugSaves(mod, userData = sandustryUserDataDir(), installedDir) {
-  const seed = ensureModSeedSave(mod);
-  const steam = ensureModSteamSave(mod, userData, installedDir);
-  return { ...steam, seedPath: seed.filePath, seedCreated: seed.created };
+export function ensureModDebugSaves(mod, userData = sandustryUserDataDir()) {
+  return ensureModSteamSave(mod, userData);
 }
 
 /**
- * @param {{ gameId: string; dir: string; name?: string; manifest?: { name?: unknown } }}[] mods
+ * @param {{ gameId: string; dir?: string; name?: string; manifest?: { name?: unknown } }}[] mods
  * @param {string} [userData]
  */
 export function ensureAllModDebugSaves(mods, userData = sandustryUserDataDir()) {
-  return mods.map((mod) =>
-    ensureModDebugSaves(
-      { gameId: mod.gameId, dir: mod.dir },
-      userData,
-      join(mod.dir, "no-os-mods"),
-    ),
-  );
+  return mods.map((mod) => ensureModDebugSaves({ gameId: mod.gameId, dir: mod.dir }, userData));
 }
 
 /**
- * Copy a mod `.save` into Steam user-data so `?db_load=` can open it.
- * Creates an empty Void named like the mod when no seed exists.
- * Does not overwrite an existing Steam save.
+ * Ensure a Steam debug Void for `?db_load=`. Does not overwrite.
  *
- * @param {{ gameId: string; dir: string; name?: string }} mod
+ * @param {{ gameId: string; dir?: string; name?: string }} mod
  * @param {string} [userData]
- * @param {string} [installedDir]
  */
-export function installModSaveToSteam(mod, userData = sandustryUserDataDir(), installedDir) {
-  return ensureModDebugSaves(mod, userData, installedDir);
+export function installModSaveToSteam(mod, userData = sandustryUserDataDir()) {
+  return ensureModDebugSaves(mod, userData);
 }
 
 /**
- * Replace seed and Steam debug saves with a fresh 1024 Void.
+ * Replace the Steam debug save with a fresh 1024 Void.
  *
- * @param {{ gameId: string; dir: string; name?: string; manifest?: { name?: unknown } }} mod
+ * @param {{ gameId: string; dir?: string; name?: string; manifest?: { name?: unknown } }} mod
  * @param {string} [userData]
  */
 export function rewriteModDebugSaves(mod, userData = sandustryUserDataDir()) {
   const { id, name } = debugSaveIdentity(mod);
-  const seedPath = join(mod.dir, `${id}.save`);
   const filePath = join(steamSavesDir(userData), `${id}.save`);
-  writeNamedVoidSave(seedPath, id, name);
   writeNamedVoidSave(filePath, id, name);
-  return { id, seedPath, filePath };
+  return { id, filePath };
 }

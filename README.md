@@ -25,7 +25,7 @@ npm run setup
 npm run dev
 ```
 
-Then **F5** in VS Code (or `npm run sandustry`). **Sandustry** shows a Quick Pick of one mod, then opens the **newest save** in that mod’s test world (`modinfo.id`, 1024×1024). `npm run dev` watches that one folder. Other OS mods stay installed. Load Game lists that id on the left (**WORLDS**). In-game Save, quicksave, and autosave for that session appear on the right under that world. Continue for your campaign stays on last-played. F5 does not change last-played. `npm run setup` creates the test world when it is missing and does not overwrite it. **Sandustry (all mods)** starts every selected mod and Continues. In game, look for **Template loaded**. **Alt+E** opens the overlay sample after `npm run examples` (`examples/overlay-hotkey`).
+Then **F5** in VS Code (or `npm run sandustry`). **Sandustry** shows a Quick Pick of one mod, then opens the **newest save** in that mod’s Steam test world (`modinfo.id`, 1024×1024). `npm run dev` watches that one folder. Other OS mods stay installed. Load Game lists that id on the left (**WORLDS**). In-game Save, quicksave, and autosave for that session appear on the right under that world. Continue for your campaign stays on last-played. F5 does not change last-played. `npm run setup` creates the Steam test world when it is missing and does not overwrite it. It does not put a `.save` in the mod folder. **Sandustry (all mods)** starts every selected mod and Continues. In game, look for **Template loaded**. **Alt+E** opens the overlay sample after `npm run examples` (`examples/overlay-hotkey`).
 
 Windows: the same commands work in PowerShell. If setup cannot find the game:
 
@@ -136,14 +136,13 @@ Every mod under `src/<name>/`, `mods/<name>/`, or `examples/<name>/` needs these
 
 The repo has one [`tsconfig.json`](tsconfig.json). TypeScript checks `modkit/`, `src/`, `examples/`, and `mods/` together (`moduleDetection` is `force` so script-style `main.ts` files do not clash). The build still blocks imports from another mod folder.
 
-Keep extra TypeScript out of the mod root. Only `modinfo.json` and/or `modinfo.ts`, `main.ts`, optional `worker.ts`, optional `patches.json` / `patches.ts`, and the F5 `.save` seed may sit at the mod root. Put other source files in feature folders (`ui/`, `health/`, `capture/`, …).
+Keep extra TypeScript out of the mod root. Only `modinfo.json` and/or `modinfo.ts`, `main.ts`, optional `worker.ts`, and optional `patches.json` / `patches.ts` may sit at the mod root. Put other source files in feature folders (`ui/`, `health/`, `capture/`, …).
 
 Add these when you need them:
 
 | File                         | Role                                                                                      |
 | ---------------------------- | ----------------------------------------------------------------------------------------- |
 | `worker.ts`                  | Worker entry at the mod root. The build writes `worker.js`                                |
-| `<modinfo.id>.save`          | F5 Void seed. Setup creates it when missing. The build does not copy it.                  |
 | `patches.json`               | Optional patch list (JSON array). See [Patches](docs/patches.md).                         |
 | `patches.ts`                 | Optional patch list (`definePatches`). See [Patches](docs/patches.md).                    |
 | `ui/`                        | React overlays                                                                            |

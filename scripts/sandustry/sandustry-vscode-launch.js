@@ -11,8 +11,9 @@
  * attach configs can connect without killing the wmctrl poll via process.exit
  * too early.
  *
- * F5 **Sandustry** opens the newest save in that mod’s test world
- * (`worldId` = `<modinfo.id>`). Creates the world when it is missing.
+ * F5 **Sandustry** opens the newest save in that mod’s Steam test world
+ * (`worldId` = `<modinfo.id>`). Creates the Steam world when it is missing.
+ * Does not write a `.save` into the mod source folder.
  * Does not overwrite. Does not uninstall other local mods.
  * Does not change last-played (Continue stays on your campaign).
  * **Sandustry (all mods)** Continues.

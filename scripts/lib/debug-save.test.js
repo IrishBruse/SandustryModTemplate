@@ -7,13 +7,10 @@ import {
   debugSaveIdentity,
   ensureAllModDebugSaves,
   ensureModDebugSaves,
-  ensureModSeedSave,
   ensureNamedVoidSave,
-  findModSaveFile,
   latestSteamSaveForWorld,
   listSteamSavesForWorld,
   parseSaveFile,
-  pickSaveInDir,
   sanitizeSaveId,
   writeSteamLastPlayed,
 } from "./debug-save.js";
@@ -35,40 +32,6 @@ test("debugSaveIdentity uses sanitized gameId for id and name", () => {
     id: "unit.id",
     name: "unit.id",
   });
-});
-
-test("pickSaveInDir prefers gameId.save then sorted name", () => {
-  const dir = join(TMP, "saves-pick");
-  rmSync(dir, { recursive: true, force: true });
-  mkdirSync(dir, { recursive: true });
-  writeFileSync(join(dir, "zzz.save"), "z");
-  assert.equal(pickSaveInDir(dir, "missing"), join(dir, "zzz.save"));
-  writeFileSync(join(dir, "unit.mod.save"), "a");
-  assert.equal(pickSaveInDir(dir, "unit.mod"), join(dir, "unit.mod.save"));
-});
-
-test("findModSaveFile prefers the source folder seed", () => {
-  const src = join(TMP, "src-mod");
-  const installed = join(TMP, "installed-mod");
-  rmSync(src, { recursive: true, force: true });
-  rmSync(installed, { recursive: true, force: true });
-  mkdirSync(join(src, "mod"), { recursive: true });
-  mkdirSync(installed, { recursive: true });
-  writeFileSync(join(src, "unit.mod.save"), "src");
-  writeFileSync(join(src, "mod", "unit.mod.save"), "mod");
-  writeFileSync(join(installed, "unit.mod.save"), "os");
-  assert.equal(findModSaveFile("unit.mod", src, installed), join(src, "unit.mod.save"));
-});
-
-test("findModSaveFile falls back to source mod/", () => {
-  const src = join(TMP, "src-fallback");
-  rmSync(src, { recursive: true, force: true });
-  mkdirSync(join(src, "mod"), { recursive: true });
-  writeFileSync(join(src, "mod", "unit.fallback.save"), "src");
-  assert.equal(
-    findModSaveFile("unit.fallback", src, join(TMP, "installed-missing")),
-    join(src, "mod", "unit.fallback.save"),
-  );
 });
 
 test("ensureNamedVoidSave writes id and name once", () => {
@@ -108,21 +71,17 @@ test("ensureNamedVoidSave writes id and name once", () => {
   assert.equal(readFileSync(first.filePath).equals(edited), true);
 });
 
-test("ensureModDebugSaves writes seed and Steam save without overwrite", () => {
+test("ensureModDebugSaves writes Steam save only, without overwrite", () => {
   const src = join(TMP, "src-debug-saves");
   const userData = join(TMP, "user-debug-saves");
   rmSync(src, { recursive: true, force: true });
   rmSync(userData, { recursive: true, force: true });
   mkdirSync(src, { recursive: true });
-  const first = ensureModDebugSaves(
-    { gameId: "unit.debug", dir: src, name: "Debug Unit" },
-    userData,
-    join(TMP, "no-os-debug"),
-  );
+  const first = ensureModDebugSaves({ gameId: "unit.debug", dir: src, name: "Debug Unit" }, userData);
   assert.equal(first.created, true);
   assert.equal(first.id, "unit.debug");
   assert.equal(first.filePath, join(userData, "saves", "unit.debug.save"));
-  assert.equal(first.seedPath, join(src, "unit.debug.save"));
+  assert.equal(existsSync(join(src, "unit.debug.save")), false);
   const steam = parseSaveFile(first.filePath);
   assert.equal(steam.meta.id, "unit.debug");
   assert.equal(steam.meta.name, "unit.debug");
@@ -130,29 +89,13 @@ test("ensureModDebugSaves writes seed and Steam save without overwrite", () => {
 
   const edited = Buffer.from("steam-edit");
   writeFileSync(first.filePath, edited);
-  const again = ensureModDebugSaves(
-    { gameId: "unit.debug", dir: src, name: "Debug Unit" },
-    userData,
-    join(TMP, "no-os-debug"),
-  );
+  const again = ensureModDebugSaves({ gameId: "unit.debug", dir: src, name: "Debug Unit" }, userData);
   assert.equal(again.created, false);
-  assert.equal(again.seedCreated, false);
   assert.equal(readFileSync(first.filePath).equals(edited), true);
+  assert.equal(existsSync(join(src, "unit.debug.save")), false);
 });
 
-test("ensureModSeedSave moves leftover mod/ seed up", () => {
-  const src = join(TMP, "src-migrate-seed");
-  rmSync(src, { recursive: true, force: true });
-  mkdirSync(join(src, "mod"), { recursive: true });
-  writeFileSync(join(src, "mod", "unit.migrate.save"), "legacy-seed");
-  const seed = ensureModSeedSave({ gameId: "unit.migrate", dir: src });
-  assert.equal(seed.created, false);
-  assert.equal(seed.filePath, join(src, "unit.migrate.save"));
-  assert.equal(existsSync(join(src, "mod", "unit.migrate.save")), false);
-  assert.equal(readFileSync(seed.filePath, "utf8"), "legacy-seed");
-});
-
-test("ensureAllModDebugSaves creates one save per mod", () => {
+test("ensureAllModDebugSaves creates one Steam save per mod", () => {
   const userData = join(TMP, "user-all-saves");
   const a = join(TMP, "src-all-a");
   const b = join(TMP, "src-all-b");
@@ -173,6 +116,8 @@ test("ensureAllModDebugSaves creates one save per mod", () => {
   assert.equal(results[1].id, "unit.b");
   assert.equal(parseSaveFile(results[0].filePath).meta.name, "unit.a");
   assert.equal(parseSaveFile(results[1].filePath).meta.name, "unit.b");
+  assert.equal(existsSync(join(a, "unit.a.save")), false);
+  assert.equal(existsSync(join(b, "unit.b.save")), false);
 });
 
 test("writeSteamLastPlayed writes meta/lastPlayedGame.json", () => {
