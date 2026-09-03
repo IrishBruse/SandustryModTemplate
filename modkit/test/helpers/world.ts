@@ -7,17 +7,16 @@ export type StructurePlacement = {
 };
 
 /**
- * Structures present beside the Empty.save spawn in the shared test world.
- * Coordinates are native cells; max values are exclusive and include the
- * complete 4x4 footprint of the placed structures.
+ * Red Block platform at the Empty.save void spawn (cellId 15).
+ * Coordinates are native cells; max values are exclusive.
  */
 export const TEST_WORLD_RESERVED_BOXES = [
   {
-    name: "spawn fixture",
-    minX: 2040,
-    minY: 1552,
-    maxXExclusive: 2092,
-    maxYExclusive: 1572,
+    name: "red platform",
+    minX: 496,
+    minY: 512,
+    maxXExclusive: 528,
+    maxYExclusive: 514,
   },
 ] as const;
 
