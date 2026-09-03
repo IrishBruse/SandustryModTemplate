@@ -29,6 +29,7 @@ export {
   resumeSimulation,
   runSimulation,
   setSimulationPaused,
+  TEST_WORLD_RESERVED_BOXES,
 } from "./helpers/world.ts";
 export { expect } from "./helpers/expect.ts";
 export { toPageExpression } from "./serialize.ts";

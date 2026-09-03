@@ -83,6 +83,7 @@ const workshop = {
 
 const electron = {
   getPlatformSync: () => "steam",
+  getModdingEnabledSync: () => true,
   getIsSteamDeckSync: () => false,
   getPreferredSystemLanguagesSync: () => ["en"],
   getLastPlayedGameSync: () => __TEST_HOST_LAST_PLAYED__,
@@ -163,9 +164,15 @@ const electron = {
     overlay: { openUrl: async () => undefined },
   },
 
-  // Match preload: fire-and-forget IPC. Do not call renderer console — the
-  // mod console inject also calls `electron.log` and would recurse.
-  log: (_level: string, _scope: string, _message: string) => undefined,
+  // Match preload: fire-and-forget IPC. Forward startup failures to the host
+  // log without using the renderer console, which may call `electron.log`.
+  log: (level: string, scope: string, message: string) => {
+    if (level === "error" || level === "warn" || scope === "bootstrap") {
+      const line = `[electron.log:${level}:${scope}] ${message}`;
+      console.error(line);
+      hostErrors.push(line);
+    }
+  },
 
   customMaps: {
     save: async () => ok(),

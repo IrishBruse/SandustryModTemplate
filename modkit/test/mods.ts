@@ -23,6 +23,7 @@ type ModInfo = {
   name?: string;
   version?: string;
   apiVersion?: number;
+  gameVersion?: { minimum?: string; maximum?: string };
   entry?: string;
   workerEntry?: string;
   dependencies?: unknown;
@@ -81,6 +82,7 @@ function harnessMod(): Record<string, unknown> {
       name: "sandustry-test harness",
       version: "0.0.1",
       apiVersion: 1,
+      gameVersion: { minimum: "0.5.6", maximum: "0.5.6" },
       entry: "main.js",
       dependencies: [],
       loadOrder: 0,
@@ -117,6 +119,7 @@ function readModRecord(modDir: string, id: string): Record<string, unknown> | nu
       name: typeof info.name === "string" ? info.name : id,
       version: typeof info.version === "string" ? info.version : "0.0.0",
       apiVersion: info.apiVersion ?? 1,
+      ...(info.gameVersion ? { gameVersion: info.gameVersion } : {}),
       entry,
       dependencies: Array.isArray(info.dependencies) ? info.dependencies : [],
       loadOrder: typeof info.loadOrder === "number" ? info.loadOrder : 0,
@@ -148,7 +151,10 @@ export function listWorkshopMods(): unknown[] {
 const TEST_HOST_DISABLED_MODS = new Set(["example.hooks-intercept"]);
 
 export function companionSettings(modIds: string[]): Record<string, unknown> {
-  const externalModSettings: Record<string, Record<string, unknown>> = {};
+  const externalModSettings: Record<string, Record<string, unknown>> = {
+    // Keep the synthetic local harness explicitly enabled in the test host.
+    [HARNESS_ID]: { enabled: true },
+  };
   for (const id of modIds) {
     if (TEST_HOST_DISABLED_MODS.has(id)) {
       externalModSettings[id] = { enabled: false };
