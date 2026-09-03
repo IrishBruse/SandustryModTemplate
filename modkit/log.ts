@@ -1,7 +1,7 @@
 /**
  * File logging via the Sandustry Electron bridge (`window.electron.log`).
  *
- * Lines go to `logs/main.log` (workspace `logs/` → OS sandustry logs:
+ * Lines go to `logs/main.log` (workspace `sandustry/logs/` → OS sandustry logs:
  * `~/.config/sandustry/logs` or `%APPDATA%/sandustry/logs`) with the mod id as
  * scope. Bare `console.*` in mod bundles already do this through the esbuild
  * inject — use this when you want a custom scope tag without going through

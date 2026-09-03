@@ -17,22 +17,18 @@ import { createPackage } from "@electron/asar";
 import {
   EXTRACT_ROOT_OS_LINKS,
   LEGACY_CURRENT_LINK,
+  SOURCE_DIR,
   bundleHasSandkit,
   cleanupOrphanedFlatExtract,
-  gameExtractFolderName,
+  gameSourceDir,
   isVersionedExtractFolder,
   migrateLegacyFlatExtract,
   readBundleSandkitFromAsar,
   removeLegacyCurrentLink,
+  removeLegacyVersionedExtracts,
   resolveGameBranchKey,
   sandustryExtractRoot,
 } from "./sandustry-extract.js";
-
-test("gameExtractFolderName combines version and branch", () => {
-  assert.equal(gameExtractFolderName("0.5.2", "mods"), "0.5.2-mods");
-  assert.equal(gameExtractFolderName("", "mods"), "unknown-mods");
-  assert.equal(gameExtractFolderName("0.5.2", ""), "0.5.2-release");
-});
 
 test("resolveGameBranchKey prefers Steam beta, then sandkit, then release", () => {
   assert.equal(resolveGameBranchKey("mods", false), "mods");
@@ -79,10 +75,10 @@ test("readBundleSandkitFromAsar uses listed entry paths for extractFile", async 
 test("isVersionedExtractFolder matches version-branch names", () => {
   assert.equal(isVersionedExtractFolder("0.5.2-mods"), true);
   assert.equal(isVersionedExtractFolder("current"), false);
-  assert.equal(isVersionedExtractFolder("0.5.2"), false);
+  assert.equal(isVersionedExtractFolder("source"), false);
 });
 
-test("migrateLegacyFlatExtract moves flat files into a version folder", () => {
+test("migrateLegacyFlatExtract moves flat files into sandustry/source/", () => {
   const root = mkdtempSync(join(tmpdir(), "sandustry-extract-"));
   try {
     mkdirSync(join(root, "dist", "js"), { recursive: true });
@@ -90,9 +86,9 @@ test("migrateLegacyFlatExtract moves flat files into a version folder", () => {
     writeFileSync(join(root, "package.json"), JSON.stringify({ version: "0.5.2" }));
     writeFileSync(join(root, "dist", "js", "bundle.js"), "sandkit\n");
 
-    const folder = migrateLegacyFlatExtract(root);
-    assert.equal(folder, "0.5.2-mods");
-    assert.equal(readFileSync(join(root, "0.5.2-mods", "main.js"), "utf8"), "// main\n");
+    const migrated = migrateLegacyFlatExtract(root);
+    assert.equal(migrated, true);
+    assert.equal(readFileSync(join(root, SOURCE_DIR, "main.js"), "utf8"), "// main\n");
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
@@ -101,31 +97,47 @@ test("migrateLegacyFlatExtract moves flat files into a version folder", () => {
 test("cleanupOrphanedFlatExtract removes flat leftovers without main.js", () => {
   const root = mkdtempSync(join(tmpdir(), "sandustry-cleanup-"));
   try {
-    mkdirSync(join(root, "0.5.2-mods"), { recursive: true });
+    mkdirSync(join(root, SOURCE_DIR), { recursive: true });
     mkdirSync(join(root, "dist", "js"), { recursive: true });
     writeFileSync(join(root, "package.json"), JSON.stringify({ version: "0.5.2" }));
     writeFileSync(join(root, "dist", "js", "bundle.js"), "sandkit\n");
 
     cleanupOrphanedFlatExtract(root);
-    assert.equal(readdirSync(root).sort().join(","), "0.5.2-mods");
+    assert.equal(readdirSync(root).sort().join(","), SOURCE_DIR);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
 });
 
-test("cleanupOrphanedFlatExtract keeps saves and workshop links", () => {
+test("cleanupOrphanedFlatExtract keeps saves, workshop, and logs links", () => {
   const root = mkdtempSync(join(tmpdir(), "sandustry-keep-links-"));
   try {
-    mkdirSync(join(root, "0.5.2-mods"), { recursive: true });
+    mkdirSync(join(root, SOURCE_DIR), { recursive: true });
     mkdirSync(join(root, "saves"), { recursive: true });
     mkdirSync(join(root, "workshop"), { recursive: true });
+    mkdirSync(join(root, "logs"), { recursive: true });
     writeFileSync(join(root, "package.json"), JSON.stringify({ version: "0.5.2" }));
     writeFileSync(join(root, "orphan.txt"), "gone");
 
     cleanupOrphanedFlatExtract(root);
     const names = readdirSync(root).sort();
-    assert.deepEqual(names, ["0.5.2-mods", "saves", "workshop"]);
-    assert.deepEqual(EXTRACT_ROOT_OS_LINKS, ["saves", "workshop"]);
+    assert.deepEqual(names, ["logs", "saves", SOURCE_DIR, "workshop"]);
+    assert.deepEqual(EXTRACT_ROOT_OS_LINKS, ["saves", "workshop", "logs"]);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("removeLegacyVersionedExtracts deletes version-branch folders", () => {
+  const root = mkdtempSync(join(tmpdir(), "sandustry-versioned-"));
+  try {
+    mkdirSync(join(root, "0.5.2-mods"), { recursive: true });
+    mkdirSync(join(root, SOURCE_DIR), { recursive: true });
+    writeFileSync(join(root, "0.5.2-mods", "marker.txt"), "old");
+
+    removeLegacyVersionedExtracts(root);
+    assert.equal(existsSync(join(root, "0.5.2-mods")), false);
+    assert.equal(existsSync(join(root, SOURCE_DIR)), true);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
@@ -134,7 +146,7 @@ test("cleanupOrphanedFlatExtract keeps saves and workshop links", () => {
 test("removeLegacyCurrentLink deletes sandustry/current", () => {
   const repo = mkdtempSync(join(tmpdir(), "sandustry-repo-"));
   const extractRoot = sandustryExtractRoot(repo);
-  const dest = join(extractRoot, "0.5.2-mods");
+  const dest = gameSourceDir(extractRoot);
   try {
     mkdirSync(dest, { recursive: true });
     symlinkSync(dest, join(extractRoot, LEGACY_CURRENT_LINK));

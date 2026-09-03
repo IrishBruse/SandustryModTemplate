@@ -6,16 +6,16 @@
  * Sandustry binary, app.asar, Steam [mods] beta, sandkit in the extracted bundle.
  *
  * Layout:
- *   sandustry/<version>-<branch>/  app.asar files except node_modules (e.g. 0.5.5-mods)
- *   dist/        symlink (Linux) / junction (Windows) to sandustry mods folder
- *   logs/        symlink (Linux) / junction (Windows) to sandustry logs
+ *   sandustry/source/     app.asar files except node_modules (refreshed each setup)
+ *   dist/                 symlink (Linux) / junction (Windows) to sandustry mods folder
+ *   sandustry/logs/       symlink (Linux) / junction (Windows) to OS sandustry logs
  *   sandustry/saves/      link to OS saves
  *   sandustry/workshop/   link to Steam Workshop content
  *                Linux: ~/.config/sandustry/logs
  *                Windows: %APPDATA%/sandustry/logs
  */
 import { extractFile, listPackage } from "@electron/asar";
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { asarExtractPath, asarRelPath } from "../lib/asar-path.js";
@@ -35,19 +35,22 @@ import { SANDUSTRY, SANDUSTRY_DIR } from "../lib/sandustry-common.js";
 import {
   BUNDLE_RELS,
   ensureExtractRoot,
-  gameExtractFolderName,
+  gameSourceDir,
   readBundleSandkitFromAsar,
   readGameVersionFromAsar,
   resolveGameBranchKey,
   sandustryExtractRoot,
-  versionedExtractDir,
+  SOURCE_DIR,
 } from "../lib/sandustry-extract.js";
 
 const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
+const ENV_EXAMPLE = join(ROOT, ".env.example");
+const ENV_FILE = join(ROOT, ".env");
 const ASAR = join(SANDUSTRY_DIR, "resources/app.asar");
 const EXTRACT_ROOT = sandustryExtractRoot(ROOT);
+const SOURCE_DEST = gameSourceDir(EXTRACT_ROOT);
 const LOGS_SRC = sandustryLogsDir();
-const LOGS_DEST = join(ROOT, "logs");
+const LOGS_DEST = join(EXTRACT_ROOT, "logs");
 const MODS_DIR = sandustryModsDir();
 const SAVES_SRC = sandustrySavesDir();
 const SAVES_DEST = join(EXTRACT_ROOT, "saves");
@@ -212,34 +215,36 @@ function removeLegacyReferencesDir() {
   console.log("Removed legacy references/");
 }
 
-/**
- * @param {string[]} listed
- * @param {string | null | undefined} betaKey
- * @returns {{ folderName: string; sourceDest: string; bundleRel: string | null }}
- */
-function resolveExtractTarget(listed, betaKey) {
+function removeLegacyRepoLogsLink() {
+  const legacy = join(ROOT, "logs");
+  if (!existsSync(legacy)) return;
+  rmSync(legacy, { recursive: true, force: true });
+  console.log("Removed legacy logs/ link at repo root.");
+}
+
+/** @param {string[]} listed @param {string | null | undefined} betaKey */
+function resolveExtractProbe(listed, betaKey) {
   const version = readGameVersionFromAsar(ASAR, listed);
   const bundleProbe = readBundleSandkitFromAsar(ASAR, listed);
   const branchKey = resolveGameBranchKey(betaKey, bundleProbe?.hasSandkit ?? false);
-  const folderName = gameExtractFolderName(version, branchKey);
   return {
-    folderName,
-    sourceDest: versionedExtractDir(EXTRACT_ROOT, folderName),
+    version,
+    branchKey,
     bundleRel: bundleProbe?.rel ?? null,
   };
 }
 
-/** @param {string[]} listed @param {string} sourceDest */
-function extractGameSource(listed, sourceDest, folderName) {
-  rmSync(sourceDest, { recursive: true, force: true });
-  mkdirSync(sourceDest, { recursive: true });
+/** @param {string[]} listed */
+function extractGameSource(listed) {
+  rmSync(SOURCE_DEST, { recursive: true, force: true });
+  mkdirSync(SOURCE_DEST, { recursive: true });
 
   let count = 0;
   for (const entry of listed) {
     const relPath = asarRelPath(entry);
     if (!isExtractableAsarFile(relPath)) continue;
 
-    const dest = join(sourceDest, relPath);
+    const dest = join(SOURCE_DEST, relPath);
     mkdirSync(dirname(dest), { recursive: true });
     try {
       writeFileSync(dest, extractFile(ASAR, asarExtractPath(entry)));
@@ -254,18 +259,18 @@ function extractGameSource(listed, sourceDest, folderName) {
     return false;
   }
 
-  ok(`Extracted ${count} asar files -> sandustry/${folderName}/`);
+  ok(`Extracted ${count} asar files -> sandustry/${SOURCE_DIR}/`);
   return true;
 }
 
-/** @param {string | null} bundleRel @param {string} sourceDest @param {string} folderName */
-function checkSandkitInBundle(bundleRel, sourceDest, folderName) {
+/** @param {string | null} bundleRel @param {string | null | undefined} version @param {string} branchKey */
+function checkSandkitInBundle(bundleRel, version, branchKey) {
   if (!bundleRel) {
     fail(`No ${BUNDLE_RELS.join(" or ")} in app.asar. Opt into the Steam [mods] beta.`);
     return;
   }
 
-  const bundlePath = join(sourceDest, bundleRel);
+  const bundlePath = join(SOURCE_DEST, bundleRel);
   if (!existsSync(bundlePath)) {
     fail(`Extracted asar is missing ${bundleRel}.`);
     return;
@@ -273,11 +278,12 @@ function checkSandkitInBundle(bundleRel, sourceDest, folderName) {
 
   const bundle = readFileSync(bundlePath, "utf8");
   if (bundle.includes("sandkit")) {
-    ok(`sandkit in sandustry/${folderName}/${bundleRel} ([mods] branch)`);
+    const versionLabel = version ? `game ${version}` : "game";
+    ok(`sandkit in sandustry/${SOURCE_DIR}/${bundleRel} (${versionLabel}, ${branchKey})`);
     return;
   }
   fail(
-    `sandustry/${folderName}/${bundleRel} has no sandkit. Opt into the Steam [mods] beta (Library → Properties → Betas).`,
+    `sandustry/${SOURCE_DIR}/${bundleRel} has no sandkit. Opt into the Steam [mods] beta (Library → Properties → Betas).`,
   );
 }
 
@@ -318,9 +324,9 @@ function reportDirLink(label, status, target) {
 
 function syncLogs() {
   try {
-    reportDirLink("logs/", ensureDirectoryLink(LOGS_SRC, LOGS_DEST), LOGS_SRC);
+    reportDirLink("sandustry/logs/", ensureDirectoryLink(LOGS_SRC, LOGS_DEST), LOGS_SRC);
   } catch (err) {
-    fail(`Could not link logs/ to ${LOGS_SRC}: ${err instanceof Error ? err.message : err}`);
+    fail(`Could not link sandustry/logs/ to ${LOGS_SRC}: ${err instanceof Error ? err.message : err}`);
   }
 }
 
@@ -345,9 +351,23 @@ function syncWorkshop() {
   }
 }
 
+function ensureEnvFile() {
+  if (existsSync(ENV_FILE)) {
+    ok("Env file .env (already present)");
+    return;
+  }
+  if (!existsSync(ENV_EXAMPLE)) {
+    warn("Missing .env.example — skip creating .env");
+    return;
+  }
+  copyFileSync(ENV_EXAMPLE, ENV_FILE);
+  ok("Created .env from .env.example");
+}
+
 console.log("Sandustry mod template setup");
 console.log("");
 
+ensureEnvFile();
 checkNode();
 checkRootInstall();
 checkModPackageInstalls();
@@ -357,15 +377,16 @@ const haveAsar = haveBinary && checkAsar();
 if (haveBinary) checkSteamModsBeta();
 
 removeLegacyReferencesDir();
+removeLegacyRepoLogsLink();
 
 if (haveAsar) {
   ensureExtractRoot(EXTRACT_ROOT);
   const listed = listPackage(ASAR, { isPack: false });
   const acf = appManifestPath(SANDUSTRY_DIR);
   const betaKey = acf ? readSteamBetaKey(acf) : "";
-  const target = resolveExtractTarget(listed, betaKey);
-  if (target && extractGameSource(listed, target.sourceDest, target.folderName)) {
-    checkSandkitInBundle(target.bundleRel, target.sourceDest, target.folderName);
+  const probe = resolveExtractProbe(listed, betaKey);
+  if (extractGameSource(listed)) {
+    checkSandkitInBundle(probe.bundleRel, probe.version, probe.branchKey);
   }
 }
 

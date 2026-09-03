@@ -1,5 +1,5 @@
 /**
- * Versioned Sandustry source extracts under `sandustry/<version>-<branch>/`.
+ * Sandustry source extract under `sandustry/source/` (refreshed each `npm run setup`).
  */
 import { extractFile } from "@electron/asar";
 import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync } from "node:fs";
@@ -7,9 +7,10 @@ import { join } from "node:path";
 import { asarExtractPath, asarRelPath } from "./asar-path.js";
 
 export const SANDUSTRY_EXTRACT_DIRNAME = "sandustry";
+export const SOURCE_DIR = "source";
 export const LEGACY_CURRENT_LINK = "current";
-/** OS directory links at the extract root (not version folders). */
-export const EXTRACT_ROOT_OS_LINKS = ["saves", "workshop"];
+/** OS directory links at the extract root (not under `source/`). */
+export const EXTRACT_ROOT_OS_LINKS = ["saves", "workshop", "logs"];
 export const BUNDLE_RELS = ["dist/js/bundle.js", "js/bundle.js"];
 const VERSIONED_FOLDER = /^\d+\.\d+\.\d+-[\w-]+$/;
 
@@ -18,15 +19,9 @@ export function sandustryExtractRoot(repoRoot) {
   return join(repoRoot, SANDUSTRY_EXTRACT_DIRNAME);
 }
 
-/**
- * Folder name for one extract, e.g. `0.5.2-mods`.
- * @param {string | null | undefined} version
- * @param {string | null | undefined} branchKey
- */
-export function gameExtractFolderName(version, branchKey) {
-  const v = String(version ?? "").trim() || "unknown";
-  const branch = sanitizeBranchKey(branchKey) || "release";
-  return `${v}-${branch}`;
+/** @param {string} extractRoot */
+export function gameSourceDir(extractRoot) {
+  return join(extractRoot, SOURCE_DIR);
 }
 
 /** @param {string | null | undefined} branchKey */
@@ -99,11 +94,6 @@ export function readBundleSandkitFromAsar(asarPath, listed) {
   return null;
 }
 
-/** @param {string} extractRoot @param {string} folderName */
-export function versionedExtractDir(extractRoot, folderName) {
-  return join(extractRoot, folderName);
-}
-
 /** @param {string} name */
 export function isVersionedExtractFolder(name) {
   return VERSIONED_FOLDER.test(name);
@@ -111,9 +101,13 @@ export function isVersionedExtractFolder(name) {
 
 /** @param {string} extractRoot @param {string} name */
 function shouldKeepExtractRootEntry(extractRoot, name) {
-  if (isVersionedExtractFolder(name)) return true;
+  if (name === SOURCE_DIR) return true;
   if (EXTRACT_ROOT_OS_LINKS.includes(name)) return true;
   if (name === LEGACY_CURRENT_LINK) {
+    rmSync(join(extractRoot, name), { recursive: true, force: true });
+    return true;
+  }
+  if (isVersionedExtractFolder(name)) {
     rmSync(join(extractRoot, name), { recursive: true, force: true });
     return true;
   }
@@ -127,32 +121,24 @@ export function removeLegacyCurrentLink(extractRoot) {
   rmSync(linkPath, { recursive: true, force: true });
 }
 
+/** Remove legacy `sandustry/<version>-<branch>/` folders from older setup runs. */
+export function removeLegacyVersionedExtracts(extractRoot) {
+  if (!existsSync(extractRoot)) return;
+  for (const name of readdirSync(extractRoot)) {
+    if (!isVersionedExtractFolder(name)) continue;
+    rmSync(join(extractRoot, name), { recursive: true, force: true });
+  }
+}
+
 /**
- * Move a flat `sandustry/main.js` tree into `sandustry/<version>-<branch>/`.
+ * Move a flat `sandustry/main.js` tree into `sandustry/source/`.
  * @param {string} extractRoot
- * @returns {string | null} folder name when migration ran
+ * @returns {boolean}
  */
 export function migrateLegacyFlatExtract(extractRoot) {
-  if (!existsSync(join(extractRoot, "main.js"))) return null;
+  if (!existsSync(join(extractRoot, "main.js"))) return false;
 
-  let version = null;
-  try {
-    const pkg = JSON.parse(readFileSync(join(extractRoot, "package.json"), "utf8"));
-    version = typeof pkg.version === "string" ? pkg.version.trim() : null;
-  } catch {
-    /* no package.json */
-  }
-
-  let hasSandkit = false;
-  for (const rel of BUNDLE_RELS) {
-    const bundlePath = join(extractRoot, rel);
-    if (!existsSync(bundlePath)) continue;
-    hasSandkit = bundleHasSandkit(readFileSync(bundlePath));
-    break;
-  }
-
-  const folderName = gameExtractFolderName(version, resolveGameBranchKey("", hasSandkit));
-  const dest = versionedExtractDir(extractRoot, folderName);
+  const dest = gameSourceDir(extractRoot);
   mkdirSync(dest, { recursive: true });
 
   for (const name of readdirSync(extractRoot)) {
@@ -160,7 +146,7 @@ export function migrateLegacyFlatExtract(extractRoot) {
     renameSync(join(extractRoot, name), join(dest, name));
   }
 
-  return folderName;
+  return true;
 }
 
 /**
@@ -181,7 +167,7 @@ export function cleanupOrphanedFlatExtract(extractRoot) {
 export function ensureExtractRoot(extractRoot) {
   mkdirSync(extractRoot, { recursive: true });
   removeLegacyCurrentLink(extractRoot);
-  const migrated = migrateLegacyFlatExtract(extractRoot);
+  migrateLegacyFlatExtract(extractRoot);
   cleanupOrphanedFlatExtract(extractRoot);
-  return migrated;
+  removeLegacyVersionedExtracts(extractRoot);
 }

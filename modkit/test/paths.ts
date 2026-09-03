@@ -1,4 +1,4 @@
-import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -83,16 +83,9 @@ export function tryReadInstalledModMain(modId: string): string | null {
   return tryReadInstalledModFile(modId, "main.js");
 }
 
-/** Newest `sandustry/<version>-<branch>/dist` that has `index.html`. */
+/** `sandustry/source/dist` when `npm run setup` has run. */
 export function extractedDistDir(): string | null {
-  const root = join(REPO_ROOT, "sandustry");
-  if (!existsSync(root)) return null;
-  const candidates = readdirSync(root)
-    .map((name) => join(root, name, "dist"))
-    .filter((dist) => existsSync(join(dist, "index.html")));
-  if (candidates.length === 0) return null;
-  candidates.sort(
-    (a, b) => statSync(join(b, "index.html")).mtimeMs - statSync(join(a, "index.html")).mtimeMs,
-  );
-  return candidates[0];
+  const dist = join(REPO_ROOT, "sandustry", "source", "dist");
+  if (existsSync(join(dist, "index.html"))) return dist;
+  return null;
 }

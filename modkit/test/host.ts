@@ -278,7 +278,7 @@ function serveStatic(
 async function startHttpHost(options?: { modIds?: readonly string[] }): Promise<TestHttpServer> {
   const distDir = extractedDistDir();
   if (!distDir) {
-    throw new Error("No sandustry/<version>-<branch>/dist. Run npm run setup.");
+    throw new Error("No sandustry/source/dist. Run npm run setup.");
   }
 
   const prepared = prepareSandustryTestUserData(
@@ -410,7 +410,7 @@ export async function startSandustryTestHost(options?: {
     return { ok: false, reason: "Chrome/Chromium not found. Set CHROME or install google-chrome." };
   }
   if (!extractedDistDir()) {
-    return { ok: false, reason: "No sandustry/<version>-<branch>/dist. Run npm run setup." };
+    return { ok: false, reason: "No sandustry/source/dist. Run npm run setup." };
   }
   if (visible && process.platform === "linux" && !process.env.DISPLAY) {
     return { ok: false, reason: "DISPLAY is missing" };
