@@ -1,6 +1,6 @@
 # Electron bridge
 
-Source of truth: `sandustry/preload.js`. Main handlers: `sandustry/main.js`. Live keys match preload.
+Source of truth: `sandustry/source/preload.js`. Main handlers: `sandustry/source/main.js`. Live keys match preload.
 
 Bridge object: `window.electron`.
 
