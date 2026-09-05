@@ -19,7 +19,7 @@ import { envString } from "../lib/env.js";
 import {
   DEFAULT_RENDERER_DEBUG_PORT,
   sandustryDebugArgs,
-  sandustryLeftMonitor,
+  sandustryLaunchMonitor,
   sandustryMaximizeOnLeftMonitor,
   sandustryRequireBinary,
   sandustryStopRunning,
@@ -59,7 +59,7 @@ sandustryStopRunning();
 
 console.log(`Sandustry debug — renderer ${rendererPort}`);
 
-const mon = sandustryLeftMonitor();
+const mon = sandustryLaunchMonitor();
 const args = [...sandustryDebugArgs(rendererPort, mon), ...extraArgs];
 const child = spawnSandustry(args, {
   cwd: SANDUSTRY_DIR,

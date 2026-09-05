@@ -119,6 +119,12 @@ Use `npm run build` when you want release staging under `build/`.
 
 `npm run dev` watches the F5 / `dev:pick` choice (`.tmp/dev-mod-selection.json`) plus any companions from `DEV_ALWAYS_MODS` in `.env` / `.env.example`. `DEV_MODS` is `selection` (default) or `all`.
 Copy `.env.example` to `.env` (or run `npm run setup`). **Sandustry** writes one folder. **Sandustry (all mods)** writes all.
+
+`SANDUSTRY_MONITOR` picks the display for `npm run sandustry` and F5 (`left`, `right`, `primary`, or `0`, `1`, …).
+Linux uses `xrandr` and `wmctrl`.
+Windows uses PowerShell `Screen` and `--start-maximized`.
+macOS and other OSes ignore monitor selection and use `0,0`.
+See [README troubleshooting](../README.md#wrong-monitor-on-launch).
 If `npm run dev` is already running, it restarts the bundle when that file changes (unless `DEV_MODS=all`).
 It does not uninstall other owned OS folders (Workshop items and other local mods stay).
 Use `npm run dev:pick` for a keyboard picker before the watch starts. **All mods** is the first row.

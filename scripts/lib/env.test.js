@@ -34,6 +34,20 @@ test("resolveDevModsSetting empty is selection", () => {
   assert.deepEqual(resolveDevModsSetting("", ""), { mode: "selection", alwaysFolders: [] });
 });
 
+test("resolveSandustryMonitor defaults to primary", async () => {
+  const { resolveSandustryMonitor } = await import("./env.js");
+  const prev = process.env.SANDUSTRY_MONITOR;
+  try {
+    delete process.env.SANDUSTRY_MONITOR;
+    assert.equal(resolveSandustryMonitor(), "primary");
+    process.env.SANDUSTRY_MONITOR = "primary";
+    assert.equal(resolveSandustryMonitor(), "primary");
+  } finally {
+    if (prev === undefined) delete process.env.SANDUSTRY_MONITOR;
+    else process.env.SANDUSTRY_MONITOR = prev;
+  }
+});
+
 test("watchModFolders all mode returns empty filter", async () => {
   const { watchModFolders } = await import("./env.js");
   assert.deepEqual(

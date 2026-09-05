@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
- * Stop any running game and launch Sandustry on the left monitor.
+ * Stop any running game and launch Sandustry on the configured monitor.
  * Does not build — run `npm run dev` or `npm run build` first.
  * Usage: npm run sandustry
  */
 import {
   sandustryLaunchArgs,
-  sandustryLeftMonitor,
+  sandustryLaunchMonitor,
   sandustryMaximizeOnLeftMonitor,
   sandustryRequireBinary,
   sandustryStopRunning,
@@ -16,7 +16,7 @@ import {
 sandustryRequireBinary();
 sandustryStopRunning();
 
-const mon = sandustryLeftMonitor();
+const mon = sandustryLaunchMonitor();
 const child = spawnSandustry(sandustryLaunchArgs(mon), { detached: true, stdio: "ignore" });
 sandustryMaximizeOnLeftMonitor(mon.x, mon.y);
 

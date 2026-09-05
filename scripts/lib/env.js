@@ -147,4 +147,13 @@ export function resolveDevCleanup() {
   return envFlag("DEV_CLEANUP", false);
 }
 
+/**
+ * Monitor for `npm run sandustry` and F5 (`SANDUSTRY_MONITOR` in `.env`).
+ * `primary` (default), `left`, `right`, or a 0-based index (`0`, `1`, …).
+ * @returns {string}
+ */
+export function resolveSandustryMonitor() {
+  return envString("SANDUSTRY_MONITOR", "primary").toLowerCase();
+}
+
 loadRepoEnv();

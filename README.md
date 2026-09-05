@@ -72,7 +72,8 @@ Shared code goes in `modkit/`.
 ### Setup and game
 
 - **`npm run setup`** — Check install, extract `app.asar` (except `node_modules/`) to `sandustry/source/`, link `dist/`, `sandustry/logs/`, `sandustry/saves/`, and `sandustry/workshop/`
-- **`npm run sandustry`** — Stop and launch the game (no build)
+- **`npm run sandustry`** — Stop and launch the game (no build).
+  Set `SANDUSTRY_MONITOR` in `.env` to pick a display (`left`, `right`, `primary`, or `0`, `1`, …).
 
 ### Development
 
@@ -257,6 +258,24 @@ set SANDUSTRY=C:\Program Files (x86)\Steam\steamapps\common\Sandustry\Sandustry.
 ```
 
 Default probe includes `%ProgramFiles(x86)%\Steam` and `%ProgramFiles%\Steam`, plus libraries from `libraryfolders.vdf`.
+
+### Wrong monitor on launch
+
+Set `SANDUSTRY_MONITOR` in `.env` (see `.env.example`).
+`npm run sandustry` and F5 use the same setting.
+
+| Value     | Meaning                                      |
+| --------- | -------------------------------------------- |
+| `primary` | OS primary display (default)                 |
+| `left`    | Leftmost display                             |
+| `right`   | Rightmost display                            |
+| `0`, `1`… | Index after sorting left-to-right, top-to-bottom |
+
+| OS      | Monitor placement | How                                    |
+| ------- | ----------------- | -------------------------------------- |
+| Linux   | Yes               | `xrandr` list; `wmctrl` maximize (F5)   |
+| Windows | Yes               | PowerShell `Screen`; `--start-maximized` |
+| macOS   | No                | Falls back to `0,0`                    |
 
 **Duplicate mods in the console** — After a rename, old folders can stay in the OS mods directory.
 The game loads every folder there, so you get two copies of each sample.

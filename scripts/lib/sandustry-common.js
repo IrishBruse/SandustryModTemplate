@@ -16,6 +16,7 @@ import {
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { setTimeout as sleep } from "node:timers/promises";
+import { resolveSandustryMonitor } from "./env.js";
 import {
   resolveSandustryBinary,
   sandustryBinaryName,
@@ -24,6 +25,7 @@ import {
 } from "./paths.js";
 
 const IS_WIN = process.platform === "win32";
+const IS_LINUX = process.platform === "linux";
 const REPO_ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const DEBUG_SESSION_FILE = join(REPO_ROOT, ".tmp", "sandustry-debug-session.json");
 
@@ -416,14 +418,16 @@ export function sandustryStopRunning() {
   }
 }
 
-/** @returns {{ name: string; x: number; y: number; w: number; h: number }} */
-function sandustryLeftMonitorLinux() {
+/** @typedef {{ name: string; x: number; y: number; w: number; h: number; primary: boolean }} SandustryMonitor */
+
+/** @returns {SandustryMonitor[]} */
+function listSandustryMonitorsLinux() {
   const output = execSync("xrandr --query", { encoding: "utf8" });
-  /** @type {{ name: string; x: number; y: number; w: number; h: number }[]} */
+  /** @type {SandustryMonitor[]} */
   const monitors = [];
 
   for (const line of output.split("\n")) {
-    const match = line.match(/^(\S+) connected .*?(\d+)x(\d+)\+(\d+)\+(\d+)/);
+    const match = line.match(/^(\S+) connected(?: primary)? .*?(\d+)x(\d+)\+(\d+)\+(\d+)/);
     if (!match) continue;
     monitors.push({
       name: match[1],
@@ -431,6 +435,7 @@ function sandustryLeftMonitorLinux() {
       h: Number(match[3]),
       x: Number(match[4]),
       y: Number(match[5]),
+      primary: line.includes(" connected primary"),
     });
   }
 
@@ -440,18 +445,16 @@ function sandustryLeftMonitorLinux() {
     process.exit(1);
   }
 
-  const mon = monitors[0];
-  console.log(`Left monitor: ${mon.name} ${mon.w}x${mon.h} at ${mon.x},${mon.y}`);
-  return mon;
+  return monitors;
 }
 
-/** @returns {{ name: string; x: number; y: number; w: number; h: number }} */
-function sandustryLeftMonitorWindows() {
+/** @returns {SandustryMonitor[]} */
+function listSandustryMonitorsWindows() {
   try {
     const ps = [
       "Add-Type -AssemblyName System.Windows.Forms;",
       "[System.Windows.Forms.Screen]::AllScreens | ForEach-Object {",
-      '  "$($_.Bounds.X) $($_.Bounds.Y) $($_.Bounds.Width) $($_.Bounds.Height)"',
+      '  "$($_.Bounds.X) $($_.Bounds.Y) $($_.Bounds.Width) $($_.Bounds.Height) $([int]$_.Primary)"',
       "}",
     ].join(" ");
     const result = spawnSync("powershell", ["-NoProfile", "-Command", ps], {
@@ -459,33 +462,87 @@ function sandustryLeftMonitorWindows() {
       windowsHide: true,
     });
     const output = result.stdout ?? "";
-    /** @type {{ name: string; x: number; y: number; w: number; h: number }[]} */
+    /** @type {SandustryMonitor[]} */
     const monitors = [];
     for (const line of output.split(/\r?\n/)) {
       const parts = line.trim().split(/\s+/);
-      if (parts.length < 4) continue;
-      const [x, y, w, h] = parts.map(Number);
-      if ([x, y, w, h].some((n) => Number.isNaN(n))) continue;
-      monitors.push({ name: `display-${monitors.length}`, x, y, w, h });
+      if (parts.length < 5) continue;
+      const [x, y, w, h, primaryFlag] = parts.map(Number);
+      if ([x, y, w, h, primaryFlag].some((n) => Number.isNaN(n))) continue;
+      monitors.push({
+        name: `display-${monitors.length}`,
+        x,
+        y,
+        w,
+        h,
+        primary: primaryFlag === 1,
+      });
     }
     monitors.sort((a, b) => a.x - b.x || a.y - b.y);
-    if (monitors.length > 0) {
-      const mon = monitors[0];
-      console.log(`Left monitor: ${mon.w}x${mon.h} at ${mon.x},${mon.y}`);
-      return mon;
-    }
+    if (monitors.length > 0) return monitors;
   } catch {
     // fall through
   }
 
   console.log("Could not detect monitors; using 0,0 (Electron --start-maximized still applies).");
-  return { name: "primary", x: 0, y: 0, w: 0, h: 0 };
+  return [{ name: "primary", x: 0, y: 0, w: 0, h: 0, primary: true }];
 }
 
-/** @returns {{ name: string; x: number; y: number; w: number; h: number }} */
+/** @returns {SandustryMonitor[]} */
+function listSandustryMonitorsUnsupported() {
+  console.log("Monitor selection is not supported on this OS; using 0,0.");
+  return [{ name: "primary", x: 0, y: 0, w: 0, h: 0, primary: true }];
+}
+
+/** @returns {SandustryMonitor[]} */
+export function listSandustryMonitors() {
+  if (IS_WIN) return listSandustryMonitorsWindows();
+  if (IS_LINUX) return listSandustryMonitorsLinux();
+  return listSandustryMonitorsUnsupported();
+}
+
+/**
+ * Pick a monitor from a sorted list (`SANDUSTRY_MONITOR` values).
+ * @param {SandustryMonitor[]} monitors
+ * @param {string} spec
+ * @returns {SandustryMonitor}
+ */
+export function pickSandustryMonitor(monitors, spec) {
+  if (monitors.length === 0) {
+    return { name: "primary", x: 0, y: 0, w: 0, h: 0, primary: true };
+  }
+
+  const normalized = spec.trim().toLowerCase();
+  if (normalized === "left") return monitors[0];
+  if (normalized === "right") return monitors[monitors.length - 1];
+  if (normalized === "primary" || normalized === "") {
+    const primary = monitors.find((mon) => mon.primary);
+    return primary ?? monitors[0];
+  }
+
+  const index = Number(normalized);
+  if (Number.isInteger(index) && index >= 0 && index < monitors.length) {
+    return monitors[index];
+  }
+
+  console.warn(`Unknown SANDUSTRY_MONITOR="${spec}"; using primary monitor.`);
+  const primary = monitors.find((mon) => mon.primary);
+  return primary ?? monitors[0];
+}
+
+/** @returns {SandustryMonitor} */
+export function sandustryLaunchMonitor() {
+  const spec = resolveSandustryMonitor();
+  const monitors = listSandustryMonitors();
+  const mon = pickSandustryMonitor(monitors, spec);
+  const label = mon.w > 0 ? `${mon.name} ${mon.w}x${mon.h}` : mon.name;
+  console.log(`Launch monitor (${spec}): ${label} at ${mon.x},${mon.y}`);
+  return mon;
+}
+
+/** @returns {SandustryMonitor} */
 export function sandustryLeftMonitor() {
-  if (IS_WIN) return sandustryLeftMonitorWindows();
-  return sandustryLeftMonitorLinux();
+  return sandustryLaunchMonitor();
 }
 
 /**
